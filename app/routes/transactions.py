@@ -52,12 +52,20 @@ def view(transaction_id):
 
 @bp.route('/<int:transaction_id>/redeem', methods=['POST'])
 def redeem(transaction_id):
+    transaction = Transaction.get_by_id(transaction_id)
+    if not transaction:
+        flash('Transaction not found.', 'danger')
+        return redirect(url_for('transactions.list'))
     Transaction.update_status(transaction_id, 'Redeemed')
     flash('Transaction marked as Redeemed.', 'success')
     return redirect(url_for('transactions.view', transaction_id=transaction_id))
 
 @bp.route('/<int:transaction_id>/forfeit', methods=['POST'])
 def forfeit(transaction_id):
+    transaction = Transaction.get_by_id(transaction_id)
+    if not transaction:
+        flash('Transaction not found.', 'danger')
+        return redirect(url_for('transactions.list'))
     Transaction.update_status(transaction_id, 'Forfeited')
     flash('Transaction marked as Forfeited. Items are now available for sale.', 'warning')
     return redirect(url_for('transactions.view', transaction_id=transaction_id))

@@ -48,7 +48,7 @@ class Transaction:
         db = get_db()
         cur = db.cursor()
         cur.execute(
-            "SELECT I.ITEM_ID, I.NAME, I.BRAND, I.MODEL, I.CONDITION, I.APPRAISED_VALUE, C.NAME as CATEGORY_NAME "
+            "SELECT I.ITEM_ID, I.NAME, I.BRAND, I.MODEL, I.CONDITION, I.STATUS, I.APPRAISED_VALUE, C.NAME as CATEGORY_NAME "
             "FROM TRANSACTION_ITEMS TI "
             "JOIN ITEMS I ON TI.ITEM_ID = I.ITEM_ID "
             "LEFT JOIN CATEGORIES C ON I.CATEGORY_ID = C.CATEGORY_ID "
