@@ -1,0 +1,6 @@
+connect to any db. same db different folder
+and run the script.
+
+CREATE DECRYPTED DATABASE 'C:\\Data\\PawnPro_Decrypted.db'
+FROM 'C:\\Data\\PawnPro.db'
+KEY 'Mood4money';

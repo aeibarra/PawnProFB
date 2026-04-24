@@ -1,0 +1,28 @@
+5
+86
+168
+
+Menu
+    Home
+        Pawn & Purchase
+        LeadsOnline Export
+        Layaway
+
+    Report
+        Client to late payments
+        List of New Pawns & List of Payments 
+        Purchases Transactions
+        Export Transaction Information
+    
+    Setup
+        Select Printers  
+        LeadsOnline FTP Parameters
+        Default Maturity Month
+        --
+        Jewelery Type
+        Jewelery Style
+        Jewelery Metal
+        Stone Shape
+        Stone Color
+
+

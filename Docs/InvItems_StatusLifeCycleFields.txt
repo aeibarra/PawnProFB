@@ -1,0 +1,84 @@
+Created -->> Item Created Status Pawn
+InvItemStatus -->> C close/inactive ELSE Active
+
+New Fields
+PawnedDate Date -->> We need to sync with Created for Pawn Transactions
+PurchaseDate Date -->> We need to sync with Created for Pawn Purchase Transaction
+RedeemedDate Date -->>  if not null store the Item's Redeemed Date.  (Item Status CLOSED).
+DefaultedDate Date -->> if not null the client default and the item is Owned by the store (Shop-owned).
+MeltedDate Date    -->> if not null the item was sent to be melted. (Item Status CLOSED).
+ForSaleDate Date   -->  The date the item was Put on Sale or Listed for Sale. 
+SoldDate Date      -->  The date the item was sold. (Item Status CLOSED).
+
+
+SELECT cast(Created as Date) PCreate, PurchaseDate
+FROM InventoryItems
+WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = 'U')
+
+
+
+
+CREATE TRIGGER InventoryItems_BI_BU
+BEFORE INSERT, UPDATE
+ON InventoryItems
+REFERENCING NEW AS n
+FOR EACH ROW
+BEGIN
+  -- Redeemed vs Defaulted: cannot be both
+  IF n.RedeemedDate IS NOT NULL AND n.DefaultedDate IS NOT NULL THEN
+     RAISERROR 17100 'Item cannot be both Redeemed and Defaulted';
+  END IF;
+
+  -- ForSale requires either Defaulted (pawned and forfeited) or Purchase (shop purchase flow)
+  IF n.ForSaleDate IS NOT NULL AND n.DefaultedDate IS NULL AND n.PurchaseDate IS NULL THEN
+     RAISERROR 17101 'ForSaleDate requires DefaultedDate or PurchaseDate';
+  END IF;
+
+  -- Sold requires either Defaulted or Purchase
+  IF n.SoldDate IS NOT NULL AND n.DefaultedDate IS NULL AND n.PurchaseDate IS NULL THEN
+     RAISERROR 17102 'SoldDate requires DefaultedDate or PurchaseDate';
+  END IF;
+
+  -- Melted requires either Defaulted or Purchase
+  IF n.MeltedDate IS NOT NULL AND n.DefaultedDate IS NULL AND n.PurchaseDate IS NULL THEN
+     RAISERROR 17103 'MeltedDate requires DefaultedDate or PurchaseDate';
+  END IF;
+
+  -- (Optional) terminal outcomes must be mutually exclusive
+  IF n.SoldDate IS NOT NULL AND n.MeltedDate IS NOT NULL THEN
+     RAISERROR 17104 'Item cannot be both Sold and Melted';
+  END IF;
+
+END;
+
+given this query example:
+select RedeemedDate, DefaultedDate
+from InventoryItems
+where TransactionNo = 2505
+
+if a query that gives me this result:
+  if RedeemedDate is null and DefaultedDate is null in all items the result is 0 meaning Pawn is Open
+  if RedeemedDate is not null and DefaultedDate is null  in all items the result is 2 meaning Pawn was Redeemed
+  if RedeemedDate is null and DefaultedDate is not null  in all items the result is 3 meaning Pawn was Defaulted
+
+  if the is a mix that some items has RedeemedDate and or DefaultedDate or not the result is 4 Pawn has Mix Defaulted/Redeemed
+  
+
+I need you to write some code to read and write some printer setting to the PawnPro.InvItemBarcode
+
+This is the section:
+[PRINTERS]
+POLICEREP=LBP6230dw
+PAYRECEIPTPRN=Microsoft Print to PDF
+POLICEREPBIN=Auto
+PAYRECEIPTPRNBIN=Auto
+
+I need to add three other entries one for activating two other printers that are optionals
+  UsePaymentReceiptPrinter  on ini value Y or N. In the application will be store in a boolean variable
+  PaymentReceiptPrinterName  printer name one ini value in application and string variable
+  UseEnvelopeLabelPrinter on ini value Y or N. In the application will be store in a boolean variable
+  EnvelopeLabelPrinterName printer name one ini value in application and string variable
+
+  I need to read and write these parameters
+  Perhaps we can create an little unit that in the future I can add more entries to read and write to the ini PawnPro.ini
+  

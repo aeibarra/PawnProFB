@@ -1,0 +1,17 @@
+CREATE SEQUENCE incidentSequence
+   MINVALUE 1000
+   MAXVALUE 100000;
+
+CREATE TABLE reportedBillingMistake( 
+   incidentID INT PRIMARY KEY DEFAULT (incidentSequence.nextval),
+   billNumber INT,
+   valueOnBill NUMERIC(10,2),
+   expectedValue NUMERIC(10,2),
+   comments LONG VARCHAR );
+
+   CREATE TABLE reportedMissingShipment( 
+   incidentID INT PRIMARY KEY DEFAULT(incidentSequence.nextval),
+   orderNumber INT,
+   comments LONG VARCHAR );
+   
+      

@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DIAGRAM DIAGRAMTYPE="Conceptual" FILE_VERSION="2" ZOOM="125" SCROLLH="0" SCROLLV="0" PAPERID="1" PAPERORIENTATION="0" PAPER_MARGIN_LEFT="2540" PAPER_MARGIN_RIGHT="2540" PAPER_MARGIN_TOP="2540" PAPER_MARGIN_BOTTOM="2540">
+    <OPTIONS OPTION0="OPT_VIEW_DISPLAY_LINK_NAMES_IN_DGR=1">
+    </OPTIONS>
+    <ITEMS>
+        <DOMAINS>
+        </DOMAINS>
+        <ENTITIES>
+            <ENTITY ID="{CBBE8634-4C13-4618-A612-FFA75A0624C8}" NAME="Customer">
+                <ATTRIBUTES>
+                    <ATTRIBUTE NAME="Custno" DT="Integer" ISID="1" REQ="1" ORDER="0">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="CustTicketNo" DT="Variable length string" DTL="15" ORDER="1">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="CustLast" DT="Variable length string" DTL="35" ORDER="2">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="CustFirst" DT="Variable length string" DTL="35" ORDER="3">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="CustMid" DT="Variable length string" DTL="1" ORDER="4">
+                    </ATTRIBUTE>
+                </ATTRIBUTES>
+                <VPROPS>
+                    <FONT FCOLHEADER="16777215">
+                    </FONT>
+                    <COLORS FCLR="16579836" OLCLR="0" HDRCLR="10789024">
+                    </COLORS>
+                    <POS POS="72,72">
+                    </POS>
+                </VPROPS>
+            </ENTITY>
+            <ENTITY ID="{7CAE0C5E-8EBE-4528-859B-6690ECFAF2E7}" NAME="InventoryItems">
+                <ATTRIBUTES>
+                    <ATTRIBUTE NAME="InvItemNo" DT="Integer" ISID="1" REQ="1" ORDER="0">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="InvItemBarcode" DT="Variable length string" DTL="30" ORDER="1">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TransactionNo" DT="Integer" ORDER="2">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="InvOriginalItemNo" DT="Integer" ORDER="3">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="InvCatNo" DT="Integer" ORDER="4">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="InvItemStatus" DT="Single character" REQ="1" ORDER="5">
+                    </ATTRIBUTE>
+                </ATTRIBUTES>
+                <VPROPS>
+                    <FONT FCOLHEADER="16777215">
+                    </FONT>
+                    <COLORS FCLR="16579836" OLCLR="0" HDRCLR="10789024">
+                    </COLORS>
+                    <POS POS="824,64">
+                    </POS>
+                </VPROPS>
+            </ENTITY>
+            <ENTITY ID="{B243A132-73E1-43BF-8870-2783309D3055}" NAME="New_Entity">
+            </ENTITY>
+            <ENTITY ID="{CE8809E7-825E-4CA6-A3E4-AD8EEF3139E9}" NAME="New_Entity4">
+                <ATTRIBUTES>
+                    <ATTRIBUTE NAME="Status" DT="Single character" ISID="1" REQ="1" ORDER="0">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="StatusDesc" DT="Variable length string" DTL="30" ORDER="1">
+                    </ATTRIBUTE>
+                </ATTRIBUTES>
+            </ENTITY>
+            <ENTITY ID="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}" NAME="Transactions">
+                <ATTRIBUTES>
+                    <ATTRIBUTE NAME="TransactionNo" DT="Integer" ISID="1" REQ="1" ORDER="0">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="CustNo" DT="Integer" REQ="1" ORDER="1">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TranDate" DT="Date" REQ="1" ORDER="2">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TranTime" DT="Time" ORDER="3">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TranTicketNo" DT="Variable length string" DTL="30" ORDER="4">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TranType" DT="Single character" REQ="1" ORDER="5">
+                    </ATTRIBUTE>
+                    <ATTRIBUTE NAME="TranStatus" DT="Single character" REQ="1" ORDER="6">
+                    </ATTRIBUTE>
+                </ATTRIBUTES>
+                <VPROPS>
+                    <FONT FCOLHEADER="16777215">
+                    </FONT>
+                    <COLORS FCLR="16579836" OLCLR="0" HDRCLR="10789024">
+                    </COLORS>
+                    <POS POS="464,64">
+                    </POS>
+                </VPROPS>
+            </ENTITY>
+        </ENTITIES>
+        <RELATIONSHIPS>
+            <RELATIONSHIP NAME="New_Relationship" ID="{A3C083BD-4609-4485-9002-CC1C20B7878B}" IDENT="1" CARD="0" SENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}" DENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="New_Relationship1" ID="{63B9CACB-726C-431E-8F5F-071626C0152F}" IDENT="1" CARD="0" SENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}" DENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="New_Relationship2" ID="{774CB65C-9691-47E3-84F3-FC81CD21B5D3}" IDENT="1" CARD="0" SENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}" DENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="New_Relationship3" ID="{CFD4FA67-AD48-452E-8415-ADF179018810}" IDENT="1" CARD="0" SENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}" DENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="New_Relationship4" ID="{7180ECC6-1415-4489-9602-13E00DCD115C}" IDENT="1" CARD="0" SENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}" DENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="FK_TranToCust" ID="{00A0F4B1-54EF-4822-9970-D013868C7705}" IDENT="1" CARD="1" SENT="{CBBE8634-4C13-4618-A612-FFA75A0624C8}" DENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}">
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="FK_Items_TransactionNo" ID="{BC1A2095-4636-4FB8-B366-11C0B35654FD}" DREQ="1" IDENT="1" CARD="1" SENT="{0A5A16D8-6882-41A2-BFC8-C1F1D3339B6B}" DENT="{7CAE0C5E-8EBE-4528-859B-6690ECFAF2E7}">
+                <SATTRS 0="TransactionNo">
+                </SATTRS>
+            </RELATIONSHIP>
+            <RELATIONSHIP NAME="New_Relationship7" ID="{8239BC29-491C-4ABF-97E6-C9F17BE39167}" IDENT="1" CARD="0" SENT="{CE8809E7-825E-4CA6-A3E4-AD8EEF3139E9}" DENT="{CE8809E7-825E-4CA6-A3E4-AD8EEF3139E9}">
+            </RELATIONSHIP>
+        </RELATIONSHIPS>
+        <LINKS>
+            <LINK SP="176,32" DP="72,40" OBJID="{00A0F4B1-54EF-4822-9970-D013868C7705}">
+            </LINK>
+            <LINK SP="144,32" DP="56,56" OBJID="{BC1A2095-4636-4FB8-B366-11C0B35654FD}">
+            </LINK>
+        </LINKS>
+        <COMMENTS>
+        </COMMENTS>
+        <REGIONS>
+        </REGIONS>
+        <DOCLINKS>
+        </DOCLINKS>
+        <SUBDIAGRAMS>
+        </SUBDIAGRAMS>
+    </ITEMS>
+</DIAGRAM>

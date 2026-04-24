@@ -1,0 +1,498 @@
+unit Inventory;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, IniFiles,
+  Dialogs, StdCtrls, Grids, DBGrids, ExtCtrls, Printers, System.UITypes,
+  Buttons, DB, ADODB, Mask, ComCtrls,
+  RzForms, RzButton, RzTreeVw;
+
+type
+  TfrmInventory = class(TForm)
+    gbBottom: TGroupBox;
+    Panel1: TPanel;
+    Splitter1: TSplitter;
+    pnTop: TPanel;
+    pnCategories: TPanel;
+    Panel4: TPanel;
+    btnAddCat: TBitBtn;
+    btnEditCat: TBitBtn;
+    dsCategories: TDataSource;
+    dsInvItems: TDataSource;
+    Panel6: TPanel;
+    Panel5: TPanel;
+    DBGrid1: TDBGrid;
+    Panel7: TPanel;
+    btnAddItem: TBitBtn;
+    btnEditItem: TBitBtn;
+    GroupBox1: TGroupBox;
+    Panel9: TPanel;
+    DBGrid2: TDBGrid;
+    btnAddStone: TBitBtn;
+    btnEditStone: TBitBtn;
+    BitBtn2: TBitBtn;
+    GroupBox2: TGroupBox;
+    chkSale: TCheckBox;
+    chkPawn: TCheckBox;
+    qryCategories: TADOQuery;
+    qryInvItems: TADOQuery;
+    qryInvItemsInvItemNo: TAutoIncField;
+    qryInvItemsInvItemBarcode: TStringField;
+    qryInvItemsInvCatNo: TIntegerField;
+    qryInvItemsJType: TStringField;
+    qryInvItemsJStyle: TStringField;
+    qryInvItemsJMetal: TStringField;
+    qryInvItemsInvItemCount: TIntegerField;
+    qryInvItemsNote: TStringField;
+    qryInvItemsSizeLength: TFloatField;
+    qryInvItemsWeight: TFloatField;
+    qryInvItemsKT: TFloatField;
+    qryInvItemsCreated: TDateTimeField;
+    qryInvItemsUnitCost: TBCDField;
+    qryInvItemsUnitPrice: TBCDField;
+    qryInvItemsInvItemStatus: TStringField;
+    qryInvItemsTransactionNo: TIntegerField;
+    qryInvItemsInvOriginalItemNo: TIntegerField;
+    qryInvItemsInvItemBrand: TStringField;
+    qryCategoriesC: TSmallintField;
+    qryCategoriesInvCatNo: TIntegerField;
+    qryCategoriesInvCategory: TStringField;
+    FormState: TRzFormState;
+    btnPrintLabel: TRzBitBtn;
+    btnPrintOneLabel: TRzBitBtn;
+    btnClose: TBitBtn;
+    chkTree: TRzCheckTree;
+    SpeedButton1: TSpeedButton;
+    btnSearch: TRzBitBtn;
+    lblTotals: TLabel;
+    qryInvItemsOwnerAppNumber: TStringField;
+    qryInvItemsModelNumber: TStringField;
+    qryInvItemsSerialNumber: TStringField;
+    qryInvItemsGender: TStringField;
+    qryInvItemsDescription: TStringField;
+    qryInvItemsJTypeDesc: TStringField;
+    qryInvItemsJStyleDesc: TStringField;
+    qryInvItemsJMetalDesc: TStringField;
+    qryInvItemsStatusDesc: TStringField;
+    qryInvItemsTotalWeight: TFloatField;
+    CheckBox1: TCheckBox;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure btnAddCatClick(Sender: TObject);
+    procedure btnEditCatClick(Sender: TObject);
+    procedure TreeClick(Sender: TObject);
+    procedure btnAddItemClick(Sender: TObject);
+    procedure btnEditItemClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnAddStoneClick(Sender: TObject);
+    procedure chkSaleClick(Sender: TObject);
+    procedure qryInvItemsCalcFields(DataSet: TDataSet);
+    procedure qryInvItemsFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
+    procedure qryInvItemsNewRecord(DataSet: TDataSet);
+    procedure qryStonesCalcFields(DataSet: TDataSet);
+    procedure qryStonesNewRecord(DataSet: TDataSet);
+    procedure btnPrintLabelClick(Sender: TObject);
+    procedure btnPrintOneLabelClick(Sender: TObject);
+    procedure btnEditStoneClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+  private
+    Param_LineNo_qryInvItems: integer;
+    function GetSelectedTreeCategories: string;
+  public
+    { Public declarations }
+//    CategorySelected: integer;
+    ShowFilter: string;
+    procedure LoadCategoryTree;
+  end;
+
+var
+  frmInventory: TfrmInventory;
+
+implementation
+
+uses PawnMain, PawnDM, EditInvCategory, EditInvItem, PawnGlobal,
+  EnterStoneInfo;
+
+{$R *.dfm}
+
+procedure TfrmInventory.LoadCategoryTree;
+var
+  Iidx: integer;
+  TreeNode{, MyTreeNode2}: TTreeNode;
+begin
+  TreeNode := nil;
+  qryCategories.First;
+  Iidx := 0;
+  while not qryCategories.Eof do
+  begin
+    if qryCategoriesInvCatNo.AsInteger = 0 then
+      begin
+        TreeNode := chkTree.Items.Add(nil, qryCategoriesInvCategory.AsString);
+        TreeNode.ImageIndex := 0;
+        TreeNode.SelectedIndex := 0;
+        TreeNode.StateIndex := STATE_CHECKED;
+        TreeNode.Data := Pointer(qryCategoriesInvCatNo.AsInteger);
+      end
+    else
+      begin
+        chkTree.Items.AddChild(TreeNode, qryCategoriesInvCategory.AsString);
+        TreeNode.Item[Iidx].ImageIndex := 1;
+        TreeNode.Item[Iidx].SelectedIndex := 1;
+        TreeNode.Item[Iidx].Data := Pointer(qryCategoriesInvCatNo.AsInteger);
+        TreeNode.Item[Iidx].StateIndex := STATE_CHECKED;
+        inc(Iidx);
+      end;
+
+
+    qryCategories.Next;
+  end;
+  TreeNode.Expand(true);
+end;
+
+function TfrmInventory.GetSelectedTreeCategories: string;
+var
+  List: TStringList;
+  TotalNodes: integer;
+  
+  procedure CollectCheckedNodes(Node: TTreeNode);
+  var
+    i: integer;
+    InvCatNoStr: string;
+  begin
+    if Node = nil then
+      exit;
+
+    // Add current node if checked
+    if (Node.StateIndex = STATE_CHECKED) and (Integer(Node.Data) <> 0) then
+    begin
+      InvCatNoStr := IntToStr(Integer(Node.Data));
+      if List.IndexOf(InvCatNoStr) < 0 then
+        List.Add(InvCatNoStr);
+    end;
+    
+    // Recursively process children
+    for i := 0 to Node.Count - 1 do
+      CollectCheckedNodes(Node.Item[i]);
+  end;
+
+var
+  i: integer;
+begin
+  Result := '';
+  List := TStringList.Create;
+  try
+    // Collect all checked nodes starting from root items
+    for i := 0 to chkTree.Items.Count - 1 do
+      CollectCheckedNodes(chkTree.Items[i]);
+    
+    // Return blank if none selected or all selected
+    TotalNodes := chkTree.Items.Count;
+    if (List.Count = 0) or (List.Count = (TotalNodes-1)) then
+      Result := ''
+    else
+      Result := List.CommaText;
+  finally
+    List.Free;
+  end;
+end;
+
+procedure TfrmInventory.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action := caFree;
+  frmInventory := nil;
+
+//  PostMessage(frmPawnMain.Handle, sx_CloseInventory, 0, 0);
+end;
+
+procedure TfrmInventory.FormShow(Sender: TObject);
+begin
+  qryCategories.Open;
+
+  LoadCategoryTree;
+
+  pnTop.Focused;
+end;
+
+procedure TfrmInventory.btnAddCatClick(Sender: TObject);
+begin
+  frmEditInvCat := TfrmEditInvCat.Create(Application);
+  try
+    frmEditInvCat.NewRow := true;
+    if frmEditInvCat.ShowModal = mrOK then;
+//      LoadCategoryTree;
+  finally
+    frmEditInvCat.Free;
+  end;
+end;
+
+procedure TfrmInventory.btnEditCatClick(Sender: TObject);
+//var
+//  S: string;
+//  i: integer;
+begin
+  if qryCategoriesInvCatNo.AsInteger <> 0 then
+    begin
+      frmEditInvCat := TfrmEditInvCat.Create(Application);
+      try
+        frmEditInvCat.NewRow := false;
+        if frmEditInvCat.ShowModal = mrOK then;
+{          begin
+            S := qryCategoriesInvCategory.AsString;
+            LoadCategoryTree;
+            for i := 0 to Tree.Node[0].Count do
+            begin
+              if Tree.Node[i].Text = S then
+                begin
+                  Tree.ActiveNode := Tree.Node[i];
+                  break;
+                end;
+            end;
+          end;  }
+      finally
+        frmEditInvCat.Free;
+      end;
+    end;
+end;
+
+procedure TfrmInventory.TreeClick(Sender: TObject);
+begin
+{  CategorySelected := -1;
+  if (Tree.ActiveNode <> nil) and (Tree.ActiveNode <> Tree.Node[0]) then
+    begin
+      if qryCategories.Locate('InvCategory', Tree.ActiveNode.Text, []) then
+        CategorySelected := qryCategoriesInvCatNo.AsInteger;
+    end;
+
+  qryInvItems.Close;
+  qryInvItems.Parameters.ParamByName('InvCatNo').Value := CategorySelected;
+  qryInvItems.Open;}
+end;
+
+procedure TfrmInventory.btnAddItemClick(Sender: TObject);
+begin
+  if qryCategoriesInvCatNo.AsInteger = 0 then
+    begin
+      MessageDlg('Please select to which category this item belongs to.', mtInformation, [mbOK], 0);
+      exit;
+    end;
+
+  frmEditInvItem := TfrmEditInvItem.Create(Application);
+  try
+    frmEditInvItem.dsInvItems.DataSet := qryInvItems;
+    frmEditInvItem.NewRow := true;
+    if frmEditInvItem.ShowModal = mrOK then
+      begin
+//        qryInvItems.Close;
+//        qryInvItems.Open;
+      end;
+  finally
+    frmEditInvItem.Free;
+  end;
+end;
+
+procedure TfrmInventory.btnEditItemClick(Sender: TObject);
+begin
+  if qryInvItemsInvItemNo.AsInteger <= 0 then
+    begin
+      MessageDlg('Nothing to edit', mtInformation, [mbOK], 0);
+      exit;
+    end;
+
+  frmEditInvItem := TfrmEditInvItem.Create(Application);
+  try
+    frmEditInvItem.dsInvItems.DataSet := qryInvItems;
+    frmEditInvItem.NewRow := false;
+    if frmEditInvItem.ShowModal = mrOK then
+      begin
+//        qryInvItems.Close;
+//        qryInvItems.Open;
+      end;
+  finally
+    frmEditInvItem.Free;
+  end;
+end;
+
+procedure TfrmInventory.FormCreate(Sender: TObject);
+begin
+  ShowFilter := '';
+  Param_LineNo_qryInvItems := qryInvItems.SQL.IndexOf(' --<PARAMS>');
+end;
+
+procedure TfrmInventory.btnAddStoneClick(Sender: TObject);
+begin
+  frmEnterStoneInfo := TfrmEnterStoneInfo.Create(Self);
+  try
+    frmEnterStoneInfo.NewRow := true;
+    frmEnterStoneInfo.ShowModal;
+  finally
+    frmEnterStoneInfo.Free;
+  end;
+end;
+
+procedure TfrmInventory.btnCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmInventory.chkSaleClick(Sender: TObject);
+begin
+  ShowFilter := '';
+  if chkSale.Checked then
+    ShowFilter := '''S'',';
+
+  if chkPawn.Checked then
+    ShowFilter := ShowFilter + '''P'',';
+
+  if qryInvItems.Active then
+    begin
+//      qryInvItems.Close;
+//      qryInvItems.Open;
+    end;
+end;
+
+procedure TfrmInventory.qryInvItemsCalcFields(DataSet: TDataSet);
+begin
+//  qryInvItemscTotalWeight.AsFloat := qryInvItemsInvItemCount.AsInteger * qryInvItemsWeight.AsFloat;
+
+//  if qryTypes.Locate('JType', qryInvItemsJType.AsString, []) then
+//    qryInvItemscType.AsString := qryTypesJTypeDesc.AsString;
+//
+//  if qryStyles.Locate('JStyle', qryInvItemsJStyle.AsString, []) then
+//     qryInvItemscStyle.AsString := qryStylesJStyleDesc.AsString;
+//
+//  if qryMetal.Locate('JMetal', qryInvItemsJMetal.AsString, []) then
+//    qryInvItemscMetal.AsString := qryMetalJMetalDesc.AsString;
+//
+//  if qryStatus.Locate('Status', qryInvItemsInvItemStatus.AsString, []) then
+//    qryInvItemscStatus.AsString := qryStatusStatusDesc.AsString;
+end;
+
+procedure TfrmInventory.qryInvItemsFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+//  Accept := pos(qryInvItemsInvItemStatus.AsString , ShowFilter) > 0;
+end;
+
+procedure TfrmInventory.qryInvItemsNewRecord(DataSet: TDataSet);
+begin
+  qryInvItemsInvItemNo.AsInteger := DM.GetNextKey('InventoryItems');
+  qryInvItemsInvCatNo.AsInteger := qryCategoriesInvCatNo.AsInteger;
+  qryInvItemsInvItemBarcode.AsString := DM.GetBarcode(qryInvItemsInvItemNo.AsInteger);
+  qryInvItemsInvItemCount.AsInteger := 1;
+  qryInvItemsInvItemStatus.AsString := 'S';  //For Sale
+
+
+{  DM.fn_GetNextKey.ParamByName('PTableName').AsString := 'InventoryItems';
+  DM.fn_GetNextKey.ExecSQL;
+  qryInvItemsInvItemNo.AsInteger := DM.fn_GetNextKey.ParamByName('fn_GetNextKey').AsInteger;}
+
+end;
+
+procedure TfrmInventory.qryStonesCalcFields(DataSet: TDataSet);
+begin
+//  if qryStoneShapes.Locate('JShape', qryStonesStoneShape.AsString, []) then
+//    qryStonescShape.AsString := qryStoneShapesJShapeDesc.AsString;
+//  if qryStoneColors.Locate('JStoneColor', qryStonesStoneColor.AsString, []) then
+//    qryStonescColor.AsString := qryStoneColorsJStoneDesc.AsString;
+end;
+
+procedure TfrmInventory.qryStonesNewRecord(DataSet: TDataSet);
+begin
+//  qryStonesInvItemNo.AsInteger := qryInvItemsInvItemNo.AsInteger;
+end;
+
+procedure TfrmInventory.SpeedButton1Click(Sender: TObject);
+begin
+  LoadCategoryTree;
+end;
+
+procedure TfrmInventory.btnPrintLabelClick(Sender: TObject);
+begin
+{  if qryInvItemsInvItemNo.AsInteger <= 0 then
+    begin
+      MessageDlg('Please select an item to print.', mtInformation, [mbOk], 0);
+      exit;
+    end;
+
+  frmPrintBarcodeLabels := TfrmPrintBarcodeLabels.Create(Application);
+  try
+    frmPrintBarcodeLabels.LabelNumber := qryInvItemsInvItemCount.AsInteger;
+    frmPrintBarcodeLabels.Barcode := qryInvItemsInvItemBarcode.AsString;
+    frmPrintBarcodeLabels.Desc := qryCategoriesInvCategory.AsString;
+    frmPrintBarcodeLabels.ShowModal;
+  finally
+    frmPrintBarcodeLabels.Free;
+  end;}
+end;
+
+procedure TfrmInventory.btnPrintOneLabelClick(Sender: TObject);
+begin
+{  if qryInvItemsInvItemNo.AsInteger <= 0 then
+    begin
+      MessageDlg('Please select an item to print.', mtInformation, [mbOk], 0);
+      exit;
+    end;
+
+  frmPrintBarcodeLabels := TfrmPrintBarcodeLabels.Create(Application);
+  try
+//    frmPrintBarcodeLabels.edLabelsNumber.Text := qryInvItemsInvItemCount.AsString;
+    frmPrintBarcodeLabels.Barcode := qryInvItemsInvItemBarcode.AsString;
+    frmPrintBarcodeLabels.Desc := qryCategoriesInvCategory.AsString;
+    frmPrintBarcodeLabels.Visible := false;
+    frmPrintBarcodeLabels.Show;
+    frmPrintBarcodeLabels.Hide;
+    frmPrintBarcodeLabels.btnPrintLabelClick(nil);
+
+  finally
+    frmPrintBarcodeLabels.Free;
+  end;}
+end;
+
+procedure TfrmInventory.btnSearchClick(Sender: TObject);
+var
+  WhereStr: string;
+  SelectedCats: string;
+begin
+  if chkSale.Checked and not chkPawn.Checked then
+    WhereStr := ' = ''S'''
+  else if not chkSale.Checked and chkPawn.Checked then
+    WhereStr := ' = ''P'''
+  else
+    WhereStr := ' IN (''P'', ''S'')';
+
+  WhereStr := ' ii.InvItemStatus' + WhereStr;
+
+  SelectedCats := GetSelectedTreeCategories;
+  if SelectedCats <> '' then
+  begin
+    WhereStr := WhereStr + ' AND ii.InvCatNo IN (' + GetSelectedTreeCategories + ')';
+  end;
+
+  Screen.Cursor := crHourGlass;
+  try
+    qryInvItems.Close;
+    qryInvItems.SQL[Param_LineNo_qryInvItems] := 'WHERE ' + WhereStr;
+    qryInvItems.Open;
+    lblTotals.Caption := 'Total Items: ' + qryInvItems.RecordCount.ToString;
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TfrmInventory.btnEditStoneClick(Sender: TObject);
+begin
+  frmEnterStoneInfo := TfrmEnterStoneInfo.Create(Application);
+  try
+    frmEnterStoneInfo.NewRow := false;
+    frmEnterStoneInfo.ShowModal;
+  finally
+    frmEnterStoneInfo.Free;
+  end;
+end;
+
+end.

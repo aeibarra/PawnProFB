@@ -1,0 +1,106 @@
+Three tables definitions
+
+CREATE TABLE "DBA"."Customer" (
+    "Custno"                         integer NOT NULL
+   ,"CustTicketNo"                   varchar(15) NULL
+   ,"CustLast"                       varchar(35) NULL
+   ,"CustFirst"                      varchar(35) NULL
+   ,"CustMid"                        varchar(1) NULL
+   ,"CustDOB"                        date NULL
+   ,"CustGender"                     varchar(1) NULL
+   ,"CustRace"                       varchar(1) NULL
+   ,"CustHair"                       varchar(5) NULL
+   ,"CustEyes"                       varchar(5) NULL
+   ,"CustMark"                       varchar(10) NULL
+   ,"CustWeight"                     double NULL
+   ,"CustHeight"                     varchar(8) NULL
+   ,"CustAddr"                       varchar(55) NULL
+   ,"CustApt"                        varchar(5) NULL
+   ,"CustCity"                       varchar(40) NULL
+   ,"CustState"                      varchar(2) NULL
+   ,"CustZip"                        varchar(11) NULL
+   ,"CustPlaceEmply"                 varchar(30) NULL
+   ,"CustFlDrvLic"                   varchar(20) NULL
+   ,"CustID"                         varchar(25) NULL
+   ,"CustIDType"                     varchar(20) NULL
+   ,"CustIDAgencyState"              varchar(10) NULL
+   ,"CustPhHome"                     varchar(14) NULL
+   ,"CustPhBussiness"                varchar(14) NULL
+   ,"CustPhBeep"                     varchar(14) NULL
+   ,"CustPhCell"                     varchar(14) NULL
+   ,"CustComment"                    long varchar NULL
+   ,"StationID"                      integer NOT NULL DEFAULT 0
+   ,"StationSEQ"                     integer NULL DEFAULT 0
+   ,PRIMARY KEY ("Custno" ASC) 
+)
+
+CREATE TABLE "DBA"."Transactions" (
+    "TransactionNo"                  integer NOT NULL DEFAULT autoincrement
+   ,"CustNo"                         integer NULL
+   ,"TranDate"                       date NULL
+   ,"TranTicketNo"                   varchar(30) NULL
+   ,"TranComment"                    long varchar NULL
+   ,"TranMaturity"                   date NULL
+   ,"TranType"                       char(1) NULL DEFAULT 'P'
+   ,"TranStatus"                     char(1) NULL DEFAULT 'A'
+   ,"TranVoidDate"                   "datetime" NULL
+   ,"TranPawnAmount"                 double NULL
+   ,"TranInterest"                   double NULL
+   ,"PrincBalance"                   double NULL
+   ,"InsterestBalance"               double NULL
+   ,"TranTime"                       time NULL DEFAULT current time
+   ,PRIMARY KEY ("TransactionNo" ASC) 
+)
+
+CREATE TABLE "DBA"."InventoryItems" (
+    "InvItemNo"                      integer NOT NULL
+   ,"InvItemBarcode"                 varchar(30) NULL
+   ,"InvCatNo"                       integer NOT NULL
+   ,"JType"                          char(1) NULL
+   ,"JStyle"                         char(1) NULL
+   ,"JMetal"                         char(1) NULL
+   ,"InvItemCount"                   integer NULL
+   ,"Note"                           varchar(80) NULL
+   ,"SizeLength"                     double NULL
+   ,"Weight"                         double NULL
+   ,"KT"                             double NULL
+   ,"Created"                        "datetime" NULL DEFAULT current timestamp
+   ,"UnitCost"                       "money" NULL
+   ,"UnitPrice"                      "money" NULL
+   ,"InvItemStatus"                  char(1) NULL DEFAULT 'S'
+   ,"TransactionNo"                  integer NULL
+   ,"InvOriginalItemNo"              integer NULL
+   ,"InvItemBrand"                   varchar(30) NULL
+   ,"OwnerAppNumber"                 varchar(40) NULL
+   ,"ModelNumber"                    varchar(40) NULL
+   ,"SerialNumber"                   varchar(40) NULL
+   ,"Gender"                         char(1) NULL
+   ,"Description"                    varchar(40) NULL
+   ,"WeightUnit"                     char(1) NULL
+   ,PRIMARY KEY ("InvItemNo" ASC) 
+)
+
+relationship between tables
+
+   Customer to Transactions the field is Custno
+   Transactions to InventoryItems the field is TransactionNo
+
+The table InventoryItems has a self reference field called InvOriginalItemNo. Everytime the Items change status to "For Sale" a copy of this record is created and 
+a reference to the previous InvItemNo is set in InvOriginalItemNo.
+
+For InventoryItems table field InvItemNo the new values obtain calling the function fn_GetNextKey with parameter 'InventoryItems'. That is from Database standpoint
+From Delphi standpoint there is a function in the main Datamodule that does that. Is called DM.GetNextKey('InventoryItems'); return an integer of course.
+
+Status From Pawn Can only change to 
+   Original Items Status    New Items Status
+     Pawn to Redeem          no new item created
+     Pawn to scrap           no new item created
+     Pawn to default         new item status For Sale
+
+Everytime the Item Status is change log it in a table.
+
+In the change status process only allow to change from Pawn to one of the status and back.
+
+In the POS screen is where we can change the status from For Sale to Sold
+
+For now straight status change no Sold of For Sale Process Done.

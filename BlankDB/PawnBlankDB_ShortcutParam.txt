@@ -1,0 +1,1 @@
+"C:\Program Files\SQL Anywhere 12\bin32\dbsrv12.exe" -x tcpip C:\Projects_2007\Pawn\DB_Master\Blank\Pawn.db  -ek Mood4money
