@@ -69,8 +69,8 @@ PawnProFB/
 │   ├── __init__.py          # App factory
 │   ├── database.py          # DB connection
 │   ├── models/              # Data models
-│   └── routes/              # Flask blueprints
-│       templates/           # Jinja2 HTML templates
+│   ├── routes/              # Flask blueprints
+│   └── templates/           # Jinja2 HTML templates
 ├── database/
 │   └── schema.sql           # Firebird DDL
 ├── config.py
