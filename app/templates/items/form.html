@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Edit' if action == 'edit' else 'Add' }} Item{% endblock %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h2><i class="bi bi-box-seam"></i> {{ 'Edit' if action == 'edit' else 'Add' }} Item</h2>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Item Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required
+                                value="{{ item.name if item else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select name="category_id" class="form-select">
+                                <option value="">-- Select Category --</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.category_id }}"
+                                    {{ 'selected' if item and item.category_id == cat.category_id else '' }}>
+                                    {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Condition</label>
+                            <select name="condition" class="form-select">
+                                {% for cond in ['Excellent', 'Good', 'Fair', 'Poor'] %}
+                                <option value="{{ cond }}" {{ 'selected' if item and item.condition == cond else ('' if item else ('selected' if cond == 'Good' else '')) }}>{{ cond }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Brand</label>
+                            <input type="text" name="brand" class="form-control"
+                                value="{{ item.brand if item else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Model</label>
+                            <input type="text" name="model" class="form-control"
+                                value="{{ item.model if item else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Serial Number</label>
+                            <input type="text" name="serial_number" class="form-control"
+                                value="{{ item.serial_number if item else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Appraised Value ($)</label>
+                            <input type="number" name="appraised_value" class="form-control" step="0.01" min="0"
+                                value="{{ item.appraised_value if item else '' }}">
+                        </div>
+                        {% if action == 'edit' %}
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                {% for st in ['Available', 'Pawned', 'For Sale', 'Sold'] %}
+                                <option value="{{ st }}" {{ 'selected' if item and item.status == st else '' }}>{{ st }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ item.description if item else '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> {{ 'Update' if action == 'edit' else 'Add' }} Item
+                        </button>
+                        <a href="{{ url_for('items.list') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

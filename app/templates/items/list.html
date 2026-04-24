@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Items{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6"><h2><i class="bi bi-box-seam"></i> Items / Inventory</h2></div>
+    <div class="col-md-6 text-md-end">
+        <a href="{{ url_for('items.add') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Item</a>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Name, brand, model, serial..." value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    {% for s in ['Available', 'Pawned', 'For Sale', 'Sold'] %}
+                    <option value="{{ s }}" {{ 'selected' if status == s else '' }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select name="category_id" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.category_id }}" {{ 'selected' if category_id == cat.category_id|string else '' }}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i></button>
+            </div>
+            <div class="col-md-1">
+                <a href="{{ url_for('items.list') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        {% if items %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Brand / Model</th>
+                        <th>Serial #</th>
+                        <th>Condition</th>
+                        <th>Status</th>
+                        <th>Appraised Value</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="fw-semibold">{{ item.name }}</td>
+                        <td>{{ item.category_name or '-' }}</td>
+                        <td>{{ item.brand or '' }}{% if item.brand and item.model %} / {% endif %}{{ item.model or '' or '-' }}</td>
+                        <td>{{ item.serial_number or '-' }}</td>
+                        <td>{{ item.condition or '-' }}</td>
+                        <td>
+                            {% if item.status == 'Available' %}<span class="badge bg-success">Available</span>
+                            {% elif item.status == 'Pawned' %}<span class="badge bg-primary">Pawned</span>
+                            {% elif item.status == 'For Sale' %}<span class="badge bg-warning text-dark">For Sale</span>
+                            {% elif item.status == 'Sold' %}<span class="badge bg-secondary">Sold</span>
+                            {% else %}<span class="badge bg-light text-dark">{{ item.status }}</span>{% endif %}
+                        </td>
+                        <td>{% if item.appraised_value %}${{ "%.2f"|format(item.appraised_value) }}{% else %}-{% endif %}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('items.edit', item_id=item.item_id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <form method="post" action="{{ url_for('items.delete', item_id=item.item_id) }}" class="d-inline" onsubmit="return confirm('Delete this item?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-3 text-muted small">{{ items|length }} item(s) found.</div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-box-seam fs-1"></i>
+            <p class="mt-2">No items found. <a href="{{ url_for('items.add') }}">Add one</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}New Pawn Transaction{% endblock %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h2><i class="bi bi-receipt"></i> New Pawn Transaction</h2>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Customer <span class="text-danger">*</span></label>
+                            <select name="customer_id" class="form-select" required>
+                                <option value="">-- Select Customer --</option>
+                                {% for c in customers %}
+                                <option value="{{ c.customer_id }}"
+                                    {{ 'selected' if form and form.get('customer_id') == c.customer_id|string else '' }}>
+                                    {{ c.last_name }}, {{ c.first_name }} {{ '(' + c.phone + ')' if c.phone else '' }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Loan Amount ($) <span class="text-danger">*</span></label>
+                            <input type="number" name="loan_amount" class="form-control" step="0.01" min="0" required
+                                value="{{ form.get('loan_amount', '') if form else '' }}" id="loanAmount">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Interest Rate (%)</label>
+                            <input type="number" name="interest_rate" class="form-control" step="0.01" min="0"
+                                value="{{ form.get('interest_rate', '10') if form else '10' }}" id="interestRate">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Due Date <span class="text-danger">*</span></label>
+                            <input type="date" name="due_date" class="form-control" required
+                                value="{{ form.get('due_date', '') if form else '' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Collateral Items</label>
+                            {% if items %}
+                            <div class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+                                {% for item in items %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="item_ids" value="{{ item.item_id }}" id="item_{{ item.item_id }}">
+                                    <label class="form-check-label" for="item_{{ item.item_id }}">
+                                        <strong>{{ item.name }}</strong>
+                                        {% if item.brand or item.model %} - {{ item.brand or '' }} {{ item.model or '' }}{% endif %}
+                                        ({{ item.condition }})
+                                        {% if item.appraised_value %} - Value: ${{ "%.2f"|format(item.appraised_value) }}{% endif %}
+                                        <span class="badge bg-light text-dark">{{ item.category_name or 'Uncategorized' }}</span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info"><i class="bi bi-info-circle"></i> No available items. <a href="{{ url_for('items.add') }}">Add items</a> first.</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="2">{{ form.get('notes', '') if form else '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Create Transaction
+                        </button>
+                        <a href="{{ url_for('transactions.list') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

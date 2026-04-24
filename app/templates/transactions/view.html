@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Transaction #{{ transaction.transaction_id }}{% endblock %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-8">
+        <h2><i class="bi bi-receipt"></i> Transaction #{{ transaction.transaction_id }}</h2>
+        <p class="text-muted">Created: {{ transaction.created_at.strftime('%Y-%m-%d %H:%M') if transaction.created_at else '-' }}</p>
+    </div>
+    <div class="col-md-4 text-md-end d-flex gap-2 justify-content-md-end align-items-start">
+        {% if transaction.status == 'Active' %}
+        <form method="post" action="{{ url_for('transactions.redeem', transaction_id=transaction.transaction_id) }}" onsubmit="return confirm('Mark as Redeemed?')">
+            <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Redeem</button>
+        </form>
+        <form method="post" action="{{ url_for('transactions.forfeit', transaction_id=transaction.transaction_id) }}" onsubmit="return confirm('Mark as Forfeited?')">
+            <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> Forfeit</button>
+        </form>
+        {% endif %}
+        <a href="{{ url_for('transactions.list') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="bi bi-person"></i> Customer</h5></div>
+            <div class="card-body">
+                <h5>{{ transaction.customer_name }}</h5>
+                <a href="{{ url_for('customers.view', customer_id=transaction.customer_id) }}" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-eye"></i> View Customer
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="bi bi-cash"></i> Loan Details</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Status</dt>
+                    <dd class="col-sm-7">
+                        {% if transaction.status == 'Active' %}<span class="badge bg-primary fs-6">Active</span>
+                        {% elif transaction.status == 'Redeemed' %}<span class="badge bg-success fs-6">Redeemed</span>
+                        {% elif transaction.status == 'Forfeited' %}<span class="badge bg-danger fs-6">Forfeited</span>
+                        {% else %}<span class="badge bg-secondary fs-6">{{ transaction.status }}</span>{% endif %}
+                    </dd>
+                    <dt class="col-sm-5">Loan Amount</dt>
+                    <dd class="col-sm-7 fw-bold">${{ "%.2f"|format(transaction.loan_amount) }}</dd>
+                    <dt class="col-sm-5">Interest Rate</dt>
+                    <dd class="col-sm-7">{{ transaction.interest_rate }}%</dd>
+                    <dt class="col-sm-5">Total Due</dt>
+                    <dd class="col-sm-7 fw-bold text-danger">${{ "%.2f"|format(transaction.total_amount_due) if transaction.total_amount_due else '-' }}</dd>
+                    <dt class="col-sm-5">Start Date</dt>
+                    <dd class="col-sm-7">{{ transaction.start_date }}</dd>
+                    <dt class="col-sm-5">Due Date</dt>
+                    <dd class="col-sm-7">{{ transaction.due_date }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0"><i class="bi bi-boxes"></i> Collateral Items ({{ items|length }})</h5></div>
+            <div class="card-body p-0">
+                {% if items %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Brand / Model</th>
+                                <th>Condition</th>
+                                <th>Appraised Value</th>
+                                <th>Current Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td class="fw-semibold">{{ item.name }}</td>
+                                <td>{{ item.category_name or '-' }}</td>
+                                <td>{{ item.brand or '' }}{% if item.brand and item.model %} / {% endif %}{{ item.model or '' or '-' }}</td>
+                                <td>{{ item.condition or '-' }}</td>
+                                <td>{% if item.appraised_value %}${{ "%.2f"|format(item.appraised_value) }}{% else %}-{% endif %}</td>
+                                <td><span class="badge bg-secondary">{{ item.condition }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-3 text-muted">No collateral items recorded.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% if transaction.notes %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0"><i class="bi bi-sticky"></i> Notes</h5></div>
+            <div class="card-body">{{ transaction.notes }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

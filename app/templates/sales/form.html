@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Record Sale{% endblock %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h2><i class="bi bi-cart-plus"></i> Record Sale</h2>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Item <span class="text-danger">*</span></label>
+                            <select name="item_id" class="form-select" required>
+                                <option value="">-- Select Item --</option>
+                                {% for item in items %}
+                                <option value="{{ item.item_id }}"
+                                    {{ 'selected' if form and form.get('item_id') == item.item_id|string else '' }}>
+                                    {{ item.name }}{% if item.brand %} ({{ item.brand }}{% if item.model %} {{ item.model }}{% endif %}){% endif %}
+                                    - {{ item.status }}
+                                    {% if item.appraised_value %} - ${{ "%.2f"|format(item.appraised_value) }}{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sale Price ($) <span class="text-danger">*</span></label>
+                            <input type="number" name="sale_price" class="form-control" step="0.01" min="0" required
+                                value="{{ form.get('sale_price', '') if form else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sale Date</label>
+                            <input type="date" name="sale_date" class="form-control"
+                                value="{{ form.get('sale_date', '') if form else '' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Customer (optional)</label>
+                            <select name="customer_id" class="form-select">
+                                <option value="">-- Walk-in / Anonymous --</option>
+                                {% for c in customers %}
+                                <option value="{{ c.customer_id }}"
+                                    {{ 'selected' if form and form.get('customer_id') == c.customer_id|string else '' }}>
+                                    {{ c.last_name }}, {{ c.first_name }} {{ '(' + c.phone + ')' if c.phone else '' }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="2">{{ form.get('notes', '') if form else '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> Record Sale
+                        </button>
+                        <a href="{{ url_for('sales.list') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Pawn Transactions{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6"><h2><i class="bi bi-receipt"></i> Pawn Transactions</h2></div>
+    <div class="col-md-6 text-md-end">
+        <a href="{{ url_for('transactions.add') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Transaction</a>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Search Customer</label>
+                <input type="text" name="search" class="form-control" placeholder="Customer name..." value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    {% for s in ['Active', 'Redeemed', 'Forfeited'] %}
+                    <option value="{{ s }}" {{ 'selected' if status == s else '' }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('transactions.list') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Loan Amount</th>
+                        <th>Interest</th>
+                        <th>Total Due</th>
+                        <th>Start Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>#{{ t.transaction_id }}</td>
+                        <td>{{ t.customer_name }}</td>
+                        <td>${{ "%.2f"|format(t.loan_amount) }}</td>
+                        <td>{{ t.interest_rate }}%</td>
+                        <td>${{ "%.2f"|format(t.total_amount_due) if t.total_amount_due else '-' }}</td>
+                        <td>{{ t.start_date }}</td>
+                        <td>{{ t.due_date }}</td>
+                        <td>
+                            {% if t.status == 'Active' %}<span class="badge bg-primary">Active</span>
+                            {% elif t.status == 'Redeemed' %}<span class="badge bg-success">Redeemed</span>
+                            {% elif t.status == 'Forfeited' %}<span class="badge bg-danger">Forfeited</span>
+                            {% else %}<span class="badge bg-secondary">{{ t.status }}</span>{% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('transactions.view', transaction_id=t.transaction_id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-3 text-muted small">{{ transactions|length }} transaction(s) found.</div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-receipt fs-1"></i>
+            <p class="mt-2">No transactions found. <a href="{{ url_for('transactions.add') }}">Create one</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
