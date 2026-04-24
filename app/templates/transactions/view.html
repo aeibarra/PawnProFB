@@ -82,7 +82,7 @@
                                 <td>{{ item.brand or '' }}{% if item.brand and item.model %} / {% endif %}{{ item.model or '' or '-' }}</td>
                                 <td>{{ item.condition or '-' }}</td>
                                 <td>{% if item.appraised_value %}${{ "%.2f"|format(item.appraised_value) }}{% else %}-{% endif %}</td>
-                                <td><span class="badge bg-secondary">{{ item.condition }}</span></td>
+                                <td><span class="badge bg-secondary">{{ item.status }}</span></td>
                             </tr>
                             {% endfor %}
                         </tbody>
