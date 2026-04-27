@@ -1,8 +1,8 @@
 object DM: TDM
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Height = 743
-  Width = 1178
+  Height = 1208
+  Width = 1736
   object qryDummy: TADOQuery
     Connection = ConnDB
     Parameters = <>
@@ -8459,5 +8459,23 @@ object DM: TDM
     object qryItemImagesImageData: TBlobField
       FieldName = 'ImageData'
     end
+  end
+  object ConnFB: TFDConnection
+    Params.Strings = (
+      'Database=C:\DB\PAWNDATA.FDB'
+      'User_Name=sysdba'
+      'Password=masterkey'
+      'DriverID=FB')
+    Left = 60
+    Top = 760
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    Left = 56
+    Top = 833
+  end
+  object qryDummyFB: TFDQuery
+    Connection = ConnFB
+    Left = 169
+    Top = 761
   end
 end

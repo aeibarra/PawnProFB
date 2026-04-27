@@ -34,15 +34,65 @@ The SQL Anywhere version must remain buildable and shippable throughout the migr
 
 - [ ] **FB5 schema DDL** complete in `Migration/Schema/` — tables, constraints, indexes, sequences, stored procs rewritten in PSQL, reference data seeds.
 - [ ] **New `CheckForMissingDBChanges()`** for FB5, for future schema bumps.
-- [ ] **Pump app** working end-to-end against a dev copy of a real store's SA database, with:
-  - Table manifest in FK-safe order
-  - `TFDBatchMove` loop with per-table progress
-  - Image-storage mode detection (`DATABASE` vs `FILE`)
-  - Key-generator (`NextKeys` or equivalent) post-step that sets counters ≥ MAX of referencing tables
-  - Validation pass (row counts, numeric/date MIN/MAX/SUM, blob spot-checks)
-  - Per-store log file output
+- [x] **Pump app** working end-to-end (`Pump_ASA_FB/PumpAsaFb50.dproj`) against a dev copy of a real store's SA database. Architecture deviates from the original plan: ADO source / FireDAC target (Pro Delphi has no FireDAC ASA driver). See [PUMP_APP_PLAN.md](PUMP_APP_PLAN.md) for full detail. Validation pass and per-store log-file output still TBD.
 - [ ] **Smoke-test script** written (see §8).
 - [ ] **Baseline backup** of a real store's SA database set aside for repeatable pump testing.
+
+---
+
+## 3a. Schema discoveries from the pump
+
+Building the pump surfaced concrete differences between the ASA source and the FB5 target that affect every SQL string and persistent-field name in the main app. Use this section as the checklist when porting any query or DM.
+
+### Naming conventions
+
+- All FB tables and columns are `SNAKE_CASE`. Mechanical rule: `Customer` → `CUSTOMER`, `Custno` → `CUST_NO`, `InventoryItems` → `INVENTORY_ITEMS`, `JTypes` → `J_TYPES`. Full mapping table in [PUMP_APP_PLAN.md §5](PUMP_APP_PLAN.md).
+- Identifiers are unquoted in SQL (FB then matches case-insensitively, like ASA).
+
+### Deprecated columns (drop from queries and persistent fields)
+
+These exist in ASA but **not** in FB. Any `SELECT *` must be replaced with explicit lists; any TField in a `.dfm` referencing them must be removed:
+
+- `Customer.CustTicketNo` — legacy, ticket numbers now live on `Transactions.TranTicketNo`. Still referenced by [PawnDM.pas:67](../PawnDM.pas#L67) `qryCustomersCustTicketNo` and at least 6 other files; remove all references during the port.
+- `Customer.StationID`, `Customer.StationSEQ` — retired multi-station-sync feature.
+
+### Renames / typo fixes
+
+- `InsterestBalance` (ASA double-s typo) → `INTEREST_BALANCE` on both `Transactions` and `Payments`.
+- `CustPhBussiness` (ASA typo) → `CUST_PH_BUSINESS`.
+
+### Type changes that affect SQL semantics
+
+- `Transactions.TranDate`: `TIMESTAMP` → `DATE`. Strip time-of-day from any query that filters on a moment-in-time. `WHERE TranDate >= :From AND TranDate < :To` semantics carry over; `WHERE DATE(TranDate) = ...` becomes a no-op cast.
+- `InventoryItems.Description`: `VARCHAR(40)` → `VARCHAR(120)` (widened, no action).
+
+### Type conversions (FireDAC handles transparently via Variant `.Value`)
+
+- `bit` → `BOOLEAN`
+- `money` → `DECIMAL(18,2)`
+- `long varchar` → `BLOB SUB_TYPE 1` (text blob)
+- `image` → `BLOB SUB_TYPE 0` (binary blob)
+
+### Schema drift in deployed FB databases
+
+The repo's `PawnPro_DB_Firebird50_Schema.sql` does **not** match what ships in real FB databases — discovered when `STONES.STONE_NUMBER` rejected NULLs that the .sql file said were allowed. Before writing any INSERT/UPDATE in the port, run a one-time audit of the live FB DB's `RDB$RELATION_FIELDS` and reconcile the .sql file (or document the divergence). The pump works around this with runtime-introspected NULL coercion; the main app should rely on the same correct metadata.
+
+### Stored procedures / functions
+
+Already ported and present in the FB DB after running `PawnPro_FB5_AddTriggerAndProcs.sql`:
+
+| ASA | FB equivalent |
+|---|---|
+| `fn_GetNextKey(name)` (function) | `SP_GET_NEXT_KEY(:TABLENAME)` (procedure, returns `NEXTTABLEKEY`) |
+| `spi_GoldPrice` | `SPI_GOLD_PRICE` |
+| `spu_CalcUnitCostFromWeight` | `SPU_CALC_UNIT_COST_FROM_WEIGHT` |
+| `sp_Connected` | `SP_CONNECTED` |
+| `CreateExportLog` | `SP_CREATE_EXPORT_LOG` |
+| `Rep_CustomerWithLatePayments` | `REP_CUSTOMER_WITH_LATE_PAYMENTS` |
+| `fn_TranWithLatePayment` (function) | `FN_TRAN_WITH_LATE_PAYMENT` (function) |
+| trigger `trg_InvItems_StatusLog` | `TRG_INV_ITEMS_STATUS_LOG` |
+
+Calling-pattern change: `fn_GetNextKey` was a scalar function in ASA (used inline in SQL); on FB it is a stored procedure that returns a row. `TfrmPumpAsaFb50Main.PostPumpReseed` shows the pattern. The Pascal wrapper `DM.GetNextKey` in `PawnDM.pas` will need to be re-implemented to call the proc and read the returned column.
 
 ---
 

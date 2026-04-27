@@ -154,6 +154,8 @@ procedure WriteLastImageBackupDate;
 //Procedure ExecSQLStatement(SQLStatement: string);
 function OpenSQLStatement(SQLStatement: string): variant;
 function ExecSQLStatement(SQLStatement: string): integer; //Return how many rows were affected
+function OpenSQLStatementFB(SQLStatement: string): variant;
+function ExecSQLStatementFB(SQLStatement: string): integer; //Return how many rows were affected
 
 procedure GetDBInfo(var DBInfo: TDBInfo);
 function GetMACAddress:String;
@@ -715,6 +717,23 @@ begin
   DM.qryDummy.Close;
   DM.qryDummy.SQL.Text := SQLStatement;
   Result := DM.qryDummy.ExecSQL;
+end;
+
+// Firebird counterparts. Side-by-side with the ADO versions during the
+// migration; call sites switch one at a time. ADO versions deleted in Phase 4.
+// Uses TFDQuery.Open(string) / ExecSQL(string) overloads — bundles the SQL
+// assignment and the call.
+function OpenSQLStatementFB(SQLStatement: string): variant;
+begin
+  DM.qryDummyFB.Close;
+  DM.qryDummyFB.Open(SQLStatement);
+  Result := DM.qryDummyFB.Fields[0].Value;
+  DM.qryDummyFB.Close;
+end;
+
+function ExecSQLStatementFB(SQLStatement: string): integer; //Return how many rows were affected
+begin
+  Result := DM.qryDummyFB.ExecSQL(SQLStatement);
 end;
 
 type

@@ -7,7 +7,12 @@ uses
   Db, ADODB, DBClient, Provider, Variants, Vcl.ImgList, DateUtils, System.UITypes, Vcl.StdCtrls,
   RzCommon, System.ImageList, RzCmboBx, Vcl.VirtualImageList, Vcl.ExtCtrls,
   Vcl.BaseImageCollection, Vcl.ImageCollection, SVGIconImageCollection,
-  SVGIconVirtualImageList;
+  SVGIconVirtualImageList, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB, FireDAC.DApt,
+  FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
+  FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet;
 
 type
   TDM = class(TDataModule)
@@ -189,6 +194,9 @@ type
     qryItemImagesImageData: TBlobField;
     qryBackupSetingsBackupImagesPath: TStringField;
     qryStoreDefaultPawnInterestRate: TFloatField;
+    ConnFB: TFDConnection;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    qryDummyFB: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -225,6 +233,8 @@ type
     SaveCustQry, SaveConnectionStr: string;
     ReCalcMaturity: boolean;
     function GetConnectionStr: string;
+    procedure ConfigureFBConnection;
+    function TestFBConnection(out ErrorMsg: string): Boolean;
     function GetNextKey(TableName: string): integer;
     procedure RefreshStoreQry;
     function GetBarcode(Key: integer): string;
@@ -681,9 +691,80 @@ begin
                     [PWD, UID, DBN, HOST, ENG]);
 end;
 
+// Reads [CONNECTION_FB] from the global PawnPro.ini and configures ConnFB.
+// Mirror of GetConnectionStr for the parallel Firebird 5 target. Does NOT open
+// the connection — caller decides when. ADO ConnDB is unaffected.
+procedure TDM.ConfigureFBConnection;
+var
+  IniFile: TIniFile;
+  Server, Database, User, Password, CharSet: string;
+  Port: Integer;
+const
+  IniSecConnFB = 'CONNECTION_FB';
+begin
+  IniFile := TIniFile.Create(GlobalIniFile);
+  try
+    Server   := IniFile.ReadString (IniSecConnFB, 'host',     'localhost');
+    Database := IniFile.ReadString (IniSecConnFB, 'database', '');
+    User     := IniFile.ReadString (IniSecConnFB, 'user',     'sysdba');
+    Password := IniFile.ReadString (IniSecConnFB, 'password', 'masterkey');
+    Port     := IniFile.ReadInteger(IniSecConnFB, 'port',     3050);
+    CharSet  := IniFile.ReadString (IniSecConnFB, 'charset',  'UTF8');
+  finally
+    IniFile.Free;
+  end;
+
+  ConnFB.Connected := False;
+  ConnFB.Params.Clear;
+  ConnFB.DriverName := 'FB';
+  ConnFB.Params.Values['Server']       := Server;
+  ConnFB.Params.Values['Database']     := Database;
+  ConnFB.Params.Values['User_Name']    := User;
+  ConnFB.Params.Values['Password']     := Password;
+  ConnFB.Params.Values['Protocol']     := 'TCPIP';
+  ConnFB.Params.Values['Port']         := IntToStr(Port);
+  ConnFB.Params.Values['CharacterSet'] := CharSet;
+  ConnFB.LoginPrompt := False;
+end;
+
+// Probe: configure, open, run trivial query, close. Returns True on success;
+// on failure ErrorMsg holds "[ExceptionClass] message" so the caller can show
+// it directly. Throwaway test for Phase 1.1.
+function TDM.TestFBConnection(out ErrorMsg: string): Boolean;
+var
+  q: TFDQuery;
+begin
+  Result := False;
+  ErrorMsg := '';
+  try
+    ConfigureFBConnection;
+    ConnFB.Connected := True;
+    try
+      q := TFDQuery.Create(nil);
+      try
+        q.Connection := ConnFB;
+        q.SQL.Text := 'SELECT 1 AS X FROM RDB$DATABASE';
+        q.Open;
+        Result := q.Fields[0].AsInteger = 1;
+      finally
+        q.Free;
+      end;
+    finally
+      ConnFB.Connected := False;
+    end;
+  except
+    on E: Exception do
+    begin
+      ErrorMsg := Format('[%s] %s', [E.ClassName, E.Message]);
+      Result := False;
+    end;
+  end;
+end;
+
 procedure TDM.DataModuleCreate(Sender: TObject);
 var
   FlagValue: string;
+  fbErr: string;
 begin
   SaveCustQry := DM.qryCustomers.SQL.Text;
   SaveConnectionStr := GetConnectionStr;
@@ -706,6 +787,32 @@ begin
   ConnDB.Connected := false;
   ConnDB.ConnectionString := SaveConnectionStr;
   ConnDB.Connected := true;
+
+  // Phase 1.2 — open ConnFB persistently in parallel with ADO ConnDB. Both
+  // connections live for the lifetime of the data module.
+  ConfigureFBConnection;
+  try
+    ConnFB.Connected := True;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('FB5 connection: FAILED' + sLineBreak + sLineBreak +
+                  'Database: ' + ConnFB.Params.Values['Database'] + sLineBreak +
+                  'Server:   ' + ConnFB.Params.Values['Server'] + sLineBreak +
+                  'Port:     ' + ConnFB.Params.Values['Port'] + sLineBreak + sLineBreak +
+                  'Error: [' + E.ClassName + '] ' + E.Message);
+      raise;
+    end;
+  end;
+
+  // Phase 1.2 probe — exercise the new helper. Removed before Phase 2.
+  try
+    fbErr := IntToStr(Integer(OpenSQLStatementFB('SELECT COUNT(*) FROM CUSTOMER')));
+    ShowMessage('FB OK. CUSTOMER count via OpenSQLStatementFB = ' + fbErr);
+  except
+    on E: Exception do
+      ShowMessage('FB helper test FAILED: [' + E.ClassName + '] ' + E.Message);
+  end;
 
   CheckForMissingDBChanges;
 
@@ -763,6 +870,10 @@ begin
   spu_Connecting.Parameters.ParamByName('@StationNo').Value := StationNo;
   spu_Connecting.Parameters.ParamByName('@Conn').Value := 'N';
   spu_Connecting.ExecProc;
+
+  // Phase 1.2 — close FB connection cleanly. Mirrors implicit ADO close.
+  if ConnFB.Connected then
+    ConnFB.Connected := False;
 end;
 
 procedure TDM.qryStoreCalcFields(DataSet: TDataSet);
