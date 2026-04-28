@@ -10,6 +10,11 @@ uses
   Buttons, ExtCtrls, ImgList, ComCtrls, ToolWin, Data.DB, System.Threading,
   Data.Win.ADODB, System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls,
   System.Actions, RzButton, RzPanel, Vcl.StdCtrls,
+  // FireDAC (gold-price background task uses thread-local FB connection + proc)
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait,
+  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DApt,
   // Web & Connection
   System.Net.HttpClient,
   System.Net.HttpClientComponent,
@@ -56,8 +61,6 @@ type
     qryAllDataCustPhBeep: TStringField;
     qryAllDataCustPhCell: TStringField;
     qryAllDataCustComment: TMemoField;
-    qryAllDataStationID: TIntegerField;
-    qryAllDataStationSEQ: TIntegerField;
     qryAllDataTransactionNo: TIntegerField;
     qryAllDataCustNo_1: TIntegerField;
     qryAllDataTranDate: TDateTimeField;
@@ -890,16 +893,16 @@ begin
       PricePerOunce: Double;
       TitleStatusMessage, StatusMessage: string;
       lblColorRed: boolean;
-      LAsyncConn: TADOConnection;  // ← Separate connection for this thread
-
+      LAsyncConn: TFDConnection;
+      LSaveProc: TFDStoredProc;
     begin
-      // Create connection within the thread
-      LAsyncConn := TADOConnection.Create(nil);
-      LAsyncConn.LoginPrompt := false;
-      LAsyncConn.KeepConnection := false;
+      // Thread-local FB connection + stored proc, configured from the same
+      // [CONNECTION_FB] params as DM.ConnFB. No shared DM components touched.
+      LAsyncConn := TFDConnection.Create(nil);
       try
-        LAsyncConn.ConnectionString := DM.SaveConnectionStr;
-        LAsyncConn.Open;
+        DM.ConfigureFBConnectionFor(LAsyncConn);
+        LAsyncConn.Connected := True;
+
         LClient := TNetHTTPClient.Create(nil);
         try
           LResponse := LClient.Get('https://min-api.cryptocompare.com/data/price?fsym=PAXG&tsyms=USD');
@@ -913,13 +916,19 @@ begin
               StatusMessage := Format(' %m per Ounce. %m per gram. ', [PricePerOunce, (PricePerOunce / 31.1034768)]);
 
               try
-                DM.spGoldPrice.Connection := LAsyncConn;
-                DM.spGoldPrice.Parameters.ParamByName('@PricePerOunce').Value := PricePerOunce;
-                DM.spGoldPrice.Parameters.ParamByName('@Currency').Value := 'USD';
-                DM.spGoldPrice.Open;
-                var LastGldPrice := DM.spGoldPrice.FieldByName('LastGPrice').AsCurrency;
-                lblColorRed := LastGldPrice > PricePerOunce;
-
+                LSaveProc := TFDStoredProc.Create(nil);
+                try
+                  LSaveProc.Connection := LAsyncConn;
+                  LSaveProc.StoredProcName := 'SPI_GOLD_PRICE';
+                  LSaveProc.Prepare;  // populates Params from FB metadata
+                  LSaveProc.Params.ParamByName('PRICE_PER_OUNCE').AsCurrency := PricePerOunce;
+                  LSaveProc.Params.ParamByName('CURRENCY').AsString := 'USD';
+                  LSaveProc.ExecProc;
+                  var LastGldPrice := LSaveProc.Params.ParamByName('LAST_G_PRICE').AsCurrency;
+                  lblColorRed := LastGldPrice > PricePerOunce;
+                finally
+                  LSaveProc.Free;
+                end;
               except
                 on E: Exception do
                   StatusMessage := StatusMessage + ' (DB Save Failed: ' + E.Message + ')';
@@ -933,13 +942,17 @@ begin
             StatusMessage := 'Error: ' + LResponse.StatusText;
         finally
           LClient.Free;
-
-          LAsyncConn.Close;
-          LAsyncConn.Free;
         end;
       except
         on E: Exception do
           StatusMessage := 'Error: ' + E.Message;
+      end;
+
+      try
+        if LAsyncConn.Connected then
+          LAsyncConn.Connected := False;
+      finally
+        LAsyncConn.Free;
       end;
 
       TThread.Synchronize(nil, procedure

@@ -80,8 +80,6 @@ Both config procedures are called at `FormCreate` and should also be re-callable
 | `SalesItems` | `SALES_ITEMS` |
 | `Store` | `STORE` |
 | `States` | `STATES` |
-| `Stations` | `STATIONS` |
-| `SEQTable` | `SEQ_TABLE` |
 | `TableKeys` | `TABLE_KEYS` |
 | `ItemStatus` | `ITEM_STATUS` |
 | `TransactionTypes` | `TRANSACTION_TYPES` |
@@ -126,7 +124,7 @@ Both config procedures are called at `FormCreate` and should also be re-callable
 
 ## 5a. FB wipe order (reverse-FK)
 
-Run as the first step of every pump. All 31 tables in the reverse of the §6 pump order, i.e. children before parents:
+Run as the first step of every pump. All 29 tables in the reverse of the §6 pump order, i.e. children before parents:
 
 ```
 PAYMENTS, STONES, SALES_ITEMS, INVENTORY_ITEM_STATUS_LOG,
@@ -136,7 +134,7 @@ GOLD_PRICE_HISTORY, BACKUP_HISTORY, TABLE_KEYS,
 INV_CATEGORIES, IMAGES_TYPES, PAYMENT_TYPES, TRANSACTION_TYPES,
 ITEM_STATUS, J_STONE_COLORS, J_STONE_SHAPES, J_GENDERS,
 J_STYLES, J_METALS, J_TYPES, EXPORT_FORMAT,
-BACKUP_SETTINGS, SEQ_TABLE, STATIONS, STORE, STATES
+BACKUP_SETTINGS, STORE, STATES
 ```
 
 Each is an unqualified `DELETE FROM <tbl>`. One FB transaction wraps the whole wipe; commit on success, roll back on any error (nothing pumped yet — safe to abort the run).
@@ -148,15 +146,15 @@ Each is an unqualified `DELETE FROM <tbl>`. One FB transaction wraps the whole w
 Parents before children. Reference/lookup tables first since they have no FKs and populate the domains used by the data tables.
 
 ```
-1.  States                        12. JStoneColors
-2.  Store                         13. ItemStatus
-3.  Stations                      14. TransactionTypes
-4.  SEQTable                      15. PaymentTypes
-5.  BackupSettings                16. ImagesTypes
-6.  ExportFormat                  17. InvCategories
-7.  JTypes                        18. TableKeys       (copy rows; reseeded in post-step)
-8.  JMetals                       -------- data ----------
-9.  JStyles                       19. Customer
+1.  States                        10. JStoneColors
+2.  Store                         11. ItemStatus
+3.  BackupSettings                12. TransactionTypes
+4.  ExportFormat                  13. PaymentTypes
+5.  JTypes                        14. ImagesTypes
+6.  JMetals                       15. InvCategories
+7.  JStyles                       16. TableKeys       (copy rows; reseeded in post-step)
+8.  JGenders                      -------- data ----------
+9.  JStoneShapes                  17. Customer
 10. JGenders                      20. Transactions         (FK → Customer)
 11. JStoneShapes                  21. InventoryItems       (FK → Transactions)
                                   22. Stones               (FK → InventoryItems)
@@ -183,7 +181,7 @@ Run these after all row-by-row work completes, before handing the DB to the cust
    ```sql
    ALTER TABLE <tbl> ALTER COLUMN <pk> RESTART WITH <MAX(pk)+1>;
    ```
-   Tables affected: `CUSTOMER`, `PAYMENTS`, `STATIONS`, `INV_CATEGORIES`, `SALES_ITEMS`, `STONES`, `BACKUP_HISTORY`, `EXPORT_FORMAT`, `EXPORT_FILE_LOG`, `EXPORT_LOG_FILE_DETAIL`, `IMAGES_TYPES`, `IMAGES_DATA`, `INVENTORY_ITEM_STATUS_LOG`, `GOLD_PRICE_HISTORY`.
+   Tables affected: `CUSTOMER`, `PAYMENTS`, `INV_CATEGORIES`, `SALES_ITEMS`, `STONES`, `BACKUP_HISTORY`, `EXPORT_FORMAT`, `EXPORT_FILE_LOG`, `EXPORT_LOG_FILE_DETAIL`, `IMAGES_TYPES`, `IMAGES_DATA`, `INVENTORY_ITEM_STATUS_LOG`, `GOLD_PRICE_HISTORY`.
 2. **Verify `TABLE_KEYS`** values are `≥ MAX(pk)` of their referenced table — specifically `Transactions` and `InventoryItems` whose keys are app-managed via `fn_GetNextKey`. If a row was copied but the `TABLE_KEYS` row was stale, bump it.
 3. **Validation pass** — write to `MemoErrors`:
    - Row count per table, ASA vs. FB.

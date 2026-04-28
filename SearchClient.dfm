@@ -2072,26 +2072,6 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField29: TppField
-      FieldAlias = 'StationID'
-      FieldName = 'StationID'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 28
-      Searchable = False
-      Sortable = False
-    end
-    object PDBPoliceRepppField30: TppField
-      FieldAlias = 'StationSEQ'
-      FieldName = 'StationSEQ'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 29
-      Searchable = False
-      Sortable = False
-    end
     object PDBPoliceRepppField31: TppField
       FieldAlias = 'CCustPhHome'
       FieldName = 'CCustPhHome'
@@ -3144,12 +3124,6 @@ object frmClients: TfrmClients
     object qryPoliceRepCustCustComment: TMemoField
       FieldName = 'CustComment'
       BlobType = ftMemo
-    end
-    object qryPoliceRepCustStationID: TIntegerField
-      FieldName = 'StationID'
-    end
-    object qryPoliceRepCustStationSEQ: TIntegerField
-      FieldName = 'StationSEQ'
     end
     object qryPoliceRepCustCCustPhHome: TStringField
       FieldKind = fkCalculated

@@ -87,8 +87,6 @@ type
     qryPoliceRepCustCustPhBeep: TStringField;
     qryPoliceRepCustCustPhCell: TStringField;
     qryPoliceRepCustCustComment: TMemoField;
-    qryPoliceRepCustStationID: TIntegerField;
-    qryPoliceRepCustStationSEQ: TIntegerField;
     qryPawnItemsInvItemNo: TIntegerField;
     qryPawnItemsInvItemBarcode: TStringField;
     qryPawnItemsInvCatNo: TIntegerField;

@@ -193,64 +193,6 @@ object DM: TDM
       Size = 30
     end
   end
-  object spu_Connecting: TADOStoredProc
-    Connection = ConnDB
-    ProcedureName = 'sp_Connected'
-    Parameters = <
-      item
-        Name = '@StationNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 10
-        Value = Null
-      end
-      item
-        Name = '@Conn'
-        Attributes = [paNullable]
-        DataType = ftString
-        Size = 1
-        Value = Null
-      end>
-    Left = 447
-    Top = 131
-  end
-  object sps_NextSEQ_: TADOStoredProc
-    Connection = ConnDB
-    ProcedureName = 'fn_NextSEQ'
-    Parameters = <
-      item
-        Name = 'fn_NextSEQ'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Direction = pdReturnValue
-        Precision = 10
-        Value = Null
-      end>
-    Left = 447
-    Top = 187
-  end
-  object fn_GetNextKey: TADOStoredProc
-    Connection = ConnDB
-    ProcedureName = 'fn_GetNextKey'
-    Parameters = <
-      item
-        Name = 'fn_GetNextKey'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Direction = pdReturnValue
-        Precision = 10
-        Value = Null
-      end
-      item
-        Name = 'PTableName'
-        Attributes = [paNullable]
-        DataType = ftString
-        Size = 15
-        Value = Null
-      end>
-    Left = 32
-    Top = 184
-  end
   object qryTransactions: TADOQuery
     Connection = ConnDB
     CursorType = ctStatic
@@ -8339,57 +8281,6 @@ object DM: TDM
     Left = 496
     Top = 280
   end
-  object qryGoldPriceHistory: TADOQuery
-    Connection = ConnDB
-    Parameters = <
-      item
-        Name = 'PricePerOunce'
-        Attributes = [paNullable]
-        DataType = ftFloat
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'Currency'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 3
-        Value = Null
-      end>
-    SQL.Strings = (
-      
-        'INSERT INTO GoldPriceHistory (PricePerOunce, Currency, FetchDate' +
-        'Time, Source)'
-      
-        'VALUES (:PricePerOunce, :Currency, CURRENT TIMESTAMP, '#39'CryptoCom' +
-        'pare'#39');')
-    Left = 1060
-    Top = 12
-  end
-  object spGoldPrice: TADOStoredProc
-    Connection = ConnDB
-    ProcedureName = 'spi_GoldPrice'
-    Parameters = <
-      item
-        Name = '@PricePerOunce'
-        Attributes = [paNullable]
-        DataType = ftBCD
-        NumericScale = 2
-        Precision = 10
-        Value = Null
-      end
-      item
-        Name = '@Currency'
-        Attributes = [paNullable]
-        DataType = ftString
-        Size = 3
-        Value = Null
-      end>
-    Left = 1061
-    Top = 75
-  end
   object qryNextTicketNo: TADOQuery
     Connection = ConnDB
     CursorType = ctStatic
@@ -8466,6 +8357,8 @@ object DM: TDM
       'User_Name=sysdba'
       'Password=masterkey'
       'DriverID=FB')
+    Connected = True
+    LoginPrompt = False
     Left = 60
     Top = 760
   end
@@ -8477,5 +8370,27 @@ object DM: TDM
     Connection = ConnFB
     Left = 169
     Top = 761
+  end
+  object fn_GetNextKey: TFDStoredProc
+    Connection = ConnFB
+    StoredProcName = 'SP_GET_NEXT_KEY'
+    Left = 306
+    Top = 759
+    ParamData = <
+      item
+        Position = 1
+        Name = 'TABLENAME'
+        DataType = ftFixedChar
+        FDDataType = dtWideString
+        ParamType = ptInput
+        Size = 15
+      end
+      item
+        Position = 2
+        Name = 'NEXTTABLEKEY'
+        DataType = ftInteger
+        FDDataType = dtInt32
+        ParamType = ptOutput
+      end>
   end
 end

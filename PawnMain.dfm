@@ -2699,14 +2699,6 @@ object frmPawnMain: TfrmPawnMain
       FieldName = 'CustComment'
       BlobType = ftMemo
     end
-    object qryAllDataStationID: TIntegerField
-      Tag = 1
-      FieldName = 'StationID'
-    end
-    object qryAllDataStationSEQ: TIntegerField
-      Tag = 1
-      FieldName = 'StationSEQ'
-    end
     object qryAllDataTransactionNo: TIntegerField
       Tag = 1
       FieldName = 'TransactionNo'

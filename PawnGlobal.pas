@@ -85,10 +85,6 @@ const
   IniSecLeadsOnline     = 'LEADS_ONLINE';
   IniKeyLeadsOnlinePath = 'CSVPath';
 
-  StationsINI      = 'Stations.INI';
-  Station_Section  = 'STATION_ID';
-  Station_GUID_Key = 'GUID';
-
   IniSecBackup = 'BACKUP';
   IniKeyBackupPath = 'Path';
 
@@ -131,7 +127,6 @@ var
   AppPath: string;
   GlobalIniFile, LocalIniFile: string;
   DatabaseFileName: string;
-  Station_GUID: string;  //Unique station ID read from INI file
   InterestCalcMethod: integer;
   PawnDatesCalcMethod: string;
   DefaultWeightMeasureUnit: string;
@@ -143,7 +138,6 @@ var
   DeleteImageProc: TDeleteImageProc;  // Procedure pointer for deleting images
 
 function WindowsDirectory: string;
-function GetStationName: string;
 
 //function AddBackSlash(Path: string): string;
 function ReadIniFile(Section, Key: string): string;
@@ -162,7 +156,6 @@ function GetMACAddress:String;
 function GetUniqueID: string;
 
 function GuidToDBString(Guid: TGUID): string;
-function GetStationGUID: string;
 
 function FloridaLic(xLast, xFirst, xmid: string; xdob: TDateTime; gender: string): string;
 
@@ -407,37 +400,6 @@ begin
   GetWindowsDirectory(pchar(Result), 255);
   SetLength(Result, StrLen(pchar(Result)));
   Result := IncludeTrailingPathDelimiter(Result);
-end;
-
-function GetStationName: string;
-var
-  nSize: Cardinal;
-  StationName: string;
-begin
-  nSize := 20;
-  SetLength(StationName, nSize);
-  GetComputerName(pchar(StationName), nSize);
-  SetLength(StationName, StrLen(pchar(StationName)));
-  Result := StationName;
-end;
-
-function GetStationGUID: string;
-var
-  Ini: TIniFile;
-  Guid: TGuid;
-begin
-  Ini := TIniFile.Create(AppPath + StationsINI);
-  try
-    Result := trim(Ini.ReadString(Station_Section, Station_GUID_Key, ''));
-    if Result = '' then
-      begin
-        CoCreateGuid(Guid);
-        Result := GuidToDBString(Guid);
-        Ini.WriteString(Station_Section, Station_GUID_Key, Result);
-      end;
-  finally
-    Ini.Free;
-  end;
 end;
 
 function FloridaLic(xLast, xFirst, xmid: string; xdob: TDateTime; gender: string): string;
@@ -1304,6 +1266,5 @@ begin
   GlobalIniFile := AppPath + IniFileName;
   ExceptionLogPath := AppPath + 'PawnProError.log';
   LocalIniFile := GetLocalUserAppDataFolder + IniFileName;
-  Station_GUID := GetStationGUID;
   ImagesStoragePath := ReadIniFile(IniSecImageStorage, IniKeyImageDirectory);
 end.

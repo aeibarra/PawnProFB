@@ -44,9 +44,6 @@ type
     QryStates: TADOQuery;
     QryStatesState_Abbr: TStringField;
     QryStatesState_Name: TStringField;
-    spu_Connecting: TADOStoredProc;
-    sps_NextSEQ_: TADOStoredProc;
-    fn_GetNextKey: TADOStoredProc;
     qryTransactions: TADOQuery;
     qryTransactionscComment: TStringField;
     qryTransactionscTranInsAmount1Month: TCurrencyField;
@@ -180,8 +177,6 @@ type
     qryLastPayment: TADOQuery;
     qryLastPaymentLastPaymentDate: TDateField;
     qryPawnPay: TADOQuery;
-    qryGoldPriceHistory: TADOQuery;
-    spGoldPrice: TADOStoredProc;
     qryNextTicketNo: TADOQuery;
     qryNextTicketNoLastKey: TIntegerField;
     qryTotalPaid: TADOQuery;
@@ -197,6 +192,7 @@ type
     ConnFB: TFDConnection;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     qryDummyFB: TFDQuery;
+    fn_GetNextKey: TFDStoredProc;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -225,15 +221,11 @@ type
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
   public
-    StationNo: integer;    //Station No read from table Stations
-//    function GetStationNo: integer;
-//    function GetLastKey(TableName: string; StationSEQ: Int64): integer;
-//    function GetLastKey(TableName: string): integer;
-//    function GetNextSEQ: Int64;
     SaveCustQry, SaveConnectionStr: string;
     ReCalcMaturity: boolean;
     function GetConnectionStr: string;
     procedure ConfigureFBConnection;
+    procedure ConfigureFBConnectionFor(AConn: TFDConnection);
     function TestFBConnection(out ErrorMsg: string): Boolean;
     function GetNextKey(TableName: string): integer;
     procedure RefreshStoreQry;
@@ -314,9 +306,9 @@ end;
 
 function TDM.GetNextKey(TableName: string): integer;
 begin
-  fn_GetNextKey.Parameters.ParamByName('PTableName').Value := TableName;
+  fn_GetNextKey.Params.ParamByName('TABLENAME').Value := TableName;
   fn_GetNextKey.ExecProc;
-  Result := DM.fn_GetNextKey.Parameters.ParamByName('fn_GetNextKey').Value;
+  Result := fn_GetNextKey.Params.ParamByName('NEXTTABLEKEY').Value;
 end;
 
 function ExistsFieldInTable(const TableName, FieldName: string): boolean;
@@ -691,10 +683,11 @@ begin
                     [PWD, UID, DBN, HOST, ENG]);
 end;
 
-// Reads [CONNECTION_FB] from the global PawnPro.ini and configures ConnFB.
-// Mirror of GetConnectionStr for the parallel Firebird 5 target. Does NOT open
-// the connection — caller decides when. ADO ConnDB is unaffected.
-procedure TDM.ConfigureFBConnection;
+// Reads [CONNECTION_FB] from the global PawnPro.ini and configures the given
+// TFDConnection with the same params used for ConnFB. Lets background tasks
+// build a thread-local connection without duplicating the INI-read logic.
+// Does NOT open the connection — caller decides when.
+procedure TDM.ConfigureFBConnectionFor(AConn: TFDConnection);
 var
   IniFile: TIniFile;
   Server, Database, User, Password, CharSet: string;
@@ -714,17 +707,24 @@ begin
     IniFile.Free;
   end;
 
-  ConnFB.Connected := False;
-  ConnFB.Params.Clear;
-  ConnFB.DriverName := 'FB';
-  ConnFB.Params.Values['Server']       := Server;
-  ConnFB.Params.Values['Database']     := Database;
-  ConnFB.Params.Values['User_Name']    := User;
-  ConnFB.Params.Values['Password']     := Password;
-  ConnFB.Params.Values['Protocol']     := 'TCPIP';
-  ConnFB.Params.Values['Port']         := IntToStr(Port);
-  ConnFB.Params.Values['CharacterSet'] := CharSet;
-  ConnFB.LoginPrompt := False;
+  AConn.Connected := False;
+  AConn.Params.Clear;
+  AConn.DriverName := 'FB';
+  AConn.Params.Values['Server']       := Server;
+  AConn.Params.Values['Database']     := Database;
+  AConn.Params.Values['User_Name']    := User;
+  AConn.Params.Values['Password']     := Password;
+  AConn.Params.Values['Protocol']     := 'TCPIP';
+  AConn.Params.Values['Port']         := IntToStr(Port);
+  AConn.Params.Values['CharacterSet'] := CharSet;
+  AConn.LoginPrompt := False;
+end;
+
+// Convenience wrapper that targets the data module's own ConnFB. Used at
+// app startup; the parameterized version is used by background tasks.
+procedure TDM.ConfigureFBConnection;
+begin
+  ConfigureFBConnectionFor(ConnFB);
 end;
 
 // Probe: configure, open, run trivial query, close. Returns True on success;
@@ -734,7 +734,6 @@ function TDM.TestFBConnection(out ErrorMsg: string): Boolean;
 var
   q: TFDQuery;
 begin
-  Result := False;
   ErrorMsg := '';
   try
     ConfigureFBConnection;
@@ -841,37 +840,10 @@ begin
 *)
 
 end;
-{
-
-function TDM.GetStationNo: integer;
-begin
-  DM.sp_GetStationNo.Parameters.ParamByName('@GUID').Value := Station_GUID;
-  DM.sp_GetStationNo.Parameters.ParamByName('@StationName').Value := GetStationName;
-  DM.sp_GetStationNo.ExecProc;
-  Result := DM.sp_GetStationNo.Parameters.ParamByName('@StationNo').Value;
-end;
-function TDM.GetLastKey(TableName: string; StationSEQ: Int64): integer;
-begin
-  DM.sps_GetKey.Parameters.ParamByName('v_TblName').Value := TableName;
-  DM.sps_GetKey.Parameters.ParamByName('v_StationNo').Value := StationNo;
-  DM.sps_GetKey.Parameters.ParamByName('v_StationSEQ').Value := StationSEQ;
-  DM.sps_GetKey.ExecProc;
-  result := DM.sps_GetKey.Parameters.ParamByName('fn_GetLastKey').Value;
-end;
-function TDM.GetNextSEQ: Int64;
-begin
-  sps_NextSEQ.ExecProc;
-  Result := Round(sps_NextSEQ.Parameters.ParamByName('fn_NextSEQ').Value);
-end;
-}
 
 procedure TDM.DataModuleDestroy(Sender: TObject);
 begin
-  spu_Connecting.Parameters.ParamByName('@StationNo').Value := StationNo;
-  spu_Connecting.Parameters.ParamByName('@Conn').Value := 'N';
-  spu_Connecting.ExecProc;
-
-  // Phase 1.2 — close FB connection cleanly. Mirrors implicit ADO close.
+  // Close FB connection cleanly. Mirrors implicit ADO close.
   if ConnFB.Connected then
     ConnFB.Connected := False;
 end;
@@ -1440,8 +1412,6 @@ end;
 
 procedure TDM.qryCustomersNewRecord(DataSet: TDataSet);
 begin
-  //qryCustomersStationID.AsInteger := StationNo;
-  //qryCustomersStationSEQ.AsInteger := GetNextSEQ;
   qryCustomersCustCity.AsString := qryStorecCity.AsString;
   qryCustomersCustState.AsString := qryStorecState.AsString;
   qryCustomersCustZip.AsString := qryStorecZIp.AsString;

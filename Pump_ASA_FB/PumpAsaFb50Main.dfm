@@ -17,11 +17,17 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     655)
   TextHeight = 21
   object lblCurrentProcess: TLabel
-    Left = 179
-    Top = 299
-    Width = 123
+    Left = 165
+    Top = 223
+    Width = 129
     Height = 21
     Caption = 'lblCurrentProcess'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Segoe UI Semibold'
+    Font.Style = [fsBold]
+    ParentFont = False
   end
   object btnClose: TButton
     Left = 746
@@ -32,13 +38,11 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     Caption = 'Close'
     TabOrder = 0
     OnClick = btnCloseClick
-    ExplicitLeft = 760
-    ExplicitTop = 234
   end
   object btnGo: TButton
-    Left = 15
-    Top = 294
-    Width = 133
+    Left = 8
+    Top = 245
+    Width = 151
     Height = 34
     Caption = 'Start Pump'
     TabOrder = 1
@@ -46,9 +50,9 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   end
   object MemoErrors: TMemo
     Left = 165
-    Top = 335
+    Top = 247
     Width = 678
-    Height = 253
+    Height = 341
     Anchors = [akLeft, akTop, akRight, akBottom]
     Lines.Strings = (
       'MemoErrors')
@@ -62,7 +66,6 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     Height = 221
     Align = alTop
     TabOrder = 3
-    ExplicitWidth = 891
     object lblAsaServer: TLabel
       Left = 179
       Top = 9

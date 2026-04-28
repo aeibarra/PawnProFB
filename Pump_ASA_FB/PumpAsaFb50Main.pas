@@ -16,7 +16,6 @@ type
   TfrmPumpAsaFb50Main = class(TForm)
     btnClose: TButton;
     btnGo: TButton;
-    lblCurrentProcess: TLabel;
     MemoErrors: TMemo;
     pnConnections: TPanel;
     edAsaServerIP: TEdit;
@@ -45,6 +44,7 @@ type
     btnTestFb: TButton;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    lblCurrentProcess: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -72,8 +72,6 @@ type
     procedure PumpItemStatus;
     procedure PumpTransactionTypes;
     procedure PumpStore;
-    procedure PumpStations;
-    procedure PumpSEQTable;
     procedure PumpBackupSettings;
     procedure PumpExportFormat;
     procedure PumpPaymentTypes;
@@ -188,8 +186,6 @@ begin
         PumpItemStatus;
         PumpTransactionTypes;
         PumpStore;
-        PumpStations;
-        PumpSEQTable;
         PumpBackupSettings;
         PumpExportFormat;
         PumpPaymentTypes;
@@ -230,7 +226,7 @@ end;
 procedure TfrmPumpAsaFb50Main.WipeFirebirdDatabase;
 const
   // Reverse-FK delete order — children before parents. See PUMP_APP_PLAN.md §5a.
-  WIPE_ORDER: array[0..30] of string = (
+  WIPE_ORDER: array[0..28] of string = (
     'PAYMENTS', 'STONES', 'SALES_ITEMS', 'INVENTORY_ITEM_STATUS_LOG',
     'IMAGES_DATA_BACKUP', 'IMAGES_DATA', 'INVENTORY_ITEMS', 'TRANSACTIONS',
     'CUSTOMER', 'EXPORT_LOG_FILE_DETAIL', 'EXPORT_FILE_LOG',
@@ -238,13 +234,13 @@ const
     'INV_CATEGORIES', 'IMAGES_TYPES', 'PAYMENT_TYPES', 'TRANSACTION_TYPES',
     'ITEM_STATUS', 'J_STONE_COLORS', 'J_STONE_SHAPES', 'J_GENDERS',
     'J_STYLES', 'J_METALS', 'J_TYPES', 'EXPORT_FORMAT',
-    'BACKUP_SETTINGS', 'SEQ_TABLE', 'STATIONS', 'STORE', 'STATES'
+    'BACKUP_SETTINGS', 'STORE', 'STATES'
   );
 var
   i, TotalDeleted: Integer;
 begin
   lblCurrentProcess.Caption := 'Wiping Firebird DB...';
-  LogLine('Wiping Firebird database (all 31 tables, one transaction)...');
+  LogLine('Wiping Firebird database (all 29 tables, one transaction)...');
   TotalDeleted := 0;
 
   ConnectionFB.StartTransaction;
@@ -458,39 +454,6 @@ begin
       dst.ParamByName('DEFAULT_WEIGHT_MEASURE_UNIT').Value:= src.FieldByName('DefaultWeightMeasureUnit').Value;
       dst.ParamByName('SALES_TAX_PERC').Value             := src.FieldByName('SalesTaxPerc').Value;
       dst.ParamByName('DEFAULT_PAWN_INTERESTRATE').Value  := src.FieldByName('DefaultPawnInterestRate').Value;
-    end);
-end;
-
-procedure TfrmPumpAsaFb50Main.PumpStations;
-begin
-  PumpTable('Stations -> STATIONS', 'STATIONS',
-    'SELECT StationNo, StationGUID, StationName, StationConnected, ' +
-    '  Created, ConnStart, ConnThru ' +
-    'FROM Stations',
-    'INSERT INTO STATIONS (STATION_NO, STATION_GUID, STATION_NAME, ' +
-    '  STATION_CONNECTED, CREATED, CONN_START, CONN_THRU) ' +
-    'VALUES (:STATION_NO, :STATION_GUID, :STATION_NAME, ' +
-    '  :STATION_CONNECTED, :CREATED, :CONN_START, :CONN_THRU)',
-    procedure(src: TADOQuery; dst: TFDQuery)
-    begin
-      dst.ParamByName('STATION_NO').Value        := src.FieldByName('StationNo').Value;
-      dst.ParamByName('STATION_GUID').Value      := src.FieldByName('StationGUID').Value;
-      dst.ParamByName('STATION_NAME').Value      := src.FieldByName('StationName').Value;
-      dst.ParamByName('STATION_CONNECTED').Value := src.FieldByName('StationConnected').Value;
-      dst.ParamByName('CREATED').Value           := src.FieldByName('Created').Value;
-      dst.ParamByName('CONN_START').Value        := src.FieldByName('ConnStart').Value;
-      dst.ParamByName('CONN_THRU').Value         := src.FieldByName('ConnThru').Value;
-    end);
-end;
-
-procedure TfrmPumpAsaFb50Main.PumpSEQTable;
-begin
-  PumpTable('SEQTable -> SEQ_TABLE', 'SEQ_TABLE',
-    'SELECT StationSEQ FROM SEQTable',
-    'INSERT INTO SEQ_TABLE (STATION_SEQ) VALUES (:STATION_SEQ)',
-    procedure(src: TADOQuery; dst: TFDQuery)
-    begin
-      dst.ParamByName('STATION_SEQ').Value := src.FieldByName('StationSEQ').Value;
     end);
 end;
 
@@ -1052,23 +1015,23 @@ end;
 //      TABLE_KEYS row already carries the right value; this is belt-and-braces.
 procedure TfrmPumpAsaFb50Main.PostPumpReseed;
 const
-  IDENTITY_TBL: array[0..13] of string = (
+  IDENTITY_TBL: array[0..12] of string = (
     'CUSTOMER',                  'PAYMENTS',
-    'STATIONS',                  'INV_CATEGORIES',
-    'SALES_ITEMS',               'STONES',
-    'BACKUP_HISTORY',            'EXPORT_FORMAT',
-    'EXPORT_FILE_LOG',           'EXPORT_LOG_FILE_DETAIL',
-    'IMAGES_TYPES',              'IMAGES_DATA',
-    'INVENTORY_ITEM_STATUS_LOG', 'GOLD_PRICE_HISTORY'
+    'INV_CATEGORIES',            'SALES_ITEMS',
+    'STONES',                    'BACKUP_HISTORY',
+    'EXPORT_FORMAT',             'EXPORT_FILE_LOG',
+    'EXPORT_LOG_FILE_DETAIL',    'IMAGES_TYPES',
+    'IMAGES_DATA',               'INVENTORY_ITEM_STATUS_LOG',
+    'GOLD_PRICE_HISTORY'
   );
-  IDENTITY_COL: array[0..13] of string = (
+  IDENTITY_COL: array[0..12] of string = (
     'CUST_NO',                   'PAYMENT_NO',
-    'STATION_NO',                'INV_CAT_NO',
-    'SALES_ITEM_NO',             'STONE_NO',
-    'BCK_ID',                    'ID',
-    'EXPORT_LOG_ID',             'ID',
-    'IMAGE_TYPE_NO',             'IMAGES_DATA_NO',
-    'LOG_ID',                    'PRICE_ID'
+    'INV_CAT_NO',                'SALES_ITEM_NO',
+    'STONE_NO',                  'BCK_ID',
+    'ID',                        'EXPORT_LOG_ID',
+    'ID',                        'IMAGE_TYPE_NO',
+    'IMAGES_DATA_NO',            'LOG_ID',
+    'PRICE_ID'
   );
 
   // TABLE_KEYS rows (ASA casing in TableName) -> FB target for MAX lookup.
