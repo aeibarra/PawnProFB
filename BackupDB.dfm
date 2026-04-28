@@ -13,6 +13,7 @@ object frmBackupDB: TfrmBackupDB
   Font.Style = []
   Position = poScreenCenter
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   TextHeight = 20
   object GroupBox1: TGroupBox
@@ -82,13 +83,13 @@ object frmBackupDB: TfrmBackupDB
       Height = 20
       Caption = 'Backup Database to:'
     end
-    object SpeedButton1: TSpeedButton
+    object btnSelectBackupPath: TSpeedButton
       Left = 554
       Top = 76
       Width = 26
       Height = 28
       Caption = '...'
-      OnClick = SpeedButton1Click
+      OnClick = btnSelectBackupPathClick
     end
     object RzLabel1: TRzLabel
       Left = 31

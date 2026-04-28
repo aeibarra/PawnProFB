@@ -73,6 +73,9 @@ DB/
 __recovery
 images/
 
+# Firebird client log written to the working dir on connection errors
+firebird.log
+
 # Claude Code / AI assistant local files
 .claude/
 CLAUDE.md

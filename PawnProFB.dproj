@@ -302,6 +302,7 @@
             <Form>frmLeadsOnlineFTPParams</Form>
         </DCCReference>
         <DCCReference Include="..\COMMON\Nvv.IO.CSV.Delphi.NvvCSVClasses.pas"/>
+        <DCCReference Include="..\COMMON\Nvv.FB5.DBA.pas"/>
         <DCCReference Include="DrvLic_PDF417Parsing.pas"/>
         <DCCReference Include="..\COMMON\SelectedItemsInGridClass.pas"/>
         <DCCReference Include="CheckBoxDrawer.pas"/>

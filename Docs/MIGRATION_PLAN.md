@@ -1,7 +1,7 @@
 # PawnPro — SQL Anywhere 16 → Firebird 5 Migration Plan
 
-Status: **planning / pre-work**
-Last updated: 2026-04-22
+Status: **Phase 1 complete — moving to Phase 2 (DM datasets)**
+Last updated: 2026-04-28
 
 This document captures the migration strategy agreed during the initial brainstorm. It is the primary hand-off artifact — a future Claude Code session (or any developer) should be able to read this, pick up context, and continue the work without needing the original conversation.
 

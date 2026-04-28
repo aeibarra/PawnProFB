@@ -691,27 +691,6 @@ object DM: TDM
     Left = 579
     Top = 276
   end
-  object qryBackupSetings: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    Parameters = <>
-    SQL.Strings = (
-      'select *'
-      'from BackupSettings')
-    Left = 151
-    Top = 248
-    object qryBackupSetingsBackupPath: TStringField
-      FieldName = 'BackupPath'
-      Size = 255
-    end
-    object qryBackupSetingsAutoBackupWhenCloseApp: TBooleanField
-      FieldName = 'AutoBackupWhenCloseApp'
-    end
-    object qryBackupSetingsBackupImagesPath: TStringField
-      FieldName = 'BackupImagesPath'
-      Size = 255
-    end
-  end
   object ImageListBtn: TImageList
     Tag = 1
     ColorDepth = cd32Bit
@@ -8363,8 +8342,8 @@ object DM: TDM
     Top = 760
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
-    Left = 56
-    Top = 833
+    Left = 53
+    Top = 834
   end
   object qryDummyFB: TFDQuery
     Connection = ConnFB
@@ -8374,8 +8353,8 @@ object DM: TDM
   object fn_GetNextKey: TFDStoredProc
     Connection = ConnFB
     StoredProcName = 'SP_GET_NEXT_KEY'
-    Left = 306
-    Top = 759
+    Left = 170
+    Top = 823
     ParamData = <
       item
         Position = 1
@@ -8392,5 +8371,33 @@ object DM: TDM
         FDDataType = dtInt32
         ParamType = ptOutput
       end>
+  end
+  object qryBackupSetings: TFDQuery
+    Connection = ConnFB
+    SQL.Strings = (
+      'SELECT'
+      '  BACKUP_PATH,'
+      '  AUTO_BACKUP_WHEN_CLOSE_APP,'
+      '  BACKUP_IMAGES_PATH'
+      'FROM BACKUP_SETTINGS;')
+    Left = 275
+    Top = 763
+    object qryBackupSetingsBACKUP_PATH: TStringField
+      FieldName = 'BACKUP_PATH'
+      Origin = 'BACKUP_PATH'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 255
+    end
+    object qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP: TBooleanField
+      FieldName = 'AUTO_BACKUP_WHEN_CLOSE_APP'
+      Origin = 'AUTO_BACKUP_WHEN_CLOSE_APP'
+      Required = True
+    end
+    object qryBackupSetingsBACKUP_IMAGES_PATH: TStringField
+      FieldName = 'BACKUP_IMAGES_PATH'
+      Origin = 'BACKUP_IMAGES_PATH'
+      Size = 255
+    end
   end
 end

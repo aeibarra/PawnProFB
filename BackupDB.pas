@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, System.UITypes,
+  Dialogs, StdCtrls, Buttons, System.UITypes, System.Threading,
+  Vcl.ExtCtrls,
   RzButton, RzCommon, RzShellDialogs, Vcl.Mask, RzEdit, RzLabel;
 
 type
@@ -14,7 +15,7 @@ type
     GroupBox2: TGroupBox;
     edBckPath: TEdit;
     Label1: TLabel;
-    SpeedButton1: TSpeedButton;
+    btnSelectBackupPath: TSpeedButton;
     btnViewBackupLog: TBitBtn;
     chkDiBackupWhenClosingApp: TCheckBox;
     btnBackUp: TBitBtn;
@@ -22,16 +23,26 @@ type
     edImageDirectory: TRzEdit;
     btnSelectFolder: TRzToolButton;
     lblProgress: TLabel;
-    procedure SpeedButton1Click(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnBackUpClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnViewBackupLogClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectFolderClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure btnSelectBackupPathClick(Sender: TObject);
   private
-    { Private declarations }
+    FBackupRunning: Boolean;
+    FProgressBaseText: string;
+    FProgressTick: Integer;
+    FProgressTimer: TTimer;
 //    procedure LogBackup(BckLocation: string);
+    procedure ProgressTimerTimer(Sender: TObject);
+    procedure SetBackupControlsEnabled(AEnabled: Boolean);
+    procedure StartBackupProgress(const AMessage: string);
+    procedure UpdateBackupProgress(const AMessage: string);
+    procedure StopBackupProgress;
+    procedure StartBackupWorker(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean);
   public
     { Public declarations }
   end;
@@ -45,7 +56,12 @@ uses PawnDM, PawnGlobal, ViewBackupHistory, uPawnDialogs;
 
 {$R *.dfm}
 
-procedure TfrmBackupDB.SpeedButton1Click(Sender: TObject);
+procedure TfrmBackupDB.btnCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmBackupDB.btnSelectBackupPathClick(Sender: TObject);
 var
   Dialog: TFileOpenDialog;
 begin
@@ -64,12 +80,6 @@ begin
   finally
     Dialog.Free;
   end;
-
-end;
-
-procedure TfrmBackupDB.btnCloseClick(Sender: TObject);
-begin
-  Close;
 end;
 
 procedure TfrmBackupDB.btnSelectFolderClick(Sender: TObject);
@@ -101,16 +111,7 @@ begin
   end;
 end;
 
-//procedure TfrmBackupDB.LogBackup(BckLocation: string);
-//begin
-//  DM.ConnDB.Execute('INSERT INTO BackupHistory (BckDate, BckPath) VALUES(GetDate(), ' + QuotedStr(BckLocation) + ')');
-//end;
-//
-
 procedure TfrmBackupDB.btnBackUpClick(Sender: TObject);
-var
-  CopiedCount, SkippedCount: integer;
-  ErrorMessage: string;
 begin
   if trim(edBckPath.Text) = '' then
     begin
@@ -145,34 +146,129 @@ begin
     end;
 
   Repaint;
-  try
-    btnBackUp.Enabled := false;
+  StartBackupWorker(trim(edBckPath.Text), trim(edImageDirectory.Text), ImageStorageMode = ImageStorageMode_File);
 
-    lblProgress.Caption := 'Backing up database...';
-    Repaint;
-    DM.BackupDatabase(edBckPath.Text);
+end;
 
-    if ImageStorageMode = ImageStorageMode_File then
-      begin
-        lblProgress.Caption := 'Backing up Images...';
-        Repaint;
-        DM.BackupImagesToFolder(ImagesStoragePath, trim(edImageDirectory.Text), CopiedCount, SkippedCount, ErrorMessage);
-        if ErrorMessage <> '' then
-          PawnError(ErrorMessage, 'Backup Images', Self);
-      end;
+procedure TfrmBackupDB.ProgressTimerTimer(Sender: TObject);
+const
+  Dots: array[0..3] of string = ('', '.', '..', '...');
+begin
+  Inc(FProgressTick);
+  lblProgress.Caption := FProgressBaseText + Dots[FProgressTick mod 4];
+end;
 
-  finally
-    btnBackUp.Enabled := true;
-    lblProgress.Caption := '';
+procedure TfrmBackupDB.SetBackupControlsEnabled(AEnabled: Boolean);
+begin
+  btnBackUp.Enabled := AEnabled;
+  btnClose.Enabled := AEnabled;
+  btnViewBackupLog.Enabled := AEnabled;
+  btnSelectBackupPath.Enabled := AEnabled;
+  btnSelectFolder.Enabled := AEnabled;
+  edBckPath.Enabled := AEnabled;
+  edImageDirectory.Enabled := AEnabled;
+  chkDiBackupWhenClosingApp.Enabled := AEnabled;
+end;
+
+procedure TfrmBackupDB.StartBackupProgress(const AMessage: string);
+begin
+  FBackupRunning := True;
+  SetBackupControlsEnabled(False);
+  Screen.Cursor := crHourGlass;
+
+  FProgressBaseText := AMessage;
+  FProgressTick := 0;
+  lblProgress.Caption := FProgressBaseText;
+
+  if FProgressTimer = nil then
+  begin
+    FProgressTimer := TTimer.Create(Self);
+    FProgressTimer.Interval := 500;
+    FProgressTimer.OnTimer := ProgressTimerTimer;
   end;
+  FProgressTimer.Enabled := True;
+end;
 
-  if ErrorMessage = '' then
-    PawnInfo('Backup done!', 'Pawn Database', Self);
+procedure TfrmBackupDB.UpdateBackupProgress(const AMessage: string);
+begin
+  FProgressBaseText := AMessage;
+  FProgressTick := 0;
+  lblProgress.Caption := FProgressBaseText;
+end;
 
+procedure TfrmBackupDB.StopBackupProgress;
+begin
+  if FProgressTimer <> nil then
+    FProgressTimer.Enabled := False;
+
+  FBackupRunning := False;
+  Screen.Cursor := crDefault;
+  SetBackupControlsEnabled(True);
+  lblProgress.Caption := '';
+end;
+
+procedure TfrmBackupDB.StartBackupWorker(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean);
+begin
+  StartBackupProgress('Backing up database');
+
+  TTask.Run(
+    procedure
+    var
+      R: TBackupResult;
+    begin
+      DM.RunBackup(ABackupPath, AImageTargetPath, ADoImageBackup, R,
+        procedure(Phase: TBackupPhase)
+        begin
+          TThread.Queue(nil,
+            procedure
+            begin
+              if not FBackupRunning then
+                Exit;
+              case Phase of
+                bpDatabase: UpdateBackupProgress('Backing up database');
+                bpImages:   UpdateBackupProgress('Backing up images');
+                bpLogging:  UpdateBackupProgress('Saving backup history');
+              end;
+            end);
+        end);
+
+      TThread.Queue(nil,
+        procedure
+        begin
+          if not FBackupRunning then
+            Exit;
+
+          StopBackupProgress;
+
+          if R.BackupError <> '' then
+          begin
+            PawnError(R.BackupError, 'Backup Database', Self);
+            Exit;
+          end;
+
+          if R.LogError <> '' then
+          begin
+            PawnError('Backup file was created, but the backup history could not be saved: ' + R.LogError,
+              'Backup Database', Self);
+            Exit;
+          end;
+
+          if R.ImageError <> '' then
+            PawnError(R.ImageError, 'Backup Images', Self)
+          else
+            PawnInfo('Backup done!', 'Pawn Database', Self);
+        end);
+    end);
 end;
 
 procedure TfrmBackupDB.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if FBackupRunning then
+  begin
+    Action := caNone;
+    Exit;
+  end;
+
   DM.qryBackupSetings.Close;
   DM.qryBackupSetings.Open;
 
@@ -181,13 +277,18 @@ begin
   else
     DM.qryBackupSetings.Edit;
 
-  DM.qryBackupSetingsBackupPath.AsString := trim(edBckPath.Text);
-  DM.qryBackupSetingsAutoBackupWhenCloseApp.AsBoolean := chkDiBackupWhenClosingApp.Checked;
-  DM.qryBackupSetingsBackupImagesPath.AsString := trim(edImageDirectory.Text);
+  DM.qryBackupSetingsBACKUP_PATH.AsString := trim(edBckPath.Text);
+  DM.qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP.AsBoolean := chkDiBackupWhenClosingApp.Checked;
+  DM.qryBackupSetingsBACKUP_IMAGES_PATH.AsString := trim(edImageDirectory.Text);
   DM.qryBackupSetings.Post;
 
   DM.qryBackupSetings.Close;
 
+end;
+
+procedure TfrmBackupDB.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := not FBackupRunning;
 end;
 
 procedure TfrmBackupDB.FormShow(Sender: TObject);
@@ -196,9 +297,9 @@ begin
   DM.qryBackupSetings.Close;
   DM.qryBackupSetings.Open;
 
-  edBckPath.Text := DM.qryBackupSetingsBackupPath.AsString;
-  chkDiBackupWhenClosingApp.Checked := DM.qryBackupSetingsAutoBackupWhenCloseApp.AsBoolean;
-  edImageDirectory.Text := DM.qryBackupSetingsBackupImagesPath.AsString;
+  edBckPath.Text := DM.qryBackupSetingsBACKUP_PATH.AsString;
+  chkDiBackupWhenClosingApp.Checked := DM.qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP.AsBoolean;
+  edImageDirectory.Text := DM.qryBackupSetingsBACKUP_IMAGES_PATH.AsString;
 
   DM.qryBackupSetings.Close;
 

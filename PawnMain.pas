@@ -258,12 +258,31 @@ begin
 end;
 
 procedure TfrmPawnMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var
+  BackupPath, ImageBackupPath: string;
+  DoImageBackup: Boolean;
+  BackupDone: Boolean;
+  R: TBackupResult;
 begin
-  DM.qryBackupSetings.Open;
-  if not DM.qryBackupSetingsAutoBackupWhenCloseApp.AsBoolean or not IsLocalDatabase then
-    exit;
+  CanClose := True;
 
-  CanClose := true;
+  BackupPath := '';
+  ImageBackupPath := '';
+  DoImageBackup := False;
+
+  DM.qryBackupSetings.Open;
+  try
+    if not DM.qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP.AsBoolean or not IsLocalDatabase then
+      Exit;
+
+    BackupPath := DM.qryBackupSetingsBACKUP_PATH.AsString;
+    ImageBackupPath := DM.qryBackupSetingsBACKUP_IMAGES_PATH.AsString;
+    DoImageBackup := (ImageStorageMode = ImageStorageMode_File) and
+      (ImageBackupPath <> '') and DirectoryExists(ImageBackupPath);
+  finally
+    DM.qryBackupSetings.Close;
+  end;
+
   try
     frmBackupInProgress := TfrmBackupInProgress.Create(Self);
     try
@@ -271,34 +290,66 @@ begin
       frmBackupInProgress.lblProgress.Caption := 'Database backup in Progress...';
       Application.ProcessMessages;
 
-      DM.qryBackupSetings.Close;
-      DM.qryBackupSetings.Open;
+      BackupDone := False;
 
-      if DM.qryBackupSetingsAutoBackupWhenCloseApp.AsBoolean then
+      TTask.Run(
+        procedure
         begin
-          DM.BackupDatabase(DM.qryBackupSetingsBackupPath.AsString);
-        end;
+          try
+            DM.RunBackup(BackupPath, ImageBackupPath, DoImageBackup, R,
+              procedure(Phase: TBackupPhase)
+              begin
+                TThread.Queue(nil,
+                  procedure
+                  begin
+                    if not Assigned(frmBackupInProgress) then
+                      Exit;
+                    case Phase of
+                      bpDatabase:
+                        frmBackupInProgress.lblProgress.Caption := 'Database backup in Progress...';
+                      bpImages:
+                        begin
+                          frmBackupInProgress.lblProgress.Caption := 'Images backup in Progress...';
+                          frmBackupInProgress.vImage.ImageIndex := 54;
+                        end;
+                      bpLogging:
+                        frmBackupInProgress.lblProgress.Caption := 'Saving backup history...';
+                    end;
+                  end);
+              end);
+          finally
+            BackupDone := True;
+          end;
+        end);
 
-      if (ImageStorageMode = ImageStorageMode_File) and (DM.qryBackupSetingsBackupImagesPath.AsString <> '') and DirectoryExists(DM.qryBackupSetingsBackupImagesPath.AsString) then
-        begin
-          frmBackupInProgress.lblProgress.Caption := 'Images backup in Progress...';
-          frmBackupInProgress.vImage.ImageIndex := 54;
-          Application.ProcessMessages;
+      while not BackupDone do
+      begin
+        Application.ProcessMessages;
+        Sleep(50);
+      end;
 
-          var CopiedCount, SkippedCount: integer;
-          var ErrorMessage: string;
+      if R.BackupError <> '' then
+        raise Exception.Create(R.BackupError);
 
-          DM.BackupImagesToFolder(ImagesStoragePath, DM.qryBackupSetingsBackupImagesPath.AsString, CopiedCount, SkippedCount, ErrorMessage);
-          if ErrorMessage <> '' then
-            PawnError(ErrorMessage, 'Backup Images', Self);
-        end;
+      if R.LogError <> '' then
+        raise Exception.Create('Backup file was created, but the backup history could not be saved: ' + R.LogError);
+
+      if R.ImageError <> '' then
+      begin
+        PawnError(R.ImageError, 'Backup Images', Self);
+        CanClose := False;
+      end;
 
     finally
       frmBackupInProgress.Free;
+      frmBackupInProgress := nil;
     end;
   except
-    CanClose :=  false;
-    MsgInfo('Unable to backup');
+    on E: Exception do
+    begin
+      CanClose := false;
+      MsgInfo('Unable to backup: ' + E.Message);
+    end;
   end;
 
 end;

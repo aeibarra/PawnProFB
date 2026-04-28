@@ -15,6 +15,18 @@ uses
   FireDAC.Comp.DataSet;
 
 type
+  TBackupPhase = (bpStarting, bpDatabase, bpImages, bpLogging, bpDone);
+  TBackupPhaseProc = reference to procedure(Phase: TBackupPhase);
+
+  TBackupResult = record
+    WrittenFile:  string;
+    BackupError:  string;
+    LogError:     string;
+    ImageError:   string;
+    CopiedCount:  Integer;
+    SkippedCount: Integer;
+  end;
+
   TDM = class(TDataModule)
     qryDummy: TADOQuery;
     ConnDB: TADOConnection;
@@ -117,9 +129,6 @@ type
     clnSalesTranTranVoidDate: TDateTimeField;
     dsSalesTran: TDataSource;
     RegIniFile: TRzRegIniFile;
-    qryBackupSetings: TADOQuery;
-    qryBackupSetingsBackupPath: TStringField;
-    qryBackupSetingsAutoBackupWhenCloseApp: TBooleanField;
     ImageListBtn: TImageList;
     qryCustomerscCustPhHome: TStringField;
     qryCustomersCCustPhBussiness: TStringField;
@@ -187,12 +196,15 @@ type
     qryItemImages: TADOQuery;
     qryItemImagesImagesDataNo: TIntegerField;
     qryItemImagesImageData: TBlobField;
-    qryBackupSetingsBackupImagesPath: TStringField;
     qryStoreDefaultPawnInterestRate: TFloatField;
     ConnFB: TFDConnection;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     qryDummyFB: TFDQuery;
     fn_GetNextKey: TFDStoredProc;
+    qryBackupSetings: TFDQuery;
+    qryBackupSetingsBACKUP_PATH: TStringField;
+    qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP: TBooleanField;
+    qryBackupSetingsBACKUP_IMAGES_PATH: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -212,7 +224,6 @@ type
     procedure qryPaymentsAfterPost(DataSet: TDataSet);
     procedure qryTransactionsAfterScroll(DataSet: TDataSet);
   private
-    procedure LogBackup(BckLocation: string);
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
@@ -233,9 +244,11 @@ type
     procedure CalcInterest(Amount: currency; var IntRate, IntAmount: extended);
     function LastPaymentForTransaction(TransactionNo: integer): TDateTime;
     function CalcNextInt(PrincipalBalance: Currency; InterestPerc: Currency; Months: integer): Currency;
-    procedure BackupDatabase(BackupPath: string);
+    procedure LogBackupWithConnection(AConn: TFDConnection; const BckLocation: string);
+    function BackupDatabaseToFileWithConnection(AConn: TFDConnection; BackupPath: string): string;
     function ShouldBackupImages: Boolean;
-    procedure BackupImagesToFolder(const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
+    procedure BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
+    procedure RunBackup(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean; out AResult: TBackupResult; AOnPhase: TBackupPhaseProc = nil);
     procedure SaveImageToFile(ImagesDataNo: integer; FileName: string);
     procedure ExportImageToPath(ImagesDataNo: integer; DestPath: string);
     function GetImageFilePath(ImagesDataNo: integer; ImageDate: TDateTime): string;
@@ -278,7 +291,7 @@ var
 
 implementation
 
-Uses PawnGlobal, uPawnProIniPrinters, SearchClient;
+Uses PawnGlobal, uPawnProIniPrinters, SearchClient, Nvv.FB5.DBA;
 
 {$R *.DFM}
 
@@ -1516,9 +1529,25 @@ begin
   Text := FormatFLDriverLic(Sender.AsString);
 end;
 
-procedure TDM.LogBackup(BckLocation: string);
+procedure TDM.LogBackupWithConnection(AConn: TFDConnection; const BckLocation: string);
+var
+  Q: TFDQuery;
 begin
-  DM.ConnDB.Execute('INSERT INTO BackupHistory (BckDate, BckPath) VALUES(GetDate(), ' + QuotedStr(BckLocation) + ')');
+  if AConn = nil then
+    raise EArgumentNilException.Create('TDM.LogBackupWithConnection: AConn is nil');
+
+  if not AConn.Connected then
+    AConn.Connected := True;
+
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := AConn;
+    Q.SQL.Text := 'INSERT INTO BACKUP_HISTORY (BCK_DATE, BCK_PATH) VALUES (CURRENT_TIMESTAMP, :BCK_PATH)';
+    Q.ParamByName('BCK_PATH').AsString := BckLocation;
+    Q.ExecSQL;
+  finally
+    Q.Free;
+  end;
 end;
 
 procedure TDM.SaveImageToFile(ImagesDataNo: integer; FileName: string);
@@ -2133,14 +2162,66 @@ begin
   end;
 end;
 
-procedure TDM.BackupDatabase(BackupPath: string);
+function TDM.BackupDatabaseToFileWithConnection(AConn: TFDConnection; BackupPath: string): string;
+const
+  KeepLastNBackups = 7;
 begin
-  Screen.Cursor := crHourGlass;
+  if AConn = nil then
+    raise EArgumentNilException.Create('TDM.BackupDatabaseToFileWithConnection: AConn is nil');
+
+  Result := TFB5DBA.BackupDatabase(AConn, BackupPath, 'PawnPro', KeepLastNBackups);
+end;
+
+// Synchronous; safe to call from a worker thread. Creates its own TFDConnection
+// so it does not share state with TDM.ConnFB. Reports phase transitions through
+// AOnPhase (callback runs on whatever thread RunBackup was invoked on - the
+// caller is responsible for marshalling to the UI thread if needed).
+procedure TDM.RunBackup(const ABackupPath, AImageTargetPath: string;
+  ADoImageBackup: Boolean; out AResult: TBackupResult;
+  AOnPhase: TBackupPhaseProc = nil);
+
+  procedure NotifyPhase(Phase: TBackupPhase);
+  begin
+    if Assigned(AOnPhase) then
+      AOnPhase(Phase);
+  end;
+
+var
+  Conn: TFDConnection;
+begin
+  AResult := Default(TBackupResult);
+
+  NotifyPhase(bpStarting);
+  Conn := TFDConnection.Create(nil);
   try
-    DM.ConnDB.Execute('BACKUP DATABASE DIRECTORY ' + QuotedStr(IncludeTrailingPathDelimiter(trim(BackupPath))) + ' WAIT BEFORE START TRANSACTION LOG TRUNCATE');
-    LogBackup(IncludeTrailingPathDelimiter(trim(BackupPath)));
+    try
+      ConfigureFBConnectionFor(Conn);
+
+      NotifyPhase(bpDatabase);
+      AResult.WrittenFile := BackupDatabaseToFileWithConnection(Conn, ABackupPath);
+
+      if ADoImageBackup then
+      begin
+        NotifyPhase(bpImages);
+        Conn.Connected := True;
+        BackupImagesToFolderWithConnection(Conn, ImagesStoragePath, AImageTargetPath,
+          AResult.CopiedCount, AResult.SkippedCount, AResult.ImageError);
+      end;
+
+      NotifyPhase(bpLogging);
+      try
+        LogBackupWithConnection(Conn, AResult.WrittenFile);
+      except
+        on E: Exception do
+          AResult.LogError := E.Message;
+      end;
+    except
+      on E: Exception do
+        AResult.BackupError := E.Message;
+    end;
   finally
-    Screen.Cursor := crDefault;
+    Conn.Free;
+    NotifyPhase(bpDone);
   end;
 end;
 
@@ -2197,9 +2278,9 @@ begin
   end;
 end;
 
-procedure TDM.BackupImagesToFolder(const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
+procedure TDM.BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
 var
-  CheckQuery, InsertQuery, ExistsQuery, MissingQuery: TADOQuery;
+  CheckQuery, InsertQuery, ExistsQuery, MissingQuery: TFDQuery;
   SourceRoot, TargetRoot: string;
 
   function ExtractImagesDataNo(const FileName: string): integer;
@@ -2226,7 +2307,7 @@ var
   function AlreadyBackedUp(const ImagesDataNo: integer): boolean;
   begin
     CheckQuery.Close;
-    CheckQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    CheckQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImagesDataNo;
     CheckQuery.Open;
     Result := not CheckQuery.Eof;
   end;
@@ -2234,15 +2315,15 @@ var
   function ExistsInImagesData(const ImagesDataNo: integer): boolean;
   begin
     ExistsQuery.Close;
-    ExistsQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    ExistsQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImagesDataNo;
     ExistsQuery.Open;
     Result := not ExistsQuery.Eof;
   end;
 
   procedure MarkBackedUp(const ImagesDataNo: integer);
   begin
-    InsertQuery.Parameters.ParamByName('ID').Value := ImagesDataNo;
-    InsertQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    InsertQuery.Params.ParamByName('ID').AsInteger := ImagesDataNo;
+    InsertQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImagesDataNo;
     InsertQuery.ExecSQL;
   end;
 
@@ -2330,17 +2411,17 @@ var
 
     while not MissingQuery.Eof do
     begin
-      ImagesDataNo := MissingQuery.FieldByName('ImagesDataNo').AsInteger;
+      ImagesDataNo := MissingQuery.FieldByName('IMAGES_DATA_NO').AsInteger;
 
-      if MissingQuery.FieldByName('Created').IsNull then
+      if MissingQuery.FieldByName('CREATED').IsNull then
       begin
         Inc(SkippedCount);
-        ErrorMessage := ErrorMessage + Format('ImagesDataNo %d has NULL Created date'#13#10, [ImagesDataNo]);
+        ErrorMessage := ErrorMessage + Format('IMAGES_DATA_NO %d has NULL CREATED date'#13#10, [ImagesDataNo]);
         MissingQuery.Next;
         Continue;
       end;
 
-      ImageDate := MissingQuery.FieldByName('Created').AsDateTime;
+      ImageDate := MissingQuery.FieldByName('CREATED').AsDateTime;
       FullSource := BuildImagePathForRoot(SourceRoot, ImagesDataNo, ImageDate);
 
       if not FileExists(FullSource) then
@@ -2378,8 +2459,8 @@ begin
   SkippedCount := 0;
   ErrorMessage := '';
 
-  // Remove backup rows for images that no longer exist in ImagesData
-  ConnDB.Execute('DELETE FROM ImagesDataBackup WHERE ImagesDataNo NOT IN (SELECT ImagesDataNo FROM ImagesData)');
+  // Remove backup rows for images that no longer exist in IMAGES_DATA.
+  AConn.ExecSQL('DELETE FROM IMAGES_DATA_BACKUP WHERE IMAGES_DATA_NO NOT IN (SELECT IMAGES_DATA_NO FROM IMAGES_DATA)');
 
   if not DirectoryExists(SourceFolder) then
     raise Exception.Create('Source folder does not exist: ' + SourceFolder);
@@ -2387,21 +2468,20 @@ begin
   SourceRoot := IncludeTrailingPathDelimiter(SourceFolder);
   TargetRoot := IncludeTrailingPathDelimiter(TargetFolder);
 
-  CheckQuery := TADOQuery.Create(nil);
-  InsertQuery := TADOQuery.Create(nil);
-  ExistsQuery := TADOQuery.Create(nil);
-  MissingQuery := TADOQuery.Create(nil);
-  Screen.Cursor := crHourGlass;
+  CheckQuery := TFDQuery.Create(nil);
+  InsertQuery := TFDQuery.Create(nil);
+  ExistsQuery := TFDQuery.Create(nil);
+  MissingQuery := TFDQuery.Create(nil);
   try
-    CheckQuery.Connection := ConnDB;
-    InsertQuery.Connection := ConnDB;
-    ExistsQuery.Connection := ConnDB;
-    MissingQuery.Connection := ConnDB;
+    CheckQuery.Connection := AConn;
+    InsertQuery.Connection := AConn;
+    ExistsQuery.Connection := AConn;
+    MissingQuery.Connection := AConn;
 
-    CheckQuery.SQL.Text := 'SELECT ImagesDataNo FROM ImagesDataBackup WHERE ImagesDataNo = :ImagesDataNo';
-    InsertQuery.SQL.Text := 'INSERT INTO ImagesDataBackup (ID, ImagesDataNo) VALUES (:ID, :ImagesDataNo)';
-    ExistsQuery.SQL.Text := 'SELECT ImagesDataNo FROM ImagesData WHERE ImagesDataNo = :ImagesDataNo';
-    MissingQuery.SQL.Text := 'SELECT ImagesDataNo, Created FROM ImagesData WHERE ImagesDataNo NOT IN (SELECT ImagesDataNo FROM ImagesDataBackup)';
+    CheckQuery.SQL.Text := 'SELECT IMAGES_DATA_NO FROM IMAGES_DATA_BACKUP WHERE IMAGES_DATA_NO = :IMAGES_DATA_NO';
+    InsertQuery.SQL.Text := 'INSERT INTO IMAGES_DATA_BACKUP (ID, IMAGES_DATA_NO) VALUES (:ID, :IMAGES_DATA_NO)';
+    ExistsQuery.SQL.Text := 'SELECT IMAGES_DATA_NO FROM IMAGES_DATA WHERE IMAGES_DATA_NO = :IMAGES_DATA_NO';
+    MissingQuery.SQL.Text := 'SELECT IMAGES_DATA_NO, CREATED FROM IMAGES_DATA WHERE IMAGES_DATA_NO NOT IN (SELECT IMAGES_DATA_NO FROM IMAGES_DATA_BACKUP)';
 
     // If weekly backup is not due, run the missing-only backup process
     if not ShouldBackupImages then
@@ -2416,7 +2496,6 @@ begin
     if (CopiedCount > 0) and (ErrorMessage = '') then
       WriteLastImageBackupDate;
   finally
-    Screen.Cursor := crDefault;
     CheckQuery.Free;
     InsertQuery.Free;
     ExistsQuery.Free;
