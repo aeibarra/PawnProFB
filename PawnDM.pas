@@ -67,11 +67,6 @@ type
     clnWeigthUnits: TClientDataSet;
     clnWeigthUnitsWeigthUnitValue: TStringField;
     clnWeigthUnitsWeightUnit: TStringField;
-    clnItemStatus: TClientDataSet;
-    qryItemStatus: TADOQuery;
-    prvItemStatus: TDataSetProvider;
-    clnItemStatusStatus: TStringField;
-    clnItemStatusStatusDesc: TStringField;
     qryUpdPawnStatus: TADOQuery;
     qryGetPawnStatusFromItems: TADOQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
@@ -79,21 +74,6 @@ type
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     vilMain24: TSVGIconVirtualImageList;
-    qryPayments_: TADOQuery;
-    qryPayments_cComment: TStringField;
-    qryPayments_cPeriodNo: TIntegerField;
-    qryPayments_PaymentNo: TAutoIncField;
-    qryPayments_TransactionNo: TIntegerField;
-    qryPayments_PayDate: TDateField;
-    qryPayments_PayAmount: TFloatField;
-    qryPayments_PayComment: TMemoField;
-    qryPayments_PayMethod: TSmallintField;
-    qryPayments_PayInterest: TFloatField;
-    qryPayments_PayPrincipal: TFloatField;
-    qryPayments_PrincBalance: TFloatField;
-    qryPayments_InsterestBalance: TFloatField;
-    qryLastPayment_: TADOQuery;
-    qryLastPayment_LastPaymentDate: TDateField;
     qryPawnPay: TFDMemTable;
     qryNextTicketNo: TADOQuery;
     qryNextTicketNoLastKey: TIntegerField;
@@ -217,8 +197,8 @@ type
     qryPaymentsPAY_PRINCIPAL: TFloatField;
     qryPaymentsPRINC_BALANCE: TFloatField;
     qryPaymentsINTEREST_BALANCE: TFloatField;
-    FDMemTable1: TFDMemTable;
-    FDQuery1: TFDQuery;
+    clnItemStatus: TFDMemTable;
+    qryItemStatus: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -793,7 +773,10 @@ begin
   QryStates.Last;
   QryStates.First;
 
-  clnItemStatus.Open;
+  // Briefcase pattern: load ITEM_STATUS into the in-memory clnItemStatus once
+  // at startup so combobox population doesn't hit the DB every time.
+  qryItemStatus.Open;
+  clnItemStatus.CopyDataSet(qryItemStatus, [coStructure, coRestart, coAppend]);
   qryItemStatus.Close;
 
   RefreshStoreQry;
@@ -1555,8 +1538,8 @@ begin
   i := 0;
   while not clnItemStatus.Eof do
     begin
-      cb.Items.Add(clnItemStatusStatusDesc.AsString);
-      if StatusToSelect = clnItemStatusStatus.AsString then
+      cb.Items.Add(clnItemStatus.FieldByName('STATUS_DESC').AsString);
+      if StatusToSelect = clnItemStatus.FieldByName('STATUS').AsString then
         iStatus := i;
 
       inc(i);

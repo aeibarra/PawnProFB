@@ -1450,21 +1450,21 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'InvItemCount'
+              FieldName = 'INV_ITEM_COUNT'
               Title.Caption = 'Quantity'
               Width = 62
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'UnitCost'
+              FieldName = 'UNIT_COST'
               Title.Caption = 'Cost'
               Width = 80
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'Weight'
+              FieldName = 'WEIGHT'
               Width = 58
               Visible = True
             end
@@ -1477,13 +1477,13 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'Description'
+              FieldName = 'DESCRIPTION'
               Width = 191
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'SizeLength'
+              FieldName = 'SIZE_LENGTH'
               Title.Caption = 'Length'
               Width = 51
               Visible = True
@@ -1511,17 +1511,17 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'Note'
+              FieldName = 'NOTE'
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'Created'
+              FieldName = 'CREATED'
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'InvItemStatus'
+              FieldName = 'INV_ITEM_STATUS'
               Visible = True
             end>
         end
@@ -3416,7 +3416,7 @@ object frmClients: TfrmClients
       Size = 30
     end
   end
-  object qryInvItems: TADOQuery
+  object qryInvItems_: TADOQuery
     Connection = DM.ConnDB
     CursorType = ctStatic
     AfterOpen = qryInvItemsAfterScroll
@@ -3441,158 +3441,158 @@ object frmClients: TfrmClients
       '       *'
       'FROM InventoryItems '
       'WHERE TransactionNo = :TransactionNo')
-    Left = 1000
-    Top = 464
-    object qryInvItemscType: TStringField
+    Left = 1016
+    Top = 362
+    object qryInvItems_cType: TStringField
       FieldKind = fkCalculated
       FieldName = 'cType'
       Size = 40
       Calculated = True
     end
-    object qryInvItemscStyle: TStringField
+    object qryInvItems_cStyle: TStringField
       FieldKind = fkCalculated
       FieldName = 'cStyle'
       Size = 30
       Calculated = True
     end
-    object qryInvItemscMetal: TStringField
+    object qryInvItems_cMetal: TStringField
       FieldKind = fkCalculated
       FieldName = 'cMetal'
       Size = 30
       Calculated = True
     end
-    object qryInvItemscTotalWeight: TFloatField
+    object qryInvItems_cTotalWeight: TFloatField
       FieldKind = fkCalculated
       FieldName = 'cTotalWeight'
       Calculated = True
     end
-    object qryInvItemscStatus: TStringField
+    object qryInvItems_cStatus: TStringField
       FieldKind = fkCalculated
       FieldName = 'cStatus'
       Size = 50
       Calculated = True
     end
-    object qryInvItemscHasPics: TStringField
+    object qryInvItems_cHasPics: TStringField
       FieldKind = fkCalculated
       FieldName = 'cHasPics'
       Size = 1
       Calculated = True
     end
-    object qryInvItemsHasPics: TBooleanField
+    object qryInvItems_HasPics: TBooleanField
       FieldName = 'HasPics'
     end
-    object qryInvItemsInvItemNo: TIntegerField
+    object qryInvItems_InvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end
-    object qryInvItemsInvItemBarcode: TStringField
+    object qryInvItems_InvItemBarcode: TStringField
       FieldName = 'InvItemBarcode'
       Size = 30
     end
-    object qryInvItemsInvCatNo: TIntegerField
+    object qryInvItems_InvCatNo: TIntegerField
       FieldName = 'InvCatNo'
     end
-    object qryInvItemsJType: TStringField
+    object qryInvItems_JType: TStringField
       FieldName = 'JType'
       Size = 1
     end
-    object qryInvItemsJStyle: TStringField
+    object qryInvItems_JStyle: TStringField
       FieldName = 'JStyle'
       Size = 1
     end
-    object qryInvItemsJMetal: TStringField
+    object qryInvItems_JMetal: TStringField
       FieldName = 'JMetal'
       Size = 1
     end
-    object qryInvItemsInvItemCount: TIntegerField
+    object qryInvItems_InvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object qryInvItemsNote: TStringField
+    object qryInvItems_Note: TStringField
       FieldName = 'Note'
       Size = 80
     end
-    object qryInvItemsSizeLength: TFloatField
+    object qryInvItems_SizeLength: TFloatField
       FieldName = 'SizeLength'
     end
-    object qryInvItemsWeight: TFloatField
+    object qryInvItems_Weight: TFloatField
       FieldName = 'Weight'
       DisplayFormat = '0.##'
     end
-    object qryInvItemsKT: TFloatField
+    object qryInvItems_KT: TFloatField
       FieldName = 'KT'
     end
-    object qryInvItemsCreated: TDateTimeField
+    object qryInvItems_Created: TDateTimeField
       FieldName = 'Created'
     end
-    object qryInvItemsUnitCost: TBCDField
+    object qryInvItems_UnitCost: TBCDField
       FieldName = 'UnitCost'
       currency = True
       Precision = 19
     end
-    object qryInvItemsUnitPrice: TBCDField
+    object qryInvItems_UnitPrice: TBCDField
       FieldName = 'UnitPrice'
       currency = True
       Precision = 19
     end
-    object qryInvItemsInvItemStatus: TStringField
+    object qryInvItems_InvItemStatus: TStringField
       FieldName = 'InvItemStatus'
       Size = 1
     end
-    object qryInvItemsTransactionNo: TIntegerField
+    object qryInvItems_TransactionNo: TIntegerField
       FieldName = 'TransactionNo'
     end
-    object qryInvItemsInvOriginalItemNo: TIntegerField
+    object qryInvItems_InvOriginalItemNo: TIntegerField
       FieldName = 'InvOriginalItemNo'
     end
-    object qryInvItemsInvItemBrand: TStringField
+    object qryInvItems_InvItemBrand: TStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object qryInvItemsOwnerAppNumber: TStringField
+    object qryInvItems_OwnerAppNumber: TStringField
       FieldName = 'OwnerAppNumber'
       Size = 40
     end
-    object qryInvItemsModelNumber: TStringField
+    object qryInvItems_ModelNumber: TStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object qryInvItemsSerialNumber: TStringField
+    object qryInvItems_SerialNumber: TStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object qryInvItemsGender: TStringField
+    object qryInvItems_Gender: TStringField
       FieldName = 'Gender'
       Size = 1
     end
-    object qryInvItemsDescription: TStringField
+    object qryInvItems_Description: TStringField
       FieldName = 'Description'
       Size = 120
     end
-    object qryInvItemsWeightUnit: TStringField
+    object qryInvItems_WeightUnit: TStringField
       FieldName = 'WeightUnit'
       Size = 1
     end
-    object qryInvItemsPawnedDate: TDateField
+    object qryInvItems_PawnedDate: TDateField
       FieldName = 'PawnedDate'
     end
-    object qryInvItemsPurchaseDate: TDateField
+    object qryInvItems_PurchaseDate: TDateField
       FieldName = 'PurchaseDate'
     end
-    object qryInvItemsRedeemedDate: TDateField
+    object qryInvItems_RedeemedDate: TDateField
       FieldName = 'RedeemedDate'
     end
-    object qryInvItemsDefaultedDate: TDateField
+    object qryInvItems_DefaultedDate: TDateField
       FieldName = 'DefaultedDate'
     end
-    object qryInvItemsMeltedDate: TDateField
+    object qryInvItems_MeltedDate: TDateField
       FieldName = 'MeltedDate'
     end
-    object qryInvItemsForSaleDate: TDateField
+    object qryInvItems_ForSaleDate: TDateField
       FieldName = 'ForSaleDate'
     end
-    object qryInvItemsSoldDate: TDateField
+    object qryInvItems_SoldDate: TDateField
       FieldName = 'SoldDate'
     end
-    object qryInvItemsLayawayDate: TDateField
+    object qryInvItems_LayawayDate: TDateField
       FieldName = 'LayawayDate'
     end
   end
@@ -3623,8 +3623,8 @@ object frmClients: TfrmClients
       end>
     SQL.Strings = (
       'exec spu_CalcUnitCostFromWeight :TransactionNo')
-    Left = 1000
-    Top = 569
+    Left = 933
+    Top = 615
   end
   object FormState: TRzFormState
     RegIniFile = DM.RegIniFile
@@ -14912,8 +14912,8 @@ object frmClients: TfrmClients
   end
   object PopMnuPawnItems: TPopupMenu
     OnPopup = PopMnuPawnItemsPopup
-    Left = 1185
-    Top = 500
+    Left = 1249
+    Top = 465
     object popmnuItemPawned: TMenuItem
       Caption = 'Pawned'
       OnClick = popmnuItemPawnedClick
@@ -14955,6 +14955,233 @@ object frmClients: TfrmClients
     object mnuReOpenLayaway: TMenuItem
       Caption = 'Re-Open Layaway'
       OnClick = mnuReOpenLayawayClick
+    end
+  end
+  object qryInvItems: TFDQuery
+    AfterOpen = qryInvItemsAfterScroll
+    AfterPost = qryInvItemsAfterPost
+    AfterScroll = qryInvItemsAfterScroll
+    OnCalcFields = qryInvItemsCalcFields
+    OnNewRecord = qryInvItemsNewRecord
+    Connection = DM.ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
+    UpdateOptions.UpdateTableName = 'INVENTORY_ITEMS'
+    UpdateOptions.KeyFields = 'INV_ITEM_NO'
+    UpdateOptions.AutoIncFields = 'INV_ITEM_NO'
+    DataSource = DM.DSTransactions
+    SQL.Strings = (
+      'SELECT'
+      '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
+
+        '           WHERE T01.IMAG_REF_TO_ROW_NO = INVENTORY_ITEMS.INV_IT' +
+        'EM_NO)) AS HAS_PICS,'
+      '  INVENTORY_ITEMS.*'
+      'FROM INVENTORY_ITEMS'
+      'WHERE TRANSACTION_NO = :TRANSACTION_NO')
+    Left = 998
+    Top = 466
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryInvItemscType: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cType'
+      Size = 40
+      Calculated = True
+    end
+    object qryInvItemscStyle: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cStyle'
+      Size = 30
+      Calculated = True
+    end
+    object qryInvItemscMetal: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cMetal'
+      Size = 30
+      Calculated = True
+    end
+    object qryInvItemscTotalWeight: TFloatField
+      FieldKind = fkCalculated
+      FieldName = 'cTotalWeight'
+      Calculated = True
+    end
+    object qryInvItemscStatus: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cStatus'
+      Size = 50
+      Calculated = True
+    end
+    object qryInvItemscHasPics: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cHasPics'
+      Size = 1
+      Calculated = True
+    end
+    object qryInvItemsHAS_PICS: TBooleanField
+      AutoGenerateValue = arDefault
+      FieldName = 'HAS_PICS'
+      Origin = 'HAS_PICS'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsINV_ITEM_NO: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'INV_ITEM_NO'
+      Origin = 'INV_ITEM_NO'
+      Required = True
+    end
+    object qryInvItemsINV_ITEM_BARCODE: TStringField
+      FieldName = 'INV_ITEM_BARCODE'
+      Origin = 'INV_ITEM_BARCODE'
+      Size = 30
+    end
+    object qryInvItemsINV_CAT_NO: TIntegerField
+      FieldName = 'INV_CAT_NO'
+      Origin = 'INV_CAT_NO'
+      Required = True
+    end
+    object qryInvItemsJ_TYPE: TStringField
+      FieldName = 'J_TYPE'
+      Origin = 'J_TYPE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsJ_STYLE: TStringField
+      FieldName = 'J_STYLE'
+      Origin = 'J_STYLE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsJ_METAL: TStringField
+      FieldName = 'J_METAL'
+      Origin = 'J_METAL'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsINV_ITEM_COUNT: TIntegerField
+      FieldName = 'INV_ITEM_COUNT'
+      Origin = 'INV_ITEM_COUNT'
+    end
+    object qryInvItemsNOTE: TStringField
+      FieldName = 'NOTE'
+      Origin = 'NOTE'
+      Size = 80
+    end
+    object qryInvItemsSIZE_LENGTH: TFloatField
+      FieldName = 'SIZE_LENGTH'
+      Origin = 'SIZE_LENGTH'
+    end
+    object qryInvItemsWEIGHT: TFloatField
+      FieldName = 'WEIGHT'
+      Origin = 'WEIGHT'
+    end
+    object qryInvItemsKT: TFloatField
+      FieldName = 'KT'
+      Origin = 'KT'
+    end
+    object qryInvItemsCREATED: TSQLTimeStampField
+      FieldName = 'CREATED'
+      Origin = 'CREATED'
+    end
+    object qryInvItemsUNIT_COST: TFMTBCDField
+      FieldName = 'UNIT_COST'
+      Origin = 'UNIT_COST'
+      Precision = 18
+      Size = 2
+    end
+    object qryInvItemsUNIT_PRICE: TFMTBCDField
+      FieldName = 'UNIT_PRICE'
+      Origin = 'UNIT_PRICE'
+      Precision = 18
+      Size = 2
+    end
+    object qryInvItemsINV_ITEM_STATUS: TStringField
+      FieldName = 'INV_ITEM_STATUS'
+      Origin = 'INV_ITEM_STATUS'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsTRANSACTION_NO: TIntegerField
+      FieldName = 'TRANSACTION_NO'
+      Origin = 'TRANSACTION_NO'
+    end
+    object qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField
+      FieldName = 'INV_ORIGINAL_ITEM_NO'
+      Origin = 'INV_ORIGINAL_ITEM_NO'
+    end
+    object qryInvItemsINV_ITEM_BRAND: TStringField
+      FieldName = 'INV_ITEM_BRAND'
+      Origin = 'INV_ITEM_BRAND'
+      Size = 30
+    end
+    object qryInvItemsSERIAL_NUMBER: TStringField
+      FieldName = 'SERIAL_NUMBER'
+      Origin = 'SERIAL_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsOWNER_APP_NUMBER: TStringField
+      FieldName = 'OWNER_APP_NUMBER'
+      Origin = 'OWNER_APP_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsMODEL_NUMBER: TStringField
+      FieldName = 'MODEL_NUMBER'
+      Origin = 'MODEL_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsGENDER: TStringField
+      FieldName = 'GENDER'
+      Origin = 'GENDER'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsDESCRIPTION: TStringField
+      FieldName = 'DESCRIPTION'
+      Origin = 'DESCRIPTION'
+      Size = 120
+    end
+    object qryInvItemsWEIGHT_UNIT: TStringField
+      FieldName = 'WEIGHT_UNIT'
+      Origin = 'WEIGHT_UNIT'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsPAWNED_DATE: TDateField
+      FieldName = 'PAWNED_DATE'
+      Origin = 'PAWNED_DATE'
+    end
+    object qryInvItemsPURCHASE_DATE: TDateField
+      FieldName = 'PURCHASE_DATE'
+      Origin = 'PURCHASE_DATE'
+    end
+    object qryInvItemsREDEEMED_DATE: TDateField
+      FieldName = 'REDEEMED_DATE'
+      Origin = 'REDEEMED_DATE'
+    end
+    object qryInvItemsDEFAULTED_DATE: TDateField
+      FieldName = 'DEFAULTED_DATE'
+      Origin = 'DEFAULTED_DATE'
+    end
+    object qryInvItemsMELTED_DATE: TDateField
+      FieldName = 'MELTED_DATE'
+      Origin = 'MELTED_DATE'
+    end
+    object qryInvItemsFORSALE_DATE: TDateField
+      FieldName = 'FORSALE_DATE'
+      Origin = 'FORSALE_DATE'
+    end
+    object qryInvItemsSOLD_DATE: TDateField
+      FieldName = 'SOLD_DATE'
+      Origin = 'SOLD_DATE'
+    end
+    object qryInvItemsLAYAWAY_DATE: TDateField
+      FieldName = 'LAYAWAY_DATE'
+      Origin = 'LAYAWAY_DATE'
     end
   end
 end

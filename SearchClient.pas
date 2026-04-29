@@ -10,7 +10,10 @@ uses
   myChkBox, ppParameter, ppDesignLayer, RzForms, RzCommon, System.Actions, PawnGlobal,
   Datasnap.Provider, Datasnap.DBClient, RzButton, FireDAC.Stan.Param,
   ppStrtch, ppRegion, DrvLic_PDF417Parsing, RzTabs, uPawnPhoneEdit, RzLabel,
-  RzDBLbl, RzEdit, JvExControls, JvLinkLabel, JvExStdCtrls, JvHtControls;
+  RzDBLbl, RzEdit, JvExControls, JvLinkLabel, JvExStdCtrls, JvHtControls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 const
   sx_ProcessCardScanning = wm_User + 100;
@@ -54,11 +57,11 @@ type
     qryTypes: TADOQuery;
     qryStyles: TADOQuery;
     qryMetal: TADOQuery;
-    qryInvItems: TADOQuery;
-    qryInvItemscStyle: TStringField;
-    qryInvItemscMetal: TStringField;
-    qryInvItemscTotalWeight: TFloatField;
-    qryInvItemscStatus: TStringField;
+    qryInvItems_: TADOQuery;
+    qryInvItems_cStyle: TStringField;
+    qryInvItems_cMetal: TStringField;
+    qryInvItems_cTotalWeight: TFloatField;
+    qryInvItems_cStatus: TStringField;
     qryPoliceRepCustCustno: TAutoIncField;
     qryPoliceRepCustCustTicketNo: TStringField;
     qryPoliceRepCustCustLast: TStringField;
@@ -117,35 +120,35 @@ type
     qryPawnStonesCT: TFloatField;
     qryPawnStonesWT: TFloatField;
     qryPawnStonesStoneType: TStringField;
-    qryInvItemsInvItemNo: TIntegerField;
-    qryInvItemsInvItemBarcode: TStringField;
-    qryInvItemsInvCatNo: TIntegerField;
-    qryInvItemsJType: TStringField;
-    qryInvItemsJStyle: TStringField;
-    qryInvItemsJMetal: TStringField;
-    qryInvItemsInvItemCount: TIntegerField;
-    qryInvItemsNote: TStringField;
-    qryInvItemsSizeLength: TFloatField;
-    qryInvItemsWeight: TFloatField;
-    qryInvItemsKT: TFloatField;
-    qryInvItemsCreated: TDateTimeField;
-    qryInvItemsUnitCost: TBCDField;
-    qryInvItemsUnitPrice: TBCDField;
-    qryInvItemsInvItemStatus: TStringField;
-    qryInvItemsTransactionNo: TIntegerField;
-    qryInvItemsInvOriginalItemNo: TIntegerField;
-    qryInvItemsInvItemBrand: TStringField;
-    qryInvItemsOwnerAppNumber: TStringField;
-    qryInvItemsModelNumber: TStringField;
-    qryInvItemsSerialNumber: TStringField;
-    qryInvItemsGender: TStringField;
+    qryInvItems_InvItemNo: TIntegerField;
+    qryInvItems_InvItemBarcode: TStringField;
+    qryInvItems_InvCatNo: TIntegerField;
+    qryInvItems_JType: TStringField;
+    qryInvItems_JStyle: TStringField;
+    qryInvItems_JMetal: TStringField;
+    qryInvItems_InvItemCount: TIntegerField;
+    qryInvItems_Note: TStringField;
+    qryInvItems_SizeLength: TFloatField;
+    qryInvItems_Weight: TFloatField;
+    qryInvItems_KT: TFloatField;
+    qryInvItems_Created: TDateTimeField;
+    qryInvItems_UnitCost: TBCDField;
+    qryInvItems_UnitPrice: TBCDField;
+    qryInvItems_InvItemStatus: TStringField;
+    qryInvItems_TransactionNo: TIntegerField;
+    qryInvItems_InvOriginalItemNo: TIntegerField;
+    qryInvItems_InvItemBrand: TStringField;
+    qryInvItems_OwnerAppNumber: TStringField;
+    qryInvItems_ModelNumber: TStringField;
+    qryInvItems_SerialNumber: TStringField;
+    qryInvItems_Gender: TStringField;
     qryTypesJType: TStringField;
     qryTypesJTypeDesc: TStringField;
     qryStylesJStyle: TStringField;
     qryStylesJStyleDesc: TStringField;
     qryMetalJMetal: TStringField;
     qryMetalJMetalDesc: TStringField;
-    qryInvItemscType: TStringField;
+    qryInvItems_cType: TStringField;
     qryPawnItemscStone1Shape: TStringField;
     qryPawnItemscStone1Color: TStringField;
     qryPawnItemscStone1CT: TFloatField;
@@ -156,7 +159,7 @@ type
     qryPawnItemscStone2Qty: TIntegerField;
     spuCalcUnitCostFromWeight: TADOStoredProc;
     qryCalcUnitCostFromWeight: TADOQuery;
-    qryInvItemsDescription: TStringField;
+    qryInvItems_Description: TStringField;
     qryPawnItemsDescription: TStringField;
     mnuPawnStatusActive: TMenuItem;
     mnuPawnStatusInactive: TMenuItem;
@@ -540,8 +543,8 @@ type
     qryPoliceRepCustcCustPhCell: TStringField;
     qryPoliceRepCustcCustFlDrvLic: TStringField;
     Label5: TLabel;
-    qryInvItemscHasPics: TStringField;
-    qryInvItemsHasPics: TBooleanField;
+    qryInvItems_cHasPics: TStringField;
+    qryInvItems_HasPics: TBooleanField;
     RptPoliceLaserPrePrinted: TppReport;
     ppHeaderBand3: TppHeaderBand;
     ppDBText93: TppDBText;
@@ -759,7 +762,7 @@ type
     lblStoreName2: TppLabel;
     TimerForScan: TTimer;
     qryPoliceRepCustcPrnHPhone: TStringField;
-    qryInvItemsWeightUnit: TStringField;
+    qryInvItems_WeightUnit: TStringField;
     qryPawnItemsWeightUnit: TStringField;
     clnPawnItemsWeightUnit: TStringField;
     qryPawnItemscWeightToPrint: TStringField;
@@ -798,13 +801,13 @@ type
     btnPayAdd: TBitBtn;
     btnPayEdit: TBitBtn;
     btnPayDelete: TBitBtn;
-    qryInvItemsPawnedDate: TDateField;
-    qryInvItemsPurchaseDate: TDateField;
-    qryInvItemsRedeemedDate: TDateField;
-    qryInvItemsDefaultedDate: TDateField;
-    qryInvItemsMeltedDate: TDateField;
-    qryInvItemsForSaleDate: TDateField;
-    qryInvItemsSoldDate: TDateField;
+    qryInvItems_PawnedDate: TDateField;
+    qryInvItems_PurchaseDate: TDateField;
+    qryInvItems_RedeemedDate: TDateField;
+    qryInvItems_DefaultedDate: TDateField;
+    qryInvItems_MeltedDate: TDateField;
+    qryInvItems_ForSaleDate: TDateField;
+    qryInvItems_SoldDate: TDateField;
     PopMnuPawnItems: TPopupMenu;
     popmnuItemRedeemed: TMenuItem;
     popmnuItemDefaulted: TMenuItem;
@@ -827,13 +830,53 @@ type
     btnEditLayaway: TBitBtn;
     btnDeleteLayaway: TBitBtn;
     btnLayawayRcpt: TRzToolButton;
-    qryInvItemsLayawayDate: TDateField;
+    qryInvItems_LayawayDate: TDateField;
     PopMnuLayaway: TPopupMenu;
     mnuCloseLayaway: TMenuItem;
     N3: TMenuItem;
     mnuReOpenLayaway: TMenuItem;
     btnCloseLayaway: TBitBtn;
     btnAdjPoliceReport: TRzToolButton;
+    qryInvItems: TFDQuery;
+    qryInvItemsHAS_PICS: TBooleanField;
+    qryInvItemsINV_ITEM_NO: TIntegerField;
+    qryInvItemsINV_ITEM_BARCODE: TStringField;
+    qryInvItemsINV_CAT_NO: TIntegerField;
+    qryInvItemsJ_TYPE: TStringField;
+    qryInvItemsJ_STYLE: TStringField;
+    qryInvItemsJ_METAL: TStringField;
+    qryInvItemsINV_ITEM_COUNT: TIntegerField;
+    qryInvItemsNOTE: TStringField;
+    qryInvItemsSIZE_LENGTH: TFloatField;
+    qryInvItemsWEIGHT: TFloatField;
+    qryInvItemsKT: TFloatField;
+    qryInvItemsCREATED: TSQLTimeStampField;
+    qryInvItemsUNIT_COST: TFMTBCDField;
+    qryInvItemsUNIT_PRICE: TFMTBCDField;
+    qryInvItemsINV_ITEM_STATUS: TStringField;
+    qryInvItemsTRANSACTION_NO: TIntegerField;
+    qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField;
+    qryInvItemsINV_ITEM_BRAND: TStringField;
+    qryInvItemsSERIAL_NUMBER: TStringField;
+    qryInvItemsOWNER_APP_NUMBER: TStringField;
+    qryInvItemsMODEL_NUMBER: TStringField;
+    qryInvItemsGENDER: TStringField;
+    qryInvItemsDESCRIPTION: TStringField;
+    qryInvItemsWEIGHT_UNIT: TStringField;
+    qryInvItemsPAWNED_DATE: TDateField;
+    qryInvItemsPURCHASE_DATE: TDateField;
+    qryInvItemsREDEEMED_DATE: TDateField;
+    qryInvItemsDEFAULTED_DATE: TDateField;
+    qryInvItemsMELTED_DATE: TDateField;
+    qryInvItemsFORSALE_DATE: TDateField;
+    qryInvItemsSOLD_DATE: TDateField;
+    qryInvItemsLAYAWAY_DATE: TDateField;
+    qryInvItemscType: TStringField;
+    qryInvItemscStyle: TStringField;
+    qryInvItemscMetal: TStringField;
+    qryInvItemscTotalWeight: TFloatField;
+    qryInvItemscStatus: TStringField;
+    qryInvItemscHasPics: TStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -853,6 +896,7 @@ type
     procedure btnEditInvItemsClick(Sender: TObject);
     procedure qryInvItemsCalcFields(DataSet: TDataSet);
     procedure qryInvItemsNewRecord(DataSet: TDataSet);
+    procedure qryInvItemsAfterPost(DataSet: TDataSet);
     procedure ppLabel1GetText(Sender: TObject; var Text: String);
     procedure txtAdjTopMarginKeyPress(Sender: TObject; var Key: Char);
     procedure ppLabel2GetText(Sender: TObject; var Text: String);
@@ -1225,8 +1269,8 @@ begin
     qryInvItems.First;
     while not qryInvItems.Eof do
       begin
-        if qryInvItemsUnitCost.AsCurrency > 0 then
-          PawnAmount := PawnAmount + qryInvItemsUnitCost.AsCurrency
+        if qryInvItemsUNIT_COST.AsCurrency > 0 then
+          PawnAmount := PawnAmount + qryInvItemsUNIT_COST.AsCurrency
         else
           inc(ItemsWithNoEnteredCost);
 
@@ -1553,7 +1597,7 @@ begin
       DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
     end;
 
-   DM.RefreshADOQry(qryInvItems);
+   DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.ActionScanCardExecute(Sender: TObject);
@@ -1625,21 +1669,21 @@ end;
 function TfrmClients.GetItemAction: string;
 begin
   Result := '';
-  if not qryInvItemsMeltedDate.IsNull then
+  if not qryInvItemsMELTED_DATE.IsNull then
     Result := PawnItemStatus_Melted
-  else if not qryInvItemsForSaleDate.IsNull then
+  else if not qryInvItemsFORSALE_DATE.IsNull then
     Result := PawnItemStatus_ForSale;
 end;
 
 function TfrmClients.GetPawnItemStatus: string;
 begin
-  if not qryInvItemsPawnedDate.IsNull then
+  if not qryInvItemsPAWNED_DATE.IsNull then
     begin
-      if not qryInvItemsRedeemedDate.IsNull then
+      if not qryInvItemsREDEEMED_DATE.IsNull then
         begin
           Result := PawnItemStatus_Redeemed;
         end
-      else if not qryInvItemsDefaultedDate.IsNull then
+      else if not qryInvItemsDEFAULTED_DATE.IsNull then
         begin
           Result := GetItemAction;
           if Result = '' then
@@ -1648,13 +1692,13 @@ begin
       else
         Result := PawnItemStatus_Pawned;
     end
-  else if not qryInvItemsPurchaseDate.IsNull then
+  else if not qryInvItemsPURCHASE_DATE.IsNull then
     begin
       Result := GetItemAction;
       if Result = '' then
         Result := 'Purchased';
     end
-  else if not qryInvItemsSoldDate.IsNull then
+  else if not qryInvItemsSOLD_DATE.IsNull then
     begin
       Result := PawnItemStatus_Sold;
     end;
@@ -1766,22 +1810,35 @@ begin
   lblNextPaymentInfoItems.Caption := DM.qryTransactionscPawnNextMinPayment.AsString;
 end;
 
+// FB IDENTITY assigns INV_ITEM_NO on Post; barcode is derived from it, so it
+// has to be set after the insert lands. The barcode-empty guard stops the
+// inner Post from re-firing this handler indefinitely.
+procedure TfrmClients.qryInvItemsAfterPost(DataSet: TDataSet);
+begin
+  if qryInvItemsINV_ITEM_BARCODE.AsString = '' then
+  begin
+    qryInvItems.Edit;
+    qryInvItemsINV_ITEM_BARCODE.AsString := DM.GetBarcode(qryInvItemsINV_ITEM_NO.AsInteger);
+    qryInvItems.Post;
+  end;
+end;
+
 procedure TfrmClients.qryInvItemsCalcFields(DataSet: TDataSet);
 begin
-  qryInvItemscTotalWeight.AsFloat := qryInvItemsInvItemCount.AsInteger * qryInvItemsWeight.AsFloat;
+  qryInvItemscTotalWeight.AsFloat := qryInvItemsINV_ITEM_COUNT.AsInteger * qryInvItemsWEIGHT.AsFloat;
 
-  if qryTypes.Locate('JType', qryInvItemsJType.AsString, []) then
+  if qryTypes.Locate('JType', qryInvItemsJ_TYPE.AsString, []) then
     qryInvItemscType.AsString := qryTypesJTypeDesc.AsString;
 
-  if qryStyles.Locate('JStyle', qryInvItemsJStyle.AsString, []) then
+  if qryStyles.Locate('JStyle', qryInvItemsJ_STYLE.AsString, []) then
      qryInvItemscStyle.AsString := qryStylesJStyleDesc.AsString;
 
-  if qryMetal.Locate('JMetal', qryInvItemsJMetal.AsString, []) then
+  if qryMetal.Locate('JMetal', qryInvItemsJ_METAL.AsString, []) then
     qryInvItemscMetal.AsString := qryMetalJMetalDesc.AsString;
 
   qryInvItemscStatus.AsString := GetPawnItemStatus;
 
-  if qryInvItemsHasPics.AsBoolean then
+  if qryInvItemsHAS_PICS.AsBoolean then
     qryInvItemscHasPics.AsString := 'X'
   else
     qryInvItemscHasPics.AsString := '';
@@ -1789,38 +1846,39 @@ end;
 
 procedure TfrmClients.qryInvItemsNewRecord(DataSet: TDataSet);
 begin
-  qryInvItemsPawnedDate.Clear;
-  qryInvItemsPurchaseDate.Clear;
-  qryInvItemsRedeemedDate.Clear;
-  qryInvItemsDefaultedDate.Clear;
-  qryInvItemsMeltedDate.Clear;
-  qryInvItemsForSaleDate.Clear;
-  qryInvItemsSoldDate.Clear;
-  qryInvItemsLayawayDate.Clear;
+  qryInvItemsPAWNED_DATE.Clear;
+  qryInvItemsPURCHASE_DATE.Clear;
+  qryInvItemsREDEEMED_DATE.Clear;
+  qryInvItemsDEFAULTED_DATE.Clear;
+  qryInvItemsMELTED_DATE.Clear;
+  qryInvItemsFORSALE_DATE.Clear;
+  qryInvItemsSOLD_DATE.Clear;
+  qryInvItemsLAYAWAY_DATE.Clear;
 
-  qryInvItemsInvItemCount.AsInteger := 1;
+  qryInvItemsINV_ITEM_COUNT.AsInteger := 1;
   if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     begin
-      qryInvItemsInvItemStatus.AsString := 'P';  //For Pawn
-      qryInvItemsPawnedDate.AsDateTime := Now;
+      qryInvItemsINV_ITEM_STATUS.AsString := 'P';  //For Pawn
+      qryInvItemsPAWNED_DATE.AsDateTime := Now;
     end
   else if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
     begin
-      qryInvItemsInvItemStatus.AsString := 'S';  //For purchase
-      qryInvItemsPurchaseDate.AsDateTime := Now;
+      qryInvItemsINV_ITEM_STATUS.AsString := 'S';  //For purchase
+      qryInvItemsPURCHASE_DATE.AsDateTime := Now;
     end
   else if DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway then
     begin
-      qryInvItemsInvItemStatus.AsString := 'L';  //Layaway
-      qryInvItemsLayawayDate.AsDateTime := Now;
+      qryInvItemsINV_ITEM_STATUS.AsString := 'L';  //Layaway
+      qryInvItemsLAYAWAY_DATE.AsDateTime := Now;
     end;
 
-  qryInvItemsTransactionNo.AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  qryInvItemsTRANSACTION_NO.AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
 
-  qryInvItemsInvItemNo.AsInteger := DM.GetNextKey('InventoryItems');
-  qryInvItemsInvItemBarcode.AsString := DM.GetBarcode(qryInvItemsInvItemNo.AsInteger);
-  qryInvItemsInvCatNo.AsInteger := 11; //Other
-  qryInvItemsWeightUnit.AsString := DefaultWeightMeasureUnit;
+  // INV_ITEM_NO is FB IDENTITY - assigned on Post via UpdateOptions.AutoIncFields.
+  // INV_ITEM_BARCODE is computed in qryInvItemsAfterPost once the IDENTITY
+  // value is available.
+  qryInvItemsINV_CAT_NO.AsInteger := 11; //Other
+  qryInvItemsWEIGHT_UNIT.AsString := DefaultWeightMeasureUnit;
 
 end;
 
@@ -1989,8 +2047,8 @@ procedure TfrmClients.btnDeleteItemClick(Sender: TObject);
 begin
   if MessageDlg('Are you sure you wish to delete this item?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
-    ExecSQLStatementFB('delete from STONES where INV_ITEM_NO=' + qryInvItemsInvItemNo.AsString);
-    ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + qryInvItemsInvItemNo.AsString);
+    ExecSQLStatementFB('delete from STONES where INV_ITEM_NO=' + qryInvItemsINV_ITEM_NO.AsString);
+    ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + qryInvItemsINV_ITEM_NO.AsString);
 
     qryInvItems.Delete;
   end;
@@ -2088,7 +2146,7 @@ procedure TfrmClients.PopMnuPawnItemsPopup(Sender: TObject);
 var
   EnabledMnuEntries: boolean;
 begin
-  if (qryInvItemscStatus.AsString <> PawnItemStatus_Pawned) or (not qryInvItemsSoldDate.IsNull) then
+  if (qryInvItemscStatus.AsString <> PawnItemStatus_Pawned) or (not qryInvItemsSOLD_DATE.IsNull) then
     begin
       EnabledMnuEntries :=  false;
     end
@@ -2172,7 +2230,7 @@ begin
 
   frmItemPictures := TfrmItemPictures.Create(self);
   try
-    frmItemPictures.ImagRefToRowNo := qryInvItemsInvItemNo.AsInteger;
+    frmItemPictures.ImagRefToRowNo := qryInvItemsINV_ITEM_NO.AsInteger;
     frmItemPictures.TicketNo := DM.qryTransactionsTRAN_TICKET_NO.AsString;
     frmItemPictures.ItemCountInTran := GetRecNo(qryInvItems.RecNo);
     frmItemPictures.ShowModal;
@@ -2289,56 +2347,56 @@ end;
 procedure TfrmClients.UpdateStatusOnSelectedItemInPopUp(TransactionNo, ItemNo: integer;
                   const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
 begin
-  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate);
+  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate);
   DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-  DM.RefreshADOQry(qryInvItems);
+  DM.RefreshFBQry(qryInvItems);
   DM.RefreshFBQry(DM.qryTransactions);
 end;
 
 procedure TfrmClients.popmnuItemPawnedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
                                     null, null, null, null);
-//  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, null, null, null);
+//  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, null, null, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-//  DM.RefreshADOQry(qryInvItems);
+//  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemDefaultedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
                                     null, Date, null, null);
 
-//  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, null, null);
+//  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, Date, null, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-//  DM.RefreshADOQry(qryInvItems);
+//  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemForSaleClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
                                     null, Date, null, Date);
-//  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, null, Date);
+//  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, Date, null, Date);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-//  DM.RefreshADOQry(qryInvItems);
+//  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemMeltedScrapClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
                                     null, Date, Date, null);
-//  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, Date, null);
+//  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, Date, Date, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-//  DM.RefreshADOQry(qryInvItems);
+//  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemRedeemedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
                                     Date, null, null, null);
-//  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, Date, null, null, null);
+//  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, Date, null, null, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-//  DM.RefreshADOQry(qryInvItems);
+//  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.mnuCloseLayawayClick(Sender: TObject);
@@ -2358,7 +2416,7 @@ begin
   DM.PutPawnBackToActive(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
   DM.RefreshFBQry(DM.qryTransactions);
-  DM.RefreshADOQry(qryInvItems);
+  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.mnuPawnStatusInactiveClick(Sender: TObject);
@@ -2370,7 +2428,7 @@ begin
     if frmPawnChangeStatus.ShowModal = mrOk then
       begin
         DM.RefreshFBQry(DM.qryTransactions);
-        DM.RefreshADOQry(qryInvItems);
+        DM.RefreshFBQry(qryInvItems);
       end;
   finally
     frmPawnChangeStatus.Free;
@@ -2382,7 +2440,7 @@ begin
   DM.ReactivateLayway(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
   DM.RefreshFBQry(DM.qryTransactions);
-  DM.RefreshADOQry(qryInvItems);
+  DM.RefreshFBQry(qryInvItems);
 end;
 
 procedure TfrmClients.lblPawnDefaultDateGetText(Sender: TObject;

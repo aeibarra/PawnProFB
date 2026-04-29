@@ -206,7 +206,7 @@ object frmEnterItems: TfrmEnterItems
       ParentFont = False
     end
     object Label11: TLabel
-      Left = 140
+      Left = 136
       Top = 285
       Width = 58
       Height = 17
@@ -298,20 +298,20 @@ object frmEnterItems: TfrmEnterItems
       ParentFont = False
     end
     object DBEdit1: TDBEdit
-      Left = 30
+      Left = 33
       Top = 100
       Width = 81
       Height = 25
-      DataField = 'InvItemBarcode'
+      DataField = 'INV_ITEM_BARCODE'
       DataSource = dsInvItems
       TabOrder = 2
     end
     object DBLookupComboBox1: TDBLookupComboBox
-      Left = 30
-      Top = 150
+      Left = 36
+      Top = 151
       Width = 161
       Height = 25
-      DataField = 'JType'
+      DataField = 'J_TYPE'
       DataSource = dsInvItems
       KeyField = 'JType'
       ListField = 'JTypeDesc'
@@ -323,7 +323,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 150
       Width = 157
       Height = 25
-      DataField = 'JStyle'
+      DataField = 'J_STYLE'
       DataSource = dsInvItems
       KeyField = 'JStyle'
       ListField = 'JStyleDesc'
@@ -331,11 +331,11 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 9
     end
     object DBLookupComboBox3: TDBLookupComboBox
-      Left = 371
-      Top = 150
+      Left = 366
+      Top = 151
       Width = 153
       Height = 25
-      DataField = 'JMetal'
+      DataField = 'J_METAL'
       DataSource = dsInvItems
       KeyField = 'JMetal'
       ListField = 'JMetalDesc'
@@ -343,11 +343,11 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 10
     end
     object DBMemo1: TDBMemo
-      Left = 248
+      Left = 241
       Top = 305
       Width = 276
       Height = 25
-      DataField = 'Note'
+      DataField = 'NOTE'
       DataSource = dsInvItems
       TabOrder = 18
     end
@@ -356,7 +356,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 100
       Width = 64
       Height = 25
-      DataField = 'Weight'
+      DataField = 'WEIGHT'
       DataSource = dsInvItems
       TabOrder = 4
     end
@@ -374,7 +374,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 100
       Width = 73
       Height = 25
-      DataField = 'SizeLength'
+      DataField = 'SIZE_LENGTH'
       DataSource = dsInvItems
       TabOrder = 7
     end
@@ -383,7 +383,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 100
       Width = 52
       Height = 25
-      DataField = 'InvItemCount'
+      DataField = 'INV_ITEM_COUNT'
       DataSource = dsInvItems
       TabOrder = 3
     end
@@ -392,16 +392,16 @@ object frmEnterItems: TfrmEnterItems
       Top = 305
       Width = 97
       Height = 25
-      DataField = 'UnitCost'
+      DataField = 'UNIT_COST'
       DataSource = dsInvItems
       TabOrder = 16
     end
     object DBEdit3: TDBEdit
-      Left = 138
+      Left = 136
       Top = 305
       Width = 97
       Height = 25
-      DataField = 'UnitPrice'
+      DataField = 'UNIT_PRICE'
       DataSource = dsInvItems
       TabOrder = 17
     end
@@ -410,7 +410,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 48
       Width = 227
       Height = 25
-      DataField = 'InvCatNo'
+      DataField = 'INV_CAT_NO'
       DataSource = dsInvItems
       KeyField = 'InvCatNo'
       ListField = 'InvCategory'
@@ -423,7 +423,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 202
       Width = 161
       Height = 25
-      DataField = 'InvItemBrand'
+      DataField = 'INV_ITEM_BRAND'
       DataSource = dsInvItems
       TabOrder = 11
     end
@@ -432,7 +432,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 202
       Width = 157
       Height = 25
-      DataField = 'SerialNumber'
+      DataField = 'SERIAL_NUMBER'
       DataSource = dsInvItems
       TabOrder = 12
     end
@@ -441,7 +441,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 48
       Width = 261
       Height = 25
-      DataField = 'Description'
+      DataField = 'DESCRIPTION'
       DataSource = dsInvItems
       TabOrder = 1
     end
@@ -450,7 +450,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 253
       Width = 161
       Height = 25
-      DataField = 'OwnerAppNumber'
+      DataField = 'OWNER_APP_NUMBER'
       DataSource = dsInvItems
       TabOrder = 14
     end
@@ -459,7 +459,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 253
       Width = 153
       Height = 25
-      DataField = 'ModelNumber'
+      DataField = 'MODEL_NUMBER'
       DataSource = dsInvItems
       TabOrder = 15
     end
@@ -468,7 +468,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 182
       Width = 153
       Height = 98
-      DataField = 'Gender'
+      DataField = 'GENDER'
       DataSource = dsInvItems
       Items.Strings = (
         'Men'#39's     '
@@ -497,7 +497,7 @@ object frmEnterItems: TfrmEnterItems
       Top = 100
       Width = 105
       Height = 25
-      DataField = 'WeightUnit'
+      DataField = 'WEIGHT_UNIT'
       DataSource = dsInvItems
       KeyField = 'WeigthUnitValue'
       ListField = 'WeightUnit'
@@ -931,7 +931,7 @@ object frmEnterItems: TfrmEnterItems
   end
   object dsWeigthUnits: TDataSource
     DataSet = clnWeigthUnits
-    Left = 716
-    Top = 368
+    Left = 714
+    Top = 378
   end
 end

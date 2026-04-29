@@ -4520,38 +4520,6 @@ object DM: TDM
       Size = 50
     end
   end
-  object clnItemStatus: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'prvItemStatus'
-    Left = 918
-    Top = 126
-    object clnItemStatusStatus: TStringField
-      FieldName = 'Status'
-      Size = 1
-    end
-    object clnItemStatusStatusDesc: TStringField
-      FieldName = 'StatusDesc'
-      Size = 30
-    end
-  end
-  object qryItemStatus: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    Parameters = <>
-    SQL.Strings = (
-      'select Status, StatusDesc'
-      'from ItemStatus'
-      'order by StatusDesc')
-    Left = 918
-    Top = 10
-  end
-  object prvItemStatus: TDataSetProvider
-    DataSet = qryItemStatus
-    Options = [poReadOnly, poUseQuoteChar]
-    Left = 918
-    Top = 65
-  end
   object qryUpdPawnStatus: TADOQuery
     Connection = ConnDB
     Parameters = <
@@ -7677,107 +7645,6 @@ object DM: TDM
     Left = 180
     Top = 650
   end
-  object qryPayments_: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    AfterPost = qryPaymentsAfterPost
-    OnCalcFields = qryPaymentsCalcFields
-    OnNewRecord = qryPaymentsNewRecord
-    DataSource = DSTransactions
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      'SELECT * '
-      'FROM Payments '
-      'WHERE TransactionNo = :TransactionNo'
-      'ORDER BY PaymentNo DESC')
-    Left = 810
-    Top = 762
-    object qryPayments_cComment: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cComment'
-      Size = 50
-      Calculated = True
-    end
-    object qryPayments_cPeriodNo: TIntegerField
-      FieldKind = fkCalculated
-      FieldName = 'cPeriodNo'
-      Calculated = True
-    end
-    object qryPayments_PaymentNo: TAutoIncField
-      FieldName = 'PaymentNo'
-      ReadOnly = True
-    end
-    object qryPayments_TransactionNo: TIntegerField
-      FieldName = 'TransactionNo'
-    end
-    object qryPayments_PayDate: TDateField
-      FieldName = 'PayDate'
-    end
-    object qryPayments_PayAmount: TFloatField
-      FieldName = 'PayAmount'
-      currency = True
-    end
-    object qryPayments_PayComment: TMemoField
-      FieldName = 'PayComment'
-      BlobType = ftMemo
-    end
-    object qryPayments_PayMethod: TSmallintField
-      FieldName = 'PayMethod'
-    end
-    object qryPayments_PayInterest: TFloatField
-      FieldName = 'PayInterest'
-      currency = True
-    end
-    object qryPayments_PayPrincipal: TFloatField
-      FieldName = 'PayPrincipal'
-      currency = True
-    end
-    object qryPayments_PrincBalance: TFloatField
-      FieldName = 'PrincBalance'
-      currency = True
-    end
-    object qryPayments_InsterestBalance: TFloatField
-      FieldName = 'InsterestBalance'
-      currency = True
-    end
-  end
-  object qryLastPayment_: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      'SELECT'
-      '    COALESCE(P.MaxPayDate, T.TranDate) AS LastPaymentDate'
-      'FROM Transactions T'
-      'LEFT JOIN ('
-      '    SELECT TransactionNo, MAX(PayDate) AS MaxPayDate'
-      '    FROM Payments'
-      '    GROUP BY TransactionNo'
-      ') P ON P.TransactionNo = T.TransactionNo'
-      'WHERE T.TransactionNo = :TransactionNo;'
-      '')
-    Left = 809
-    Top = 690
-    object qryLastPayment_LastPaymentDate: TDateField
-      FieldName = 'LastPaymentDate'
-    end
-  end
   object qryPawnPay: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
@@ -8580,7 +8447,7 @@ object DM: TDM
       ReadOnly = True
     end
   end
-  object FDMemTable1: TFDMemTable
+  object clnItemStatus: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -8588,12 +8455,16 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 1097
-    Top = 30
+    Left = 989
+    Top = 762
   end
-  object FDQuery1: TFDQuery
+  object qryItemStatus: TFDQuery
     Connection = ConnFB
-    Left = 1105
-    Top = 102
+    SQL.Strings = (
+      'SELECT STATUS, STATUS_DESC'
+      'FROM ITEM_STATUS'
+      'ORDER BY STATUS_DESC')
+    Left = 989
+    Top = 824
   end
 end

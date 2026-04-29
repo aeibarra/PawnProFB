@@ -200,7 +200,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'InvItemBarcode'
+          FieldName = 'INV_ITEM_BARCODE'
           Title.Caption = 'Barcode'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -212,7 +212,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'InvItemCount'
+          FieldName = 'INV_ITEM_COUNT'
           Title.Caption = 'Quantity'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -224,7 +224,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'UnitCost'
+          FieldName = 'UNIT_COST'
           Title.Caption = 'Cost'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -236,7 +236,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'Weight'
+          FieldName = 'WEIGHT'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -15
@@ -259,7 +259,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'Description'
+          FieldName = 'DESCRIPTION'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -15
@@ -270,7 +270,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'SizeLength'
+          FieldName = 'SIZE_LENGTH'
           Title.Caption = 'Length'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -330,7 +330,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'Note'
+          FieldName = 'NOTE'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -15
@@ -340,7 +340,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
         end
         item
           Expanded = False
-          FieldName = 'Created'
+          FieldName = 'CREATED'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -15
@@ -393,7 +393,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
       Top = 41
       Width = 71
       Height = 28
-      DataField = 'TranTicketNo'
+      DataField = 'TRAN_TICKET_NO'
       DataSource = DM.DSTransactions
       ReadOnly = True
       TabOrder = 0
@@ -403,7 +403,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
       Top = 41
       Width = 89
       Height = 28
-      DataField = 'TranDate'
+      DataField = 'TRAN_DATE'
       DataSource = DM.DSTransactions
       ReadOnly = True
       TabOrder = 1
@@ -413,7 +413,7 @@ object frmChangePawnItemsStatus: TfrmChangePawnItemsStatus
       Top = 41
       Width = 89
       Height = 28
-      DataField = 'TranPawnAmount'
+      DataField = 'TRAN_PAWN_AMOUNT'
       DataSource = DM.DSTransactions
       ReadOnly = True
       TabOrder = 2

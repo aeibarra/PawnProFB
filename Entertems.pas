@@ -168,7 +168,7 @@ begin
       frmClients.qryInvItems.Edit;
     end;
 
-  clnStones.Params.ParamByName('InvItemNo').AsInteger := dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger;
+  clnStones.Params.ParamByName('InvItemNo').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
   clnStones.Open;
 
   DM.GetWeightUnits(clnWeigthUnits);
@@ -184,7 +184,7 @@ end;
 
 procedure TfrmEnterItems.clnStonesNewRecord(DataSet: TDataSet);
 begin
-  clnStonesInvItemNo.AsInteger := dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger;
+  clnStonesInvItemNo.AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
   clnStonesStoneWeightUnit.AsString := DefaultWeightMeasureUnit;
 end;
 
@@ -217,7 +217,7 @@ end;
 
 procedure TfrmEnterItems.btnSaveClick(Sender: TObject);
 begin
-  if frmClients.qryInvItemsInvCatNo.IsNull then
+  if frmClients.qryInvItemsINV_CAT_NO.IsNull then
     begin
       MessageDlg('Please select Item Category.', mtInformation, [mbOk], 0);
       exit;
@@ -229,7 +229,7 @@ begin
   if trim(frmClients.qryInvItems.FieldByName('InvItemBarcode').AsString) = '' then
     begin
       frmClients.qryInvItems.Edit;
-      frmClients.qryInvItems.FieldByName('InvItemBarcode').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
+      frmClients.qryInvItems.FieldByName('InvItemBarcode').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
       frmClients.qryInvItems.Post;
     end;
 

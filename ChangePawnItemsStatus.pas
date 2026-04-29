@@ -60,13 +60,13 @@ end;
 
 procedure TfrmChangePawnItemsStatus.dbGridItemsCellClick(Column: TColumn);
 begin
-  if frmClients.qryInvItemsInvItemNo.IsNull or (Column.Index <> 0) then
+  if frmClients.qryInvItemsINV_ITEM_NO.IsNull or (Column.Index <> 0) then
     exit;
 
-   if SelectedItemsInGrid.IsInCheckList(frmClients.qryInvItemsInvItemNo.AsString) then
-      SelectedItemsInGrid.RemoveFromCheckList(frmClients.qryInvItemsInvItemNo.AsString)
+   if SelectedItemsInGrid.IsInCheckList(frmClients.qryInvItemsINV_ITEM_NO.AsString) then
+      SelectedItemsInGrid.RemoveFromCheckList(frmClients.qryInvItemsINV_ITEM_NO.AsString)
    else
-     SelectedItemsInGrid.AddToCheckList(frmClients.qryInvItemsInvItemNo.AsString);
+     SelectedItemsInGrid.AddToCheckList(frmClients.qryInvItemsINV_ITEM_NO.AsString);
 
    dbGridItems.Invalidate;
 
@@ -75,11 +75,11 @@ end;
 procedure TfrmChangePawnItemsStatus.dbGridItemsDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
-  if frmClients.qryInvItemsInvItemNo.IsNull then
+  if frmClients.qryInvItemsINV_ITEM_NO.IsNull then
     exit;
 
 
-  GridCheckBox((Sender as TDBGrid), Rect, Column, DataCol, State, SelectedItemsInGrid.IsInCheckList(frmClients.qryInvItemsInvItemNo.AsString));
+  GridCheckBox((Sender as TDBGrid), Rect, Column, DataCol, State, SelectedItemsInGrid.IsInCheckList(frmClients.qryInvItemsINV_ITEM_NO.AsString));
 
 end;
 
@@ -88,7 +88,7 @@ begin
   SelectedItemsInGrid := TSelectedItemsInGridClass.Create;
 
   DM.FillPawnStatusCombobox(cbPawnStatus, DM.qryTransactionsTRAN_STATUS.AsString);
-  FillCombo(TCombobox(cbItemStatusToSet), DM.clnItemStatus, 'StatusDesc', '', false);
+  FillCombo(TCombobox(cbItemStatusToSet), DM.clnItemStatus, 'STATUS_DESC', '', false);
 
 end;
 
