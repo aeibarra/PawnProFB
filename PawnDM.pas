@@ -28,45 +28,12 @@ type
   end;
 
   TDM = class(TDataModule)
-    qryDummy: TADOQuery;
     ConnDB: TADOConnection;
     DSCustomers: TDataSource;
     DSStates: TDataSource;
     DSTransactions: TDataSource;
     DSPayments: TDataSource;
     DSStore: TDataSource;
-    QryStates: TADOQuery;
-    QryStatesState_Abbr: TStringField;
-    QryStatesState_Name: TStringField;
-    qryCustomers: TADOQuery;
-    qryCustomersCustno: TIntegerField;
-    qryCustomersCustTicketNo: TStringField;
-    qryCustomersCustLast: TStringField;
-    qryCustomersCustFirst: TStringField;
-    qryCustomersCustMid: TStringField;
-    qryCustomersCustDOB: TDateField;
-    qryCustomersCustGender: TStringField;
-    qryCustomersCustRace: TStringField;
-    qryCustomersCustHair: TStringField;
-    qryCustomersCustEyes: TStringField;
-    qryCustomersCustMark: TStringField;
-    qryCustomersCustWeight: TFloatField;
-    qryCustomersCustHeight: TStringField;
-    qryCustomersCustAddr: TStringField;
-    qryCustomersCustApt: TStringField;
-    qryCustomersCustCity: TStringField;
-    qryCustomersCustState: TStringField;
-    qryCustomersCustZip: TStringField;
-    qryCustomersCustPlaceEmply: TStringField;
-    qryCustomersCustFlDrvLic: TStringField;
-    qryCustomersCustID: TStringField;
-    qryCustomersCustIDType: TStringField;
-    qryCustomersCustIDAgencyState: TStringField;
-    qryCustomersCustPhHome: TStringField;
-    qryCustomersCustPhBussiness: TStringField;
-    qryCustomersCustPhBeep: TStringField;
-    qryCustomersCustPhCell: TStringField;
-    qryCustomersCustComment: TMemoField;
     qrySalesTran_: TADOQuery;
     qrySalesTran_TransactionNo: TIntegerField;
     qrySalesTran_CustNo: TIntegerField;
@@ -92,17 +59,11 @@ type
     dsSalesTran: TDataSource;
     RegIniFile: TRzRegIniFile;
     ImageListBtn: TImageList;
-    qryCustomerscCustPhHome: TStringField;
-    qryCustomersCCustPhBussiness: TStringField;
-    qryCustomersCCustPhBeep: TStringField;
-    qryCustomerscCustPhCell: TStringField;
-    qryCustomerscCustFlDrvLic: TStringField;
     qryImage: TADOQuery;
     qryImageImagesDataNo: TIntegerField;
     qryImageImageDesc: TStringField;
     qryImageImageData: TBlobField;
     qryImageUploadFileName: TStringField;
-    qryCustomerscCustAge: TIntegerField;
     clnWeigthUnits: TClientDataSet;
     clnWeigthUnitsWeigthUnitValue: TStringField;
     clnWeigthUnitsWeightUnit: TStringField;
@@ -117,7 +78,6 @@ type
     qryGetPawnStatusFromItemsItemCount: TIntegerField;
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
-    ADOQuery1: TADOQuery;
     vilMain24: TSVGIconVirtualImageList;
     qryPayments: TADOQuery;
     qryPaymentscComment: TStringField;
@@ -205,6 +165,43 @@ type
     qryStorecCity: TStringField;
     qryStorecState: TStringField;
     qryStorecZIp: TStringField;
+    qryStates: TFDQuery;
+    qryStatesSTATE_ABBR: TStringField;
+    qryStatesSTATE_NAME: TStringField;
+    qryCustomers: TFDQuery;
+    qryCustomersCUST_NO: TIntegerField;
+    qryCustomersCUST_FIRST: TWideStringField;
+    qryCustomersCUST_MID: TWideStringField;
+    qryCustomersCUST_LAST: TWideStringField;
+    qryCustomersCUST_DOB: TDateField;
+    qryCustomersCUST_GENDER: TWideStringField;
+    qryCustomersCUST_RACE: TWideStringField;
+    qryCustomersCUST_HAIR: TWideStringField;
+    qryCustomersCUST_EYES: TWideStringField;
+    qryCustomersCUST_MARK: TWideStringField;
+    qryCustomersCUST_WEIGHT: TFloatField;
+    qryCustomersCUST_HEIGHT: TWideStringField;
+    qryCustomersCUST_ADDR: TWideStringField;
+    qryCustomersCUST_APT: TWideStringField;
+    qryCustomersCUST_CITY: TWideStringField;
+    qryCustomersCUST_STATE: TWideStringField;
+    qryCustomersCUST_ZIP: TWideStringField;
+    qryCustomersCUST_PLACE_EMPLY: TWideStringField;
+    qryCustomersCUST_FL_DRV_LIC: TWideStringField;
+    qryCustomersCUST_ID: TWideStringField;
+    qryCustomersCUST_ID_TYPE: TWideStringField;
+    qryCustomersCUST_ID_AGENCY_STATE: TWideStringField;
+    qryCustomersCUST_PH_HOME: TWideStringField;
+    qryCustomersCUST_PH_BUSINESS: TWideStringField;
+    qryCustomersCUST_PH_BEEP: TWideStringField;
+    qryCustomersCUST_PH_CELL: TWideStringField;
+    qryCustomersCUST_COMMENT: TMemoField;
+    qryCustomersCCustPhHome: TStringField;
+    qryCustomersCCustPhBussiness: TStringField;
+    qryCustomersCCustPhBeep: TStringField;
+    qryCustomerscCustPhCell: TStringField;
+    qryCustomerscCustFlDrvLic: TStringField;
+    qryCustomerscCustAge: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -216,7 +213,6 @@ type
     procedure clnSalesTranCalcFields(DataSet: TDataSet);
     procedure clnSalesTranNewRecord(DataSet: TDataSet);
     procedure qryCustomersAfterScroll(DataSet: TDataSet);
-    procedure qryCustomersBeforePost(DataSet: TDataSet);
     procedure qryCustomersCalcFields(DataSet: TDataSet);
     procedure qryTransactionsTranDateChange(Sender: TField);
     procedure qryCustomersCustFlDrvLicGetText(Sender: TField; var Text: string;
@@ -228,7 +224,6 @@ type
     procedure PopulateWeightUnits;
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
     function RoutineExists(const Conn: TADOConnection; const Schema, Name, RoutineType: string): Boolean;
-    procedure EnsureLatePayObjects(const Conn: TADOConnection);
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
   public
@@ -333,7 +328,7 @@ begin
     exit;
 
   try
-    OpenSQLStatement('SELECT TOP 1 ' + FieldName + ' FROM ' + TableName);
+    OpenSQLStatementFB('SELECT TOP 1 ' + FieldName + ' FROM ' + TableName);
     Result := true;
   except
   end;
@@ -347,7 +342,7 @@ begin
     exit;
 
   try
-    OpenSQLStatement('SELECT 1 FROM SYS.SYSINDEX WHERE index_name = ' + QuotedStr(IndexName) +
+    OpenSQLStatementFB('SELECT 1 FROM SYS.SYSINDEX WHERE index_name = ' + QuotedStr(IndexName) +
                      ' AND table_id IN (SELECT table_id FROM SYS.SYSTABLE WHERE table_name = ' + QuotedStr(TableName) + ')');
     Result := true;
   except
@@ -381,262 +376,210 @@ begin
 
 end;
 
-
-procedure TDM.EnsureLatePayObjects(const Conn: TADOConnection);
-const
-  SCHEMA_NAME = 'DBA';
-  FN_NAME     = 'fn_TranWithLatePayment';
-  SP_NAME     = 'Rep_CustomerWithLatePayments';
-var
-  RA: Integer;
-  FN_SQL, SP_SQL: string;
-begin
-  FN_SQL :=
-    'CREATE FUNCTION "DBA"."fn_TranWithLatePayment"( @TransactionNo integer, @Mons integer = 1 ) ' + sLineBreak +
-    'RETURNS bit AS BEGIN ' + sLineBreak +
-    '  DECLARE @R integer ' + sLineBreak +
-    '  DECLARE @PawnDate date, @LastPayDay date, @CmpDate date ' + sLineBreak +
-    '  SELECT @PawnDate = TranDate FROM Transactions WHERE TransactionNo = @TransactionNo ' + sLineBreak +
-    '  SELECT @LastPayDay = max(PayDate) FROM Payments WHERE TransactionNo = @TransactionNo ' + sLineBreak +
-    '  IF @LastPayDay IS NULL ' + sLineBreak +
-    '    SET @CmpDate = @PawnDate ' + sLineBreak +
-    '  ELSE SET @CmpDate = @LastPayDay ' + sLineBreak +
-    '  IF abs(datediff(month, getdate(), @CmpDate)) > @Mons  SET @R = 1 ELSE SET @R = 0 ' + sLineBreak +
-    '  RETURN @R ' + sLineBreak +
-    'END';
-
-  SP_SQL :=
-    'CREATE OR REPLACE PROCEDURE "DBA"."Rep_CustomerWithLatePayments"( @Mons integer = 1 ) AS BEGIN ' + sLineBreak +
-    '  CREATE TABLE #PawnTran( Custno integer NULL, TransactionNo integer NULL, LatePayment integer NULL ) ' + sLineBreak +
-    '  INSERT INTO #PawnTran( Custno, TransactionNo, LatePayment ) ' + sLineBreak +
-    '    SELECT T1.Custno, T2.TransactionNo, "DBA".fn_TranWithLatePayment(T2.TransactionNo, @Mons) ' + sLineBreak +
-    '    FROM Customer AS T1 JOIN Transactions AS T2 ON T1.Custno = T2.CustNo ' + sLineBreak +
-    '    WHERE T2.TranType = ''P'' AND T2.TranStatus = ''A'' ' + sLineBreak +
-    '  SELECT TOP 1000 T1.TransactionNo, T3.TranTicketNo, CAST(T3.TranDate AS DateTime) AS TranDate, ' + sLineBreak +
-    '         LatePayment, T2.Custno, T2.CustLast, T2.CustFirst, T2.CustMid, ' + sLineBreak +
-    '         T2.CustPhCell, T2.CustPhHome, T2.CustPhBussiness, T3.TranPawnAmount ' + sLineBreak +
-    '    FROM #PawnTran AS T1 ' + sLineBreak +
-    '    JOIN Customer AS T2 ON T1.Custno = T2.Custno ' + sLineBreak +
-    '    JOIN Transactions AS T3 ON T1.TransactionNo = T3.TransactionNo ' + sLineBreak +
-    '    WHERE LatePayment = 1 ' + sLineBreak +
-    '    ORDER BY T2.CustFirst ASC, T2.CustLast ASC, T2.Custno ASC ' + sLineBreak +
-    '  DROP TABLE #PawnTran ' + sLineBreak +
-    'END';
-
-  // If you�re okay replacing definitions, you can skip existence checks entirely:
-  // Conn.Execute(FN_SQL, RA, []);
-  // Conn.Execute(SP_SQL, RA, []);
-
-  if not RoutineExists(Conn, SCHEMA_NAME, FN_NAME, 'FUNCTION') then
-    Conn.Execute(FN_SQL, RA, []);
-  if not RoutineExists(Conn, SCHEMA_NAME, SP_NAME, 'PROCEDURE') then
-    Conn.Execute(SP_SQL, RA, []);
-end;
-
 procedure TDM.CheckForMissingDBChanges;
 begin
   if UpperCase(ParamStr(1)) = 'UPDB' then
     begin
-      if not ExistsFieldInTable('Store', 'PawnDateCalculationBase') then
-        ExecSQLStatement('ALTER TABLE Store ADD "PawnDateCalculationBase" char(1) NULL DEFAULT ''D''');
-
-      if not ExistsFieldInTable('Store', 'SalesTaxPerc') then
-        ExecSQLStatement('ALTER TABLE Store ADD "SalesTaxPerc" double NULL DEFAULT 7');
-
-      //Unit weight
-      if not ExistsFieldInTable('Store', 'DefaultWeightMeasureUnit') then
-        ExecSQLStatement('ALTER TABLE Store ADD "DefaultWeightMeasureUnit" char(1) NULL ');
-
-      // Update DefaultWeightMeasureUnit with 'P' if it's NULL
-      if OpenSQLStatement('SELECT COUNT(*) FROM Store WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''') > 0 then
-        ExecSQLStatement('UPDATE Store SET DefaultWeightMeasureUnit = ''P'' WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''');
-
-      // Default Pawn Interest Rate
-      if not ExistsFieldInTable('Store', 'DefaultPawnInterestRate') then
-        ExecSQLStatement('ALTER TABLE Store ADD "DefaultPawnInterestRate" double NULL ');
-
-      // Update DefaultPawnInterestRate with 10 if it's NULL
-      if OpenSQLStatement('SELECT COUNT(*) FROM Store WHERE DefaultPawnInterestRate IS NULL') > 0 then
-        ExecSQLStatement('UPDATE Store SET DefaultPawnInterestRate = 10 WHERE DefaultPawnInterestRate IS NULL');
-
-      if not ExistsFieldInTable('InventoryItems', 'WeightUnit') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "WeightUnit" char(1) NULL ');
-
-      if not ExistsFieldInTable('Stones', 'StoneWeightUnit') then
-        ExecSQLStatement('ALTER TABLE Stones ADD "StoneWeightUnit" char(1) NULL ');
-
-      EnsureLatePayObjects(ConnDB);
-///
-     if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''C''') = 0 then
-       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''C'', ''Close'');');
-
-     if OpenSQLStatement('SELECT COUNT(*) FROM TransactionTypes WHERE TranType = ''L''') = 0 then
-       ExecSQLStatement('INSERT INTO TransactionTypes (TranType, TranTypeDesc) VALUES(''L'', ''Layaway'');');
-
-    if OpenSQLStatement('SELECT COUNT(*) FROM TableKeys WHERE TableName = ''LayawayTicketNo''') = 0 then
-       ExecSQLStatement('INSERT INTO TableKeys (TableName, LastKey) VALUES(''LayawayTicketNo'', 0);');
-
-    if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''L''') = 0 then
-       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''L'', ''Layaway'');');
-
-     if not ExistsFieldInTable('Transactions', 'TranCloseReason') then
-       ExecSQLStatement('ALTER TABLE Transactions ADD TranCloseReason SMALLINT DEFAULT 0 NOT NULL; ' +
-                        'COMMENT ON COLUMN Transactions.TranCloseReason IS ''0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Defaulted/Redeemed''');
-
-      if not ExistsFieldInTable('Transactions', 'TranSalesTax') then
-        ExecSQLStatement('ALTER TABLE Transactions ADD "TranSalesTax" double NULL');
-
-      if not ExistsFieldInTable('InventoryItems', 'PawnedDate') then
-      begin
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PawnedDate" Date NULL ');
-        ExecSQLStatement('UPDATE InventoryItems SET PawnedDate = cast(Created as Date) ' +
-                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''P'') ')
-      end;
-
-      if not ExistsFieldInTable('InventoryItems', 'PurchaseDate') then
-      begin
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PurchaseDate" Date NULL ');
-        ExecSQLStatement('UPDATE InventoryItems SET PurchaseDate= cast(Created as Date) ' +
-                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''U'') ')
-      end;
-
-      if not ExistsFieldInTable('InventoryItems', 'RedeemedDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "RedeemedDate" Date NULL ');
-
-      if not ExistsFieldInTable('InventoryItems', 'DefaultedDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "DefaultedDate" Date NULL ');
-
-      if not ExistsFieldInTable('InventoryItems', 'MeltedDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "MeltedDate" Date NULL ');
-
-      if not ExistsFieldInTable('InventoryItems', 'ForSaleDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "ForSaleDate" Date NULL ');
-
-      if not ExistsFieldInTable('InventoryItems', 'SoldDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "SoldDate" Date NULL ');
-
-      if not ExistsFieldInTable('InventoryItems', 'LayawayDate') then
-        ExecSQLStatement('ALTER TABLE InventoryItems ADD "LayawayDate" Date NULL ');
-
-      // Add BackupImagesPath to BackupSettings if it doesn't exist
-      if not ExistsFieldInTable('BackupSettings', 'BackupImagesPath') then
-        ExecSQLStatement('ALTER TABLE BackupSettings ADD "BackupImagesPath" varchar(255) NULL ');
-
-      // Create ImagesDataBackup table if it doesn't exist
-      if not ExistsFieldInTable('ImagesDataBackup', 'ID') then
-      begin
-        ExecSQLStatement('CREATE TABLE "DBA"."ImagesDataBackup" ( ' +
-                         '"ID" bigint NOT NULL, ' +
-                         '"ImagesDataNo" integer NOT NULL, ' +
-                         'PRIMARY KEY CLUSTERED ("ID" ASC) )');
-        ExecSQLStatement('CREATE UNIQUE INDEX "idx_ImagesDataNo" ON "DBA"."ImagesDataBackup" ( "ImagesDataNo" )');
-      end;
-
-      // Create covering index on InventoryItems if it doesn't exist
-      if not ExistsIndexOnTable('InventoryItems', 'idx_InvItemStatus_Covering') then
-        ExecSQLStatement('CREATE INDEX "idx_InvItemStatus_Covering" ON "DBA"."InventoryItems" ' +
-                         '( "InvItemStatus" ASC, "JType" ASC, "JStyle" ASC, "JMetal" ASC, ' +
-                         '"InvItemNo", "InvItemBarcode", "InvCatNo", "InvItemCount", "Note", ' +
-                         '"SizeLength", "Weight", "KT", "Created", "UnitCost", "UnitPrice" )');
-
-      // Audit table for inventory status/date changes
-      if not ExistsFieldInTable('InventoryItemStatusLog', 'LogId') then
-      begin
-        ExecSQLStatement('CREATE TABLE "DBA"."InventoryItemStatusLog" ( ' +
-                         '"LogId" bigint NOT NULL DEFAULT autoincrement, ' +
-                         '"InvItemNo" integer NOT NULL, ' +
-                         '"OldStatus" char(1) NULL, "NewStatus" char(1) NOT NULL, ' +
-                         '"OldPawnedDate" date NULL, "NewPawnedDate" date NULL, ' +
-                         '"OldPurchaseDate" date NULL, "NewPurchaseDate" date NULL, ' +
-                         '"OldRedeemedDate" date NULL, "NewRedeemedDate" date NULL, ' +
-                         '"OldDefaultedDate" date NULL, "NewDefaultedDate" date NULL, ' +
-                         '"OldMeltedDate" date NULL, "NewMeltedDate" date NULL, ' +
-                         '"OldForSaleDate" date NULL, "NewForSaleDate" date NULL, ' +
-                         '"OldSoldDate" date NULL, "NewSoldDate" date NULL, ' +
-                         '"OldLayawayDate" date NULL, "NewLayawayDate" date NULL, ' +
-                         '"ChangedBy" varchar(50) NULL, ' +
-                         '"ChangedAt" "datetime" NOT NULL DEFAULT current timestamp, ' +
-                         'PRIMARY KEY ("LogId" ASC) )');
-        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
-      end
-      else if not ExistsIndexOnTable('InventoryItemStatusLog', 'idx_InvStatusLog_Item') then
-        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
-
-      // Trigger to log status/date changes on InventoryItems
-      if OpenSQLStatement('SELECT COUNT(*) FROM sys.systrigger WHERE trigger_name = ''trg_InvItems_StatusLog''') = 0 then
-        ExecSQLStatement('CREATE TRIGGER "DBA"."trg_InvItems_StatusLog" ' +
-                         'AFTER UPDATE OF InvItemStatus, PawnedDate, PurchaseDate, RedeemedDate, ' +
-                         '                DefaultedDate, MeltedDate, ForSaleDate, SoldDate, LayawayDate ' +
-                         'ON "DBA"."InventoryItems" ' +
-                         'REFERENCING OLD AS oldrow NEW AS newrow ' +
-                         'FOR EACH ROW ' +
-                         'BEGIN ' +
-                         '  IF oldrow.InvItemStatus IS DISTINCT FROM newrow.InvItemStatus ' +
-                         '     OR oldrow.PawnedDate    IS DISTINCT FROM newrow.PawnedDate ' +
-                         '     OR oldrow.PurchaseDate  IS DISTINCT FROM newrow.PurchaseDate ' +
-                         '     OR oldrow.RedeemedDate  IS DISTINCT FROM newrow.RedeemedDate ' +
-                         '     OR oldrow.DefaultedDate IS DISTINCT FROM newrow.DefaultedDate ' +
-                         '     OR oldrow.MeltedDate    IS DISTINCT FROM newrow.MeltedDate ' +
-                         '     OR oldrow.ForSaleDate   IS DISTINCT FROM newrow.ForSaleDate ' +
-                         '     OR oldrow.SoldDate      IS DISTINCT FROM newrow.SoldDate ' +
-                         '     OR oldrow.LayawayDate   IS DISTINCT FROM newrow.LayawayDate ' +
-                         '  THEN ' +
-                         '    INSERT INTO "DBA"."InventoryItemStatusLog" ( ' +
-                         '      InvItemNo, OldStatus, NewStatus, ' +
-                         '      OldPawnedDate,    NewPawnedDate, ' +
-                         '      OldPurchaseDate,  NewPurchaseDate, ' +
-                         '      OldRedeemedDate,  NewRedeemedDate, ' +
-                         '      OldDefaultedDate, NewDefaultedDate, ' +
-                         '      OldMeltedDate,    NewMeltedDate, ' +
-                         '      OldForSaleDate,   NewForSaleDate, ' +
-                         '      OldSoldDate,      NewSoldDate, ' +
-                         '      OldLayawayDate,   NewLayawayDate, ' +
-                         '      ChangedBy ' +
-                         '    ) ' +
-                         '    VALUES ( ' +
-                         '      newrow.InvItemNo, oldrow.InvItemStatus, newrow.InvItemStatus, ' +
-                         '      oldrow.PawnedDate,    newrow.PawnedDate, ' +
-                         '      oldrow.PurchaseDate,  newrow.PurchaseDate, ' +
-                         '      oldrow.RedeemedDate,  newrow.RedeemedDate, ' +
-                         '      oldrow.DefaultedDate, newrow.DefaultedDate, ' +
-                         '      oldrow.MeltedDate,    newrow.MeltedDate, ' +
-                         '      oldrow.ForSaleDate,   newrow.ForSaleDate, ' +
-                         '      oldrow.SoldDate,      newrow.SoldDate, ' +
-                         '      oldrow.LayawayDate,   newrow.LayawayDate, ' +
-                         '      USER ' +
-                         '    ); ' +
-                         '  END IF; ' +
-                         'END');
-
-      // Create GoldPriceHistory table if it doesn't exist
-      if not ExistsFieldInTable('GoldPriceHistory', 'PriceID') then
-      begin
-        ExecSQLStatement('CREATE TABLE "DBA"."GoldPriceHistory" (' +
-                         '"PriceID" integer NOT NULL DEFAULT autoincrement,' +
-                         '"PricePerOunce" numeric(10, 2) NOT NULL,' +
-                         '"Currency" varchar(3) NOT NULL DEFAULT ''USD'',' +
-                         '"FetchDateTime" "datetime" NOT NULL DEFAULT current timestamp,' +
-                         '"Source" varchar(50) NOT NULL DEFAULT ''CryptoCompare'',' +
-                         '"APIResponse" long varchar NULL,' +
-                         'PRIMARY KEY ("PriceID" ASC))');
-
-        // Create index on GoldPriceHistory
-        ExecSQLStatement('CREATE INDEX "idx_GoldPrice_FetchDateTime" ON "DBA"."GoldPriceHistory" ( "FetchDateTime" DESC )');
-      end;
-
-      // Create stored procedure for gold price if it doesn't exist
-      if not RoutineExists(ConnDB, 'DBA', 'spi_GoldPrice', 'PROCEDURE') then
-        ExecSQLStatement('CREATE PROCEDURE "DBA"."spi_GoldPrice"( @PricePerOunce numeric(10,2),@Currency varchar(3) ) ' +
-                         'as ' +
-                         'begin ' +
-                         'declare @LastGPrice numeric(10,2) ' +
-                         'select top 1 @LastGPrice = PricePerOunce from GoldPriceHistory order by PriceID desc ' +
-                         'set @LastGPrice = isnull(@LastGPrice,0) ' +
-                         'if @LastGPrice <> @PricePerOunce ' +
-                         'insert into GoldPriceHistory( PricePerOunce,Currency,FetchDateTime,Source ) values( @PricePerOunce,@Currency,current timestamp,''CryptoCompare'' ) ' +
-                         'select LastGPrice=@LastGPrice ' +
-                         'end');
-
+//      if not ExistsFieldInTable('Store', 'PawnDateCalculationBase') then
+//        ExecSQLStatementFB('ALTER TABLE Store ADD "PawnDateCalculationBase" char(1) NULL DEFAULT ''D''');
+//
+//      if not ExistsFieldInTable('Store', 'SalesTaxPerc') then
+//        ExecSQLStatementFB('ALTER TABLE Store ADD "SalesTaxPerc" double NULL DEFAULT 7');
+//
+//      //Unit weight
+//      if not ExistsFieldInTable('Store', 'DefaultWeightMeasureUnit') then
+//        ExecSQLStatementFB('ALTER TABLE Store ADD "DefaultWeightMeasureUnit" char(1) NULL ');
+//
+//      // Update DefaultWeightMeasureUnit with 'P' if it's NULL
+//      if OpenSQLStatementFB('SELECT COUNT(*) FROM Store WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''') > 0 then
+//        ExecSQLStatementFB('UPDATE Store SET DefaultWeightMeasureUnit = ''P'' WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''');
+//
+//      // Default Pawn Interest Rate
+//      if not ExistsFieldInTable('Store', 'DefaultPawnInterestRate') then
+//        ExecSQLStatementFB('ALTER TABLE Store ADD "DefaultPawnInterestRate" double NULL ');
+//
+//      // Update DefaultPawnInterestRate with 10 if it's NULL
+//      if OpenSQLStatementFB('SELECT COUNT(*) FROM Store WHERE DefaultPawnInterestRate IS NULL') > 0 then
+//        ExecSQLStatementFB('UPDATE Store SET DefaultPawnInterestRate = 10 WHERE DefaultPawnInterestRate IS NULL');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'WeightUnit') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "WeightUnit" char(1) NULL ');
+//
+//      if not ExistsFieldInTable('Stones', 'StoneWeightUnit') then
+//        ExecSQLStatement('ALTER TABLE Stones ADD "StoneWeightUnit" char(1) NULL ');
+//
+//      EnsureLatePayObjects(ConnDB);
+/////
+//     if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''C''') = 0 then
+//       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''C'', ''Close'');');
+//
+//     if OpenSQLStatement('SELECT COUNT(*) FROM TransactionTypes WHERE TranType = ''L''') = 0 then
+//       ExecSQLStatement('INSERT INTO TransactionTypes (TranType, TranTypeDesc) VALUES(''L'', ''Layaway'');');
+//
+//    if OpenSQLStatement('SELECT COUNT(*) FROM TableKeys WHERE TableName = ''LayawayTicketNo''') = 0 then
+//       ExecSQLStatement('INSERT INTO TableKeys (TableName, LastKey) VALUES(''LayawayTicketNo'', 0);');
+//
+//    if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''L''') = 0 then
+//       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''L'', ''Layaway'');');
+//
+//     if not ExistsFieldInTable('Transactions', 'TranCloseReason') then
+//       ExecSQLStatement('ALTER TABLE Transactions ADD TranCloseReason SMALLINT DEFAULT 0 NOT NULL; ' +
+//                        'COMMENT ON COLUMN Transactions.TranCloseReason IS ''0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Defaulted/Redeemed''');
+//
+//      if not ExistsFieldInTable('Transactions', 'TranSalesTax') then
+//        ExecSQLStatement('ALTER TABLE Transactions ADD "TranSalesTax" double NULL');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'PawnedDate') then
+//      begin
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PawnedDate" Date NULL ');
+//        ExecSQLStatement('UPDATE InventoryItems SET PawnedDate = cast(Created as Date) ' +
+//                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''P'') ')
+//      end;
+//
+//      if not ExistsFieldInTable('InventoryItems', 'PurchaseDate') then
+//      begin
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PurchaseDate" Date NULL ');
+//        ExecSQLStatement('UPDATE InventoryItems SET PurchaseDate= cast(Created as Date) ' +
+//                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''U'') ')
+//      end;
+//
+//      if not ExistsFieldInTable('InventoryItems', 'RedeemedDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "RedeemedDate" Date NULL ');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'DefaultedDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "DefaultedDate" Date NULL ');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'MeltedDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "MeltedDate" Date NULL ');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'ForSaleDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "ForSaleDate" Date NULL ');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'SoldDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "SoldDate" Date NULL ');
+//
+//      if not ExistsFieldInTable('InventoryItems', 'LayawayDate') then
+//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "LayawayDate" Date NULL ');
+//
+//      // Add BackupImagesPath to BackupSettings if it doesn't exist
+//      if not ExistsFieldInTable('BackupSettings', 'BackupImagesPath') then
+//        ExecSQLStatement('ALTER TABLE BackupSettings ADD "BackupImagesPath" varchar(255) NULL ');
+//
+//      // Create ImagesDataBackup table if it doesn't exist
+//      if not ExistsFieldInTable('ImagesDataBackup', 'ID') then
+//      begin
+//        ExecSQLStatement('CREATE TABLE "DBA"."ImagesDataBackup" ( ' +
+//                         '"ID" bigint NOT NULL, ' +
+//                         '"ImagesDataNo" integer NOT NULL, ' +
+//                         'PRIMARY KEY CLUSTERED ("ID" ASC) )');
+//        ExecSQLStatement('CREATE UNIQUE INDEX "idx_ImagesDataNo" ON "DBA"."ImagesDataBackup" ( "ImagesDataNo" )');
+//      end;
+//
+//      // Create covering index on InventoryItems if it doesn't exist
+//      if not ExistsIndexOnTable('InventoryItems', 'idx_InvItemStatus_Covering') then
+//        ExecSQLStatement('CREATE INDEX "idx_InvItemStatus_Covering" ON "DBA"."InventoryItems" ' +
+//                         '( "InvItemStatus" ASC, "JType" ASC, "JStyle" ASC, "JMetal" ASC, ' +
+//                         '"InvItemNo", "InvItemBarcode", "InvCatNo", "InvItemCount", "Note", ' +
+//                         '"SizeLength", "Weight", "KT", "Created", "UnitCost", "UnitPrice" )');
+//
+//      // Audit table for inventory status/date changes
+//      if not ExistsFieldInTable('InventoryItemStatusLog', 'LogId') then
+//      begin
+//        ExecSQLStatement('CREATE TABLE "DBA"."InventoryItemStatusLog" ( ' +
+//                         '"LogId" bigint NOT NULL DEFAULT autoincrement, ' +
+//                         '"InvItemNo" integer NOT NULL, ' +
+//                         '"OldStatus" char(1) NULL, "NewStatus" char(1) NOT NULL, ' +
+//                         '"OldPawnedDate" date NULL, "NewPawnedDate" date NULL, ' +
+//                         '"OldPurchaseDate" date NULL, "NewPurchaseDate" date NULL, ' +
+//                         '"OldRedeemedDate" date NULL, "NewRedeemedDate" date NULL, ' +
+//                         '"OldDefaultedDate" date NULL, "NewDefaultedDate" date NULL, ' +
+//                         '"OldMeltedDate" date NULL, "NewMeltedDate" date NULL, ' +
+//                         '"OldForSaleDate" date NULL, "NewForSaleDate" date NULL, ' +
+//                         '"OldSoldDate" date NULL, "NewSoldDate" date NULL, ' +
+//                         '"OldLayawayDate" date NULL, "NewLayawayDate" date NULL, ' +
+//                         '"ChangedBy" varchar(50) NULL, ' +
+//                         '"ChangedAt" "datetime" NOT NULL DEFAULT current timestamp, ' +
+//                         'PRIMARY KEY ("LogId" ASC) )');
+//        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
+//      end
+//      else if not ExistsIndexOnTable('InventoryItemStatusLog', 'idx_InvStatusLog_Item') then
+//        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
+//
+//      // Trigger to log status/date changes on InventoryItems
+//      if OpenSQLStatement('SELECT COUNT(*) FROM sys.systrigger WHERE trigger_name = ''trg_InvItems_StatusLog''') = 0 then
+//        ExecSQLStatement('CREATE TRIGGER "DBA"."trg_InvItems_StatusLog" ' +
+//                         'AFTER UPDATE OF InvItemStatus, PawnedDate, PurchaseDate, RedeemedDate, ' +
+//                         '                DefaultedDate, MeltedDate, ForSaleDate, SoldDate, LayawayDate ' +
+//                         'ON "DBA"."InventoryItems" ' +
+//                         'REFERENCING OLD AS oldrow NEW AS newrow ' +
+//                         'FOR EACH ROW ' +
+//                         'BEGIN ' +
+//                         '  IF oldrow.InvItemStatus IS DISTINCT FROM newrow.InvItemStatus ' +
+//                         '     OR oldrow.PawnedDate    IS DISTINCT FROM newrow.PawnedDate ' +
+//                         '     OR oldrow.PurchaseDate  IS DISTINCT FROM newrow.PurchaseDate ' +
+//                         '     OR oldrow.RedeemedDate  IS DISTINCT FROM newrow.RedeemedDate ' +
+//                         '     OR oldrow.DefaultedDate IS DISTINCT FROM newrow.DefaultedDate ' +
+//                         '     OR oldrow.MeltedDate    IS DISTINCT FROM newrow.MeltedDate ' +
+//                         '     OR oldrow.ForSaleDate   IS DISTINCT FROM newrow.ForSaleDate ' +
+//                         '     OR oldrow.SoldDate      IS DISTINCT FROM newrow.SoldDate ' +
+//                         '     OR oldrow.LayawayDate   IS DISTINCT FROM newrow.LayawayDate ' +
+//                         '  THEN ' +
+//                         '    INSERT INTO "DBA"."InventoryItemStatusLog" ( ' +
+//                         '      InvItemNo, OldStatus, NewStatus, ' +
+//                         '      OldPawnedDate,    NewPawnedDate, ' +
+//                         '      OldPurchaseDate,  NewPurchaseDate, ' +
+//                         '      OldRedeemedDate,  NewRedeemedDate, ' +
+//                         '      OldDefaultedDate, NewDefaultedDate, ' +
+//                         '      OldMeltedDate,    NewMeltedDate, ' +
+//                         '      OldForSaleDate,   NewForSaleDate, ' +
+//                         '      OldSoldDate,      NewSoldDate, ' +
+//                         '      OldLayawayDate,   NewLayawayDate, ' +
+//                         '      ChangedBy ' +
+//                         '    ) ' +
+//                         '    VALUES ( ' +
+//                         '      newrow.InvItemNo, oldrow.InvItemStatus, newrow.InvItemStatus, ' +
+//                         '      oldrow.PawnedDate,    newrow.PawnedDate, ' +
+//                         '      oldrow.PurchaseDate,  newrow.PurchaseDate, ' +
+//                         '      oldrow.RedeemedDate,  newrow.RedeemedDate, ' +
+//                         '      oldrow.DefaultedDate, newrow.DefaultedDate, ' +
+//                         '      oldrow.MeltedDate,    newrow.MeltedDate, ' +
+//                         '      oldrow.ForSaleDate,   newrow.ForSaleDate, ' +
+//                         '      oldrow.SoldDate,      newrow.SoldDate, ' +
+//                         '      oldrow.LayawayDate,   newrow.LayawayDate, ' +
+//                         '      USER ' +
+//                         '    ); ' +
+//                         '  END IF; ' +
+//                         'END');
+//
+//      // Create GoldPriceHistory table if it doesn't exist
+//      if not ExistsFieldInTable('GoldPriceHistory', 'PriceID') then
+//      begin
+//        ExecSQLStatement('CREATE TABLE "DBA"."GoldPriceHistory" (' +
+//                         '"PriceID" integer NOT NULL DEFAULT autoincrement,' +
+//                         '"PricePerOunce" numeric(10, 2) NOT NULL,' +
+//                         '"Currency" varchar(3) NOT NULL DEFAULT ''USD'',' +
+//                         '"FetchDateTime" "datetime" NOT NULL DEFAULT current timestamp,' +
+//                         '"Source" varchar(50) NOT NULL DEFAULT ''CryptoCompare'',' +
+//                         '"APIResponse" long varchar NULL,' +
+//                         'PRIMARY KEY ("PriceID" ASC))');
+//
+//        // Create index on GoldPriceHistory
+//        ExecSQLStatement('CREATE INDEX "idx_GoldPrice_FetchDateTime" ON "DBA"."GoldPriceHistory" ( "FetchDateTime" DESC )');
+//      end;
+//
+//      // Create stored procedure for gold price if it doesn't exist
+//      if not RoutineExists(ConnDB, 'DBA', 'spi_GoldPrice', 'PROCEDURE') then
+//        ExecSQLStatement('CREATE PROCEDURE "DBA"."spi_GoldPrice"( @PricePerOunce numeric(10,2),@Currency varchar(3) ) ' +
+//                         'as ' +
+//                         'begin ' +
+//                         'declare @LastGPrice numeric(10,2) ' +
+//                         'select top 1 @LastGPrice = PricePerOunce from GoldPriceHistory order by PriceID desc ' +
+//                         'set @LastGPrice = isnull(@LastGPrice,0) ' +
+//                         'if @LastGPrice <> @PricePerOunce ' +
+//                         'insert into GoldPriceHistory( PricePerOunce,Currency,FetchDateTime,Source ) values( @PricePerOunce,@Currency,current timestamp,''CryptoCompare'' ) ' +
+//                         'select LastGPrice=@LastGPrice ' +
+//                         'end');
+//
     end;
 end;
 
@@ -1405,7 +1348,7 @@ begin
   // TRANSACTION_NO is FB IDENTITY - assigned on Post via UpdateOptions.AutoIncFields
   qryTransactionsTRAN_DATE.AsDateTime := Date;
   qryTransactionsTRAN_MATURITY.AsDateTime := GetPawnMaturityDate(qryTransactionsTRAN_DATE.AsDateTime);
-  qryTransactionsCUST_NO.AsInteger := qryCustomersCustNo.AsInteger;
+  qryTransactionsCUST_NO.AsInteger := qryCustomersCUST_NO.AsInteger;
   qryTransactionsTRAN_INTEREST.AsFloat := IntRate;
   qryTransactionsTRAN_TYPE.AsString := 'P';
   qryTransactionsTRAN_STATUS.AsString := 'A';
@@ -1422,9 +1365,9 @@ end;
 
 procedure TDM.qryCustomersNewRecord(DataSet: TDataSet);
 begin
-  qryCustomersCustCity.AsString := qryStorecCity.AsString;
-  qryCustomersCustState.AsString := qryStorecState.AsString;
-  qryCustomersCustZip.AsString := qryStorecZIp.AsString;
+  qryCustomersCUST_CITY.AsString := qryStorecCity.AsString;
+  qryCustomersCUST_STATE.AsString := qryStorecState.AsString;
+  qryCustomersCUST_ZIP.AsString := qryStorecZIp.AsString;
 end;
 
 procedure TDM.CalcInterest(Amount: currency; var IntRate, IntAmount: extended);
@@ -1495,27 +1438,21 @@ end;
 procedure TDM.qryCustomersAfterScroll(DataSet: TDataSet);
 begin
   qryTransactions.Close;
-  qryTransactions.Params.ParamByName('CUST_NO').AsInteger := qryCustomersCustno.AsInteger;
+  qryTransactions.Params.ParamByName('CUST_NO').AsInteger := qryCustomersCUST_NO.AsInteger;
   qryTransactions.Open;
-end;
-
-procedure TDM.qryCustomersBeforePost(DataSet: TDataSet);
-begin
-  if qryCustomersCustno.AsInteger = 0 then
-    qryCustomersCustno.AsInteger := GetNextKey('Customer');
 end;
 
 procedure TDM.qryCustomersCalcFields(DataSet: TDataSet);
 begin
-  qryCustomerscCustPhHome.AsString := FormatPhoneUSA(qryCustomersCustPhHome.AsString);
-  qryCustomersCCustPhBussiness.AsString := FormatPhoneUSA(qryCustomersCustPhBussiness.AsString);
-  qryCustomersCCustPhBeep.AsString := FormatPhoneUSA(qryCustomersCustPhBeep.AsString);
-  qryCustomerscCustPhCell.AsString := FormatPhoneUSA(qryCustomersCustPhCell.AsString);
-  if trim(qryCustomersCustFlDrvLic.AsString) <> '' then
-    qryCustomerscCustFlDrvLic.AsString := FormatFLDriverLic(trim(qryCustomersCustFlDrvLic.AsString));
+  qryCustomerscCustPhHome.AsString := FormatPhoneUSA(qryCustomersCUST_PH_HOME.AsString);
+  qryCustomersCCustPhBussiness.AsString := FormatPhoneUSA(qryCustomersCUST_PH_BUSINESS.AsString);
+  qryCustomersCCustPhBeep.AsString := FormatPhoneUSA(qryCustomersCUST_PH_BEEP.AsString);
+  qryCustomerscCustPhCell.AsString := FormatPhoneUSA(qryCustomersCUST_PH_CELL.AsString);
+  if trim(qryCustomersCUST_FL_DRV_LIC.AsString) <> '' then
+    qryCustomerscCustFlDrvLic.AsString := FormatFLDriverLic(trim(qryCustomersCUST_FL_DRV_LIC.AsString));
 
-  if qryCustomersCustDOB.AsDateTime > 0 then
-    qryCustomerscCustAge.AsInteger := YearsBetween(Date, qryCustomersCustDOB.AsDateTime)
+  if qryCustomersCUST_DOB.AsDateTime > 0 then
+    qryCustomerscCustAge.AsInteger := YearsBetween(Date, qryCustomersCUST_DOB.AsDateTime)
   else
     qryCustomerscCustAge.AsInteger := 0;
 end;

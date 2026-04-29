@@ -8,7 +8,7 @@ uses
   ppRelatv, ppDB, ppDBPipe, ppProd, ppClass, ppReport, ppPrnabl, ppCtrls, StrUtils,
   ppBands, ppCache, ppVar, IniFiles, Menus, System.UITypes, Variants,
   myChkBox, ppParameter, ppDesignLayer, RzForms, RzCommon, System.Actions, PawnGlobal,
-  Datasnap.Provider, Datasnap.DBClient, RzButton,
+  Datasnap.Provider, Datasnap.DBClient, RzButton, FireDAC.Stan.Param,
   ppStrtch, ppRegion, DrvLic_PDF417Parsing, RzTabs, uPawnPhoneEdit, RzLabel,
   RzDBLbl, RzEdit, JvExControls, JvLinkLabel, JvExStdCtrls, JvHtControls;
 
@@ -986,19 +986,19 @@ begin
 
   if trim(edTicketNo.Text) <> '' then
     begin
-      SQLStr := ReplaceStr(SQLStr, '--SearchByTicketNo', ' AND Custno in (select CustNo from Transactions where TranTicketNo = ' + QuotedStr(trim(edTicketNo.Text)) + ') ');
+      SQLStr := ReplaceStr(SQLStr, '--SearchByTicketNo', ' AND CUST_NO in (select CUST_NO from TRANSACTIONS where TRAN_TICKET_NO = ' + QuotedStr(trim(edTicketNo.Text)) + ') ');
     end;
 
   if trim(edPhone.Digits) <> '' then
     begin
-      SQLStr := ReplaceStr(SQLStr, '--SearchByPhone', ' AND ' + QuotedStr( trim(edPhone.Digits) ) + ' in (CustPhBeep, CustPhBussiness, CustPhCell, CustPhHome) ');
+      SQLStr := ReplaceStr(SQLStr, '--SearchByPhone', ' AND ' + QuotedStr( trim(edPhone.Digits) ) + ' in (CUST_PH_BEEP, CUST_PH_BUSINESS, CUST_PH_CELL, CUST_PH_HOME) ');
     end;
 
 
   DM.qryCustomers.SQL.Text := SQLStr;
 
-  DM.qryCustomers.Parameters.ParamByName('Lastname').Value := LName;
-  DM.qryCustomers.Parameters.ParamByName('FirstName').Value := Fname;
+  DM.qryCustomers.Params.ParamByName('CUST_LAST').AsString := LName;
+  DM.qryCustomers.Params.ParamByName('CUST_FIRST').AsString := Fname;
 
   Screen.Cursor := crHourGlass;
   try
@@ -1078,7 +1078,7 @@ end;
 
 procedure TfrmClients.btnClientEditClick(Sender: TObject);
 begin
-  if DM.qryCustomersCustNo.AsInteger <= 0 then
+  if DM.qryCustomersCUST_NO.AsInteger <= 0 then
     begin
       MessageDlg('Nothing to edit.', mtInformation, [mbOK], 0);
       exit;
@@ -1246,7 +1246,7 @@ begin
   pgTransactions.ActivePageIndex := 0;
   pgTransactionsChange(nil);
 
-  if DM.qryCustomersCustNo.AsInteger <= 0 then
+  if DM.qryCustomersCUST_NO.AsInteger <= 0 then
     begin
       MessageDlg('Please enter client information first', mtInformation, [mbOK], 0);
       exit;
@@ -1443,7 +1443,7 @@ begin
     end;
 
   qryPoliceRepCust.Close;
-  qryPoliceRepCust.Parameters.ParamByName('Custno').Value := DM.qryCustomersCustno.AsInteger;
+  qryPoliceRepCust.Parameters.ParamByName('Custno').Value := DM.qryCustomersCUST_NO.AsInteger;
   qryPoliceRepCust.Open;
 
   lblStoreName2.Visible := false;
@@ -1939,7 +1939,7 @@ procedure TfrmClients.btnNewWithCopyItemsClick(Sender: TObject);
 var
   SavePos: integer;
 begin
-  if DM.qryCustomersCustNo.AsInteger <= 0 then
+  if DM.qryCustomersCUST_NO.AsInteger <= 0 then
     begin
       MessageDlg('Please enter client information first', mtInformation, [mbOK], 0);
       exit;
@@ -1961,8 +1961,8 @@ begin
   frmEnterTransaction := TfrmEnterTransaction.Create(Self);
   try
     frmEnterTransaction.NewRow := true;
-    frmEnterTransaction.CustNo := DM.qryCustomersCustno.AsInteger;
-    if OpenSQLStatement('select count(*) from Transactions T1, InventoryItems T2 where T1.CustNo = ' + DM.qryCustomersCustno.AsString + ' and T1.TransactionNo = T2.TransactionNo') <= 0 then
+    frmEnterTransaction.CustNo := DM.qryCustomersCUST_NO.AsInteger;
+    if OpenSQLStatementFB('select count(*) from TRANSACTIONS T1 JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_NO where T1.CUST_NO = ' + DM.qryCustomersCUST_NO.AsString) <= 0 then
 //    frmEnterTransaction.qryInvItems.RecordCount <= 0 then
       begin
         MessageDlg('No Existing transaction to copy items from.', mtInformation, [mbOK], 0);
@@ -1989,8 +1989,8 @@ procedure TfrmClients.btnDeleteItemClick(Sender: TObject);
 begin
   if MessageDlg('Are you sure you wish to delete this item?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
-    ExecSQLStatement('delete from Stones where InvItemNo=' + qryInvItemsInvItemNo.AsString);
-    ExecSQLStatement('delete from ImagesData where InvItemNo=' + qryInvItemsInvItemNo.AsString);
+    ExecSQLStatementFB('delete from STONES where INV_ITEM_NO=' + qryInvItemsInvItemNo.AsString);
+    ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + qryInvItemsInvItemNo.AsString);
 
     qryInvItems.Delete;
   end;

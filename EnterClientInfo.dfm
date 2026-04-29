@@ -77,73 +77,6 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Margin = 10
       Spacing = -5
     end
-    object DBComboBox1: TDBComboBox
-      Left = 41
-      Top = 15
-      Width = 50
-      Height = 25
-      Style = csDropDownList
-      DataField = 'CustGender'
-      DataSource = DM.DSCustomers
-      Items.Strings = (
-        'M'
-        'F')
-      TabOrder = 2
-      Visible = False
-    end
-    object dbcbRace_: TDBComboBox
-      Left = 97
-      Top = 15
-      Width = 50
-      Height = 25
-      Style = csDropDownList
-      DataField = 'CustRace'
-      DataSource = DM.DSCustomers
-      Items.Strings = (
-        'W'
-        'B'
-        'I'
-        'A'
-        'H')
-      TabOrder = 3
-      Visible = False
-    end
-    object DBComboBox3: TDBComboBox
-      Left = 164
-      Top = 15
-      Width = 50
-      Height = 25
-      Style = csDropDownList
-      DataField = 'CustEyes'
-      DataSource = DM.DSCustomers
-      Items.Strings = (
-        'BLU'
-        'BLK'
-        'BRN'
-        'GRN'
-        'GRY'
-        'HZL')
-      TabOrder = 4
-      Visible = False
-    end
-    object DBComboBox2: TDBComboBox
-      Left = 227
-      Top = 15
-      Width = 50
-      Height = 25
-      Style = csDropDownList
-      DataField = 'CustHair'
-      DataSource = DM.DSCustomers
-      Items.Strings = (
-        'BLK'
-        'BLD'
-        'BND'
-        'BRN'
-        'GRY'
-        'RED')
-      TabOrder = 5
-      Visible = False
-    end
   end
   object GroupBox2: TGroupBox
     AlignWithMargins = True
@@ -353,9 +286,9 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     object edLast: TDBEdit
       Left = 300
       Top = 30
-      Width = 207
+      Width = 211
       Height = 25
-      DataField = 'CustLast'
+      DataField = 'CUST_LAST'
       DataSource = DM.DSCustomers
       TabOrder = 2
     end
@@ -364,7 +297,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 30
       Width = 208
       Height = 25
-      DataField = 'CustFirst'
+      DataField = 'CUST_FIRST'
       DataSource = DM.DSCustomers
       TabOrder = 0
     end
@@ -373,7 +306,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 30
       Width = 52
       Height = 25
-      DataField = 'CustMid'
+      DataField = 'CUST_MID'
       DataSource = DM.DSCustomers
       TabOrder = 1
     end
@@ -382,7 +315,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 80
       Width = 96
       Height = 25
-      DataField = 'CustMark'
+      DataField = 'CUST_MARK'
       DataSource = DM.DSCustomers
       TabOrder = 10
     end
@@ -391,7 +324,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 80
       Width = 47
       Height = 25
-      DataField = 'CustWeight'
+      DataField = 'CUST_WEIGHT'
       DataSource = DM.DSCustomers
       TabOrder = 7
     end
@@ -400,7 +333,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 80
       Width = 53
       Height = 25
-      DataField = 'CustHeight'
+      DataField = 'CUST_HEIGHT'
       DataSource = DM.DSCustomers
       TabOrder = 6
     end
@@ -409,7 +342,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 130
       Width = 207
       Height = 25
-      DataField = 'CustAddr'
+      DataField = 'CUST_ADDR'
       DataSource = DM.DSCustomers
       TabOrder = 11
     end
@@ -418,7 +351,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 130
       Width = 53
       Height = 25
-      DataField = 'CustApt'
+      DataField = 'CUST_APT'
       DataSource = DM.DSCustomers
       TabOrder = 12
     end
@@ -427,7 +360,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 130
       Width = 130
       Height = 25
-      DataField = 'CustCity'
+      DataField = 'CUST_CITY'
       DataSource = DM.DSCustomers
       TabOrder = 13
     end
@@ -436,7 +369,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 130
       Width = 73
       Height = 25
-      DataField = 'CustState'
+      DataField = 'CUST_STATE'
       DataSource = DM.DSCustomers
       DropDownWidth = 150
       KeyField = 'State_Abbr'
@@ -449,16 +382,16 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 180
       Width = 207
       Height = 25
-      DataField = 'CustPlaceEmply'
+      DataField = 'CUST_PLACE_EMPLY'
       DataSource = DM.DSCustomers
       TabOrder = 16
     end
     object DBEdit16: TDBEdit
-      Left = 25
+      Left = 26
       Top = 228
       Width = 180
       Height = 25
-      DataField = 'CustID'
+      DataField = 'CUST_ID'
       DataSource = DM.DSCustomers
       TabOrder = 18
     end
@@ -467,16 +400,16 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 228
       Width = 125
       Height = 25
-      DataField = 'CustIDType'
+      DataField = 'CUST_ID_TYPE'
       DataSource = DM.DSCustomers
       TabOrder = 19
     end
     object DBEdit18: TDBEdit
       Left = 344
       Top = 228
-      Width = 112
+      Width = 167
       Height = 25
-      DataField = 'CustIDAgencyState'
+      DataField = 'CUST_ID_AGENCY_STATE'
       DataSource = DM.DSCustomers
       TabOrder = 20
     end
@@ -485,18 +418,18 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 328
       Width = 581
       Height = 74
-      DataField = 'CustComment'
+      DataField = 'CUST_COMMENT'
       DataSource = DM.DSCustomers
       ScrollBars = ssVertical
       TabOrder = 25
     end
-    object RzDBDateTimeEdit1: TRzDBDateTimeEdit
-      Left = 514
-      Top = 30
-      Width = 100
+    object cbCustDOB: TRzDBDateTimeEdit
+      Left = 518
+      Top = 31
+      Width = 95
       Height = 25
       DataSource = DM.DSCustomers
-      DataField = 'CustDOB'
+      DataField = 'CUST_DOB'
       TabOrder = 3
       OnExit = RzDBDateTimeEdit1Exit
       EditType = etDate
@@ -506,7 +439,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Top = 130
       Width = 96
       Height = 25
-      DataField = 'CustZip'
+      DataField = 'CUST_ZIP'
       DataSource = DM.DSCustomers
       TabOrder = 15
     end

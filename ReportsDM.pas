@@ -435,7 +435,7 @@ begin
   qryLayawayRcpt.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
   qryLayawayRcpt.Open;
 
-  LayawayBalance := OpenSQLStatement('select SUM(PayAmount) as TotalPaid from Payments where TransactionNo = ' + DM.qryTransactionsTRANSACTION_NO.AsString);
+  LayawayBalance := OpenSQLStatementFB('select SUM(PAY_AMOUNT) as TotalPaid from PAYMENTS where TRANSACTION_NO = ' + DM.qryTransactionsTRANSACTION_NO.AsString);
   LayawayBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - LayawayBalance;
 
   qryLayawayPayments.Close;

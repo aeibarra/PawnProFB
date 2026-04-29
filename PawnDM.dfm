@@ -3,12 +3,6 @@ object DM: TDM
   OnDestroy = DataModuleDestroy
   Height = 1208
   Width = 1736
-  object qryDummy: TADOQuery
-    Connection = ConnDB
-    Parameters = <>
-    Left = 32
-    Top = 120
-  end
   object ConnDB: TADOConnection
     ConnectionString = 
       'Provider=SAOLEDB.12;Password=kakita;Persist Security Info=True;U' +
@@ -23,13 +17,13 @@ object DM: TDM
   end
   object DSCustomers: TDataSource
     DataSet = qryCustomers
-    Left = 152
-    Top = 68
+    Left = 565
+    Top = 824
   end
   object DSStates: TDataSource
-    DataSet = QryStates
-    Left = 257
-    Top = 184
+    DataSet = qryStates
+    Left = 148
+    Top = 1032
   end
   object DSTransactions: TDataSource
     DataSet = qryTransactions
@@ -45,202 +39,6 @@ object DM: TDM
     DataSet = qryStore
     Left = 429
     Top = 962
-  end
-  object QryStates: TADOQuery
-    Connection = ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT State_Abbr, State_Name FROM States')
-    Left = 257
-    Top = 128
-    object QryStatesState_Abbr: TStringField
-      FieldName = 'State_Abbr'
-      Size = 2
-    end
-    object QryStatesState_Name: TStringField
-      FieldName = 'State_Name'
-      Size = 30
-    end
-  end
-  object qryCustomers: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    BeforePost = qryCustomersBeforePost
-    AfterScroll = qryCustomersAfterScroll
-    OnCalcFields = qryCustomersCalcFields
-    OnNewRecord = qryCustomersNewRecord
-    Parameters = <
-      item
-        Name = 'Lastname'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = 'AL%'
-      end
-      item
-        Name = 'FirstName'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = '%'
-      end>
-    SQL.Strings = (
-      'SELECT *  '
-      'FROM Customer '
-      
-        'WHERE CustLast LIKE :Lastname AND CustFirst LIKE :FirstName AND ' +
-        'Custno > 0'
-      '   --SearchByTicketNo'
-      '   --SearchByPhone'
-      'ORDER BY  CustFirst, CustLast ')
-    Left = 151
-    Top = 14
-    object qryCustomersCustno: TIntegerField
-      FieldName = 'Custno'
-    end
-    object qryCustomersCustTicketNo: TStringField
-      FieldName = 'CustTicketNo'
-      Size = 15
-    end
-    object qryCustomersCustLast: TStringField
-      FieldName = 'CustLast'
-      Size = 35
-    end
-    object qryCustomersCustFirst: TStringField
-      FieldName = 'CustFirst'
-      Size = 35
-    end
-    object qryCustomersCustMid: TStringField
-      FieldName = 'CustMid'
-      Size = 1
-    end
-    object qryCustomersCustDOB: TDateField
-      FieldName = 'CustDOB'
-      DisplayFormat = 'mm/dd/yyyy'
-    end
-    object qryCustomersCustGender: TStringField
-      FieldName = 'CustGender'
-      Size = 1
-    end
-    object qryCustomersCustRace: TStringField
-      FieldName = 'CustRace'
-      Size = 1
-    end
-    object qryCustomersCustHair: TStringField
-      FieldName = 'CustHair'
-      Size = 5
-    end
-    object qryCustomersCustEyes: TStringField
-      FieldName = 'CustEyes'
-      Size = 5
-    end
-    object qryCustomersCustMark: TStringField
-      FieldName = 'CustMark'
-      Size = 10
-    end
-    object qryCustomersCustWeight: TFloatField
-      FieldName = 'CustWeight'
-    end
-    object qryCustomersCustHeight: TStringField
-      FieldName = 'CustHeight'
-      Size = 8
-    end
-    object qryCustomersCustAddr: TStringField
-      FieldName = 'CustAddr'
-      Size = 55
-    end
-    object qryCustomersCustApt: TStringField
-      FieldName = 'CustApt'
-      Size = 5
-    end
-    object qryCustomersCustCity: TStringField
-      FieldName = 'CustCity'
-      Size = 40
-    end
-    object qryCustomersCustState: TStringField
-      FieldName = 'CustState'
-      Size = 2
-    end
-    object qryCustomersCustZip: TStringField
-      FieldName = 'CustZip'
-      EditMask = '00000\-9999;1;_'
-      Size = 11
-    end
-    object qryCustomersCustPlaceEmply: TStringField
-      FieldName = 'CustPlaceEmply'
-      Size = 30
-    end
-    object qryCustomersCustFlDrvLic: TStringField
-      FieldName = 'CustFlDrvLic'
-      OnGetText = qryCustomersCustFlDrvLicGetText
-    end
-    object qryCustomersCustID: TStringField
-      FieldName = 'CustID'
-      Size = 25
-    end
-    object qryCustomersCustIDType: TStringField
-      FieldName = 'CustIDType'
-    end
-    object qryCustomersCustIDAgencyState: TStringField
-      FieldName = 'CustIDAgencyState'
-      Size = 10
-    end
-    object qryCustomersCustPhHome: TStringField
-      FieldName = 'CustPhHome'
-      Size = 14
-    end
-    object qryCustomersCustPhBussiness: TStringField
-      FieldName = 'CustPhBussiness'
-      Size = 14
-    end
-    object qryCustomersCustPhBeep: TStringField
-      FieldName = 'CustPhBeep'
-      Size = 14
-    end
-    object qryCustomersCustPhCell: TStringField
-      FieldName = 'CustPhCell'
-      Size = 14
-    end
-    object qryCustomersCustComment: TMemoField
-      FieldName = 'CustComment'
-      BlobType = ftMemo
-    end
-    object qryCustomerscCustPhHome: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'CCustPhHome'
-      Size = 14
-      Calculated = True
-    end
-    object qryCustomersCCustPhBussiness: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'CCustPhBussiness'
-      Size = 14
-      Calculated = True
-    end
-    object qryCustomersCCustPhBeep: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'CCustPhBeep'
-      Size = 14
-      Calculated = True
-    end
-    object qryCustomerscCustPhCell: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cCustPhCell'
-      Size = 14
-      Calculated = True
-    end
-    object qryCustomerscCustFlDrvLic: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cCustFlDrvLic'
-      Calculated = True
-    end
-    object qryCustomerscCustAge: TIntegerField
-      FieldKind = fkCalculated
-      FieldName = 'cCustAge'
-      Calculated = True
-    end
   end
   object qrySalesTran_: TADOQuery
     Connection = ConnDB
@@ -4711,8 +4509,8 @@ object DM: TDM
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 151
-    Top = 312
+    Left = 53
+    Top = 973
     object clnWeigthUnitsWeigthUnitValue: TStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
@@ -4746,7 +4544,7 @@ object DM: TDM
       'from ItemStatus'
       'order by StatusDesc')
     Left = 918
-    Top = 11
+    Top = 10
   end
   object prvItemStatus: TDataSetProvider
     DataSet = qryItemStatus
@@ -7619,12 +7417,6 @@ object DM: TDM
     Left = 104
     Top = 591
   end
-  object ADOQuery1: TADOQuery
-    Connection = ConnDB
-    Parameters = <>
-    Left = 421
-    Top = 407
-  end
   object vilMain24: TSVGIconVirtualImageList
     Tag = 1
     Images = <
@@ -8068,7 +7860,7 @@ object DM: TDM
       'Password=masterkey'
       'DriverID=FB')
     LoginPrompt = False
-    Left = 60
+    Left = 59
     Top = 760
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
@@ -8444,6 +8236,229 @@ object DM: TDM
     object qryStoreDEFAULT_PAWN_INTERESTRATE: TFloatField
       FieldName = 'DEFAULT_PAWN_INTERESTRATE'
       Origin = 'DEFAULT_PAWN_INTERESTRATE'
+    end
+  end
+  object qryStates: TFDQuery
+    Connection = ConnFB
+    SQL.Strings = (
+      'SELECT STATE_ABBR, STATE_NAME '
+      'FROM STATES')
+    Left = 145
+    Top = 967
+    object qryStatesSTATE_ABBR: TStringField
+      FieldName = 'STATE_ABBR'
+      Origin = 'STATE_ABBR'
+      Size = 2
+    end
+    object qryStatesSTATE_NAME: TStringField
+      FieldName = 'STATE_NAME'
+      Origin = 'STATE_NAME'
+      Size = 30
+    end
+  end
+  object qryCustomers: TFDQuery
+    AfterScroll = qryCustomersAfterScroll
+    OnCalcFields = qryCustomersCalcFields
+    OnNewRecord = qryCustomersNewRecord
+    Connection = ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
+    UpdateOptions.UpdateTableName = 'CUSTOMER'
+    UpdateOptions.KeyFields = 'CUST_NO'
+    UpdateOptions.AutoIncFields = 'CUST_NO'
+    SQL.Strings = (
+      'SELECT *'
+      'FROM CUSTOMER'
+      
+        'WHERE CUST_LAST LIKE :CUST_LAST AND CUST_FIRST LIKE :CUST_FIRST ' +
+        'AND CUST_NO > 0'
+      '   --SearchByTicketNo'
+      '   --SearchByPhone'
+      'ORDER BY CUST_FIRST, CUST_LAST')
+    Left = 559
+    Top = 764
+    ParamData = <
+      item
+        Name = 'CUST_LAST'
+        DataType = ftWideString
+        ParamType = ptInput
+        Size = 35
+      end
+      item
+        Name = 'CUST_FIRST'
+        DataType = ftWideString
+        ParamType = ptInput
+        Size = 35
+      end>
+    object qryCustomersCCustPhHome: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'CCustPhHome'
+      Size = 14
+      Calculated = True
+    end
+    object qryCustomersCCustPhBussiness: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'CCustPhBussiness'
+      Size = 14
+      Calculated = True
+    end
+    object qryCustomersCCustPhBeep: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'CCustPhBeep'
+      Size = 14
+      Calculated = True
+    end
+    object qryCustomerscCustPhCell: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cCustPhCell'
+      Size = 14
+      Calculated = True
+    end
+    object qryCustomerscCustFlDrvLic: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cCustFlDrvLic'
+      Calculated = True
+    end
+    object qryCustomerscCustAge: TIntegerField
+      FieldKind = fkCalculated
+      FieldName = 'cCustAge'
+      Calculated = True
+    end
+    object qryCustomersCUST_NO: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'CUST_NO'
+      Origin = 'CUST_NO'
+      Required = True
+    end
+    object qryCustomersCUST_FIRST: TWideStringField
+      FieldName = 'CUST_FIRST'
+      Origin = 'CUST_FIRST'
+      Size = 35
+    end
+    object qryCustomersCUST_MID: TWideStringField
+      FieldName = 'CUST_MID'
+      Origin = 'CUST_MID'
+      FixedChar = True
+      Size = 1
+    end
+    object qryCustomersCUST_LAST: TWideStringField
+      FieldName = 'CUST_LAST'
+      Origin = 'CUST_LAST'
+      Size = 35
+    end
+    object qryCustomersCUST_DOB: TDateField
+      FieldName = 'CUST_DOB'
+      Origin = 'CUST_DOB'
+    end
+    object qryCustomersCUST_GENDER: TWideStringField
+      FieldName = 'CUST_GENDER'
+      Origin = 'CUST_GENDER'
+      FixedChar = True
+      Size = 1
+    end
+    object qryCustomersCUST_RACE: TWideStringField
+      FieldName = 'CUST_RACE'
+      Origin = 'CUST_RACE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryCustomersCUST_HAIR: TWideStringField
+      FieldName = 'CUST_HAIR'
+      Origin = 'CUST_HAIR'
+      Size = 5
+    end
+    object qryCustomersCUST_EYES: TWideStringField
+      FieldName = 'CUST_EYES'
+      Origin = 'CUST_EYES'
+      Size = 5
+    end
+    object qryCustomersCUST_MARK: TWideStringField
+      FieldName = 'CUST_MARK'
+      Origin = 'CUST_MARK'
+      Size = 10
+    end
+    object qryCustomersCUST_WEIGHT: TFloatField
+      FieldName = 'CUST_WEIGHT'
+      Origin = 'CUST_WEIGHT'
+    end
+    object qryCustomersCUST_HEIGHT: TWideStringField
+      FieldName = 'CUST_HEIGHT'
+      Origin = 'CUST_HEIGHT'
+      Size = 8
+    end
+    object qryCustomersCUST_ADDR: TWideStringField
+      FieldName = 'CUST_ADDR'
+      Origin = 'CUST_ADDR'
+      Size = 55
+    end
+    object qryCustomersCUST_APT: TWideStringField
+      FieldName = 'CUST_APT'
+      Origin = 'CUST_APT'
+      Size = 5
+    end
+    object qryCustomersCUST_CITY: TWideStringField
+      FieldName = 'CUST_CITY'
+      Origin = 'CUST_CITY'
+      Size = 40
+    end
+    object qryCustomersCUST_STATE: TWideStringField
+      FieldName = 'CUST_STATE'
+      Origin = 'CUST_STATE'
+      FixedChar = True
+      Size = 2
+    end
+    object qryCustomersCUST_ZIP: TWideStringField
+      FieldName = 'CUST_ZIP'
+      Origin = 'CUST_ZIP'
+      Size = 11
+    end
+    object qryCustomersCUST_PLACE_EMPLY: TWideStringField
+      FieldName = 'CUST_PLACE_EMPLY'
+      Origin = 'CUST_PLACE_EMPLY'
+      Size = 30
+    end
+    object qryCustomersCUST_FL_DRV_LIC: TWideStringField
+      FieldName = 'CUST_FL_DRV_LIC'
+      Origin = 'CUST_FL_DRV_LIC'
+    end
+    object qryCustomersCUST_ID: TWideStringField
+      FieldName = 'CUST_ID'
+      Origin = 'CUST_ID'
+      Size = 25
+    end
+    object qryCustomersCUST_ID_TYPE: TWideStringField
+      FieldName = 'CUST_ID_TYPE'
+      Origin = 'CUST_ID_TYPE'
+    end
+    object qryCustomersCUST_ID_AGENCY_STATE: TWideStringField
+      FieldName = 'CUST_ID_AGENCY_STATE'
+      Origin = 'CUST_ID_AGENCY_STATE'
+      Size = 10
+    end
+    object qryCustomersCUST_PH_HOME: TWideStringField
+      FieldName = 'CUST_PH_HOME'
+      Origin = 'CUST_PH_HOME'
+      Size = 14
+    end
+    object qryCustomersCUST_PH_BUSINESS: TWideStringField
+      FieldName = 'CUST_PH_BUSINESS'
+      Origin = 'CUST_PH_BUSINESS'
+      Size = 14
+    end
+    object qryCustomersCUST_PH_BEEP: TWideStringField
+      FieldName = 'CUST_PH_BEEP'
+      Origin = 'CUST_PH_BEEP'
+      Size = 14
+    end
+    object qryCustomersCUST_PH_CELL: TWideStringField
+      FieldName = 'CUST_PH_CELL'
+      Origin = 'CUST_PH_CELL'
+      Size = 14
+    end
+    object qryCustomersCUST_COMMENT: TMemoField
+      FieldName = 'CUST_COMMENT'
+      Origin = 'CUST_COMMENT'
+      BlobType = ftMemo
     end
   end
 end

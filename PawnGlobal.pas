@@ -146,12 +146,9 @@ procedure WriteLastImageBackupDate;
 
 //function CreateTempView(SQLStatement: string): string;
 //Procedure ExecSQLStatement(SQLStatement: string);
-function OpenSQLStatement(SQLStatement: string): variant;
-function ExecSQLStatement(SQLStatement: string): integer; //Return how many rows were affected
 function OpenSQLStatementFB(SQLStatement: string): variant;
 function ExecSQLStatementFB(SQLStatement: string): integer; //Return how many rows were affected
 
-procedure GetDBInfo(var DBInfo: TDBInfo);
 function GetMACAddress:String;
 function GetUniqueID: string;
 
@@ -332,20 +329,6 @@ begin
   end;
 end;
 }
-procedure GetDBInfo(var DBInfo: TDBInfo);
-begin
-  DM.qryDummy.SQL.Text := 'call sa_db_info(0)';
-  DM.qryDummy.Open;
-  with DBInfo do
-    begin
-      Alias := DM.qryDummy.FieldByName('Alias').AsString;
-      DBFile := DM.qryDummy.FieldByName('File').AsString;
-      LogName := DM.qryDummy.FieldByName('LogName').AsString;
-      ConnCount := DM.qryDummy.FieldByName('ConnCount').AsInteger;
-      PageSize := DM.qryDummy.FieldByName('PageSize').AsInteger;
-    end;
-end;
-
 function GetMACAddress:String;
 type
   TGMac = record
@@ -664,21 +647,6 @@ begin
   eighth := StringOfChar('0', 3 - length(eighth)) + eighth;
 
   Result :=UpCase(xLast[1]) + Second + Fifth + Sixth + Eighth;
-end;
-
-function OpenSQLStatement(SQLStatement: string): variant;
-begin
-  DM.qryDummy.SQL.Text := SQLStatement;
-  DM.qryDummy.Open;
-  Result := DM.qryDummy.Fields[0].Value;
-  DM.qryDummy.Close;
-end;
-
-function ExecSQLStatement(SQLStatement: string): integer; //Return how many rows were affected
-begin
-  DM.qryDummy.Close;
-  DM.qryDummy.SQL.Text := SQLStatement;
-  Result := DM.qryDummy.ExecSQL;
 end;
 
 // Firebird counterparts. Side-by-side with the ADO versions during the

@@ -64,14 +64,14 @@ object frmClients: TfrmClients
         Columns = <
           item
             Expanded = False
-            FieldName = 'Custno'
+            FieldName = 'CUST_NO'
             Title.Caption = 'No'
             Width = 37
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustFirst'
+            FieldName = 'CUST_FIRST'
             Title.Alignment = taCenter
             Title.Caption = 'First Name'
             Width = 121
@@ -79,14 +79,14 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustMid'
+            FieldName = 'CUST_MID'
             Title.Caption = 'Middle'
             Width = 52
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustLast'
+            FieldName = 'CUST_LAST'
             Title.Alignment = taCenter
             Title.Caption = 'Last Name'
             Width = 161
@@ -94,7 +94,7 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustAddr'
+            FieldName = 'CUST_ADDR'
             Title.Alignment = taCenter
             Title.Caption = 'Address'
             Width = 150
@@ -102,13 +102,13 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustApt'
+            FieldName = 'CUST_APT'
             Title.Caption = 'Apt.'
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustCity'
+            FieldName = 'CUST_CITY'
             Title.Alignment = taCenter
             Title.Caption = 'City'
             Width = 99
@@ -116,7 +116,7 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustState'
+            FieldName = 'CUST_STATE'
             Title.Alignment = taCenter
             Title.Caption = 'State'
             Width = 48
@@ -124,7 +124,7 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustZip'
+            FieldName = 'CUST_ZIP'
             Title.Alignment = taCenter
             Title.Caption = 'ZIP'
             Width = 89
@@ -139,7 +139,7 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustDOB'
+            FieldName = 'CUST_DOB'
             Title.Caption = 'DOB'
             Width = 87
             Visible = True
@@ -174,77 +174,69 @@ object frmClients: TfrmClients
           end
           item
             Expanded = False
-            FieldName = 'CustID'
+            FieldName = 'CUST_ID'
             Title.Caption = 'ID'
             Width = 67
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustIDType'
+            FieldName = 'CUST_ID_TYPE'
             Title.Caption = 'ID type'
             Width = 61
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustIDAgencyState'
+            FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustGender'
+            FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustRace'
+            FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustHair'
+            FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustEyes'
+            FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustMark'
+            FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustWeight'
+            FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustHeight'
+            FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CustPlaceEmply'
+            FieldName = 'CUST_PLACE_EMPLY'
             Title.Caption = 'Place Emply'
             Width = 200
             Visible = True
@@ -1140,13 +1132,13 @@ object frmClients: TfrmClients
       Width = 976
       Height = 349
       Hint = ''
-      ActivePage = TabPayment
+      ActivePage = TabItems
       Align = alClient
       BoldCurrentTab = True
       HotTrackStyle = htsTabBar
       Images = DM.ImageListBtn
       TabHeight = 35
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 1
       OnChange = pgTransDetailChange
       FixedDimension = 35
@@ -1238,7 +1230,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end
             item
@@ -1286,7 +1277,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end>
         end

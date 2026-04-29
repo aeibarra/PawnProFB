@@ -60,7 +60,7 @@ type
     ActionListClientInfo: TActionList;
     ActionScanCard: TAction;
     btnSave: TRzBitBtn;
-    RzDBDateTimeEdit1: TRzDBDateTimeEdit;
+    cbCustDOB: TRzDBDateTimeEdit;
     DBEdit1: TDBEdit;
     TimerScanningTimeOut: TTimer;
     qryCheckClient: TADOQuery;
@@ -71,10 +71,6 @@ type
     cbRace: TComboBox;
     cbEyes: TComboBox;
     cbHair: TComboBox;
-    DBComboBox1: TDBComboBox;
-    dbcbRace_: TDBComboBox;
-    DBComboBox3: TDBComboBox;
-    DBComboBox2: TDBComboBox;
     lblCustAge: TRzLabel;
     edFLDriverLicense: TPawnFLDLEdit;
     edCellNumber: TPawnPhoneEdit;
@@ -160,13 +156,13 @@ begin
   State := trim(UpperCase(State));
   if (State <> '') and (State = 'FL') then
     begin
-      DM.qryCustomersCustFlDrvLic.AsString := IdNumber;
+      DM.qryCustomersCUST_FL_DRV_LIC.AsString := IdNumber;
     end
   else
     begin
-      DM.qryCustomersCustID.AsString := IdNumber;
-      DM.qryCustomersCustIDAgencyState.AsString := State;
-      DM.qryCustomersCustIDType.AsString := 'DL';
+      DM.qryCustomersCUST_ID.AsString := IdNumber;
+      DM.qryCustomersCUST_ID_AGENCY_STATE.AsString := State;
+      DM.qryCustomersCUST_ID_TYPE.AsString := 'DL';
     end;
 
 end;
@@ -176,35 +172,35 @@ begin
   if (trim(DrvLicInfo.FirstName) = '') and (trim(DrvLicInfo.Address) = '') then
     exit;
 
-  DM.qryCustomersCustFirst.AsString := DrvLicInfo.FirstName;
-  DM.qryCustomersCustMid.AsString := DrvLicInfo.MiddleName;
-  DM.qryCustomersCustLast.AsString := DrvLicInfo.LastName;
+  DM.qryCustomersCUST_FIRST.AsString := DrvLicInfo.FirstName;
+  DM.qryCustomersCUST_MID.AsString := DrvLicInfo.MiddleName;
+  DM.qryCustomersCUST_LAST.AsString := DrvLicInfo.LastName;
 
-  DM.qryCustomersCustGender.AsString := DrvLicInfo.Sex;
+  DM.qryCustomersCUST_GENDER.AsString := DrvLicInfo.Sex;
   CustomerGender := DrvLicInfo.Sex;;
 
-  DM.qryCustomersCustHeight.AsString := DrvLicInfo.PersonHeight;
-  DM.qryCustomersCustAddr.AsString := DrvLicInfo.Address;
-  DM.qryCustomersCustCity.AsString := DrvLicInfo.City;
-  DM.qryCustomersCustState.AsString := DrvLicInfo.State;
-  DM.qryCustomersCustZip.AsString := DrvLicInfo.ZipCode;
-  DM.qryCustomersCustDOB.AsDateTime := DrvLicInfo.DOB;
+  DM.qryCustomersCUST_HEIGHT.AsString := DrvLicInfo.PersonHeight;
+  DM.qryCustomersCUST_ADDR.AsString := DrvLicInfo.Address;
+  DM.qryCustomersCUST_CITY.AsString := DrvLicInfo.City;
+  DM.qryCustomersCUST_STATE.AsString := DrvLicInfo.State;
+  DM.qryCustomersCUST_ZIP.AsString := DrvLicInfo.ZipCode;
+  DM.qryCustomersCUST_DOB.AsDateTime := DrvLicInfo.DOB;
 
   PopulateID(DrvLicInfo.DrivervLicNumber, DrvLicInfo.State);
 
 //  State := trim(UpperCase(DrvLicInfo.State));
 //  if (State <> '') and (State = 'FL') then
 //    begin
-//      DM.qryCustomersCustFlDrvLic.AsString := DrvLicInfo.DrivervLicNumber;
+//      DM.qryCustomersCUST_FL_DRV_LIC.AsString := DrvLicInfo.DrivervLicNumber;
 //    end
 //  else
 //    begin
-//      DM.qryCustomersCustID.AsString := DrvLicInfo.DrivervLicNumber;
-//      DM.qryCustomersCustIDAgencyState.AsString := State;
-//      DM.qryCustomersCustIDType.AsString := 'DL';
+//      DM.qryCustomersCUST_ID.AsString := DrvLicInfo.DrivervLicNumber;
+//      DM.qryCustomersCUST_ID_AGENCY_STATE.AsString := State;
+//      DM.qryCustomersCUST_ID_TYPE.AsString := 'DL';
 //    end;
 
-  DM.qryCustomersCustComment.AsString := '';
+  DM.qryCustomersCUST_COMMENT.AsString := '';
 end;
 
 procedure TfrmEnterClientInfo.ProcessAndShowBarcodeData;
@@ -478,13 +474,13 @@ begin
     begin
       DM.qryCustomers.Edit;
 
-      CustomerGender := DM.qryCustomersCustGender.AsString;
-      CustomerRace := DM.qryCustomersCustRace.AsString;
-      CustomerEyesColor := DM.qryCustomersCustEyes.AsString;
-      CustomerHairColor := DM.qryCustomersCustHair.AsString;
+      CustomerGender := DM.qryCustomersCUST_GENDER.AsString;
+      CustomerRace := DM.qryCustomersCUST_RACE.AsString;
+      CustomerEyesColor := DM.qryCustomersCUST_EYES.AsString;
+      CustomerHairColor := DM.qryCustomersCUST_HAIR.AsString;
 
-      CustomerDriverLicense := DM.qryCustomersCustFlDrvLic.AsString;
-      CustomerCellNumber := DM.qryCustomersCustPhCell.AsString;
+      CustomerDriverLicense := DM.qryCustomersCUST_FL_DRV_LIC.AsString;
+      CustomerCellNumber := DM.qryCustomersCUST_PH_CELL.AsString;
       CustomerHomePhoneNumber := DM.qryCustomerscCustPhHome.AsString;
       CustomerBussinessPhoneNumber := DM.qryCustomersCCustPhBussiness.AsString;
       CustomerOtherPhoneNumber := DM.qryCustomersCCustPhBeep.AsString;
@@ -508,32 +504,32 @@ begin
   btnSave.SetFocus;
   Application.ProcessMessages;
 
-  if trim(DM.qryCustomersCustFirst.AsString) = '' then
+  if trim(DM.qryCustomersCUST_FIRST.AsString) = '' then
     begin
       MessageDlg('Please enter the client firt name.', mtInformation, [mbOk], 0);
       edFirst.SetFocus;
       exit;
     end;
   
-  if trim(DM.qryCustomersCustLast.AsString) = '' then
+  if trim(DM.qryCustomersCUST_LAST.AsString) = '' then
     begin
       MessageDlg('Please enter the client last name.', mtInformation, [mbOk], 0);
       edLast.SetFocus;
       exit;
     end;
 
-  if DM.qryCustomersCustFlDrvLic.IsNull then
+  if DM.qryCustomersCUST_FL_DRV_LIC.IsNull then
     btnCalcLicClick(nil);
 
-  DM.qryCustomersCustLast.AsString := trim(DM.qryCustomersCustLast.AsString);
-  DM.qryCustomersCustFirst.AsString := trim(DM.qryCustomersCustFirst.AsString);
-  DM.qryCustomersCustGender.AsString := GetGender;
-  DM.qryCustomersCustRace.AsString := CustomerRace;
-  DM.qryCustomersCustEyes.AsString := CustomerEyesColor;
-  DM.qryCustomersCustHair.AsString := CustomerHairColor;
+  DM.qryCustomersCUST_LAST.AsString := trim(DM.qryCustomersCUST_LAST.AsString);
+  DM.qryCustomersCUST_FIRST.AsString := trim(DM.qryCustomersCUST_FIRST.AsString);
+  DM.qryCustomersCUST_GENDER.AsString := GetGender;
+  DM.qryCustomersCUST_RACE.AsString := CustomerRace;
+  DM.qryCustomersCUST_EYES.AsString := CustomerEyesColor;
+  DM.qryCustomersCUST_HAIR.AsString := CustomerHairColor;
 
-  DM.qryCustomersCustFlDrvLic.AsString := CustomerDriverLicense;
-  DM.qryCustomersCustPhCell.AsString := CustomerCellNumber;
+  DM.qryCustomersCUST_FL_DRV_LIC.AsString := CustomerDriverLicense;
+  DM.qryCustomersCUST_PH_CELL.AsString := CustomerCellNumber;
   DM.qryCustomerscCustPhHome.AsString := CustomerHomePhoneNumber;
   DM.qryCustomersCCustPhBussiness.AsString := CustomerBussinessPhoneNumber;
   DM.qryCustomersCCustPhBeep.AsString := CustomerOtherPhoneNumber;
@@ -541,16 +537,16 @@ begin
   if NewRow then
     begin
       qryCheckClient.Close;
-      qryCheckClient.Parameters.ParamByName('CustLast').Value := DM.qryCustomersCustLast.AsString;
-      qryCheckClient.Parameters.ParamByName('CustFirst').Value := DM.qryCustomersCustFirst.AsString;
-      qryCheckClient.Parameters.ParamByName('CustDOB').Value := DM.qryCustomersCustDOB.AsDateTime;
+      qryCheckClient.Parameters.ParamByName('CustLast').Value := DM.qryCustomersCUST_LAST.AsString;
+      qryCheckClient.Parameters.ParamByName('CustFirst').Value := DM.qryCustomersCUST_FIRST.AsString;
+      qryCheckClient.Parameters.ParamByName('CustDOB').Value := DM.qryCustomersCUST_DOB.AsDateTime;
       qryCheckClient.Open;
 
       if qryCheckClientTClients.AsInteger > 0 then
         begin
           MsgInfo('Client already exists. Please select client from search screen.');
-          frmClients.edFirst.Text := DM.qryCustomersCustFirst.AsString;
-          frmClients.edLast.Text := DM.qryCustomersCustLast.AsString;
+          frmClients.edFirst.Text := DM.qryCustomersCUST_FIRST.AsString;
+          frmClients.edLast.Text := DM.qryCustomersCUST_LAST.AsString;
 
           DM.qryCustomers.Cancel;
           frmClients.btnSearchClick(nil);
@@ -569,16 +565,16 @@ end;
 
 procedure TfrmEnterClientInfo.btnCalcLicClick(Sender: TObject);
 begin
-//   DM.qryCustomersCustFlDrvLic.AsString := FloridaLic(DM.qryCustomersCustLast.AsString,
-//                                                     DM.qryCustomersCustFirst.AsString,
-//                                                     DM.qryCustomersCustMid.AsString,
-//                                                     DM.qryCustomersCustDOB.AsDateTime,
+//   DM.qryCustomersCUST_FL_DRV_LIC.AsString := FloridaLic(DM.qryCustomersCUST_LAST.AsString,
+//                                                     DM.qryCustomersCUST_FIRST.AsString,
+//                                                     DM.qryCustomersCUST_MID.AsString,
+//                                                     DM.qryCustomersCUST_DOB.AsDateTime,
 //                                                     GetGender);
 end;
 
 procedure TfrmEnterClientInfo.txtFlDrvLicAfterEnter(Sender: TObject);
 begin
-  if DM.qryCustomersCustFlDrvLic.IsNull then
+  if DM.qryCustomersCUST_FL_DRV_LIC.IsNull then
     btnCalcLicClick(nil);
 end;
 
@@ -762,35 +758,35 @@ begin
   try
     if frmDriverLicCardReader.ShowModal = mrOK then
       begin
-        DM.qryCustomersCustFirst.AsString := frmDriverLicCardReader.edFirst.Text;
-        DM.qryCustomersCustLast.AsString := frmDriverLicCardReader.edLast.Text;
-        DM.qryCustomersCustMid.AsString := frmDriverLicCardReader.edMiddle.Text;
+        DM.qryCustomersCUST_FIRST.AsString := frmDriverLicCardReader.edFirst.Text;
+        DM.qryCustomersCUST_LAST.AsString := frmDriverLicCardReader.edLast.Text;
+        DM.qryCustomersCUST_MID.AsString := frmDriverLicCardReader.edMiddle.Text;
         try
-          DM.qryCustomersCustDOB.AsDateTime := StrToDate(frmDriverLicCardReader.edDOB.Text);
+          DM.qryCustomersCUST_DOB.AsDateTime := StrToDate(frmDriverLicCardReader.edDOB.Text);
         except
         end;
-        DM.qryCustomersCustAddr.AsString :=  frmDriverLicCardReader.edAddress.Text;
-        DM.qryCustomersCustCity.AsString := frmDriverLicCardReader.edCity.Text;
-        DM.qryCustomersCustState.AsString := frmDriverLicCardReader.edState.Text;
-        DM.qryCustomersCustZip.AsString := frmDriverLicCardReader.edZIP.Text;
+        DM.qryCustomersCUST_ADDR.AsString :=  frmDriverLicCardReader.edAddress.Text;
+        DM.qryCustomersCUST_CITY.AsString := frmDriverLicCardReader.edCity.Text;
+        DM.qryCustomersCUST_STATE.AsString := frmDriverLicCardReader.edState.Text;
+        DM.qryCustomersCUST_ZIP.AsString := frmDriverLicCardReader.edZIP.Text;
 
-        DM.qryCustomersCustGender.AsString := frmDriverLicCardReader.edSex.Text;
+        DM.qryCustomersCUST_GENDER.AsString := frmDriverLicCardReader.edSex.Text;
         CustomerGender := frmDriverLicCardReader.edSex.Text;
 
-        DM.qryCustomersCustHeight.AsString := frmDriverLicCardReader.edHeight.Text;
+        DM.qryCustomersCUST_HEIGHT.AsString := frmDriverLicCardReader.edHeight.Text;
 
         PopulateID(frmDriverLicCardReader.edDrvLic.Text, frmDriverLicCardReader.edState.Text);
 
 //        State := trim(UpperCase(frmDriverLicCardReader.edState.Text));
 //        if (State <> '') and (State = 'FL') then
 //          begin
-//            DM.qryCustomersCustFlDrvLic.AsString := frmDriverLicCardReader.edDrvLic.Text;
+//            DM.qryCustomersCUST_FL_DRV_LIC.AsString := frmDriverLicCardReader.edDrvLic.Text;
 //          end
 //        else
 //          begin
-//            DM.qryCustomersCustID.AsString := frmDriverLicCardReader.edDrvLic.Text;
-//            DM.qryCustomersCustIDAgencyState.AsString := State;
-//            DM.qryCustomersCustIDType.AsString := 'DL';
+//            DM.qryCustomersCUST_ID.AsString := frmDriverLicCardReader.edDrvLic.Text;
+//            DM.qryCustomersCUST_ID_AGENCY_STATE.AsString := State;
+//            DM.qryCustomersCUST_ID_TYPE.AsString := 'DL';
 //          end;
 
         cbRace.SetFocus;
