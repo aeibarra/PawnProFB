@@ -474,7 +474,7 @@ object DMReports: TDMReports
         UserName = 'DBText1'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -497,7 +497,7 @@ object DMReports: TDMReports
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -520,7 +520,7 @@ object DMReports: TDMReports
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -543,7 +543,7 @@ object DMReports: TDMReports
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -566,7 +566,7 @@ object DMReports: TDMReports
         UserName = 'DBText41'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Storenumber'
+        DataField = 'STORE_NUMBER'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2645,7 +2645,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer3
         UserName = 'DBText24'
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = dbpStore
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2667,7 +2667,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer3
         UserName = 'DBText25'
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = dbpStore
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2689,7 +2689,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer3
         UserName = 'DBText26'
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = dbpStore
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2711,7 +2711,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer3
         UserName = 'DBText27'
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = dbpStore
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack

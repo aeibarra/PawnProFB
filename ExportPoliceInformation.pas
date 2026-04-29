@@ -166,7 +166,7 @@ var
 begin
   frmViewImage := TfrmViewImage.Create(self);
   try
-    ImgFileName := DM_LeadsOnline.GetLeadsOnlineFileName(DM.qryStoreLeadsStoreId.AsString, qryImagesNotExpTranType.AsString,
+    ImgFileName := DM_LeadsOnline.GetLeadsOnlineFileName(DM.qryStoreLEADS_STORE_ID.AsString, qryImagesNotExpTranType.AsString,
                                                                qryImagesNotExpTranDate.AsDateTime, qryImagesNotExpTranTicketNo.AsInteger,
                                                                qryImagesNotExpItemSeq.AsInteger, qryImagesNotExpImagesDataNo.AsInteger);
     frmViewImage.FileName := ImgFileName;
@@ -306,9 +306,9 @@ begin
 
   btnSendImages.Enabled := false;
   try
-    FTP.Host := DM.qryStoreLeadsOnlineFTPAddress.AsString ;//'ftp.leadsonline.com';
-    FTP.Username := DM.qryStoreLeadsOnlineUserName.AsString ;//'perezcash';
-    FTP.Password := DM.qryStoreLeadsOnlinePassword.AsString ;//'cashjoyeria2';
+    FTP.Host := DM.qryStoreLEADS_ONLINE_FTP_ADDRESS.AsString ;//'ftp.leadsonline.com';
+    FTP.Username := DM.qryStoreLEADS_ONLINE_USER_NAME.AsString ;//'perezcash';
+    FTP.Password := DM.qryStoreLEADS_ONLINE_PASSWORD.AsString ;//'cashjoyeria2';
 //    FTP.Host := 'aeibarra.com';
 //    FTP.Username := 'aeibarra' ;
 //    FTP.Password := 'SuperKakita1019';
@@ -316,7 +316,7 @@ begin
 
     lblFTPStatus.Caption := 'Connecting...'; Application.ProcessMessages;
     FTP.Connect;
-    if DM.qryStoreFTPPassive.AsBoolean then
+    if DM.qryStoreFTP_PASSIVE.AsBoolean then
       begin
         FTP.Passive := true;
       end
@@ -339,7 +339,7 @@ begin
           lblSendImgProgress.Caption := Format('Sending Image %d of %d', [i, TotalImg]);
           Application.ProcessMessages;
 
-          ImgFileName := DM_LeadsOnline.GetLeadsOnlineFileName(DM.qryStoreLeadsStoreId.AsString, qryImagesNotExpTranType.AsString,
+          ImgFileName := DM_LeadsOnline.GetLeadsOnlineFileName(DM.qryStoreLEADS_STORE_ID.AsString, qryImagesNotExpTranType.AsString,
                                                                qryImagesNotExpTranDate.AsDateTime, qryImagesNotExpTranTicketNo.AsInteger,
                                                                qryImagesNotExpItemSeq.AsInteger, qryImagesNotExpImagesDataNo.AsInteger);
 

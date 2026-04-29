@@ -98,7 +98,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 292
       Height = 28
       DataSource = DM.DSStore
-      DataField = 'LeadsOnlineFTPAddress'
+      DataField = 'LEADS_ONLINE_FTP_ADDRESS'
       TabOrder = 0
     end
     object edUserName: TRzDBEdit
@@ -107,7 +107,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 135
       Height = 28
       DataSource = DM.DSStore
-      DataField = 'LeadsOnlineUserName'
+      DataField = 'LEADS_ONLINE_USER_NAME'
       TabOrder = 3
     end
     object edPassword: TRzDBEdit
@@ -116,7 +116,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 151
       Height = 28
       DataSource = DM.DSStore
-      DataField = 'LeadsOnlinePassword'
+      DataField = 'LEADS_ONLINE_PASSWORD'
       PasswordChar = '*'
       TabOrder = 4
     end
@@ -126,7 +126,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 178
       Height = 28
       DataSource = DM.DSStore
-      DataField = 'LeadsStoreId'
+      DataField = 'LEADS_STORE_ID'
       TabOrder = 1
     end
     object DBCheckBox1: TDBCheckBox
@@ -135,7 +135,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 97
       Height = 17
       Caption = 'FTP Passive'
-      DataField = 'FTPPassive'
+      DataField = 'FTP_PASSIVE'
       DataSource = DM.DSStore
       TabOrder = 2
     end

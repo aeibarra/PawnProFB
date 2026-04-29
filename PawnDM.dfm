@@ -43,139 +43,8 @@ object DM: TDM
   end
   object DSStore: TDataSource
     DataSet = qryStore
-    Left = 151
-    Top = 184
-  end
-  object qryStore: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    OnCalcFields = qryStoreCalcFields
-    Parameters = <>
-    SQL.Strings = (
-      
-        'SELECT StoreNo, StoreName, StoreAddr, StoreCityStZIP, StorePhone' +
-        ', StorePoliceID,'
-      
-        '       StoreAdjTopMarg, Storenumber, StoreAdjDetailHeight, Store' +
-        'AdjFooterHeight,'
-      
-        '       InterestCalcMethod, PoliceReportToPrint, PoliceReportLase' +
-        'rCopies,'
-      
-        '       DefaultMaturityMonths, PawnDefaultMonths, LeadsStoreId, L' +
-        'eadsOnlineFTPAddress,'
-      
-        '       LeadsOnlineUserName, LeadsOnlinePassword, FTPPassive, Paw' +
-        'nDateCalculationBase,'
-      
-        '       DefaultWeightMeasureUnit, SalesTaxPerc, DefaultPawnIntere' +
-        'stRate'
-      'FROM Store'
-      'WHERE StoreNo=0')
-    Left = 151
-    Top = 128
-    object qryStorecCity: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cCity'
-      Size = 40
-      Calculated = True
-    end
-    object qryStorecState: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cState'
-      Size = 2
-      Calculated = True
-    end
-    object qryStorecZIp: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cZIp'
-      Size = 15
-      Calculated = True
-    end
-    object qryStoreStoreNo: TStringField
-      FieldName = 'StoreNo'
-      Size = 10
-    end
-    object qryStoreStoreName: TStringField
-      FieldName = 'StoreName'
-      Size = 55
-    end
-    object qryStoreStoreAddr: TStringField
-      FieldName = 'StoreAddr'
-      Size = 55
-    end
-    object qryStoreStoreCityStZIP: TStringField
-      FieldName = 'StoreCityStZIP'
-      Size = 55
-    end
-    object qryStoreStorePhone: TStringField
-      FieldName = 'StorePhone'
-      Size = 14
-    end
-    object qryStoreStorePoliceID: TStringField
-      FieldName = 'StorePoliceID'
-      Size = 30
-    end
-    object qryStoreStoreAdjTopMarg: TIntegerField
-      FieldName = 'StoreAdjTopMarg'
-    end
-    object qryStoreStorenumber: TStringField
-      FieldName = 'Storenumber'
-      Size = 30
-    end
-    object qryStoreStoreAdjDetailHeight: TIntegerField
-      FieldName = 'StoreAdjDetailHeight'
-    end
-    object qryStoreStoreAdjFooterHeight: TIntegerField
-      FieldName = 'StoreAdjFooterHeight'
-    end
-    object qryStoreInterestCalcMethod: TIntegerField
-      FieldName = 'InterestCalcMethod'
-    end
-    object qryStorePoliceReportToPrint: TIntegerField
-      FieldName = 'PoliceReportToPrint'
-    end
-    object qryStorePoliceReportLaserCopies: TIntegerField
-      FieldName = 'PoliceReportLaserCopies'
-    end
-    object qryStoreDefaultMaturityMonths: TIntegerField
-      FieldName = 'DefaultMaturityMonths'
-    end
-    object qryStorePawnDefaultMonths: TIntegerField
-      FieldName = 'PawnDefaultMonths'
-    end
-    object qryStoreLeadsStoreId: TStringField
-      FieldName = 'LeadsStoreId'
-    end
-    object qryStoreLeadsOnlineFTPAddress: TStringField
-      FieldName = 'LeadsOnlineFTPAddress'
-      Size = 50
-    end
-    object qryStoreLeadsOnlineUserName: TStringField
-      FieldName = 'LeadsOnlineUserName'
-      Size = 50
-    end
-    object qryStoreLeadsOnlinePassword: TStringField
-      FieldName = 'LeadsOnlinePassword'
-      Size = 50
-    end
-    object qryStoreFTPPassive: TBooleanField
-      FieldName = 'FTPPassive'
-    end
-    object qryStorePawnDateCalculationBase: TStringField
-      FieldName = 'PawnDateCalculationBase'
-      Size = 1
-    end
-    object qryStoreDefaultWeightMeasureUnit: TStringField
-      FieldName = 'DefaultWeightMeasureUnit'
-      Size = 1
-    end
-    object qryStoreSalesTaxPerc: TFloatField
-      FieldName = 'SalesTaxPerc'
-    end
-    object qryStoreDefaultPawnInterestRate: TFloatField
-      FieldName = 'DefaultPawnInterestRate'
-    end
+    Left = 429
+    Top = 962
   end
   object QryStates: TADOQuery
     Connection = ConnDB
@@ -191,144 +60,6 @@ object DM: TDM
     object QryStatesState_Name: TStringField
       FieldName = 'State_Name'
       Size = 30
-    end
-  end
-  object qryTransactions_: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    Filter = 'TranType='#39'P'#39
-    Filtered = True
-    AfterPost = qryTransactionsAfterScroll
-    AfterScroll = qryTransactionsAfterScroll
-    OnCalcFields = qryTransactionsCalcFields
-    OnNewRecord = qryTransactionsNewRecord
-    Parameters = <
-      item
-        Name = 'CustNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM Transactions'
-      'WHERE CustNo = :CustNo and TranType in ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
-      'ORDER BY TranStatus, TranDate DESC, TranTicketNo DESC')
-    Left = 444
-    Top = 687
-    object qryTransactions_cComment: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cComment'
-      Size = 40
-      Calculated = True
-    end
-    object qryTransactions_cTranInsAmount1Month: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTranInsAmount1Month'
-      Calculated = True
-    end
-    object qryTransactions_cTotalPay1Month: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTotalPay1Month'
-      Calculated = True
-    end
-    object qryTransactions_cPawnDefaultDate: TDateTimeField
-      FieldKind = fkCalculated
-      FieldName = 'cPawnDefaultDate'
-      Calculated = True
-    end
-    object qryTransactions_cTAmountRedeemDefaultDate: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTAmountRedeemDefaultDate'
-      Calculated = True
-    end
-    object qryTransactions_cAnnualPercRate: TFloatField
-      FieldKind = fkCalculated
-      FieldName = 'cAnnualPercRate'
-      Calculated = True
-    end
-    object qryTransactions_cPawnNextMinPayment: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cPawnNextMinPayment'
-      Size = 126
-      Calculated = True
-    end
-    object qryTransactions_cTranTotalInterestAtMaturity: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTranTotalInterestAtMaturity'
-      Calculated = True
-    end
-    object qryTransactions_cTranTotalAmountAtMaturity: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTranTotalAmountAtMaturity'
-      Calculated = True
-    end
-    object qryTransactions_cTotalSalesAmount: TCurrencyField
-      FieldKind = fkCalculated
-      FieldName = 'cTotalSalesAmount'
-      Calculated = True
-    end
-    object qryTransactions_TransactionNo: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'TransactionNo'
-    end
-    object qryTransactions_CustNo: TIntegerField
-      FieldName = 'CustNo'
-    end
-    object qryTransactions_TranDate: TDateTimeField
-      FieldName = 'TranDate'
-      OnChange = qryTransactionsTranDateChange
-      DisplayFormat = 'mm/dd/yyyy'
-    end
-    object qryTransactions_TranTicketNo: TStringField
-      FieldName = 'TranTicketNo'
-      Size = 30
-    end
-    object qryTransactions_TranComment: TMemoField
-      FieldName = 'TranComment'
-      BlobType = ftMemo
-    end
-    object qryTransactions_TranMaturity: TDateField
-      FieldName = 'TranMaturity'
-      DisplayFormat = 'mm/dd/yyyy'
-    end
-    object qryTransactions_TranType: TStringField
-      FieldName = 'TranType'
-      Size = 1
-    end
-    object qryTransactions_TranStatus: TStringField
-      FieldName = 'TranStatus'
-      Size = 1
-    end
-    object qryTransactions_TranPawnAmount: TFloatField
-      FieldName = 'TranPawnAmount'
-      currency = True
-    end
-    object qryTransactions_TranInterest: TFloatField
-      FieldName = 'TranInterest'
-    end
-    object qryTransactions_PrincBalance: TFloatField
-      FieldName = 'PrincBalance'
-      currency = True
-    end
-    object qryTransactions_InsterestBalance: TFloatField
-      FieldName = 'InsterestBalance'
-      currency = True
-    end
-    object qryTransactions_TranTime: TTimeField
-      FieldName = 'TranTime'
-    end
-    object qryTransactions_TranVoidDate: TDateTimeField
-      FieldName = 'TranVoidDate'
-    end
-    object qryTransactions_TranCloseReason: TSmallintField
-      FieldName = 'TranCloseReason'
-    end
-    object qryTransactions_TranSalesTax: TFloatField
-      FieldName = 'TranSalesTax'
-      currency = True
     end
   end
   object qryCustomers: TADOQuery
@@ -8336,7 +8067,6 @@ object DM: TDM
       'User_Name=sysdba'
       'Password=masterkey'
       'DriverID=FB')
-    Connected = True
     LoginPrompt = False
     Left = 60
     Top = 760
@@ -8557,6 +8287,163 @@ object DM: TDM
       FieldName = 'TRAN_SALES_TAX'
       Origin = 'TRAN_SALES_TAX'
       currency = True
+    end
+  end
+  object qryStore: TFDQuery
+    OnCalcFields = qryStoreCalcFields
+    Connection = ConnFB
+    SQL.Strings = (
+      
+        'SELECT STORE_NO, STORE_NAME, STORE_ADDR, STORE_CITY_ST_ZIP, STOR' +
+        'E_PHONE, STORE_POLICE_ID,'
+      
+        '       STORE_ADJ_TOP_MARG, STORE_NUMBER, STORE_ADJ_DETAIL_HEIGHT' +
+        ', STORE_ADJ_FOOTER_HEIGHT,'
+      
+        '       INTEREST_CALC_METHOD, POLICE_REPORT_TO_PRINT, POLICE_REPO' +
+        'RT_LASER_COPIES,'
+      
+        '       DEFAULT_MATURITY_MONTHS, PAWN_DEFAULT_MONTHS, LEADS_STORE' +
+        '_ID, LEADS_ONLINE_FTP_ADDRESS,'
+      
+        '       LEADS_ONLINE_USER_NAME, LEADS_ONLINE_PASSWORD, FTP_PASSIV' +
+        'E, PAWN_DATE_CALCULATION_BASE,'
+      
+        '       DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC, DEFAULT_PAWN' +
+        '_INTERESTRATE'
+      'FROM STORE'
+      'WHERE STORE_NO = '#39'0'#39)
+    Left = 428
+    Top = 903
+    object qryStorecCity: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cCity'
+      Size = 40
+      Calculated = True
+    end
+    object qryStorecState: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cState'
+      Size = 2
+      Calculated = True
+    end
+    object qryStorecZIp: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cZIp'
+      Size = 15
+      Calculated = True
+    end
+    object qryStoreSTORE_NO: TStringField
+      FieldName = 'STORE_NO'
+      Origin = 'STORE_NO'
+      Size = 10
+    end
+    object qryStoreSTORE_NAME: TStringField
+      FieldName = 'STORE_NAME'
+      Origin = 'STORE_NAME'
+      Size = 55
+    end
+    object qryStoreSTORE_ADDR: TStringField
+      FieldName = 'STORE_ADDR'
+      Origin = 'STORE_ADDR'
+      Size = 55
+    end
+    object qryStoreSTORE_CITY_ST_ZIP: TStringField
+      FieldName = 'STORE_CITY_ST_ZIP'
+      Origin = 'STORE_CITY_ST_ZIP'
+      Size = 55
+    end
+    object qryStoreSTORE_PHONE: TStringField
+      FieldName = 'STORE_PHONE'
+      Origin = 'STORE_PHONE'
+      Size = 14
+    end
+    object qryStoreSTORE_POLICE_ID: TStringField
+      FieldName = 'STORE_POLICE_ID'
+      Origin = 'STORE_POLICE_ID'
+      Size = 30
+    end
+    object qryStoreSTORE_ADJ_TOP_MARG: TIntegerField
+      FieldName = 'STORE_ADJ_TOP_MARG'
+      Origin = 'STORE_ADJ_TOP_MARG'
+    end
+    object qryStoreSTORE_NUMBER: TStringField
+      FieldName = 'STORE_NUMBER'
+      Origin = 'STORE_NUMBER'
+      Size = 30
+    end
+    object qryStoreSTORE_ADJ_DETAIL_HEIGHT: TIntegerField
+      FieldName = 'STORE_ADJ_DETAIL_HEIGHT'
+      Origin = 'STORE_ADJ_DETAIL_HEIGHT'
+    end
+    object qryStoreSTORE_ADJ_FOOTER_HEIGHT: TIntegerField
+      FieldName = 'STORE_ADJ_FOOTER_HEIGHT'
+      Origin = 'STORE_ADJ_FOOTER_HEIGHT'
+      Required = True
+    end
+    object qryStoreINTEREST_CALC_METHOD: TIntegerField
+      FieldName = 'INTEREST_CALC_METHOD'
+      Origin = 'INTEREST_CALC_METHOD'
+    end
+    object qryStorePOLICE_REPORT_TO_PRINT: TIntegerField
+      FieldName = 'POLICE_REPORT_TO_PRINT'
+      Origin = 'POLICE_REPORT_TO_PRINT'
+    end
+    object qryStorePOLICE_REPORT_LASER_COPIES: TIntegerField
+      FieldName = 'POLICE_REPORT_LASER_COPIES'
+      Origin = 'POLICE_REPORT_LASER_COPIES'
+    end
+    object qryStoreDEFAULT_MATURITY_MONTHS: TIntegerField
+      FieldName = 'DEFAULT_MATURITY_MONTHS'
+      Origin = 'DEFAULT_MATURITY_MONTHS'
+    end
+    object qryStorePAWN_DEFAULT_MONTHS: TIntegerField
+      FieldName = 'PAWN_DEFAULT_MONTHS'
+      Origin = 'PAWN_DEFAULT_MONTHS'
+    end
+    object qryStoreLEADS_STORE_ID: TStringField
+      FieldName = 'LEADS_STORE_ID'
+      Origin = 'LEADS_STORE_ID'
+    end
+    object qryStoreLEADS_ONLINE_FTP_ADDRESS: TStringField
+      FieldName = 'LEADS_ONLINE_FTP_ADDRESS'
+      Origin = 'LEADS_ONLINE_FTP_ADDRESS'
+      Size = 50
+    end
+    object qryStoreLEADS_ONLINE_USER_NAME: TStringField
+      FieldName = 'LEADS_ONLINE_USER_NAME'
+      Origin = 'LEADS_ONLINE_USER_NAME'
+      Size = 50
+    end
+    object qryStoreLEADS_ONLINE_PASSWORD: TStringField
+      FieldName = 'LEADS_ONLINE_PASSWORD'
+      Origin = 'LEADS_ONLINE_PASSWORD'
+      Size = 50
+    end
+    object qryStoreFTP_PASSIVE: TBooleanField
+      FieldName = 'FTP_PASSIVE'
+      Origin = 'FTP_PASSIVE'
+      Required = True
+    end
+    object qryStorePAWN_DATE_CALCULATION_BASE: TStringField
+      FieldName = 'PAWN_DATE_CALCULATION_BASE'
+      Origin = 'PAWN_DATE_CALCULATION_BASE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TStringField
+      FieldName = 'DEFAULT_WEIGHT_MEASURE_UNIT'
+      Origin = 'DEFAULT_WEIGHT_MEASURE_UNIT'
+      FixedChar = True
+      Size = 1
+    end
+    object qryStoreSALES_TAX_PERC: TFloatField
+      FieldName = 'SALES_TAX_PERC'
+      Origin = 'SALES_TAX_PERC'
+    end
+    object qryStoreDEFAULT_PAWN_INTERESTRATE: TFloatField
+      FieldName = 'DEFAULT_PAWN_INTERESTRATE'
+      Origin = 'DEFAULT_PAWN_INTERESTRATE'
     end
   end
 end

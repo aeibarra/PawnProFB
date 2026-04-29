@@ -43,8 +43,8 @@ end;
 
 procedure TfrmSetDefaultMaturityMonth.FormShow(Sender: TObject);
 begin
-  edDefaultMaturityMonths.Text := DM.qryStoreDefaultMaturityMonths.AsString;
-  edDefaultPawnInterestRate.Value := DM.qryStoreDefaultPawnInterestRate.AsFloat;
+  edDefaultMaturityMonths.Text := DM.qryStoreDEFAULT_MATURITY_MONTHS.AsString;
+  edDefaultPawnInterestRate.Value := DM.qryStoreDEFAULT_PAWN_INTERESTRATE.AsFloat;
 end;
 
 procedure TfrmSetDefaultMaturityMonth.RzBitBtn1Click(Sender: TObject);
@@ -54,8 +54,8 @@ begin
   if TryStrToInt(edDefaultMaturityMonths.Text, DMonths) then
     begin
       DM.qryStore.Edit;
-      DM.qryStoreDefaultMaturityMonths.AsInteger := DMonths;
-      DM.qryStoreDefaultPawnInterestRate.AsFloat := edDefaultPawnInterestRate.Value;
+      DM.qryStoreDEFAULT_MATURITY_MONTHS.AsInteger := DMonths;
+      DM.qryStoreDEFAULT_PAWN_INTERESTRATE.AsFloat := edDefaultPawnInterestRate.Value;
       DM.qryStore.Post;
     end
   else

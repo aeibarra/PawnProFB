@@ -44,9 +44,9 @@ procedure TfrmLeadsOnlineFTPParams.FormShow(Sender: TObject);
 begin
   DM.qryStore.edit;
 
-  if trim(DM.qryStoreLeadsOnlineFTPAddress.AsString) = '' then
+  if trim(DM.qryStoreLEADS_ONLINE_FTP_ADDRESS.AsString) = '' then
     begin
-      DM.qryStoreLeadsOnlineFTPAddress.AsString := 'ftp.leadsonline.com';
+      DM.qryStoreLEADS_ONLINE_FTP_ADDRESS.AsString := 'ftp.leadsonline.com';
     end;
   
 end;

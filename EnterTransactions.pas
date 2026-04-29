@@ -382,7 +382,7 @@ begin
 
        if (DM.qryTransactionsINTEREST_BALANCE.AsFloat <= 0) and NewRow then
          begin
-          IntRate := DM.qryStoreDefaultPawnInterestRate.AsFloat;
+          IntRate := DM.qryStoreDEFAULT_PAWN_INTERESTRATE.AsFloat;
           DM.CalcInterest(DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency, IntRate, IntAmount);
           DM.qryTransactionsTRAN_INTEREST.AsFloat := ConvertTo2Dec(IntRate);
           DM.qryTransactionsINTEREST_BALANCE.AsCurrency := ConvertTo2Dec(IntAmount);

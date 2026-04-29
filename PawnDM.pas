@@ -35,47 +35,9 @@ type
     DSTransactions: TDataSource;
     DSPayments: TDataSource;
     DSStore: TDataSource;
-    qryStore: TADOQuery;
-    qryStorecCity: TStringField;
-    qryStorecState: TStringField;
-    qryStorecZIp: TStringField;
-    qryStoreStoreNo: TStringField;
-    qryStoreStoreName: TStringField;
-    qryStoreStoreAddr: TStringField;
-    qryStoreStoreCityStZIP: TStringField;
-    qryStoreStorePhone: TStringField;
-    qryStoreStorePoliceID: TStringField;
-    qryStoreStoreAdjTopMarg: TIntegerField;
-    qryStoreStorenumber: TStringField;
-    qryStoreStoreAdjDetailHeight: TIntegerField;
-    qryStoreStoreAdjFooterHeight: TIntegerField;
-    qryStoreInterestCalcMethod: TIntegerField;
-    qryStorePoliceReportToPrint: TIntegerField;
-    qryStorePoliceReportLaserCopies: TIntegerField;
-    qryStoreDefaultMaturityMonths: TIntegerField;
     QryStates: TADOQuery;
     QryStatesState_Abbr: TStringField;
     QryStatesState_Name: TStringField;
-    qryTransactions_: TADOQuery;
-    qryTransactions_cComment: TStringField;
-    qryTransactions_cTranInsAmount1Month: TCurrencyField;
-    qryTransactions_cTotalPay1Month: TCurrencyField;
-    qryTransactions_cPawnDefaultDate: TDateTimeField;
-    qryTransactions_cTAmountRedeemDefaultDate: TCurrencyField;
-    qryTransactions_cAnnualPercRate: TFloatField;
-    qryTransactions_TransactionNo: TIntegerField;
-    qryTransactions_CustNo: TIntegerField;
-    qryTransactions_TranDate: TDateTimeField;
-    qryTransactions_TranTicketNo: TStringField;
-    qryTransactions_TranComment: TMemoField;
-    qryTransactions_TranMaturity: TDateField;
-    qryTransactions_TranType: TStringField;
-    qryTransactions_TranStatus: TStringField;
-    qryTransactions_TranPawnAmount: TFloatField;
-    qryTransactions_TranInterest: TFloatField;
-    qryTransactions_PrincBalance: TFloatField;
-    qryTransactions_InsterestBalance: TFloatField;
-    qryTransactions_TranTime: TTimeField;
     qryCustomers: TADOQuery;
     qryCustomersCustno: TIntegerField;
     qryCustomersCustTicketNo: TStringField;
@@ -135,32 +97,20 @@ type
     qryCustomersCCustPhBeep: TStringField;
     qryCustomerscCustPhCell: TStringField;
     qryCustomerscCustFlDrvLic: TStringField;
-    qryStorePawnDefaultMonths: TIntegerField;
     qryImage: TADOQuery;
     qryImageImagesDataNo: TIntegerField;
     qryImageImageDesc: TStringField;
     qryImageImageData: TBlobField;
-    qryStoreLeadsStoreId: TStringField;
-    qryStoreLeadsOnlineFTPAddress: TStringField;
-    qryStoreLeadsOnlineUserName: TStringField;
-    qryStoreLeadsOnlinePassword: TStringField;
     qryImageUploadFileName: TStringField;
-    qryStoreFTPPassive: TBooleanField;
-    qryTransactions_cTranTotalInterestAtMaturity: TCurrencyField;
-    qryTransactions_cTranTotalAmountAtMaturity: TCurrencyField;
-    qryStorePawnDateCalculationBase: TStringField;
     qryCustomerscCustAge: TIntegerField;
     clnWeigthUnits: TClientDataSet;
     clnWeigthUnitsWeigthUnitValue: TStringField;
     clnWeigthUnitsWeightUnit: TStringField;
-    qryStoreDefaultWeightMeasureUnit: TStringField;
     clnItemStatus: TClientDataSet;
     qryItemStatus: TADOQuery;
     prvItemStatus: TDataSetProvider;
     clnItemStatusStatus: TStringField;
     clnItemStatusStatusDesc: TStringField;
-    qryTransactions_TranVoidDate: TDateTimeField;
-    qryTransactions_TranCloseReason: TSmallintField;
     qryUpdPawnStatus: TADOQuery;
     qryGetPawnStatusFromItems: TADOQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
@@ -168,7 +118,6 @@ type
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     ADOQuery1: TADOQuery;
-    qryTransactions_cPawnNextMinPayment: TStringField;
     vilMain24: TSVGIconVirtualImageList;
     qryPayments: TADOQuery;
     qryPaymentscComment: TStringField;
@@ -190,13 +139,9 @@ type
     qryNextTicketNoLastKey: TIntegerField;
     qryTotalPaid: TADOQuery;
     qryTotalPaidTotalPaid: TFloatField;
-    qryStoreSalesTaxPerc: TFloatField;
-    qryTransactions_TranSalesTax: TFloatField;
-    qryTransactions_cTotalSalesAmount: TCurrencyField;
     qryItemImages: TADOQuery;
     qryItemImagesImagesDataNo: TIntegerField;
     qryItemImagesImageData: TBlobField;
-    qryStoreDefaultPawnInterestRate: TFloatField;
     ConnFB: TFDConnection;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     qryDummyFB: TFDQuery;
@@ -232,6 +177,34 @@ type
     qryTransactionscTranTotalInterestAtMaturity: TCurrencyField;
     qryTransactionscTranTotalAmountAtMaturity: TCurrencyField;
     qryTransactionscTotalSalesAmount: TCurrencyField;
+    qryStore: TFDQuery;
+    qryStoreSTORE_NO: TStringField;
+    qryStoreSTORE_NAME: TStringField;
+    qryStoreSTORE_ADDR: TStringField;
+    qryStoreSTORE_CITY_ST_ZIP: TStringField;
+    qryStoreSTORE_PHONE: TStringField;
+    qryStoreSTORE_POLICE_ID: TStringField;
+    qryStoreSTORE_ADJ_TOP_MARG: TIntegerField;
+    qryStoreSTORE_NUMBER: TStringField;
+    qryStoreSTORE_ADJ_DETAIL_HEIGHT: TIntegerField;
+    qryStoreSTORE_ADJ_FOOTER_HEIGHT: TIntegerField;
+    qryStoreINTEREST_CALC_METHOD: TIntegerField;
+    qryStorePOLICE_REPORT_TO_PRINT: TIntegerField;
+    qryStorePOLICE_REPORT_LASER_COPIES: TIntegerField;
+    qryStoreDEFAULT_MATURITY_MONTHS: TIntegerField;
+    qryStorePAWN_DEFAULT_MONTHS: TIntegerField;
+    qryStoreLEADS_STORE_ID: TStringField;
+    qryStoreLEADS_ONLINE_FTP_ADDRESS: TStringField;
+    qryStoreLEADS_ONLINE_USER_NAME: TStringField;
+    qryStoreLEADS_ONLINE_PASSWORD: TStringField;
+    qryStoreFTP_PASSIVE: TBooleanField;
+    qryStorePAWN_DATE_CALCULATION_BASE: TStringField;
+    qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TStringField;
+    qryStoreSALES_TAX_PERC: TFloatField;
+    qryStoreDEFAULT_PAWN_INTERESTRATE: TFloatField;
+    qryStorecCity: TStringField;
+    qryStorecState: TStringField;
+    qryStorecZIp: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -865,12 +838,12 @@ begin
 
   RefreshStoreQry;
 
-  InterestCalcMethod := qryStoreInterestCalcMethod.AsInteger;
-  PawnDatesCalcMethod := qryStorePawnDateCalculationBase.AsString;
+  InterestCalcMethod := qryStoreINTEREST_CALC_METHOD.AsInteger;
+  PawnDatesCalcMethod := qryStorePAWN_DATE_CALCULATION_BASE.AsString;
   if (PawnDatesCalcMethod <> PawnDateCalcByDays) and (PawnDatesCalcMethod <> PawnDateCalcByMonth) then
     PawnDatesCalcMethod := PawnDateCalcByDays;
 
-  DefaultWeightMeasureUnit := qryStoreDefaultWeightMeasureUnit.AsString;
+  DefaultWeightMeasureUnit := qryStoreDEFAULT_WEIGHT_MEASURE_UNIT.AsString;
 
   PopulateWeightUnits;
 
@@ -891,9 +864,9 @@ end;
 
 procedure TDM.qryStoreCalcFields(DataSet: TDataSet);
 begin
-  qryStorecCity.AsString := Copy(qryStoreStoreCityStZIP.AsString, 1, pos(',', qryStoreStoreCityStZIP.AsString) - 1);
-  qryStorecState.AsString := Copy(qryStoreStoreCityStZIP.AsString, pos(',', qryStoreStoreCityStZIP.AsString)+ 2, 2);
-  qryStorecZIp.AsString := Copy(qryStoreStoreCityStZIP.AsString, pos(',', qryStoreStoreCityStZIP.AsString)+ 5, 255);
+  qryStorecCity.AsString := Copy(qryStoreSTORE_CITY_ST_ZIP.AsString, 1, pos(',', qryStoreSTORE_CITY_ST_ZIP.AsString) - 1);
+  qryStorecState.AsString := Copy(qryStoreSTORE_CITY_ST_ZIP.AsString, pos(',', qryStoreSTORE_CITY_ST_ZIP.AsString)+ 2, 2);
+  qryStorecZIp.AsString := Copy(qryStoreSTORE_CITY_ST_ZIP.AsString, pos(',', qryStoreSTORE_CITY_ST_ZIP.AsString)+ 5, 255);
 end;
 
 procedure TDM.qryPaymentsAfterPost(DataSet: TDataSet);
@@ -944,7 +917,7 @@ end;
 
 function TDM.GetPawnMaturityDate(TransactionDate: TDateTime): TDateTime;
 begin
-  Result := CalcPawnDefaultDate(TransactionDate, qryStoreDefaultMaturityMonths.AsInteger);
+  Result := CalcPawnDefaultDate(TransactionDate, qryStoreDEFAULT_MATURITY_MONTHS.AsInteger);
 end;
 
 function TDM.GetCurrentInterestBalance(AsOfDate, PawnDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TADOQuery): Currency;
@@ -1357,8 +1330,8 @@ var
   OneMonthInterest: Currency;
   CurrentIntBalanceMsg: string;
 begin
-  DefaultMonthsToRedeem := qryStorePawnDefaultMonths.AsInteger; //2;  // Store table ->  PawnDefaultMonths
-  MaturityMonths        := qryStoreDefaultMaturityMonths.AsInteger;   // DefaultMaturityMonths
+  DefaultMonthsToRedeem := qryStorePAWN_DEFAULT_MONTHS.AsInteger; //2;  // Store table ->  PawnDefaultMonths
+  MaturityMonths        := qryStoreDEFAULT_MATURITY_MONTHS.AsInteger;   // DefaultMaturityMonths
   CurrentIntBalanceMsg := '';
 
   if DefaultMonthsToRedeem < MaturityMonths then
@@ -1424,8 +1397,8 @@ procedure TDM.qryTransactionsNewRecord(DataSet: TDataSet);
 var
   IntRate: double;
 begin
-  if qryStoreDefaultPawnInterestRate.AsFloat > 0 then
-    IntRate := qryStoreDefaultPawnInterestRate.AsFloat
+  if qryStoreDEFAULT_PAWN_INTERESTRATE.AsFloat > 0 then
+    IntRate := qryStoreDEFAULT_PAWN_INTERESTRATE.AsFloat
   else
     IntRate := 10;
 

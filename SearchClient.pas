@@ -1046,7 +1046,7 @@ begin
 
   DM.RefreshStoreQry;
 
-  btnAdjPoliceReport.Visible := DM.qryStorePoliceReportToPrint.AsInteger in [1, 3, 4];
+  btnAdjPoliceReport.Visible := DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4];
 
   qryTypes.Open;
   qryStyles.Open;
@@ -1062,7 +1062,7 @@ begin
 
   DM.RefreshStoreQry;
 
-  //txtAdjTopMargin.Text := IntToStr(DM.qryStoreStoreAdjTopMarg.AsInteger);
+  //txtAdjTopMargin.Text := IntToStr(DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger);
 //  frmPawnMain.ClientsMnu.Visible := true;
   frmPawnMain.btnTabClient.Enabled := true;
 
@@ -1416,13 +1416,13 @@ var
 begin
   DM.RefreshStoreQry;
 
-  if DM.qryStorePoliceReportToPrint.AsInteger in [1, 3, 4] then
+  if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4] then
     begin
       qryPawnItems.Close;
       qryPawnItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
       qryPawnItems.Open;
     end
-  else if DM.qryStorePoliceReportToPrint.AsInteger = 2 then
+  else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 2 then
     begin
       clnPawnItems.Close;
       clnPawnItems.Params.ParamByName('TransactionNo').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
@@ -1450,40 +1450,40 @@ begin
   lblStoreName2.Caption := 'Pawnshop';
 
   RptPoliceRep.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
-  RptPoliceRep.PrinterSetup.MarginTop := 0.01 * DM.qryStoreStoreAdjTopMarg.AsInteger;
+  RptPoliceRep.PrinterSetup.MarginTop := 0.01 * DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger;
 
-  RptPoliceLaserPrePrinted.PrinterSetup.MarginTop := 0.01 * DM.qryStoreStoreAdjTopMarg.AsInteger;
+  RptPoliceLaserPrePrinted.PrinterSetup.MarginTop := 0.01 * DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger;
 
-  if DM.qryStoreStoreAdjDetailHeight.AsInteger > 0 then
+  if DM.qryStoreSTORE_ADJ_DETAIL_HEIGHT.AsInteger > 0 then
     begin
-//      RptPoliceRep.DetailBand.Height := 0.01 * DM.qryStoreStoreAdjDetailHeight.AsInteger;
-//      RptPoliceLaserPrePrinted.DetailBand.Height := 0.01 * DM.qryStoreStoreAdjDetailHeight.AsInteger;
+//      RptPoliceRep.DetailBand.Height := 0.01 * DM.qryStoreSTORE_ADJ_DETAIL_HEIGHT.AsInteger;
+//      RptPoliceLaserPrePrinted.DetailBand.Height := 0.01 * DM.qryStoreSTORE_ADJ_DETAIL_HEIGHT.AsInteger;
     end;
 
 //////////////////////////////////////////PRINT SELECTED REPORT///////////////////////////////////////////////
-  if DM.qryStoreStoreAdjFooterHeight.AsInteger > 0 then
+  if DM.qryStoreSTORE_ADJ_FOOTER_HEIGHT.AsInteger > 0 then
     begin
-      RptPoliceRep.FooterBand.Height := 0.01 * DM.qryStoreStoreAdjFooterHeight.AsInteger;
-      RptPoliceLaserprePrinted.FooterBand.Height := 0.01 * DM.qryStoreStoreAdjFooterHeight.AsInteger;
+      RptPoliceRep.FooterBand.Height := 0.01 * DM.qryStoreSTORE_ADJ_FOOTER_HEIGHT.AsInteger;
+      RptPoliceLaserprePrinted.FooterBand.Height := 0.01 * DM.qryStoreSTORE_ADJ_FOOTER_HEIGHT.AsInteger;
     end;
 
-  if DM.qryStorePoliceReportToPrint.AsInteger = 1 then //Dot Matrix 0920
+  if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 1 then //Dot Matrix 0920
     begin
       RptPoliceRep.Print
     end
-  else if DM.qryStorePoliceReportToPrint.AsInteger = 2 then //Laser Print all form
+  else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 2 then //Laser Print all form
     begin
       RepPoliceLaser.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
-      RepPoliceLaser.PrinterSetup.Copies := DM.qryStorePoliceReportLaserCopies.AsInteger;
+      RepPoliceLaser.PrinterSetup.Copies := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
 
       DMReports.PrintToTray(RepPoliceLaser, AppPrinterSettings.PoliceReportPrinter, AppPrinterSettings.PoliceReportBin);  /////////////LASER/////////////////////////
     end
-  else if DM.qryStorePoliceReportToPrint.AsInteger = 3 then //Laser PrePrinted
+  else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 3 then //Laser PrePrinted
     begin
-      for i := 1 to DM.qryStorePoliceReportLaserCopies.AsInteger do
+      for i := 1 to DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger do
         begin
           RptPoliceLaserprePrinted.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
-    //      RptPoliceLaserprePrinted.PrinterSetup.Copies := DM.qryStorePoliceReportLaserCopies.AsInteger;
+    //      RptPoliceLaserprePrinted.PrinterSetup.Copies := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
           case i of
           1:
             begin
@@ -1507,7 +1507,7 @@ begin
           DMReports.PrintToTray(RptPoliceLaserPrePrinted, AppPrinterSettings.PoliceReportPrinter, AppPrinterSettings.PoliceReportBin); /////////////LASER/////////////////////////
         end;
     end
-  else if DM.qryStorePoliceReportToPrint.AsInteger = 4 then //Dot Matrix 0924
+  else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 4 then //Dot Matrix 0924
     begin
       RptDotMatrix0924.PrinterSetup.PrinterName := RptPoliceRep.PrinterSetup.PrinterName;
       RptDotMatrix0924.PrinterSetup.MarginTop := RptPoliceRep.PrinterSetup.MarginTop;
@@ -1846,7 +1846,7 @@ procedure TfrmClients.SaveTopMarginPolRep;
 begin
 //  DM.ConnDB.Execute('UPDATE Store SET StoreAdjTopMarg = ' + trim(txtAdjTopMargin.text) + ' WHERE StoreNo = 0');
 //  DM.qryStore.Edit;
-//  DM.qryStoreStoreAdjTopMarg.AsInteger := StrToInt(trim(txtAdjTopMargin.text));
+//  DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger := StrToInt(trim(txtAdjTopMargin.text));
 //  DM.qryStore.Post;
 end;
 
@@ -2223,7 +2223,7 @@ end;
 
 procedure TfrmClients.ppLabel8GetText(Sender: TObject; var Text: string);
 begin
-  Text := DM.qryStoreStorePoliceID.AsString;
+  Text := DM.qryStoreSTORE_POLICE_ID.AsString;
 end;
 
 procedure TfrmClients.ppLabel9GetText(Sender: TObject; var Text: string);

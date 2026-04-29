@@ -49,7 +49,7 @@ uses PawnDM, PawnGlobal;
 
 procedure TfrmEnterLayaway.CalculateSalesTaxAndTotalAmount;
 begin
-  DM.qryTransactionsTRAN_SALES_TAX.AsCurrency := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency * (DM.qryStoreSalesTaxPerc.AsCurrency / 100);
+  DM.qryTransactionsTRAN_SALES_TAX.AsCurrency := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency * (DM.qryStoreSALES_TAX_PERC.AsCurrency / 100);
 end;
 
 procedure TfrmEnterLayaway.btnCancelClick(Sender: TObject);

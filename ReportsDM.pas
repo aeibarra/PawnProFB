@@ -402,7 +402,7 @@ begin
   if DM.clnWeigthUnits.Locate('WeigthUnitValue', qryLayawayRcptWeightUnit.AsString, []) then
     qryLayawayRcptcWeightUnit.AsString := DM.clnWeigthUnitsWeightUnit.AsString;
 
-  CalcTaxAndTotal(qryLayawayRcptUnitPrice.AsCurrency, DM.qryStoreSalesTaxPerc.AsCurrency, Tax, Total);
+  CalcTaxAndTotal(qryLayawayRcptUnitPrice.AsCurrency, DM.qryStoreSALES_TAX_PERC.AsCurrency, Tax, Total);
 
   qryLayawayRcptcSalesTax.AsCurrency := Tax;
   qryLayawayRcptcTotalItemCost.AsCurrency := Total;

@@ -69,10 +69,10 @@ begin
   SavePrinterSettingsToIni(GlobalIniFile, AppPrinterSettings);
 
   DM.qryStore.Edit;
-  DM.qryStorePoliceReportLaserCopies.AsInteger := trunc(edLaserCopies.Value);
+  DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger := trunc(edLaserCopies.Value);
 
   if cbTypeOfPoliceReport.ItemIndex in [0, 1, 2, 3] then
-    DM.qryStorePoliceReportToPrint.AsInteger := cbTypeOfPoliceReport.Value.ToInteger;// Values[cbTypeOfPoliceReport.ItemIndex];// idx := cbTypeOfPoliceReport.Values.IndexOf(IntToStr(DM.qryStorePoliceReportToPrint.AsInteger)); //cbTypeOfPoliceReport.ItemIndex + 1;
+    DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger := cbTypeOfPoliceReport.Value.ToInteger;// Values[cbTypeOfPoliceReport.ItemIndex];// idx := cbTypeOfPoliceReport.Values.IndexOf(IntToStr(DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger)); //cbTypeOfPoliceReport.ItemIndex + 1;
 
   DM.qryStore.Post;
 
@@ -119,10 +119,10 @@ begin
 
   DM.RefreshStoreQry;
 
-  edLaserCopies.Value := DM.qryStorePoliceReportLaserCopies.AsInteger;
-  if DM.qryStorePoliceReportToPrint.AsInteger in [1, 2, 3, 4] then
+  edLaserCopies.Value := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
+  if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 2, 3, 4] then
     begin
-      idx := cbTypeOfPoliceReport.Values.IndexOf(DM.qryStorePoliceReportToPrint.AsString);
+      idx := cbTypeOfPoliceReport.Values.IndexOf(DM.qryStorePOLICE_REPORT_TO_PRINT.AsString);
       cbTypeOfPoliceReport.ItemIndex := idx;
     end
   else

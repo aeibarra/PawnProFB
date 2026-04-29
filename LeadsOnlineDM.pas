@@ -264,7 +264,7 @@ begin
       qryGetDataToExpClientIdNumber.AsString := trim(qryGetDataToExpCustID.AsString);
     end;
 
-  qryGetDataToExpAmountRedeemDefaultDate.AsDateTime := DM.CalcPawnDefaultDate(qryGetDataToExpTranDate.AsDateTime, DM.qryStorePawnDefaultMonths.AsInteger);
+  qryGetDataToExpAmountRedeemDefaultDate.AsDateTime := DM.CalcPawnDefaultDate(qryGetDataToExpTranDate.AsDateTime, DM.qryStorePAWN_DEFAULT_MONTHS.AsInteger);
 
   qryItemStones.Close;
   qryItemStones.Parameters.ParamByName('InvItemNo').Value := qryGetDataToExpInvItemNo.AsInteger;

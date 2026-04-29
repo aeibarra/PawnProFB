@@ -3814,7 +3814,7 @@ object frmClients: TfrmClients
         UserName = 'DBText1'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3837,7 +3837,7 @@ object frmClients: TfrmClients
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3860,7 +3860,7 @@ object frmClients: TfrmClients
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3883,7 +3883,7 @@ object frmClients: TfrmClients
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3928,7 +3928,7 @@ object frmClients: TfrmClients
         UserName = 'DBText6'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePoliceID'
+        DataField = 'STORE_POLICE_ID'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -4234,7 +4234,7 @@ object frmClients: TfrmClients
         UserName = 'DBText41'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Storenumber'
+        DataField = 'STORE_NUMBER'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10558,7 +10558,7 @@ object frmClients: TfrmClients
         UserName = 'DBText1'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10581,7 +10581,7 @@ object frmClients: TfrmClients
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10604,7 +10604,7 @@ object frmClients: TfrmClients
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10627,7 +10627,7 @@ object frmClients: TfrmClients
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10672,7 +10672,7 @@ object frmClients: TfrmClients
         UserName = 'DBText6'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePoliceID'
+        DataField = 'STORE_POLICE_ID'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -11042,7 +11042,7 @@ object frmClients: TfrmClients
         UserName = 'DBText41'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Storenumber'
+        DataField = 'STORE_NUMBER'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12085,7 +12085,7 @@ object frmClients: TfrmClients
         UserName = 'DBText1'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12108,7 +12108,7 @@ object frmClients: TfrmClients
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12131,7 +12131,7 @@ object frmClients: TfrmClients
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12154,7 +12154,7 @@ object frmClients: TfrmClients
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12199,7 +12199,7 @@ object frmClients: TfrmClients
         UserName = 'DBText6'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePoliceID'
+        DataField = 'STORE_POLICE_ID'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -12570,7 +12570,7 @@ object frmClients: TfrmClients
         UserName = 'DBText41'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Storenumber'
+        DataField = 'STORE_NUMBER'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13554,7 +13554,7 @@ object frmClients: TfrmClients
         UserName = 'DBText1'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreName'
+        DataField = 'STORE_NAME'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13577,7 +13577,7 @@ object frmClients: TfrmClients
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreAddr'
+        DataField = 'STORE_ADDR'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13600,7 +13600,7 @@ object frmClients: TfrmClients
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StoreCityStZIP'
+        DataField = 'STORE_CITY_ST_ZIP'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13623,7 +13623,7 @@ object frmClients: TfrmClients
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePhone'
+        DataField = 'STORE_PHONE'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13668,7 +13668,7 @@ object frmClients: TfrmClients
         UserName = 'DBText6'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'StorePoliceID'
+        DataField = 'STORE_POLICE_ID'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -14041,7 +14041,7 @@ object frmClients: TfrmClients
         UserName = 'DBText41'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Storenumber'
+        DataField = 'STORE_NUMBER'
         DataPipeline = DBPStoreInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack

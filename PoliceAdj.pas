@@ -60,9 +60,9 @@ begin
       DM.RefreshStoreQry;
       lblDetail.Caption := IntToStr(trunc(DetailH * 100));
       lblFooter.Caption := IntToStr(trunc(FooterH * 100));
-      edAdjTopMargin.Text := qryStoreStoreAdjTopMarg.AsString;
-      edDetail.Text := qryStoreStoreAdjDetailHeight.AsString;
-      edFooter.Text := qryStoreStoreAdjFooterHeight.AsString;
+      edAdjTopMargin.Text := qryStoreSTORE_ADJ_TOP_MARG.AsString;
+      edDetail.Text := qryStoreSTORE_ADJ_DETAIL_HEIGHT.AsString;
+      edFooter.Text := qryStoreSTORE_ADJ_FOOTER_HEIGHT.AsString;
     end;
 end;
 
