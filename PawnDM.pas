@@ -56,26 +56,26 @@ type
     QryStates: TADOQuery;
     QryStatesState_Abbr: TStringField;
     QryStatesState_Name: TStringField;
-    qryTransactions: TADOQuery;
-    qryTransactionscComment: TStringField;
-    qryTransactionscTranInsAmount1Month: TCurrencyField;
-    qryTransactionscTotalPay1Month: TCurrencyField;
-    qryTransactionscPawnDefaultDate: TDateTimeField;
-    qryTransactionscTAmountRedeemDefaultDate: TCurrencyField;
-    qryTransactionscAnnualPercRate: TFloatField;
-    qryTransactionsTransactionNo: TIntegerField;
-    qryTransactionsCustNo: TIntegerField;
-    qryTransactionsTranDate: TDateTimeField;
-    qryTransactionsTranTicketNo: TStringField;
-    qryTransactionsTranComment: TMemoField;
-    qryTransactionsTranMaturity: TDateField;
-    qryTransactionsTranType: TStringField;
-    qryTransactionsTranStatus: TStringField;
-    qryTransactionsTranPawnAmount: TFloatField;
-    qryTransactionsTranInterest: TFloatField;
-    qryTransactionsPrincBalance: TFloatField;
-    qryTransactionsInsterestBalance: TFloatField;
-    qryTransactionsTranTime: TTimeField;
+    qryTransactions_: TADOQuery;
+    qryTransactions_cComment: TStringField;
+    qryTransactions_cTranInsAmount1Month: TCurrencyField;
+    qryTransactions_cTotalPay1Month: TCurrencyField;
+    qryTransactions_cPawnDefaultDate: TDateTimeField;
+    qryTransactions_cTAmountRedeemDefaultDate: TCurrencyField;
+    qryTransactions_cAnnualPercRate: TFloatField;
+    qryTransactions_TransactionNo: TIntegerField;
+    qryTransactions_CustNo: TIntegerField;
+    qryTransactions_TranDate: TDateTimeField;
+    qryTransactions_TranTicketNo: TStringField;
+    qryTransactions_TranComment: TMemoField;
+    qryTransactions_TranMaturity: TDateField;
+    qryTransactions_TranType: TStringField;
+    qryTransactions_TranStatus: TStringField;
+    qryTransactions_TranPawnAmount: TFloatField;
+    qryTransactions_TranInterest: TFloatField;
+    qryTransactions_PrincBalance: TFloatField;
+    qryTransactions_InsterestBalance: TFloatField;
+    qryTransactions_TranTime: TTimeField;
     qryCustomers: TADOQuery;
     qryCustomersCustno: TIntegerField;
     qryCustomersCustTicketNo: TStringField;
@@ -146,8 +146,8 @@ type
     qryStoreLeadsOnlinePassword: TStringField;
     qryImageUploadFileName: TStringField;
     qryStoreFTPPassive: TBooleanField;
-    qryTransactionscTranTotalInterestAtMaturity: TCurrencyField;
-    qryTransactionscTranTotalAmountAtMaturity: TCurrencyField;
+    qryTransactions_cTranTotalInterestAtMaturity: TCurrencyField;
+    qryTransactions_cTranTotalAmountAtMaturity: TCurrencyField;
     qryStorePawnDateCalculationBase: TStringField;
     qryCustomerscCustAge: TIntegerField;
     clnWeigthUnits: TClientDataSet;
@@ -159,8 +159,8 @@ type
     prvItemStatus: TDataSetProvider;
     clnItemStatusStatus: TStringField;
     clnItemStatusStatusDesc: TStringField;
-    qryTransactionsTranVoidDate: TDateTimeField;
-    qryTransactionsTranCloseReason: TSmallintField;
+    qryTransactions_TranVoidDate: TDateTimeField;
+    qryTransactions_TranCloseReason: TSmallintField;
     qryUpdPawnStatus: TADOQuery;
     qryGetPawnStatusFromItems: TADOQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
@@ -168,7 +168,7 @@ type
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     ADOQuery1: TADOQuery;
-    qryTransactionscPawnNextMinPayment: TStringField;
+    qryTransactions_cPawnNextMinPayment: TStringField;
     vilMain24: TSVGIconVirtualImageList;
     qryPayments: TADOQuery;
     qryPaymentscComment: TStringField;
@@ -191,8 +191,8 @@ type
     qryTotalPaid: TADOQuery;
     qryTotalPaidTotalPaid: TFloatField;
     qryStoreSalesTaxPerc: TFloatField;
-    qryTransactionsTranSalesTax: TFloatField;
-    qryTransactionscTotalSalesAmount: TCurrencyField;
+    qryTransactions_TranSalesTax: TFloatField;
+    qryTransactions_cTotalSalesAmount: TCurrencyField;
     qryItemImages: TADOQuery;
     qryItemImagesImagesDataNo: TIntegerField;
     qryItemImagesImageData: TBlobField;
@@ -205,6 +205,33 @@ type
     qryBackupSetingsBACKUP_PATH: TStringField;
     qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP: TBooleanField;
     qryBackupSetingsBACKUP_IMAGES_PATH: TStringField;
+    qryTransactions: TFDQuery;
+    qryTransactionsTRANSACTION_NO: TIntegerField;
+    qryTransactionsCUST_NO: TIntegerField;
+    qryTransactionsTRAN_DATE: TDateField;
+    qryTransactionsTRAN_TICKET_NO: TStringField;
+    qryTransactionsTRAN_COMMENT: TMemoField;
+    qryTransactionsTRAN_MATURITY: TDateField;
+    qryTransactionsTRAN_TYPE: TStringField;
+    qryTransactionsTRAN_STATUS: TStringField;
+    qryTransactionsTRAN_VOID_DATE: TSQLTimeStampField;
+    qryTransactionsTRAN_PAWN_AMOUNT: TFloatField;
+    qryTransactionsTRAN_INTEREST: TFloatField;
+    qryTransactionsPRINC_BALANCE: TFloatField;
+    qryTransactionsINTEREST_BALANCE: TFloatField;
+    qryTransactionsTRAN_TIME: TTimeField;
+    qryTransactionsTRAN_CLOSE_REASON: TSmallintField;
+    qryTransactionsTRAN_SALES_TAX: TFloatField;
+    qryTransactionscComment: TStringField;
+    qryTransactionscTranInsAmount1Month: TCurrencyField;
+    qryTransactionscTotalPay1Month: TCurrencyField;
+    qryTransactionscPawnDefaultDate: TDateTimeField;
+    qryTransactionscTAmountRedeemDefaultDate: TCurrencyField;
+    qryTransactionscAnnualPercRate: TFloatField;
+    qryTransactionscPawnNextMinPayment: TStringField;
+    qryTransactionscTranTotalInterestAtMaturity: TCurrencyField;
+    qryTransactionscTranTotalAmountAtMaturity: TCurrencyField;
+    qryTransactionscTotalSalesAmount: TCurrencyField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -269,6 +296,7 @@ type
     procedure SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
     procedure PutPawnBackToActive(TransactionNo: integer);
     procedure RefreshADOQry(Qry: TADOQuery);
+    procedure RefreshFBQry(Qry: TFDQuery);
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     function GetPawnStatusFromItems(TransactionNo: integer): integer;
     procedure UpdatePawnStatusBaseOnItems(TransactionNo: integer);
@@ -876,14 +904,14 @@ end;
 procedure TDM.qryPaymentsCalcFields(DataSet: TDataSet);
 begin
   qryPaymentscComment.AsString := Copy(qryPaymentsPayComment.AsString, 1, 255);
-  qryPaymentscPeriodNo.AsInteger := GetPawnPeriod(qryTransactionsTranDate.AsDateTime, qryPaymentsPayDate.AsDateTime);
+  qryPaymentscPeriodNo.AsInteger := GetPawnPeriod(qryTransactionsTRAN_DATE.AsDateTime, qryPaymentsPayDate.AsDateTime);
 end;
 
 procedure TDM.qryPaymentsNewRecord(DataSet: TDataSet);
 begin
   qryPaymentsPayDate.AsDateTime := Date;
 //  qryPaymentsPaymentNo.AsInteger := GetNextKey('Payments');
-  qryPaymentsTransactionNo.AsInteger := qryTransactionsTransactionNo.AsInteger;
+  qryPaymentsTransactionNo.AsInteger := qryTransactionsTRANSACTION_NO.AsInteger;
 end;
 
 function TDM.CalcNextInt(PrincipalBalance: Currency; InterestPerc: Currency; Months: integer): Currency;
@@ -1212,7 +1240,7 @@ var
   AsOfDate: TDateTime;
   LastPayDate: TDateTime;
 begin
-  LastPayDate := LastPaymentForTransaction(qryTransactionsTransactionNo.AsInteger);
+  LastPayDate := LastPaymentForTransaction(qryTransactionsTRANSACTION_NO.AsInteger);
 
   if Date > LastPayDate then
     AsOfDate := Date
@@ -1226,10 +1254,10 @@ begin
       end;
 
     GetInterestAndNextPaymentInfo(AsOfDate,
-                                     DM.qryTransactionsTranDate.AsDateTime,
+                                     DM.qryTransactionsTRAN_DATE.AsDateTime,
                                      LastPayDate,
-                                     DM.qryTransactionsTranPawnAmount.AsCurrency,
-                                     DM.qryTransactionsTranInterest.AsCurrency,
+                                     DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency,
+                                     DM.qryTransactionsTRAN_INTEREST.AsCurrency,
                                      qryPawnPay,
                                      InterestBalanceAsOf, //out
                                      InterestOwedToday,   //out
@@ -1251,13 +1279,13 @@ var
   outInterestDueAtNext: Currency;
 begin
   Result := '';
-  if (qryTransactionsTranStatus.AsString = TranStatus_Active) and (qryTransactionsTranType.AsString = TranPawn) then
+  if (qryTransactionsTRAN_STATUS.AsString = TranStatus_Active) and (qryTransactionsTRAN_TYPE.AsString = TranPawn) then
     begin
       GetPawnPaymentBalancesAndDueDate(outInterestBalanceAsOf,
                                        outInterestOwedToday,
                                        outNextPaymentDate,
                                        outInterestDueAtNext);
-//      LastPayDate := LastPaymentForTransaction(qryTransactionsTransactionNo.AsInteger);
+//      LastPayDate := LastPaymentForTransaction(qryTransactionsTRANSACTION_NO.AsInteger);
 //
 //      if Date > LastPayDate then
 //        AsOfDate := Date
@@ -1273,10 +1301,10 @@ begin
 //        end;
 //
 //      GetInterestAndNextPaymentInfo(AsOfDate,
-//                                       DM.qryTransactionsTranDate.AsDateTime,
+//                                       DM.qryTransactionsTRAN_DATE.AsDateTime,
 //                                       LastPayDate,
-//                                       DM.qryTransactionsTranPawnAmount.AsCurrency,
-//                                       DM.qryTransactionsTranInterest.AsCurrency,
+//                                       DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency,
+//                                       DM.qryTransactionsTRAN_INTEREST.AsCurrency,
 //                                       qryPawnPay,
 //                                       outInterestBalanceAsOf,
 //                                       outInterestOwedToday,
@@ -1336,28 +1364,24 @@ begin
   if DefaultMonthsToRedeem < MaturityMonths then
     DefaultMonthsToRedeem := MaturityMonths;
 
-  OneMonthInterest := qryTransactionsTranPawnAmount.AsCurrency * (qryTransactionsTranInterest.AsFloat / 100);
-  qryTransactionscComment.AsString := Copy(qryTransactionsTranComment.AsString, 1, 255);
+  OneMonthInterest := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency * (qryTransactionsTRAN_INTEREST.AsFloat / 100);
+  qryTransactionscComment.AsString := Copy(qryTransactionsTRAN_COMMENT.AsString, 1, 255);
 
   qryTransactionscTranTotalInterestAtMaturity.AsCurrency := OneMonthInterest * MaturityMonths;
-  qryTransactionscTranTotalAmountAtMaturity.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency + qryTransactionscTranTotalInterestAtMaturity.AsCurrency;
+  qryTransactionscTranTotalAmountAtMaturity.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency + qryTransactionscTranTotalInterestAtMaturity.AsCurrency;
 
-//      qryTransactionscprnAmount.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency;
   InterestAtDefaultDate := (DefaultMonthsToRedeem * OneMonthInterest);
-  qryTransactionscTranInsAmount1Month.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency *
-                                                   (1 * qryTransactionsTranInterest.AsFloat) / 100;
-//                                                   (MaturityMonth * qryTransactionsTranInterest.AsFloat) / 100;
-  qryTransactionscTotalPay1Month.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency + (OneMonthInterest);//qryTransactionscTranInsAmount1Month.AsCurrency;
-  qryTransactionscAnnualPercRate.AsFloat := qryTransactionsTranInterest.AsFloat * 12;
-//  qryTransactionscprnTranMaturity.AsDateTime := qryTransactionsTranMaturity.AsDateTime;
-  qryTransactionscPawnDefaultDate.AsDateTime := CalcPawnDefaultDate(qryTransactionsTranDate.AsDateTime, DefaultMonthsToRedeem);
-  qryTransactionscTAmountRedeemDefaultDate.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency + InterestAtDefaultDate; //qryTransactionscTranInsAmount1Month.AsCurrency;
-                                                         //IncMonth(qryTransactionsTranDate.AsDateTime, qryStorePawnDefaultMonths.AsInteger);
+  qryTransactionscTranInsAmount1Month.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency *
+                                                   (1 * qryTransactionsTRAN_INTEREST.AsFloat) / 100;
+  qryTransactionscTotalPay1Month.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency + OneMonthInterest;
+  qryTransactionscAnnualPercRate.AsFloat := qryTransactionsTRAN_INTEREST.AsFloat * 12;
+  qryTransactionscPawnDefaultDate.AsDateTime := CalcPawnDefaultDate(qryTransactionsTRAN_DATE.AsDateTime, DefaultMonthsToRedeem);
+  qryTransactionscTAmountRedeemDefaultDate.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency + InterestAtDefaultDate;
 
-  if qryTransactionsTranSalesTax.AsCurrency > 0 then
-    qryTransactionscTotalSalesAmount.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency + qryTransactionsTranSalesTax.AsCurrency
+  if qryTransactionsTRAN_SALES_TAX.AsCurrency > 0 then
+    qryTransactionscTotalSalesAmount.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency + qryTransactionsTRAN_SALES_TAX.AsCurrency
   else
-    qryTransactionscTotalSalesAmount.AsCurrency := qryTransactionsTranPawnAmount.AsCurrency;
+    qryTransactionscTotalSalesAmount.AsCurrency := qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency;
 
   SendMessageToRefreshPaymentDueDateText;
 //  qryTransactionscPawnNextMinPayment.AsString := GetPawnPaymentUserMessageAboutBalancesAndDueDate;
@@ -1405,21 +1429,21 @@ begin
   else
     IntRate := 10;
 
-  qryTransactionsTransactionNo.AsInteger := DM.GetNextKey('Transactions');
-  qryTransactionsTranDate.AsDateTime := Date;
-  qryTransactionsTranMaturity.AsDateTime := GetPawnMaturityDate(qryTransactionsTranDate.AsDateTime);
-  qryTransactionsCustNo.AsInteger := qryCustomersCustNo.AsInteger;
-  qryTransactionsTranInterest.AsFloat := IntRate;
-  qryTransactionsTranType.AsString := 'P';
-  qryTransactionsTranStatus.AsString := 'A';
-  qryTransactionsPrincBalance.AsFloat := 0;
-  qryTransactionsInsterestBalance.AsFloat := 0;
+  // TRANSACTION_NO is FB IDENTITY - assigned on Post via UpdateOptions.AutoIncFields
+  qryTransactionsTRAN_DATE.AsDateTime := Date;
+  qryTransactionsTRAN_MATURITY.AsDateTime := GetPawnMaturityDate(qryTransactionsTRAN_DATE.AsDateTime);
+  qryTransactionsCUST_NO.AsInteger := qryCustomersCustNo.AsInteger;
+  qryTransactionsTRAN_INTEREST.AsFloat := IntRate;
+  qryTransactionsTRAN_TYPE.AsString := 'P';
+  qryTransactionsTRAN_STATUS.AsString := 'A';
+  qryTransactionsPRINC_BALANCE.AsFloat := 0;
+  qryTransactionsINTEREST_BALANCE.AsFloat := 0;
 end;
 
 procedure TDM.qryTransactionsTranDateChange(Sender: TField);
 begin
   if ReCalcMaturity then
-    qryTransactionsTranMaturity.AsDateTime := GetPawnMaturityDate(qryTransactionsTranDate.AsDateTime);
+    qryTransactionsTRAN_MATURITY.AsDateTime := GetPawnMaturityDate(qryTransactionsTRAN_DATE.AsDateTime);
 
 end;
 
@@ -1489,7 +1513,7 @@ begin
   clnSalesTranTransactionNo.AsInteger := DM.GetNextKey('Transactions');
   clnSalesTranTranTicketNo.AsInteger := DM.GetNextKey('SaleTicketNo');
   clnSalesTranTranDate.AsDateTime := Now;
-//  qryTransactionsTranMaturity.AsDateTime := IncMonth(Date, 1);
+//  qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
   clnSalesTranCustNo.AsInteger := 0;
   clnSalesTranTranType.AsString := 'S';
   clnSalesTranTranStatus.AsString := 'A'
@@ -1498,7 +1522,7 @@ end;
 procedure TDM.qryCustomersAfterScroll(DataSet: TDataSet);
 begin
   qryTransactions.Close;
-  qryTransactions.Parameters.ParamByName('CustNo').Value := qryCustomersCustno.AsString;
+  qryTransactions.Params.ParamByName('CUST_NO').AsInteger := qryCustomersCustno.AsInteger;
   qryTransactions.Open;
 end;
 
@@ -1629,7 +1653,7 @@ begin
   case PawnStatus of
   0: // Pawned Active
     begin
-      if qryTransactionsTranStatus.AsString <> 'A' then
+      if qryTransactionsTRAN_STATUS.AsString <> 'A' then
         begin
           CloseReason := 0;
           TranStatus := 'A';
@@ -1638,7 +1662,7 @@ begin
     end;
   2: // Pawn Redeemed
     begin
-      if (qryTransactionsTranStatus.AsString = 'A') or (qryTransactionsTranCloseReason.AsInteger <> 2) then
+      if (qryTransactionsTRAN_STATUS.AsString = 'A') or (qryTransactionsTRAN_CLOSE_REASON.AsInteger <> 2) then
         begin
           CloseReason := 2;
           TranStatus := 'I';
@@ -1647,7 +1671,7 @@ begin
     end;
   3: // Pawn Defaulted
     begin
-      if (qryTransactionsTranStatus.AsString = 'A') or (qryTransactionsTranCloseReason.AsInteger <> 3) then
+      if (qryTransactionsTRAN_STATUS.AsString = 'A') or (qryTransactionsTRAN_CLOSE_REASON.AsInteger <> 3) then
         begin
           CloseReason := 3;
           TranStatus := 'I';
@@ -1656,7 +1680,7 @@ begin
     end;
   4: // Pawn Items Status mix Redeemed and or  Defaulted
     begin
-      if (qryTransactionsTranStatus.AsString = 'A') or (qryTransactionsTranCloseReason.AsInteger <> 4) then
+      if (qryTransactionsTRAN_STATUS.AsString = 'A') or (qryTransactionsTRAN_CLOSE_REASON.AsInteger <> 4) then
         begin
           CloseReason := 4;
           TranStatus := 'I';
@@ -1807,8 +1831,8 @@ begin
     ConnDB.BeginTrans;
 
     qryTransactions.Edit;
-    qryTransactionsTranStatus.AsString := TranStatus_Active;
-    qryTransactionsPrincBalance.AsCurrency := 0;
+    qryTransactionsTRAN_STATUS.AsString := TranStatus_Active;
+    qryTransactionsPRINC_BALANCE.AsCurrency := 0;
     qryTransactions.Post;
 
     sSQLItemsStatus := 'UPDATE InventoryItems SET SoldDate=null ' + sLineBreak +
@@ -1862,8 +1886,8 @@ begin
     /////////////End Payment///////////////
 
     qryTransactions.Edit;
-    qryTransactionsTranStatus.AsString := TranStatus_Inactive;
-    qryTransactionsPrincBalance.AsCurrency := 0;
+    qryTransactionsTRAN_STATUS.AsString := TranStatus_Inactive;
+    qryTransactionsPRINC_BALANCE.AsCurrency := 0;
     qryTransactions.Post;
 
     sSQLItemsStatus := 'UPDATE InventoryItems SET SoldDate=current timestamp ' + sLineBreak +
@@ -1902,6 +1926,25 @@ begin
     end;
 end;
 
+procedure TDM.RefreshFBQry(Qry: TFDQuery);
+var
+  SavePos: integer;
+begin
+  if Qry.RecNo > 0 then
+    begin
+      SavePos := Qry.RecNo;
+
+      Qry.DisableControls;
+      try
+        Qry.Close;
+        Qry.Open;
+        Qry.RecNo := SavePos;
+      finally
+        Qry.EnableControls;
+      end;
+    end;
+end;
+
 function TDM.GetPawnStatusFromItems(TransactionNo: integer): integer;
 begin
   Result := -1;
@@ -1918,7 +1961,7 @@ end;
 function TDM.GetTotalPaid: Currency;
 begin
   qryTotalPaid.Close;
-  qryTotalPaid.Parameters.ParamByName('TransactionNo').Value := qryTransactionsTransactionNo.AsInteger;
+  qryTotalPaid.Parameters.ParamByName('TransactionNo').Value := qryTransactionsTRANSACTION_NO.AsInteger;
   qryTotalPaid.Open;
 
   Result := qryTotalPaidTotalPaid.AsCurrency;
@@ -1934,7 +1977,7 @@ begin
   PricBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid;
 
   DM.qryTransactions.Edit;
-  DM.qryTransactionsPrincBalance.AsFloat := PricBalance;
+  DM.qryTransactionsPRINC_BALANCE.AsFloat := PricBalance;
   DM.qryTransactions.Post;
 end;
 

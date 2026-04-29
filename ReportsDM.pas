@@ -263,7 +263,7 @@ end;
 procedure TDMReports.lblLayawaySubTotalGetText(Sender: TObject;
   var Text: string);
 begin
-  Text := Format('%m', [DM.qryTransactionsTranPawnAmount.AsCurrency]);
+  Text := Format('%m', [DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency]);
 end;
 
 procedure TDMReports.lblLayawayTotalGetText(Sender: TObject; var Text: string);
@@ -281,7 +281,7 @@ end;
 
 procedure TDMReports.ppLabel27GetText(Sender: TObject; var Text: string);
 begin
-  Text := Format('%m', [DM.qryTransactionsTranSalesTax.AsCurrency]);
+  Text := Format('%m', [DM.qryTransactionsTRAN_SALES_TAX.AsCurrency]);
 end;
 
 procedure TDMReports.PrintItemEnvelopeLable(InvItemNo: integer; ItemPos, TotalItems: integer);
@@ -435,11 +435,11 @@ begin
   qryLayawayRcpt.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
   qryLayawayRcpt.Open;
 
-  LayawayBalance := OpenSQLStatement('select SUM(PayAmount) as TotalPaid from Payments where TransactionNo = ' + DM.qryTransactionsTransactionNo.AsString);
+  LayawayBalance := OpenSQLStatement('select SUM(PayAmount) as TotalPaid from Payments where TransactionNo = ' + DM.qryTransactionsTRANSACTION_NO.AsString);
   LayawayBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - LayawayBalance;
 
   qryLayawayPayments.Close;
-  qryLayawayPayments.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+  qryLayawayPayments.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
   qryLayawayPayments.Open;
 
   ppSubReportPayments.Visible := qryLayawayPayments.RecordCount > 0;

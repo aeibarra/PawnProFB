@@ -87,7 +87,7 @@ procedure TfrmChangePawnItemsStatus.FormShow(Sender: TObject);
 begin
   SelectedItemsInGrid := TSelectedItemsInGridClass.Create;
 
-  DM.FillPawnStatusCombobox(cbPawnStatus, DM.qryTransactionsTranStatus.AsString);
+  DM.FillPawnStatusCombobox(cbPawnStatus, DM.qryTransactionsTRAN_STATUS.AsString);
   FillCombo(TCombobox(cbItemStatusToSet), DM.clnItemStatus, 'StatusDesc', '', false);
 
 end;

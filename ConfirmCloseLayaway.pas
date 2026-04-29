@@ -34,8 +34,8 @@ uses PawnDM, PawnGlobal;
 procedure TfrmConfirmCloseLayaway.btnCancelLayawayClick(Sender: TObject);
 begin
   DM.qryTransactions.Edit;
-  DM.qryTransactionsTranStatus.AsString := TranStatus_Inactive;
-  DM.qryTransactionsPrincBalance.AsCurrency := 0;
+  DM.qryTransactionsTRAN_STATUS.AsString := TranStatus_Inactive;
+  DM.qryTransactionsPRINC_BALANCE.AsCurrency := 0;
   DM.qryTransactions.Post;
 
   ModalResult := mrOk;
@@ -45,7 +45,7 @@ procedure TfrmConfirmCloseLayaway.btnPayoffClick(Sender: TObject);
 begin
   Screen.Cursor := crHourGlass;
   try
-    DM.LaywayClosePayoffBalance(DM.qryTransactionsTransactionNo.AsInteger, true);
+    DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, true);
   finally
     Screen.Cursor := crDefault;
   end;

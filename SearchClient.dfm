@@ -37,7 +37,6 @@ object frmClients: TfrmClients
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1670
     object PanelClientInfo: TPanel
       Left = 0
       Top = 82
@@ -46,7 +45,6 @@ object frmClients: TfrmClients
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 1670
       object gridClients: TDBGrid
         AlignWithMargins = True
         Left = 3
@@ -192,48 +190,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CustIDAgencyState'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustGender'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustRace'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustHair'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustEyes'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustMark'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustWeight'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CustHeight'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -253,7 +259,6 @@ object frmClients: TfrmClients
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 1664
         object btnAdjPoliceReport: TRzToolButton
           Left = 596
           Top = 12
@@ -333,7 +338,6 @@ object frmClients: TfrmClients
       Height = 76
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 1664
       DesignSize = (
         1666
         76)
@@ -469,7 +473,6 @@ object frmClients: TfrmClients
         ModalResult = 2
         TabOrder = 5
         OnClick = btnExitClick
-        ExplicitLeft = 1556
       end
       object edTicketNo: TEdit
         Left = 312
@@ -513,7 +516,6 @@ object frmClients: TfrmClients
     BevelOuter = bvNone
     Constraints.MinHeight = 200
     TabOrder = 1
-    ExplicitWidth = 1670
     object SplitterBottom: TSplitter
       Left = 687
       Top = 0
@@ -580,7 +582,7 @@ object frmClients: TfrmClients
             item
               Alignment = taCenter
               Expanded = False
-              FieldName = 'TranDate'
+              FieldName = 'TRAN_DATE'
               Title.Alignment = taCenter
               Title.Caption = 'Date'
               Title.Font.Charset = ANSI_CHARSET
@@ -593,7 +595,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranTicketNo'
+              FieldName = 'TRAN_TICKET_NO'
               Title.Caption = 'Ticket No'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -605,7 +607,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranPawnAmount'
+              FieldName = 'TRAN_PAWN_AMOUNT'
               Title.Caption = 'Pawn Amount'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -617,7 +619,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranInterest'
+              FieldName = 'TRAN_INTEREST'
               Title.Caption = 'Int. %'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -629,7 +631,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PrincBalance'
+              FieldName = 'PRINC_BALANCE'
               Title.Caption = 'Princ. Balance'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -641,7 +643,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranMaturity'
+              FieldName = 'TRAN_MATURITY'
               Title.Caption = 'Maturity'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -653,7 +655,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'cNextInterestToPay'
+              FieldName = 'cPawnNextMinPayment'
               Title.Caption = 'Next Int. to pay'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -665,7 +667,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'InsterestBalance'
+              FieldName = 'INTEREST_BALANCE'
               Title.Caption = 'I. Balance'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -689,7 +691,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TransactionNo'
+              FieldName = 'TRANSACTION_NO'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
               Title.Font.Height = -13
@@ -812,7 +814,7 @@ object frmClients: TfrmClients
             item
               Alignment = taCenter
               Expanded = False
-              FieldName = 'TranDate'
+              FieldName = 'TRAN_DATE'
               Title.Alignment = taCenter
               Title.Caption = 'Date'
               Title.Font.Charset = ANSI_CHARSET
@@ -825,7 +827,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranTicketNo'
+              FieldName = 'TRAN_TICKET_NO'
               Title.Caption = 'Ticket No'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -837,7 +839,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranPawnAmount'
+              FieldName = 'TRAN_PAWN_AMOUNT'
               Title.Caption = 'Amount'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -849,7 +851,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranMaturity'
+              FieldName = 'TRAN_MATURITY'
               Title.Caption = 'Maturity'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -978,7 +980,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranDate'
+              FieldName = 'TRAN_DATE'
               Title.Alignment = taCenter
               Title.Caption = 'Date'
               Width = 80
@@ -986,7 +988,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranTicketNo'
+              FieldName = 'TRAN_TICKET_NO'
               Title.Alignment = taCenter
               Title.Caption = 'Ticket No'
               Width = 73
@@ -994,7 +996,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranPawnAmount'
+              FieldName = 'TRAN_PAWN_AMOUNT'
               Title.Alignment = taCenter
               Title.Caption = 'Amount'
               Width = 92
@@ -1002,7 +1004,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'TranSalesTax'
+              FieldName = 'TRAN_SALES_TAX'
               Title.Alignment = taCenter
               Title.Caption = 'Sales Tax'
               Visible = True
@@ -1017,7 +1019,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PrincBalance'
+              FieldName = 'PRINC_BALANCE'
               Title.Alignment = taCenter
               Title.Caption = 'Balance'
               Width = 108
@@ -1147,12 +1149,10 @@ object frmClients: TfrmClients
       TabIndex = 0
       TabOrder = 1
       OnChange = pgTransDetailChange
-      ExplicitWidth = 974
       FixedDimension = 35
       object TabPayment: TRzTabSheet
         ImageIndex = 21
         Caption = 'Payments'
-        ExplicitWidth = 970
         object gridPayments: TDBGrid
           AlignWithMargins = True
           Left = 3
@@ -1238,6 +1238,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1285,6 +1286,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -1297,7 +1299,6 @@ object frmClients: TfrmClients
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 964
           DesignSize = (
             966
             60)
@@ -1394,7 +1395,6 @@ object frmClients: TfrmClients
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitWidth = 964
           DesignSize = (
             962
             26)
@@ -1420,7 +1420,6 @@ object frmClients: TfrmClients
       object TabItems: TRzTabSheet
         ImageIndex = 22
         Caption = '   Items    '
-        ExplicitWidth = 970
         object gridItems: TDBGrid
           AlignWithMargins = True
           Left = 3
@@ -1545,7 +1544,6 @@ object frmClients: TfrmClients
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 964
           DesignSize = (
             966
             60)
@@ -1659,7 +1657,6 @@ object frmClients: TfrmClients
             ImageIndex = 18
             Images = DM.vilMain24
             Margin = 10
-            ExplicitLeft = 816
           end
         end
         object pnPawnItemBalance: TPanel
@@ -1672,7 +1669,6 @@ object frmClients: TfrmClients
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitWidth = 964
           DesignSize = (
             962
             26)
@@ -2078,7 +2074,7 @@ object frmClients: TfrmClients
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
-      Position = 30
+      Position = 28
       Searchable = False
       Sortable = False
     end
@@ -2088,13 +2084,33 @@ object frmClients: TfrmClients
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
-      Position = 31
+      Position = 29
+      Searchable = False
+      Sortable = False
+    end
+    object PDBPoliceRepppField35: TppField
+      FieldAlias = 'cCustFlDrvLic'
+      FieldName = 'cCustFlDrvLic'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 30
       Searchable = False
       Sortable = False
     end
     object PDBPoliceRepppField33: TppField
       FieldAlias = 'CCustPhBeep'
       FieldName = 'CCustPhBeep'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 31
+      Searchable = False
+      Sortable = False
+    end
+    object PDBPoliceRepppField36: TppField
+      FieldAlias = 'cPrnHPhone'
+      FieldName = 'cPrnHPhone'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2109,26 +2125,6 @@ object frmClients: TfrmClients
       DataType = dtNotKnown
       DisplayWidth = 0
       Position = 33
-      Searchable = False
-      Sortable = False
-    end
-    object PDBPoliceRepppField35: TppField
-      FieldAlias = 'cCustFlDrvLic'
-      FieldName = 'cCustFlDrvLic'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 34
-      Searchable = False
-      Sortable = False
-    end
-    object PDBPoliceRepppField36: TppField
-      FieldAlias = 'cPrnHPhone'
-      FieldName = 'cPrnHPhone'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 35
       Searchable = False
       Sortable = False
     end

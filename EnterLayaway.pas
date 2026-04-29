@@ -49,7 +49,7 @@ uses PawnDM, PawnGlobal;
 
 procedure TfrmEnterLayaway.CalculateSalesTaxAndTotalAmount;
 begin
-  DM.qryTransactionsTranSalesTax.AsCurrency := DM.qryTransactionsTranPawnAmount.AsCurrency * (DM.qryStoreSalesTaxPerc.AsCurrency / 100);
+  DM.qryTransactionsTRAN_SALES_TAX.AsCurrency := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency * (DM.qryStoreSalesTaxPerc.AsCurrency / 100);
 end;
 
 procedure TfrmEnterLayaway.btnCancelClick(Sender: TObject);
@@ -59,7 +59,7 @@ end;
 
 procedure TfrmEnterLayaway.btnSaveClick(Sender: TObject);
 begin
-  if DM.qryTransactionsTranPawnAmount.AsFloat <= 0 then
+  if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
       MessageDlg('Please enter purchase amount.', mtInformation, [mbOk], 0);
       edAmount.SetFocus;
@@ -70,7 +70,7 @@ begin
 
   if NewRow then
   begin
-    DM.qryTransactionsPrincBalance.AsCurrency := DM.qryTransactionscTotalSalesAmount.AsCurrency;
+    DM.qryTransactionsPRINC_BALANCE.AsCurrency := DM.qryTransactionscTotalSalesAmount.AsCurrency;
   end;
 
   DM.GetNextKey(LayawayTicketNo);
@@ -93,8 +93,8 @@ begin
   if Key = #13 then
   begin
     TranAmount := edAmount.EditText.ToExtended;
-    if TranAmount <> DM.qryTransactionsTranPawnAmount.AsCurrency then
-      DM.qryTransactionsTranPawnAmount.AsCurrency := TranAmount;
+    if TranAmount <> DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency then
+      DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency := TranAmount;
 
     CalculateSalesTaxAndTotalAmount;
     Key := #0;
@@ -112,10 +112,10 @@ begin
   if NewRow then
     begin
       DM.qryTransactions.Append;
-      DM.qryTransactionsTranType.AsString := TranLayaway; //Lawaway
-      DM.qryTransactionsTranTicketNo.AsInteger := DM.GetNextTicketNo(LayawayTicketNo);
-      DM.qryTransactionsTranMaturity.AsDateTime := IncMonth(Date, 1);
-      DM.qryTransactionsTranInterest.AsFloat := 0.0;
+      DM.qryTransactionsTRAN_TYPE.AsString := TranLayaway; //Lawaway
+      DM.qryTransactionsTRAN_TICKET_NO.AsInteger := DM.GetNextTicketNo(LayawayTicketNo);
+      DM.qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
+      DM.qryTransactionsTRAN_INTEREST.AsFloat := 0.0;
     end
   else
     begin

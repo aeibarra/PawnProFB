@@ -339,7 +339,7 @@ begin
   if NewRow then
     begin
       DM.qryTransactions.Append;
-      DM.qryTransactionsTranTicketNo.AsInteger := GetLastTicketNo + 1;
+      DM.qryTransactionsTRAN_TICKET_NO.AsInteger := GetLastTicketNo + 1;
       edPawnAmount.SetFocus;
     end
   else
@@ -367,7 +367,7 @@ begin
   AskIfUpdateTicketNo := false;
   btnSave.SetFocus;
 
-  if DM.qryTransactionsTranPawnAmount.AsFloat <= 0 then
+  if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
       MessageDlg('Please enter Pawn total amount.', mtInformation, [mbOk], 0);
       edPawnAmount.SetFocus;
@@ -378,19 +378,19 @@ begin
   try
    if NewRow then
      begin
-       DM.qryTransactionsTranTime.AsDateTime := Time;
+       DM.qryTransactionsTRAN_TIME.AsDateTime := Time;
 
-       if (DM.qryTransactionsInsterestBalance.AsFloat <= 0) and NewRow then
+       if (DM.qryTransactionsINTEREST_BALANCE.AsFloat <= 0) and NewRow then
          begin
           IntRate := DM.qryStoreDefaultPawnInterestRate.AsFloat;
-          DM.CalcInterest(DM.qryTransactionsTranPawnAmount.AsCurrency, IntRate, IntAmount);
-          DM.qryTransactionsTranInterest.AsFloat := ConvertTo2Dec(IntRate);
-          DM.qryTransactionsInsterestBalance.AsCurrency := ConvertTo2Dec(IntAmount);
-//          DM.qryTransactionsInsterestBalance.AsFloat := DM.qryTransactionsTranPawnAmount.AsFloat * DM.qryTransactionsTranInterest.AsFloat / 100.0;
+          DM.CalcInterest(DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency, IntRate, IntAmount);
+          DM.qryTransactionsTRAN_INTEREST.AsFloat := ConvertTo2Dec(IntRate);
+          DM.qryTransactionsINTEREST_BALANCE.AsCurrency := ConvertTo2Dec(IntAmount);
+//          DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
          end;
-       DM.qryTransactionsPrincBalance.AsFloat := DM.qryTransactionsTranPawnAmount.AsFloat;
+       DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat;
 
-       if GetLastTicketNo > DM.qryTransactionsTranTicketNo.AsInteger then
+       if GetLastTicketNo > DM.qryTransactionsTRAN_TICKET_NO.AsInteger then
        begin
          if MessageDlg('Warning!!! The ticket number you entered is lower then the previous one. Continue?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
            begin
@@ -411,7 +411,7 @@ begin
        if not AskIfUpdateTicketNo or (AskIfUpdateTicketNo and (MessageDlg('Update Ticket Number?', mtConfirmation, [mbYes, mbNo], 0) = mrYes)) then
          begin
            qryNextTicket.Edit;
-           qryNextTicketLastKey.AsInteger := DM.qryTransactionsTranTicketNo.AsInteger;
+           qryNextTicketLastKey.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
            qryNextTicket.Post;
          end;
 
@@ -431,7 +431,7 @@ begin
                 begin
                   NewInvItemNo := DM.GetNextKey('InventoryItems');
                   qryInsItems.Parameters.ParamByName('InvItemNo').Value := NewInvItemNo;
-                  qryInsItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+                  qryInsItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
                   qryInsItems.Parameters.ParamByName('InvItemBarcode').Value := DM.GetBarcode(NewInvItemNo);
                   qryInsItems.Parameters.ParamByName('InvCatNo').Value :=  clnItemsToSelectInvCatNo.AsInteger;
                   qryInsItems.Parameters.ParamByName('JType').Value := clnItemsToSelectJType.Value;
@@ -481,7 +481,7 @@ end;
 
 procedure TfrmEnterTransaction.First1Click(Sender: TObject);
 begin
-  DM.qryTransactionsTranInterest.AsFloat := DM.qryTransactionsInsterestBalance.AsFloat / DM.qryTransactionsTranPawnAmount.AsFloat * 100;
+  DM.qryTransactionsTRAN_INTEREST.AsFloat := DM.qryTransactionsINTEREST_BALANCE.AsFloat / DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat * 100;
 end;
 
 procedure TfrmEnterTransaction.FormClose(Sender: TObject;
@@ -567,12 +567,12 @@ procedure TfrmEnterTransaction.edPawnAmountExit(Sender: TObject);
 var
   IntRate, IntAmount: Extended;
 begin
-  if (not DM.qryTransactionsTranPawnAmount.IsNull) and NewRow and (DM.qryTransactionsTranType.AsString = TranPawn) then
+  if (not DM.qryTransactionsTRAN_PAWN_AMOUNT.IsNull) and NewRow and (DM.qryTransactionsTRAN_TYPE.AsString = TranPawn) then
     begin
-      IntRate := DM.qryTransactionsTranInterest.AsCurrency;
-      DM.CalcInterest(DM.qryTransactionsTranPawnAmount.AsCurrency, IntRate, IntAmount);
-      DM.qryTransactionsTranInterest.AsFloat := ConvertTo2Dec(IntRate);
-      DM.qryTransactionsInsterestBalance.AsCurrency := ConvertTo2Dec(IntAmount);
+      IntRate := DM.qryTransactionsTRAN_INTEREST.AsCurrency;
+      DM.CalcInterest(DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency, IntRate, IntAmount);
+      DM.qryTransactionsTRAN_INTEREST.AsFloat := ConvertTo2Dec(IntRate);
+      DM.qryTransactionsINTEREST_BALANCE.AsCurrency := ConvertTo2Dec(IntAmount);
     end;
 
 end;
@@ -630,7 +630,7 @@ var
   ItemPlural: string;
 begin
     frmClients.CalcPawnAmountFromItemCost(PawnAmount, ItemsWithNoEnteredCost);
-    DM.qryTransactionsTranPawnAmount.AsCurrency := PawnAmount;
+    DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency := PawnAmount;
     if ItemsWithNoEnteredCost > 0 then
       begin
         ItemPlural := IfThen(ItemsWithNoEnteredCost = 1, '', 's');
@@ -649,20 +649,20 @@ var
   MonthSinceLastPayment: integer;
   Amount: Currency;
 begin
-  if (DM.qryTransactionsTranType.AsString = TranPawn) and (not DM.qryTransactionsTranPawnAmount.IsNull) then
+  if (DM.qryTransactionsTRAN_TYPE.AsString = TranPawn) and (not DM.qryTransactionsTRAN_PAWN_AMOUNT.IsNull) then
     begin
-      LastPayDate := DM.LastPaymentForTransaction(DM.qryTransactionsTransactionNo.AsInteger);
+      LastPayDate := DM.LastPaymentForTransaction(DM.qryTransactionsTRANSACTION_NO.AsInteger);
       if LastPayDate > 0 then
         MonthSinceLastPayment := MonthsBetween(Date, LastPayDate)
       else
         MonthSinceLastPayment := 0;
 
       if NewRow then
-        Amount := DM.qryTransactionsTranPawnAmount.AsCurrency
+        Amount := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency
       else
-        Amount := DM.qryTransactionsPrincBalance.AsCurrency;
+        Amount := DM.qryTransactionsPRINC_BALANCE.AsCurrency;
 
-      DM.qryTransactionsInsterestBalance.AsFloat := DM.CalcNextInt(Amount, (DM.qryTransactionsTranInterest.AsFloat / 100.00), MonthSinceLastPayment);
+      DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.CalcNextInt(Amount, (DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.00), MonthSinceLastPayment);
     end;
 end;
 

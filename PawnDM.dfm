@@ -33,8 +33,8 @@ object DM: TDM
   end
   object DSTransactions: TDataSource
     DataSet = qryTransactions
-    Left = 257
-    Top = 68
+    Left = 425
+    Top = 833
   end
   object DSPayments: TDataSource
     DataSet = qryPayments
@@ -193,7 +193,7 @@ object DM: TDM
       Size = 30
     end
   end
-  object qryTransactions: TADOQuery
+  object qryTransactions_: TADOQuery
     Connection = ConnDB
     CursorType = ctStatic
     Filter = 'TranType='#39'P'#39
@@ -216,117 +216,117 @@ object DM: TDM
       'FROM Transactions'
       'WHERE CustNo = :CustNo and TranType in ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
       'ORDER BY TranStatus, TranDate DESC, TranTicketNo DESC')
-    Left = 257
-    Top = 13
-    object qryTransactionscComment: TStringField
+    Left = 444
+    Top = 687
+    object qryTransactions_cComment: TStringField
       FieldKind = fkCalculated
       FieldName = 'cComment'
       Size = 40
       Calculated = True
     end
-    object qryTransactionscTranInsAmount1Month: TCurrencyField
+    object qryTransactions_cTranInsAmount1Month: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTranInsAmount1Month'
       Calculated = True
     end
-    object qryTransactionscTotalPay1Month: TCurrencyField
+    object qryTransactions_cTotalPay1Month: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTotalPay1Month'
       Calculated = True
     end
-    object qryTransactionscPawnDefaultDate: TDateTimeField
+    object qryTransactions_cPawnDefaultDate: TDateTimeField
       FieldKind = fkCalculated
       FieldName = 'cPawnDefaultDate'
       Calculated = True
     end
-    object qryTransactionscTAmountRedeemDefaultDate: TCurrencyField
+    object qryTransactions_cTAmountRedeemDefaultDate: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTAmountRedeemDefaultDate'
       Calculated = True
     end
-    object qryTransactionscAnnualPercRate: TFloatField
+    object qryTransactions_cAnnualPercRate: TFloatField
       FieldKind = fkCalculated
       FieldName = 'cAnnualPercRate'
       Calculated = True
     end
-    object qryTransactionscPawnNextMinPayment: TStringField
+    object qryTransactions_cPawnNextMinPayment: TStringField
       FieldKind = fkCalculated
       FieldName = 'cPawnNextMinPayment'
       Size = 126
       Calculated = True
     end
-    object qryTransactionscTranTotalInterestAtMaturity: TCurrencyField
+    object qryTransactions_cTranTotalInterestAtMaturity: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTranTotalInterestAtMaturity'
       Calculated = True
     end
-    object qryTransactionscTranTotalAmountAtMaturity: TCurrencyField
+    object qryTransactions_cTranTotalAmountAtMaturity: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTranTotalAmountAtMaturity'
       Calculated = True
     end
-    object qryTransactionscTotalSalesAmount: TCurrencyField
+    object qryTransactions_cTotalSalesAmount: TCurrencyField
       FieldKind = fkCalculated
       FieldName = 'cTotalSalesAmount'
       Calculated = True
     end
-    object qryTransactionsTransactionNo: TIntegerField
+    object qryTransactions_TransactionNo: TIntegerField
       AutoGenerateValue = arDefault
       FieldName = 'TransactionNo'
     end
-    object qryTransactionsCustNo: TIntegerField
+    object qryTransactions_CustNo: TIntegerField
       FieldName = 'CustNo'
     end
-    object qryTransactionsTranDate: TDateTimeField
+    object qryTransactions_TranDate: TDateTimeField
       FieldName = 'TranDate'
       OnChange = qryTransactionsTranDateChange
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryTransactionsTranTicketNo: TStringField
+    object qryTransactions_TranTicketNo: TStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryTransactionsTranComment: TMemoField
+    object qryTransactions_TranComment: TMemoField
       FieldName = 'TranComment'
       BlobType = ftMemo
     end
-    object qryTransactionsTranMaturity: TDateField
+    object qryTransactions_TranMaturity: TDateField
       FieldName = 'TranMaturity'
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryTransactionsTranType: TStringField
+    object qryTransactions_TranType: TStringField
       FieldName = 'TranType'
       Size = 1
     end
-    object qryTransactionsTranStatus: TStringField
+    object qryTransactions_TranStatus: TStringField
       FieldName = 'TranStatus'
       Size = 1
     end
-    object qryTransactionsTranPawnAmount: TFloatField
+    object qryTransactions_TranPawnAmount: TFloatField
       FieldName = 'TranPawnAmount'
       currency = True
     end
-    object qryTransactionsTranInterest: TFloatField
+    object qryTransactions_TranInterest: TFloatField
       FieldName = 'TranInterest'
     end
-    object qryTransactionsPrincBalance: TFloatField
+    object qryTransactions_PrincBalance: TFloatField
       FieldName = 'PrincBalance'
       currency = True
     end
-    object qryTransactionsInsterestBalance: TFloatField
+    object qryTransactions_InsterestBalance: TFloatField
       FieldName = 'InsterestBalance'
       currency = True
     end
-    object qryTransactionsTranTime: TTimeField
+    object qryTransactions_TranTime: TTimeField
       FieldName = 'TranTime'
     end
-    object qryTransactionsTranVoidDate: TDateTimeField
+    object qryTransactions_TranVoidDate: TDateTimeField
       FieldName = 'TranVoidDate'
     end
-    object qryTransactionsTranCloseReason: TSmallintField
+    object qryTransactions_TranCloseReason: TSmallintField
       FieldName = 'TranCloseReason'
     end
-    object qryTransactionsTranSalesTax: TFloatField
+    object qryTransactions_TranSalesTax: TFloatField
       FieldName = 'TranSalesTax'
       currency = True
     end
@@ -8398,6 +8398,165 @@ object DM: TDM
       FieldName = 'BACKUP_IMAGES_PATH'
       Origin = 'BACKUP_IMAGES_PATH'
       Size = 255
+    end
+  end
+  object qryTransactions: TFDQuery
+    AfterPost = qryTransactionsAfterScroll
+    AfterScroll = qryTransactionsAfterScroll
+    OnCalcFields = qryTransactionsCalcFields
+    OnNewRecord = qryTransactionsNewRecord
+    Filtered = True
+    Filter = 'TRAN_TYPE='#39'P'#39
+    Connection = ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
+    UpdateOptions.UpdateTableName = 'TRANSACTIONS'
+    UpdateOptions.KeyFields = 'TRANSACTION_NO'
+    UpdateOptions.AutoIncFields = 'TRANSACTION_NO'
+    SQL.Strings = (
+      'SELECT *'
+      'FROM TRANSACTIONS'
+      'WHERE CUST_NO = :CUST_NO AND TRAN_TYPE IN ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
+      'ORDER BY TRAN_STATUS, TRAN_DATE DESC, TRAN_TICKET_NO DESC')
+    Left = 422
+    Top = 770
+    ParamData = <
+      item
+        Name = 'CUST_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryTransactionscComment: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cComment'
+      Size = 40
+      Calculated = True
+    end
+    object qryTransactionscTranInsAmount1Month: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTranInsAmount1Month'
+      Calculated = True
+    end
+    object qryTransactionscTotalPay1Month: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTotalPay1Month'
+      Calculated = True
+    end
+    object qryTransactionscPawnDefaultDate: TDateTimeField
+      FieldKind = fkCalculated
+      FieldName = 'cPawnDefaultDate'
+      Calculated = True
+    end
+    object qryTransactionscTAmountRedeemDefaultDate: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTAmountRedeemDefaultDate'
+      Calculated = True
+    end
+    object qryTransactionscAnnualPercRate: TFloatField
+      FieldKind = fkCalculated
+      FieldName = 'cAnnualPercRate'
+      Calculated = True
+    end
+    object qryTransactionscPawnNextMinPayment: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cPawnNextMinPayment'
+      Size = 126
+      Calculated = True
+    end
+    object qryTransactionscTranTotalInterestAtMaturity: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTranTotalInterestAtMaturity'
+      Calculated = True
+    end
+    object qryTransactionscTranTotalAmountAtMaturity: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTranTotalAmountAtMaturity'
+      Calculated = True
+    end
+    object qryTransactionscTotalSalesAmount: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'cTotalSalesAmount'
+      Calculated = True
+    end
+    object qryTransactionsTRANSACTION_NO: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'TRANSACTION_NO'
+      Origin = 'TRANSACTION_NO'
+      Required = True
+    end
+    object qryTransactionsCUST_NO: TIntegerField
+      FieldName = 'CUST_NO'
+      Origin = 'CUST_NO'
+    end
+    object qryTransactionsTRAN_DATE: TDateField
+      FieldName = 'TRAN_DATE'
+      Origin = 'TRAN_DATE'
+      OnChange = qryTransactionsTranDateChange
+      DisplayFormat = 'mm/dd/yyyy'
+    end
+    object qryTransactionsTRAN_TICKET_NO: TStringField
+      FieldName = 'TRAN_TICKET_NO'
+      Origin = 'TRAN_TICKET_NO'
+      Size = 30
+    end
+    object qryTransactionsTRAN_COMMENT: TMemoField
+      FieldName = 'TRAN_COMMENT'
+      Origin = 'TRAN_COMMENT'
+      BlobType = ftMemo
+    end
+    object qryTransactionsTRAN_MATURITY: TDateField
+      FieldName = 'TRAN_MATURITY'
+      Origin = 'TRAN_MATURITY'
+      DisplayFormat = 'mm/dd/yyyy'
+    end
+    object qryTransactionsTRAN_TYPE: TStringField
+      FieldName = 'TRAN_TYPE'
+      Origin = 'TRAN_TYPE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryTransactionsTRAN_STATUS: TStringField
+      FieldName = 'TRAN_STATUS'
+      Origin = 'TRAN_STATUS'
+      FixedChar = True
+      Size = 1
+    end
+    object qryTransactionsTRAN_VOID_DATE: TSQLTimeStampField
+      FieldName = 'TRAN_VOID_DATE'
+      Origin = 'TRAN_VOID_DATE'
+    end
+    object qryTransactionsTRAN_PAWN_AMOUNT: TFloatField
+      FieldName = 'TRAN_PAWN_AMOUNT'
+      Origin = 'TRAN_PAWN_AMOUNT'
+      currency = True
+    end
+    object qryTransactionsTRAN_INTEREST: TFloatField
+      FieldName = 'TRAN_INTEREST'
+      Origin = 'TRAN_INTEREST'
+    end
+    object qryTransactionsPRINC_BALANCE: TFloatField
+      FieldName = 'PRINC_BALANCE'
+      Origin = 'PRINC_BALANCE'
+      currency = True
+    end
+    object qryTransactionsINTEREST_BALANCE: TFloatField
+      FieldName = 'INTEREST_BALANCE'
+      Origin = 'INTEREST_BALANCE'
+      currency = True
+    end
+    object qryTransactionsTRAN_TIME: TTimeField
+      FieldName = 'TRAN_TIME'
+      Origin = 'TRAN_TIME'
+    end
+    object qryTransactionsTRAN_CLOSE_REASON: TSmallintField
+      FieldName = 'TRAN_CLOSE_REASON'
+      Origin = 'TRAN_CLOSE_REASON'
+      Required = True
+    end
+    object qryTransactionsTRAN_SALES_TAX: TFloatField
+      FieldName = 'TRAN_SALES_TAX'
+      Origin = 'TRAN_SALES_TAX'
+      currency = True
     end
   end
 end

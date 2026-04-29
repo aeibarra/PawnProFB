@@ -53,10 +53,10 @@ begin
     begin
       qryNextTicket.Open;
       DM.qryTransactions.Append;
-      DM.qryTransactionsTranType.AsString := 'U';
-      DM.qryTransactionsTranTicketNo.AsInteger := qryNextTicketLastKey.AsInteger + 1;
-      DM.qryTransactionsTranMaturity.AsDateTime := IncMonth(Date, 1);
-      DM.qryTransactionsTranInterest.AsFloat := 0.0;
+      DM.qryTransactionsTRAN_TYPE.AsString := 'U';
+      DM.qryTransactionsTRAN_TICKET_NO.AsInteger := qryNextTicketLastKey.AsInteger + 1;
+      DM.qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
+      DM.qryTransactionsTRAN_INTEREST.AsFloat := 0.0;
     end
   else
     begin
@@ -68,7 +68,7 @@ end;
 
 procedure TfrmEnterPurchase.btnSaveClick(Sender: TObject);
 begin
-  if DM.qryTransactionsTranPawnAmount.AsFloat <= 0 then
+  if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
       MessageDlg('Please enter purchase amount.', mtInformation, [mbOk], 0);
       edAmount.SetFocus;
@@ -78,11 +78,11 @@ begin
   if NewRow then
     begin
       qryNextTicket.Edit;
-      qryNextTicketLastKey.AsInteger := DM.qryTransactionsTranTicketNo.AsInteger;
+      qryNextTicketLastKey.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
       qryNextTicket.Post;
     end;
 
-  DM.qryTransactionsTranTime.AsDateTime := Time;
+  DM.qryTransactionsTRAN_TIME.AsDateTime := Time;
 
   DM.qryTransactions.Post;
   ModalResult := mrOk;

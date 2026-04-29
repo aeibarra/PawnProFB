@@ -1140,7 +1140,7 @@ begin
   if DataCol = 0 then
     begin
       DBGrid.Canvas.Brush.Color := clWhite;
-      if DM.qryTransactionsTranStatus.AsString = 'I' then
+      if DM.qryTransactionsTRAN_STATUS.AsString = 'I' then
         begin
           DBGrid.Canvas.Brush.Color := clDkGray;
           DBGrid.Canvas.Font.Color  := clWhite;
@@ -1162,7 +1162,7 @@ begin
   if DataCol = 0 then
     begin
       DBGrid.Canvas.Brush.Color := clWhite;
-      if DM.qryTransactionsTranStatus.AsString = 'I' then
+      if DM.qryTransactionsTRAN_STATUS.AsString = 'I' then
         begin
           DBGrid.Canvas.Brush.Color := clDkGray;
           DBGrid.Canvas.Font.Color  := clWhite;
@@ -1252,7 +1252,7 @@ begin
       exit;
     end;
 
-  if not NewTransaction and (DM.qryTransactionsTransactionNo.AsInteger <= 0) then
+  if not NewTransaction and (DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0) then
     begin
       MessageDlg('Nothing to edit.', mtInformation, [mbOK], 0);
       exit;
@@ -1346,7 +1346,7 @@ end;
 
 procedure TfrmClients.btnPayAddClick(Sender: TObject);
 begin
-  if DM.qryTransactionsTransactionNo.AsInteger <= 0 then
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0 then
     begin
       MessageDlg('Please enter Transaction information first', mtInformation, [mbOK], 0);
       exit;
@@ -1387,7 +1387,7 @@ begin
   try
     qry.Connection := DM.ConnDB;
     qry.SQL.Text := 'select InvItemNo from InventoryItems where TransactionNo = :TransactionNo order by InvItemNo';
-    qry.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+    qry.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
     qry.Open;
     TotalItems := qry.RecordCount;
     iPos := 0;
@@ -1419,13 +1419,13 @@ begin
   if DM.qryStorePoliceReportToPrint.AsInteger in [1, 3, 4] then
     begin
       qryPawnItems.Close;
-      qryPawnItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+      qryPawnItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
       qryPawnItems.Open;
     end
   else if DM.qryStorePoliceReportToPrint.AsInteger = 2 then
     begin
       clnPawnItems.Close;
-      clnPawnItems.Params.ParamByName('TransactionNo').AsInteger := DM.qryTransactionsTransactionNo.AsInteger;
+      clnPawnItems.Params.ParamByName('TransactionNo').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
       clnPawnItems.Open;
 
       mult := clnPawnItems.RecordCount / (ItemsPerPage * 1.0);
@@ -1530,17 +1530,17 @@ begin
   if DM.qryTransactions.RecordCount = 0 then
     exit;
 
-  if DM.qryTransactionsTranStatus.AsString = TranStatus_Inactive then
+  if DM.qryTransactionsTRAN_STATUS.AsString = TranStatus_Inactive then
     begin
       MsgInfo('This Layaway is already close.');
       exit;
     end;
 
-  if DM.qryTransactionsPrincBalance.AsCurrency > 0 then
+  if DM.qryTransactionsPRINC_BALANCE.AsCurrency > 0 then
     begin
       frmConfirmCloseLayaway := TfrmConfirmCloseLayaway.Create(Self);
       try
-        frmConfirmCloseLayaway.LayawayBalance := DM.qryTransactionsPrincBalance.AsCurrency;
+        frmConfirmCloseLayaway.LayawayBalance := DM.qryTransactionsPRINC_BALANCE.AsCurrency;
         if frmConfirmCloseLayaway.ShowModal = mrCancel then
           exit;
 
@@ -1550,7 +1550,7 @@ begin
     end
   else
     begin
-      DM.LaywayClosePayoffBalance(DM.qryTransactionsTransactionNo.AsInteger, false);
+      DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
     end;
 
    DM.RefreshADOQry(qryInvItems);
@@ -1573,9 +1573,9 @@ end;
 
 procedure TfrmClients.bntCalcUnitcostClick(Sender: TObject);
 begin
-  qryCalcUnitCostFromWeight.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+  qryCalcUnitCostFromWeight.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
   qryCalcUnitCostFromWeight.ExecSQL;
-  //  spuCalcUnitCostFromWeight.Parameters[0].Value := DM.qryTransactionsTransactionNo.AsInteger;
+  //  spuCalcUnitCostFromWeight.Parameters[0].Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
 //  spuCalcUnitCostFromWeight.ExecProc;
   qryInvItems.Close;
   qryInvItems.Open;
@@ -1583,7 +1583,7 @@ end;
 
 procedure TfrmClients.btnAddInvItemsClick(Sender: TObject);
 begin
-  if DM.qryTransactionsTransactionNo.AsInteger <= 0 then
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0 then
     begin
       MessageDlg('Please enter Transaction information first', mtInformation, [mbOK], 0);
       exit;
@@ -1799,23 +1799,23 @@ begin
   qryInvItemsLayawayDate.Clear;
 
   qryInvItemsInvItemCount.AsInteger := 1;
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     begin
       qryInvItemsInvItemStatus.AsString := 'P';  //For Pawn
       qryInvItemsPawnedDate.AsDateTime := Now;
     end
-  else if DM.qryTransactionsTranType.AsString = TranPurchase then
+  else if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
     begin
       qryInvItemsInvItemStatus.AsString := 'S';  //For purchase
       qryInvItemsPurchaseDate.AsDateTime := Now;
     end
-  else if DM.qryTransactionsTranType.AsString = TranLayaway then
+  else if DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway then
     begin
       qryInvItemsInvItemStatus.AsString := 'L';  //Layaway
       qryInvItemsLayawayDate.AsDateTime := Now;
     end;
 
-  qryInvItemsTransactionNo.AsInteger := DM.qryTransactionsTransactionNo.AsInteger;
+  qryInvItemsTransactionNo.AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
 
   qryInvItemsInvItemNo.AsInteger := DM.GetNextKey('InventoryItems');
   qryInvItemsInvItemBarcode.AsString := DM.GetBarcode(qryInvItemsInvItemNo.AsInteger);
@@ -1945,7 +1945,7 @@ begin
       exit;
     end;
 
-{  if DM.qryTransactionsTransactionNo.AsInteger <= 0 then
+{  if DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0 then
     begin
       MessageDlg('No Existing transaction to copy items from.', mtInformation, [mbOK], 0);
       exit;
@@ -1970,7 +1970,7 @@ begin
       end;
 
     SavePos := DM.qryTransactions.RecNo;
-    frmEnterTransaction.FilterByTransactionNo := DM.qryTransactionsTransactionNo.AsInteger;
+    frmEnterTransaction.FilterByTransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
     if frmEnterTransaction.ShowModal = mrOk then
       begin
        qryInvItems.Close;
@@ -2059,9 +2059,9 @@ var
   PawnTabActive: boolean;
 begin
   case pgTransactions.ActivePageIndex of
-  0: Filter := 'TranType = ''P'''; //Pawn
-  1: Filter := 'TranType = ''U'''; //Purchase
-  2: Filter := 'TranType = ''L'''; //Layaway
+  0: Filter := 'TRAN_TYPE = ''P'''; //Pawn
+  1: Filter := 'TRAN_TYPE = ''U'''; //Purchase
+  2: Filter := 'TRAN_TYPE = ''L'''; //Layaway
   else
     Filter := '';
   end;
@@ -2079,8 +2079,8 @@ end;
 
 procedure TfrmClients.PopMnuLayawayPopup(Sender: TObject);
 begin
-  mnuReOpenLayaway.Enabled := DM.qryTransactionsTranStatus.AsString <> 'A';
-  mnuCloseLayaway.Enabled := DM.qryTransactionsTranStatus.AsString <> 'I';
+  mnuReOpenLayaway.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'A';
+  mnuCloseLayaway.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'I';
 
 end;
 
@@ -2106,8 +2106,8 @@ end;
 
 procedure TfrmClients.PopMnuTransactionsPopup(Sender: TObject);
 begin
-  mnuPawnStatusActive.Enabled := DM.qryTransactionsTranStatus.AsString <> 'A';
-  mnuPawnStatusInactive.Enabled := DM.qryTransactionsTranStatus.AsString <> 'I';
+  mnuPawnStatusActive.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'A';
+  mnuPawnStatusInactive.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'I';
 end;
 
 procedure TfrmClients.AddEditLayaway(NewRow: boolean);
@@ -2143,7 +2143,7 @@ procedure TfrmClients.btnEditPurchaseClick(Sender: TObject);
 begin
   pgTransactions.ActivePageIndex := 1;
   pgTransactionsChange(nil);
-  if DM.qryTransactionsTransactionNo.AsInteger <= 0 then
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0 then
     begin
       MessageDlg('Nothing to edit.', mtInformation, [mbOK], 0);
       exit;
@@ -2173,7 +2173,7 @@ begin
   frmItemPictures := TfrmItemPictures.Create(self);
   try
     frmItemPictures.ImagRefToRowNo := qryInvItemsInvItemNo.AsInteger;
-    frmItemPictures.TicketNo := DM.qryTransactionsTranTicketNo.AsString;
+    frmItemPictures.TicketNo := DM.qryTransactionsTRAN_TICKET_NO.AsString;
     frmItemPictures.ItemCountInTran := GetRecNo(qryInvItems.RecNo);
     frmItemPictures.ShowModal;
     if frmItemPictures.PictureTaken then
@@ -2192,7 +2192,7 @@ end;
 
 procedure TfrmClients.btnLayawayRcptClick(Sender: TObject);
 begin
-  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTransactionNo.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
 end;
 
 procedure TfrmClients.FormCreate(Sender: TObject);
@@ -2207,16 +2207,16 @@ end;
 
 procedure TfrmClients.lblAmountGetText(Sender: TObject; var Text: String);
 begin //Poner esta opcion en el futuro que se pueda cambiar
-  if DM.qryTransactionsTranType.AsString = TranPawn then
-    Text := Format('%m', [DM.qryTransactionsTranPawnAmount.AsCurrency])
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
+    Text := Format('%m', [DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency])
   else
     Text := '$0.00';
 end;
 
 procedure TfrmClients.ppLabel7GetText(Sender: TObject; var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPurchase then
-    Text := Format('%.2f', [DM.qryTransactionsTranPawnAmount.AsCurrency])
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
+    Text := Format('%.2f', [DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency])
   else
     Text := '';
 end;
@@ -2228,13 +2228,13 @@ end;
 
 procedure TfrmClients.ppLabel9GetText(Sender: TObject; var Text: string);
 begin
-  Text := trim(DM.qryTransactionsTranTicketNo.AsString);
+  Text := trim(DM.qryTransactionsTRAN_TICKET_NO.AsString);
 end;
 
 procedure TfrmClients.lblTranInterestAtMaturityGetText(Sender: TObject;
   var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     Text := Format('%.2f', [DM.qryTransactionscTranTotalInterestAtMaturity.AsCurrency])
   else
     Text := '0.00';
@@ -2243,7 +2243,7 @@ end;
 procedure TfrmClients.lblTotalAmountAtMaturityGetText(Sender: TObject;
   var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     Text := Format('%.2f', [DM.qryTransactionscTranTotalAmountAtMaturity.AsCurrency ])
   else
     Text := '0.00';
@@ -2252,7 +2252,7 @@ end;
 procedure TfrmClients.lblAnnualPercRateGetText(Sender: TObject;
   var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     Text := Format('%.2f', [DM.qryTransactionscAnnualPercRate.AsFloat])
   else
     Text := '0.00';
@@ -2261,8 +2261,8 @@ end;
 procedure TfrmClients.lblTranMaturityGetText(Sender: TObject;
   var Text: String);
 begin
-//  if DM.qryTransactionsTranType.AsString = TranPawn then
-    Text := FormatDateTime('mm/dd/yyyy', DM.qryTransactionsTranMaturity.AsDateTime)
+//  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
+    Text := FormatDateTime('mm/dd/yyyy', DM.qryTransactionsTRAN_MATURITY.AsDateTime)
 //  else
 //    Text := '';
 end;
@@ -2290,74 +2290,74 @@ procedure TfrmClients.UpdateStatusOnSelectedItemInPopUp(TransactionNo, ItemNo: i
                   const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
 begin
   DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate);
-  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
   DM.RefreshADOQry(qryInvItems);
-  DM.RefreshADOQry(DM.qryTransactions);
+  DM.RefreshFBQry(DM.qryTransactions);
 end;
 
 procedure TfrmClients.popmnuItemPawnedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTransactionNo.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
                                     null, null, null, null);
 //  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, null, null, null);
-//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemDefaultedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTransactionNo.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
                                     null, Date, null, null);
 
 //  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, null, null);
-//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemForSaleClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTransactionNo.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
                                     null, Date, null, Date);
 //  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, null, Date);
-//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemMeltedScrapClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTransactionNo.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
                                     null, Date, Date, null);
 //  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, null, Date, Date, null);
-//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.popmnuItemRedeemedClick(Sender: TObject);
 begin
-  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTransactionNo.AsInteger, qryInvItemsInvItemNo.AsInteger,
+  UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsInvItemNo.AsInteger,
                                     Date, null, null, null);
 //  DM.UpdatePawnItemStatus(qryInvItemsInvItemNo.AsInteger, Date, null, null, null);
-//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.mnuCloseLayawayClick(Sender: TObject);
 begin
-  if DM.qryTransactionsPrincBalance.AsCurrency > 0 then
+  if DM.qryTransactionsPRINC_BALANCE.AsCurrency > 0 then
     if MessageDlg('The Layaway balance is not zero. Close Layaway?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
       exit;
 
-  DM.LaywayClosePayoffBalance(DM.qryTransactionsTransactionNo.AsInteger, false);
+  DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
 
-  DM.RefreshADOQry(DM.qryTransactions);
+  DM.RefreshFBQry(DM.qryTransactions);
 
 end;
 
 procedure TfrmClients.mnuPawnStatusActiveClick(Sender: TObject);
 begin
-  DM.PutPawnBackToActive(DM.qryTransactionsTransactionNo.AsInteger);
+  DM.PutPawnBackToActive(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
-  DM.RefreshADOQry(DM.qryTransactions);
+  DM.RefreshFBQry(DM.qryTransactions);
   DM.RefreshADOQry(qryInvItems);
 end;
 
@@ -2366,10 +2366,10 @@ begin
   frmPawnChangeStatus := TfrmPawnChangeStatus.Create(Self);
   try
     CenterPopupOnControl(gridPawn, frmPawnChangeStatus);
-    frmPawnChangeStatus.TransactionNo := DM.qryTransactionsTransactionNo.AsInteger;
+    frmPawnChangeStatus.TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
     if frmPawnChangeStatus.ShowModal = mrOk then
       begin
-        DM.RefreshADOQry(DM.qryTransactions);
+        DM.RefreshFBQry(DM.qryTransactions);
         DM.RefreshADOQry(qryInvItems);
       end;
   finally
@@ -2379,16 +2379,16 @@ end;
 
 procedure TfrmClients.mnuReOpenLayawayClick(Sender: TObject);
 begin
-  DM.ReactivateLayway(DM.qryTransactionsTransactionNo.AsInteger);
+  DM.ReactivateLayway(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
-  DM.RefreshADOQry(DM.qryTransactions);
+  DM.RefreshFBQry(DM.qryTransactions);
   DM.RefreshADOQry(qryInvItems);
 end;
 
 procedure TfrmClients.lblPawnDefaultDateGetText(Sender: TObject;
   var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     Text := FormatDateTime('mm/dd/yyyy', DM.qryTransactionscPawnDefaultDate.AsDateTime)
   else
     Text := '';
@@ -2397,7 +2397,7 @@ end;
 procedure TfrmClients.lblTAmountRedeemDefaultDateGetText(Sender: TObject;
   var Text: String);
 begin
-  if DM.qryTransactionsTranType.AsString = TranPawn then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
     Text := Format('%.2f', [DM.qryTransactionscTAmountRedeemDefaultDate.AsCurrency])
   else
     Text := '$0.00';
@@ -2405,18 +2405,18 @@ end;
 
 procedure TfrmClients.ppChkPurchasePrint(Sender: TObject);
 begin
-  ppChkPurchase.Checked := DM.qryTransactionsTranType.AsString = TranPurchase;
-  chkChkPurchase.Checked := DM.qryTransactionsTranType.AsString = TranPurchase;
-  chkChkPurchaseLetterPrePrinted.Checked := DM.qryTransactionsTranType.AsString = TranPurchase;
-  ppChkPurchase0924.Checked := DM.qryTransactionsTranType.AsString = TranPurchase;
+  ppChkPurchase.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase;
+  chkChkPurchase.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase;
+  chkChkPurchaseLetterPrePrinted.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase;
+  ppChkPurchase0924.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase;
 end;
 
 procedure TfrmClients.ppChkPawnPrint(Sender: TObject);
 begin
-  ppChkPawn.Checked := DM.qryTransactionsTranType.AsString = TranPawn;
-  ppChkPawn0924.Checked := DM.qryTransactionsTranType.AsString = TranPawn;
-  ppChkPawnLetter.Checked := DM.qryTransactionsTranType.AsString = TranPawn;
-  ppChkPawnLetterPrePrinted.Checked := DM.qryTransactionsTranType.AsString = TranPawn;
+  ppChkPawn.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
+  ppChkPawn0924.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
+  ppChkPawnLetter.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
+  ppChkPawnLetterPrePrinted.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
 end;
 
 procedure TfrmClients.FormDestroy(Sender: TObject);

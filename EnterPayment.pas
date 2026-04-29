@@ -93,7 +93,7 @@ end;   }
 //begin
 ////  if First then
 ////    begin
-////      F := MonthsBetween(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTranDate.AsDateTime);//  MonthDiff(DM.qryTransactionsTranDate.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
+////      F := MonthsBetween(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime);//  MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
 ////      Result := trunc(F);
 ////      if (Frac(F) > 0) then
 ////        inc(Result);
@@ -103,8 +103,8 @@ end;   }
 ////    end
 ////  else
 ////    begin
-////      F1 := MonthSpan(qryLastPaymentPayDate.AsDateTime, DM.qryTransactionsTranDate.AsDateTime);//MonthDiff(DM.qryTransactionsTranDate.AsDateTime, qryLastPaymentPayDate.AsDateTime);
-////      F2 := MonthSpan(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTranDate.AsDateTime); //MonthDiff(DM.qryTransactionsTranDate.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
+////      F1 := MonthSpan(qryLastPaymentPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime);//MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, qryLastPaymentPayDate.AsDateTime);
+////      F2 := MonthSpan(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime); //MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
 ////      Result := Abs(trunc(F2) - trunc(F1));
 ////    end;
 //end;
@@ -116,13 +116,13 @@ end;   }
 ////  MonthCount := CalcMonth(qryLastPaymentPaymentNo.AsInteger <= 0);
 ////  if qryLastPaymentPaymentNo.AsInteger <= 0 then
 ////    begin
-////      LastPricipalBalance := DM.qryTransactionsTranPawnAmount.AsFloat;
-////      LastInterestBalance := MonthCount * DM.qryTransactionsTranPawnAmount.AsFloat * DM.qryTransactionsTranInterest.AsFloat / 100.0;
+////      LastPricipalBalance := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat;
+////      LastInterestBalance := MonthCount * DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
 ////    end
 ////  else
 ////    begin
 ////      LastPricipalBalance := qryLastPaymentPrincBalance.AsFloat;
-////      LastInterestBalance := qryLastPaymentInsterestBalance.AsFloat + (MonthCount * qryLastPaymentPrincBalance.AsFloat * DM.qryTransactionsTranInterest.AsFloat) / 100.0;
+////      LastInterestBalance := qryLastPaymentInsterestBalance.AsFloat + (MonthCount * qryLastPaymentPrincBalance.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat) / 100.0;
 ////    end;
 ////
 //end;
@@ -130,9 +130,9 @@ end;   }
 procedure TfrmEnterPayment.FormShow(Sender: TObject);
 begin
 //  qryLastPayment.Close;
-//  qryLastPayment.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTransactionNo.AsInteger;
+//  qryLastPayment.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
 //  qryLastPayment.Open;
-//  DM.LastPaymentForTransaction(DM.qryTransactionsTransactionNo.AsInteger);
+//  DM.LastPaymentForTransaction(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
   DM.GetPawnPaymentBalancesAndDueDate(InterestBalanceAsOf, InterestOwedToday, NextPaymentDate, InterestDueAtNext);
 
@@ -142,18 +142,18 @@ begin
 //      CalcBalances;
 
       DM.qryPaymentsInsterestBalance.AsCurrency := InterestBalanceAsOf;
-      DM.qryPaymentsPrincBalance.AsCurrency := DM.qryTransactionsPrincBalance.AsCurrency;
+      DM.qryPaymentsPrincBalance.AsCurrency := DM.qryTransactionsPRINC_BALANCE.AsCurrency;
 {      if qryLastPaymentPaymentNo.AsInteger <= 0 then
         begin
           DM.qryPaymentsInsterestBalance.AsFloat :=
-                MonthCount * DM.qryTransactionsTranPawnAmount.AsFloat * DM.qryTransactionsTranInterest.AsFloat / 100.0;
-          DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsTranPawnAmount.AsFloat;
+                MonthCount * DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
+          DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat;
         end
       else
         begin
           DM.qryPaymentsInsterestBalance.AsFloat :=
                 qryLastPaymentInsterestBalance.AsFloat +
-                MonthCount * qryLastPaymentPrincBalance.AsFloat * DM.qryTransactionsTranInterest.AsFloat / 100.0;
+                MonthCount * qryLastPaymentPrincBalance.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
           DM.qryPaymentsPrincBalance.AsFloat := qryLastPaymentPrincBalance.AsFloat;
         end;}
     end
@@ -198,8 +198,8 @@ begin
     DM.qryPayments.Post;
 
     DM.qryTransactions.Edit;
-    DM.qryTransactionsPrincBalance.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
-    DM.qryTransactionsInsterestBalance.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
+    DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
+    DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
     DM.qryTransactions.Post;
   except
     DM.ConnDB.RollbackTrans;
@@ -262,7 +262,7 @@ begin
       if DM.qryPaymentsInsterestBalance.AsFloat > 0 then
         DM.qryPaymentsPayPrincipal.AsFloat := 0;
 
-      DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsPrincBalance.AsCurrency - DM.qryPaymentsPayPrincipal.AsFloat;
+      DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsPRINC_BALANCE.AsCurrency - DM.qryPaymentsPayPrincipal.AsFloat;
     end;
 end;
 

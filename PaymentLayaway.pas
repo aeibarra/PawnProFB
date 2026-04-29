@@ -114,12 +114,12 @@ begin
   DM.qryPayments.Post;
 
   DM.qryTransactions.Edit;
-  DM.qryTransactionsPrincBalance.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
-  DM.qryTransactionsInsterestBalance.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
+  DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
+  DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
   DM.qryTransactions.Post;
 
   if CloseLayaway then
-    DM.LaywayClosePayoffBalance(DM.qryTransactionsTransactionNo.AsInteger, false);
+    DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
 
   ModalResult := mrOk;
 
