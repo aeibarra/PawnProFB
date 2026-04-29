@@ -110,7 +110,7 @@ object frmPaymentLayaway: TfrmPaymentLayaway
       Width = 146
       Height = 29
       DataSource = DM.DSPayments
-      DataField = 'PayDate'
+      DataField = 'PAY_DATE'
       TabOrder = 0
       EditType = etDate
     end
@@ -119,7 +119,7 @@ object frmPaymentLayaway: TfrmPaymentLayaway
       Top = 50
       Width = 101
       Height = 29
-      DataField = 'PayAmount'
+      DataField = 'PAY_AMOUNT'
       DataSource = DM.DSPayments
       MaxLength = 6
       TabOrder = 1
@@ -130,7 +130,7 @@ object frmPaymentLayaway: TfrmPaymentLayaway
       Width = 288
       Height = 79
       TabStop = False
-      DataField = 'PayComment'
+      DataField = 'PAY_COMMENT'
       DataSource = DM.DSPayments
       ScrollBars = ssVertical
       TabOrder = 2

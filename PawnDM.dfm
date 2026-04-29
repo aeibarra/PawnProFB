@@ -1,7 +1,7 @@
 object DM: TDM
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Height = 1208
+  Height = 1122
   Width = 1736
   object ConnDB: TADOConnection
     ConnectionString = 
@@ -28,12 +28,12 @@ object DM: TDM
   object DSTransactions: TDataSource
     DataSet = qryTransactions
     Left = 425
-    Top = 833
+    Top = 824
   end
   object DSPayments: TDataSource
     DataSet = qryPayments
-    Left = 447
-    Top = 68
+    Left = 697
+    Top = 824
   end
   object DSStore: TDataSource
     DataSet = qryStore
@@ -7677,7 +7677,7 @@ object DM: TDM
     Left = 180
     Top = 650
   end
-  object qryPayments: TADOQuery
+  object qryPayments_: TADOQuery
     Connection = ConnDB
     CursorType = ctStatic
     AfterPost = qryPaymentsAfterPost
@@ -7698,58 +7698,58 @@ object DM: TDM
       'FROM Payments '
       'WHERE TransactionNo = :TransactionNo'
       'ORDER BY PaymentNo DESC')
-    Left = 448
-    Top = 14
-    object qryPaymentscComment: TStringField
+    Left = 810
+    Top = 762
+    object qryPayments_cComment: TStringField
       FieldKind = fkCalculated
       FieldName = 'cComment'
       Size = 50
       Calculated = True
     end
-    object qryPaymentscPeriodNo: TIntegerField
+    object qryPayments_cPeriodNo: TIntegerField
       FieldKind = fkCalculated
       FieldName = 'cPeriodNo'
       Calculated = True
     end
-    object qryPaymentsPaymentNo: TAutoIncField
+    object qryPayments_PaymentNo: TAutoIncField
       FieldName = 'PaymentNo'
       ReadOnly = True
     end
-    object qryPaymentsTransactionNo: TIntegerField
+    object qryPayments_TransactionNo: TIntegerField
       FieldName = 'TransactionNo'
     end
-    object qryPaymentsPayDate: TDateField
+    object qryPayments_PayDate: TDateField
       FieldName = 'PayDate'
     end
-    object qryPaymentsPayAmount: TFloatField
+    object qryPayments_PayAmount: TFloatField
       FieldName = 'PayAmount'
       currency = True
     end
-    object qryPaymentsPayComment: TMemoField
+    object qryPayments_PayComment: TMemoField
       FieldName = 'PayComment'
       BlobType = ftMemo
     end
-    object qryPaymentsPayMethod: TSmallintField
+    object qryPayments_PayMethod: TSmallintField
       FieldName = 'PayMethod'
     end
-    object qryPaymentsPayInterest: TFloatField
+    object qryPayments_PayInterest: TFloatField
       FieldName = 'PayInterest'
       currency = True
     end
-    object qryPaymentsPayPrincipal: TFloatField
+    object qryPayments_PayPrincipal: TFloatField
       FieldName = 'PayPrincipal'
       currency = True
     end
-    object qryPaymentsPrincBalance: TFloatField
+    object qryPayments_PrincBalance: TFloatField
       FieldName = 'PrincBalance'
       currency = True
     end
-    object qryPaymentsInsterestBalance: TFloatField
+    object qryPayments_InsterestBalance: TFloatField
       FieldName = 'InsterestBalance'
       currency = True
     end
   end
-  object qryLastPayment: TADOQuery
+  object qryLastPayment_: TADOQuery
     Connection = ConnDB
     CursorType = ctStatic
     Parameters = <
@@ -7772,14 +7772,20 @@ object DM: TDM
       ') P ON P.TransactionNo = T.TransactionNo'
       'WHERE T.TransactionNo = :TransactionNo;'
       '')
-    Left = 360
-    Top = 14
-    object qryLastPaymentLastPaymentDate: TDateField
+    Left = 809
+    Top = 690
+    object qryLastPayment_LastPaymentDate: TDateField
       FieldName = 'LastPaymentDate'
     end
   end
-  object qryPawnPay: TADOQuery
-    Parameters = <>
+  object qryPawnPay: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
     Left = 496
     Top = 280
   end
@@ -7861,7 +7867,7 @@ object DM: TDM
       'DriverID=FB')
     LoginPrompt = False
     Left = 59
-    Top = 760
+    Top = 762
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
     Left = 53
@@ -7870,7 +7876,7 @@ object DM: TDM
   object qryDummyFB: TFDQuery
     Connection = ConnFB
     Left = 169
-    Top = 761
+    Top = 762
   end
   object fn_GetNextKey: TFDStoredProc
     Connection = ConnFB
@@ -7903,7 +7909,7 @@ object DM: TDM
       '  BACKUP_IMAGES_PATH'
       'FROM BACKUP_SETTINGS;')
     Left = 275
-    Top = 763
+    Top = 762
     object qryBackupSetingsBACKUP_PATH: TStringField
       FieldName = 'BACKUP_PATH'
       Origin = 'BACKUP_PATH'
@@ -7941,7 +7947,7 @@ object DM: TDM
       'WHERE CUST_NO = :CUST_NO AND TRAN_TYPE IN ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
       'ORDER BY TRAN_STATUS, TRAN_DATE DESC, TRAN_TICKET_NO DESC')
     Left = 422
-    Top = 770
+    Top = 762
     ParamData = <
       item
         Name = 'CUST_NO'
@@ -8276,7 +8282,7 @@ object DM: TDM
       '   --SearchByPhone'
       'ORDER BY CUST_FIRST, CUST_LAST')
     Left = 559
-    Top = 764
+    Top = 762
     ParamData = <
       item
         Name = 'CUST_LAST'
@@ -8460,5 +8466,134 @@ object DM: TDM
       Origin = 'CUST_COMMENT'
       BlobType = ftMemo
     end
+  end
+  object qryPayments: TFDQuery
+    AfterPost = qryPaymentsAfterPost
+    OnCalcFields = qryPaymentsCalcFields
+    OnNewRecord = qryPaymentsNewRecord
+    MasterSource = DSTransactions
+    MasterFields = 'TRANSACTION_NO'
+    Connection = ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
+    UpdateOptions.UpdateTableName = 'PAYMENTS'
+    UpdateOptions.KeyFields = 'PAYMENT_NO'
+    UpdateOptions.AutoIncFields = 'PAYMENT_NO'
+    SQL.Strings = (
+      'SELECT *'
+      'FROM PAYMENTS'
+      'WHERE TRANSACTION_NO = :TRANSACTION_NO'
+      'ORDER BY PAYMENT_NO DESC')
+    Left = 697
+    Top = 762
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryPaymentscComment: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cComment'
+      Size = 50
+      Calculated = True
+    end
+    object qryPaymentscPeriodNo: TIntegerField
+      FieldKind = fkCalculated
+      FieldName = 'cPeriodNo'
+      Calculated = True
+    end
+    object qryPaymentsPAYMENT_NO: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'PAYMENT_NO'
+      Origin = 'PAYMENT_NO'
+      Required = True
+    end
+    object qryPaymentsTRANSACTION_NO: TIntegerField
+      FieldName = 'TRANSACTION_NO'
+      Origin = 'TRANSACTION_NO'
+    end
+    object qryPaymentsPAY_DATE: TDateField
+      FieldName = 'PAY_DATE'
+      Origin = 'PAY_DATE'
+    end
+    object qryPaymentsPAY_AMOUNT: TFloatField
+      FieldName = 'PAY_AMOUNT'
+      Origin = 'PAY_AMOUNT'
+      currency = True
+    end
+    object qryPaymentsPAY_COMMENT: TMemoField
+      FieldName = 'PAY_COMMENT'
+      Origin = 'PAY_COMMENT'
+      BlobType = ftMemo
+    end
+    object qryPaymentsPAY_METHOD: TSmallintField
+      FieldName = 'PAY_METHOD'
+      Origin = 'PAY_METHOD'
+    end
+    object qryPaymentsPAY_INTEREST: TFloatField
+      FieldName = 'PAY_INTEREST'
+      Origin = 'PAY_INTEREST'
+      currency = True
+    end
+    object qryPaymentsPAY_PRINCIPAL: TFloatField
+      FieldName = 'PAY_PRINCIPAL'
+      Origin = 'PAY_PRINCIPAL'
+      currency = True
+    end
+    object qryPaymentsPRINC_BALANCE: TFloatField
+      FieldName = 'PRINC_BALANCE'
+      Origin = 'PRINC_BALANCE'
+      currency = True
+    end
+    object qryPaymentsINTEREST_BALANCE: TFloatField
+      FieldName = 'INTEREST_BALANCE'
+      Origin = 'INTEREST_BALANCE'
+      currency = True
+    end
+  end
+  object qryLastPayment: TFDQuery
+    Connection = ConnFB
+    SQL.Strings = (
+      'SELECT'
+      '    COALESCE(P.MaxPayDate, T.TRAN_DATE) AS LastPaymentDate'
+      'FROM TRANSACTIONS T'
+      'LEFT JOIN ('
+      '    SELECT TRANSACTION_NO, MAX(PAY_DATE) AS MaxPayDate'
+      '    FROM PAYMENTS'
+      '    GROUP BY TRANSACTION_NO'
+      ') P ON P.TRANSACTION_NO = T.TRANSACTION_NO'
+      'WHERE T.TRANSACTION_NO = :TRANSACTION_NO')
+    Left = 695
+    Top = 698
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryLastPaymentLASTPAYMENTDATE: TDateField
+      AutoGenerateValue = arDefault
+      FieldName = 'LASTPAYMENTDATE'
+      Origin = 'LASTPAYMENTDATE'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+  end
+  object FDMemTable1: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1097
+    Top = 30
+  end
+  object FDQuery1: TFDQuery
+    Connection = ConnFB
+    Left = 1105
+    Top = 102
   end
 end

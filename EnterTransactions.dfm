@@ -215,7 +215,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 95
       Width = 94
       Height = 28
-      DataField = 'PrincBalance'
+      DataField = 'PRINC_BALANCE'
       DataSource = DM.DSTransactions
       TabOrder = 6
     end
@@ -224,7 +224,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 42
       Width = 60
       Height = 28
-      DataField = 'TranInterest'
+      DataField = 'TRAN_INTEREST'
       DataSource = DM.DSTransactions
       TabOrder = 3
       OnChange = edInterestChange
@@ -235,7 +235,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 95
       Width = 114
       Height = 28
-      DataField = 'InsterestBalance'
+      DataField = 'INTEREST_BALANCE'
       DataSource = DM.DSTransactions
       TabOrder = 8
     end

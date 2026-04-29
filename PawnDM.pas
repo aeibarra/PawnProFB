@@ -79,22 +79,22 @@ type
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     vilMain24: TSVGIconVirtualImageList;
-    qryPayments: TADOQuery;
-    qryPaymentscComment: TStringField;
-    qryPaymentscPeriodNo: TIntegerField;
-    qryPaymentsPaymentNo: TAutoIncField;
-    qryPaymentsTransactionNo: TIntegerField;
-    qryPaymentsPayDate: TDateField;
-    qryPaymentsPayAmount: TFloatField;
-    qryPaymentsPayComment: TMemoField;
-    qryPaymentsPayMethod: TSmallintField;
-    qryPaymentsPayInterest: TFloatField;
-    qryPaymentsPayPrincipal: TFloatField;
-    qryPaymentsPrincBalance: TFloatField;
-    qryPaymentsInsterestBalance: TFloatField;
-    qryLastPayment: TADOQuery;
-    qryLastPaymentLastPaymentDate: TDateField;
-    qryPawnPay: TADOQuery;
+    qryPayments_: TADOQuery;
+    qryPayments_cComment: TStringField;
+    qryPayments_cPeriodNo: TIntegerField;
+    qryPayments_PaymentNo: TAutoIncField;
+    qryPayments_TransactionNo: TIntegerField;
+    qryPayments_PayDate: TDateField;
+    qryPayments_PayAmount: TFloatField;
+    qryPayments_PayComment: TMemoField;
+    qryPayments_PayMethod: TSmallintField;
+    qryPayments_PayInterest: TFloatField;
+    qryPayments_PayPrincipal: TFloatField;
+    qryPayments_PrincBalance: TFloatField;
+    qryPayments_InsterestBalance: TFloatField;
+    qryLastPayment_: TADOQuery;
+    qryLastPayment_LastPaymentDate: TDateField;
+    qryPawnPay: TFDMemTable;
     qryNextTicketNo: TADOQuery;
     qryNextTicketNoLastKey: TIntegerField;
     qryTotalPaid: TADOQuery;
@@ -202,6 +202,23 @@ type
     qryCustomerscCustPhCell: TStringField;
     qryCustomerscCustFlDrvLic: TStringField;
     qryCustomerscCustAge: TIntegerField;
+    qryPayments: TFDQuery;
+    qryLastPayment: TFDQuery;
+    qryLastPaymentLASTPAYMENTDATE: TDateField;
+    qryPaymentscComment: TStringField;
+    qryPaymentscPeriodNo: TIntegerField;
+    qryPaymentsPAYMENT_NO: TIntegerField;
+    qryPaymentsTRANSACTION_NO: TIntegerField;
+    qryPaymentsPAY_DATE: TDateField;
+    qryPaymentsPAY_AMOUNT: TFloatField;
+    qryPaymentsPAY_COMMENT: TMemoField;
+    qryPaymentsPAY_METHOD: TSmallintField;
+    qryPaymentsPAY_INTEREST: TFloatField;
+    qryPaymentsPAY_PRINCIPAL: TFloatField;
+    qryPaymentsPRINC_BALANCE: TFloatField;
+    qryPaymentsINTEREST_BALANCE: TFloatField;
+    FDMemTable1: TFDMemTable;
+    FDQuery1: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -223,12 +240,12 @@ type
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
-    function RoutineExists(const Conn: TADOConnection; const Schema, Name, RoutineType: string): Boolean;
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
   public
     SaveCustQry, SaveConnectionStr: string;
     ReCalcMaturity: boolean;
+    function RoutineExists(const Conn: TADOConnection; const Schema, Name, RoutineType: string): Boolean;
     function GetConnectionStr: string;
     procedure ConfigureFBConnection;
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
@@ -268,8 +285,8 @@ type
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     function GetPawnStatusFromItems(TransactionNo: integer): integer;
     procedure UpdatePawnStatusBaseOnItems(TransactionNo: integer);
-    function GetCurrentInterestBalance(AsOfDate, PawnDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TADOQuery): Currency;
-    procedure GetInterestAndNextPaymentInfo(AsOfDate, PawnDate, LastPaymentDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TADOQuery;
+    function GetCurrentInterestBalance(AsOfDate, PawnDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TDataSet): Currency;
+    procedure GetInterestAndNextPaymentInfo(AsOfDate, PawnDate, LastPaymentDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TDataSet;
                                                 out InterestBalanceAsOf: Currency; out InterestOwedToday: Currency;
                                                 out NextPaymentDate: TDateTime; out InterestDueAtNext: Currency);
     function GetPawnPaymentUserMessageAboutBalancesAndDueDate: string;
@@ -819,15 +836,15 @@ end;
 
 procedure TDM.qryPaymentsCalcFields(DataSet: TDataSet);
 begin
-  qryPaymentscComment.AsString := Copy(qryPaymentsPayComment.AsString, 1, 255);
-  qryPaymentscPeriodNo.AsInteger := GetPawnPeriod(qryTransactionsTRAN_DATE.AsDateTime, qryPaymentsPayDate.AsDateTime);
+  qryPaymentscComment.AsString := Copy(qryPaymentsPAY_COMMENT.AsString, 1, 255);
+  qryPaymentscPeriodNo.AsInteger := GetPawnPeriod(qryTransactionsTRAN_DATE.AsDateTime, qryPaymentsPAY_DATE.AsDateTime);
 end;
 
 procedure TDM.qryPaymentsNewRecord(DataSet: TDataSet);
 begin
-  qryPaymentsPayDate.AsDateTime := Date;
-//  qryPaymentsPaymentNo.AsInteger := GetNextKey('Payments');
-  qryPaymentsTransactionNo.AsInteger := qryTransactionsTRANSACTION_NO.AsInteger;
+  qryPaymentsPAY_DATE.AsDateTime := Date;
+  // PAYMENT_NO is FB IDENTITY - assigned on Post via UpdateOptions.AutoIncFields.
+  // TRANSACTION_NO is bound from the master via DataSource = DSTransactions.
 end;
 
 function TDM.CalcNextInt(PrincipalBalance: Currency; InterestPerc: Currency; Months: integer): Currency;
@@ -841,10 +858,10 @@ end;
 function TDM.LastPaymentForTransaction(TransactionNo: integer): TDateTime;
 begin
   qryLastPayment.Close;
-  qryLastPayment.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
+  qryLastPayment.Params.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
   qryLastPayment.Open;
 
-  Result := qryLastPaymentLastPaymentDate.AsDateTime;
+  Result := qryLastPaymentLASTPAYMENTDATE.AsDateTime;
 
   qryLastPayment.Close;
 end;
@@ -863,7 +880,7 @@ begin
   Result := CalcPawnDefaultDate(TransactionDate, qryStoreDEFAULT_MATURITY_MONTHS.AsInteger);
 end;
 
-function TDM.GetCurrentInterestBalance(AsOfDate, PawnDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TADOQuery): Currency;
+function TDM.GetCurrentInterestBalance(AsOfDate, PawnDate: TDateTime; PawnAmount, InterestRate: Currency; qryPayments: TDataSet): Currency;
 var
   DueMonths, PeriodIndex: Integer;
   TotalAccrued, TotalInterestPaid: Currency;
@@ -915,12 +932,12 @@ begin
       // Rule: principal changes inside a period affect NEXT periods only.
       while Assigned(qryPayments) and (not qryPayments.Eof) do
       begin
-        PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+        PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
 
         if PayDt < PeriodStart then
         begin
           // PrincBalance is the principal AFTER that payment.
-          CurrentPrincipal := qryPayments.FieldByName('PrincBalance').AsCurrency;
+          CurrentPrincipal := qryPayments.FieldByName('PRINC_BALANCE').AsCurrency;
           qryPayments.Next;
         end
         else
@@ -941,10 +958,10 @@ begin
     qryPayments.First;
     while not qryPayments.Eof do
     begin
-      PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+      PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
       if PayDt <= AsOfDate then
         TotalInterestPaid := TotalInterestPaid +
-          qryPayments.FieldByName('PayInterest').AsCurrency
+          qryPayments.FieldByName('PAY_INTEREST').AsCurrency
       else
         Break;  // assuming ordered by PayDate ASC
       qryPayments.Next;
@@ -959,7 +976,7 @@ end;
 
 procedure TDM.GetInterestAndNextPaymentInfo(
   AsOfDate, PawnDate, LastPaymentDate: TDateTime;
-  PawnAmount, InterestRate: Currency; qryPayments: TADOQuery;
+  PawnAmount, InterestRate: Currency; qryPayments: TDataSet;
   out InterestBalanceAsOf: Currency;
   out InterestOwedToday: Currency;
   out NextPaymentDate: TDateTime;
@@ -1009,10 +1026,10 @@ begin
     qryPayments.First;
     while not qryPayments.Eof do
     begin
-      PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+      PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
       if PayDt <= AsOfDate then
         TotalInterestPaid := TotalInterestPaid +
-          qryPayments.FieldByName('PayInterest').AsCurrency
+          qryPayments.FieldByName('PAY_INTEREST').AsCurrency
       else
         Break;
       qryPayments.Next;
@@ -1037,10 +1054,10 @@ begin
       // Apply principal changes from payments BEFORE this period start.
       while not qryPayments.Eof do
       begin
-        PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+        PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
         if PayDt < PeriodStart then
         begin
-          PrincipalSim := qryPayments.FieldByName('PrincBalance').AsCurrency;
+          PrincipalSim := qryPayments.FieldByName('PRINC_BALANCE').AsCurrency;
           qryPayments.Next;
         end
         else
@@ -1094,10 +1111,10 @@ begin
     qryPayments.First;
     while not qryPayments.Eof do
     begin
-      PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+      PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
       if PayDt < PeriodStart then
       begin
-        PrincipalCurrent := qryPayments.FieldByName('PrincBalance').AsCurrency;
+        PrincipalCurrent := qryPayments.FieldByName('PRINC_BALANCE').AsCurrency;
         qryPayments.Next;
       end
       else
@@ -1117,10 +1134,10 @@ begin
     // Start of NEXT period = NextPaymentDate
     while not qryPayments.Eof do
     begin
-      PayDt := Trunc(qryPayments.FieldByName('PayDate').AsDateTime);
+      PayDt := Trunc(qryPayments.FieldByName('PAY_DATE').AsDateTime);
       if PayDt < NextPaymentDate then
       begin
-        PrincipalNext := qryPayments.FieldByName('PrincBalance').AsCurrency;
+        PrincipalNext := qryPayments.FieldByName('PRINC_BALANCE').AsCurrency;
         qryPayments.Next;
       end
       else
@@ -1165,8 +1182,8 @@ begin
 
     if Assigned(qryPayments) and qryPayments.Active then
       begin
-        qryPawnPay.Clone(qryPayments);
-        qryPawnPay.Sort := 'PayDate ASC';
+        qryPawnPay.CopyDataSet(qryPayments, [coStructure, coRestart, coAppend]);
+        qryPawnPay.IndexFieldNames := 'PAY_DATE';
       end;
 
     GetInterestAndNextPaymentInfo(AsOfDate,
@@ -1784,13 +1801,13 @@ begin
       qryPayments.Append;
 
       if TotalPaid <= qryTransactionscTotalSalesAmount.AsCurrency  then
-        qryPaymentsPayAmount.AsCurrency := qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid
+        qryPaymentsPAY_AMOUNT.AsCurrency := qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid
       else
         raise Exception.Create('Total payments are greater than Total Transaction Amount');
 
-      qryPaymentsPayPrincipal.AsCurrency := qryPaymentsPayAmount.AsCurrency;
-      qryPaymentsPrincBalance.AsCurrency := 0;
-      qryPaymentsInsterestBalance.AsCurrency := 0;
+      qryPaymentsPAY_PRINCIPAL.AsCurrency := qryPaymentsPAY_AMOUNT.AsCurrency;
+      qryPaymentsPRINC_BALANCE.AsCurrency := 0;
+      qryPaymentsINTEREST_BALANCE.AsCurrency := 0;
       qryPayments.Post;
     end;
     /////////////End Payment///////////////

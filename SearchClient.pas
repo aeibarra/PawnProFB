@@ -1357,7 +1357,7 @@ end;
 
 procedure TfrmClients.btnPayEditClick(Sender: TObject);
 begin
-  if DM.qryPaymentsPaymentNo.AsInteger <= 0 then
+  if DM.qryPaymentsPAYMENT_NO.AsInteger <= 0 then
     begin
       MessageDlg('Nothing to edit.', mtInformation, [mbOK], 0);
       exit;
@@ -1404,7 +1404,7 @@ end;
 
 procedure TfrmClients.btnPrintPayReceiptClick(Sender: TObject);
 begin
-  DMReports.PrintPaymentReceipt(DM.qryPaymentsPaymentNo.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+  DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
 end;
 
 procedure TfrmClients.btnPrintPolRptClick(Sender: TObject);

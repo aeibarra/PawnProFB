@@ -153,7 +153,7 @@ object frmEnterPayment: TfrmEnterPayment
       Top = 215
       Width = 426
       Height = 88
-      DataField = 'PayComment'
+      DataField = 'PAY_COMMENT'
       DataSource = DM.DSPayments
       ScrollBars = ssVertical
       TabOrder = 6
@@ -164,7 +164,7 @@ object frmEnterPayment: TfrmEnterPayment
       Width = 93
       Height = 29
       TabStop = False
-      DataField = 'InsterestBalance'
+      DataField = 'INTEREST_BALANCE'
       DataSource = DM.DSPayments
       TabOrder = 4
     end
@@ -173,7 +173,7 @@ object frmEnterPayment: TfrmEnterPayment
       Top = 50
       Width = 93
       Height = 29
-      DataField = 'PayPrincipal'
+      DataField = 'PAY_PRINCIPAL'
       DataSource = DM.DSPayments
       TabOrder = 3
       OnExit = edPayPrincExit
@@ -184,7 +184,7 @@ object frmEnterPayment: TfrmEnterPayment
       Width = 93
       Height = 29
       TabStop = False
-      DataField = 'PrincBalance'
+      DataField = 'PRINC_BALANCE'
       DataSource = DM.DSPayments
       TabOrder = 5
     end
@@ -193,7 +193,7 @@ object frmEnterPayment: TfrmEnterPayment
       Top = 50
       Width = 93
       Height = 29
-      DataField = 'PayInterest'
+      DataField = 'PAY_INTEREST'
       DataSource = DM.DSPayments
       TabOrder = 2
       OnExit = edPayInterestExit
@@ -203,7 +203,7 @@ object frmEnterPayment: TfrmEnterPayment
       Top = 50
       Width = 93
       Height = 29
-      DataField = 'PayAmount'
+      DataField = 'PAY_AMOUNT'
       DataSource = DM.DSPayments
       MaxLength = 6
       TabOrder = 1
@@ -225,7 +225,7 @@ object frmEnterPayment: TfrmEnterPayment
       Width = 124
       Height = 29
       DataSource = DM.DSPayments
-      DataField = 'PayDate'
+      DataField = 'PAY_DATE'
       TabOrder = 0
       OnExit = edDateAfterExit
       EditType = etDate

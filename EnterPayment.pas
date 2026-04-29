@@ -93,7 +93,7 @@ end;   }
 //begin
 ////  if First then
 ////    begin
-////      F := MonthsBetween(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime);//  MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
+////      F := MonthsBetween(DM.qryPaymentsPAY_DATE.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime);//  MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPAY_DATE.AsDateTime);
 ////      Result := trunc(F);
 ////      if (Frac(F) > 0) then
 ////        inc(Result);
@@ -104,7 +104,7 @@ end;   }
 ////  else
 ////    begin
 ////      F1 := MonthSpan(qryLastPaymentPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime);//MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, qryLastPaymentPayDate.AsDateTime);
-////      F2 := MonthSpan(DM.qryPaymentsPayDate.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime); //MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPayDate.AsDateTime);
+////      F2 := MonthSpan(DM.qryPaymentsPAY_DATE.AsDateTime, DM.qryTransactionsTRAN_DATE.AsDateTime); //MonthDiff(DM.qryTransactionsTRAN_DATE.AsDateTime, DM.qryPaymentsPAY_DATE.AsDateTime);
 ////      Result := Abs(trunc(F2) - trunc(F1));
 ////    end;
 //end;
@@ -141,20 +141,20 @@ begin
       DM.qryPayments.Append;
 //      CalcBalances;
 
-      DM.qryPaymentsInsterestBalance.AsCurrency := InterestBalanceAsOf;
-      DM.qryPaymentsPrincBalance.AsCurrency := DM.qryTransactionsPRINC_BALANCE.AsCurrency;
+      DM.qryPaymentsINTEREST_BALANCE.AsCurrency := InterestBalanceAsOf;
+      DM.qryPaymentsPRINC_BALANCE.AsCurrency := DM.qryTransactionsPRINC_BALANCE.AsCurrency;
 {      if qryLastPaymentPaymentNo.AsInteger <= 0 then
         begin
-          DM.qryPaymentsInsterestBalance.AsFloat :=
+          DM.qryPaymentsINTEREST_BALANCE.AsFloat :=
                 MonthCount * DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
-          DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat;
+          DM.qryPaymentsPRINC_BALANCE.AsFloat := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat;
         end
       else
         begin
-          DM.qryPaymentsInsterestBalance.AsFloat :=
+          DM.qryPaymentsINTEREST_BALANCE.AsFloat :=
                 qryLastPaymentInsterestBalance.AsFloat +
                 MonthCount * qryLastPaymentPrincBalance.AsFloat * DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.0;
-          DM.qryPaymentsPrincBalance.AsFloat := qryLastPaymentPrincBalance.AsFloat;
+          DM.qryPaymentsPRINC_BALANCE.AsFloat := qryLastPaymentPrincBalance.AsFloat;
         end;}
     end
   else
@@ -181,7 +181,7 @@ end;
 
 procedure TfrmEnterPayment.btnSaveClick(Sender: TObject);
 begin
-  if DM.qryPaymentsPayAmount.AsFloat <> (DM.qryPaymentsPayPrincipal.AsFloat + DM.qryPaymentsPayInterest.AsFloat) then
+  if DM.qryPaymentsPAY_AMOUNT.AsFloat <> (DM.qryPaymentsPAY_PRINCIPAL.AsFloat + DM.qryPaymentsPAY_INTEREST.AsFloat) then
     begin
       MessageDlg('(Amount apply to interest + Amount apply to principal) must be equal to pay amount.', mtInformation, [mbOk], 0);
       exit;
@@ -189,8 +189,8 @@ begin
 
 {  if NewRow then
     begin
-      DM.qryPaymentsPrincBalance.AsFloat := DM.qryPaymentsPrincBalance.AsFloat - DM.qryPaymentsPayPrincipal.AsFloat;
-      DM.qryPaymentsInsterestBalance.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat - DM.qryPaymentsPayInterest.AsFloat;
+      DM.qryPaymentsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat - DM.qryPaymentsPAY_PRINCIPAL.AsFloat;
+      DM.qryPaymentsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat - DM.qryPaymentsPAY_INTEREST.AsFloat;
     end;}
 
   DM.ConnDB.BeginTrans;
@@ -198,8 +198,8 @@ begin
     DM.qryPayments.Post;
 
     DM.qryTransactions.Edit;
-    DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
-    DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
+    DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat;
+    DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat;
     DM.qryTransactions.Post;
   except
     DM.ConnDB.RollbackTrans;
@@ -229,12 +229,12 @@ end;
 
 procedure TfrmEnterPayment.edDateAfterEnter(Sender: TObject);
 begin
-  SaveDate := DM.qryPaymentsPayDate.AsDateTime;
+  SaveDate := DM.qryPaymentsPAY_DATE.AsDateTime;
 end;
 
 procedure TfrmEnterPayment.edDateAfterExit(Sender: TObject);
 begin
-  if DM.qryPaymentsPayDate.AsDateTime <> SaveDate then
+  if DM.qryPaymentsPAY_DATE.AsDateTime <> SaveDate then
     begin
 //      CalcBalances;
       edAmountExit(nil);
@@ -243,15 +243,15 @@ end;
 
 procedure TfrmEnterPayment.btnSplitPaymentClick(Sender: TObject);
 begin
-  if (DM.qryPaymentsPayAmount.AsFloat - InterestOwedToday) > 0 then
+  if (DM.qryPaymentsPAY_AMOUNT.AsFloat - InterestOwedToday) > 0 then
     begin
-      DM.qryPaymentsPayInterest.AsFloat := InterestOwedToday;
-      DM.qryPaymentsPayPrincipal.AsFloat := DM.qryPaymentsPayAmount.AsFloat - InterestOwedToday;
+      DM.qryPaymentsPAY_INTEREST.AsFloat := InterestOwedToday;
+      DM.qryPaymentsPAY_PRINCIPAL.AsFloat := DM.qryPaymentsPAY_AMOUNT.AsFloat - InterestOwedToday;
     end
   else
     begin
-      DM.qryPaymentsPayInterest.AsFloat := DM.qryPaymentsPayAmount.AsFloat;
-      DM.qryPaymentsPayPrincipal.AsFloat := 0;
+      DM.qryPaymentsPAY_INTEREST.AsFloat := DM.qryPaymentsPAY_AMOUNT.AsFloat;
+      DM.qryPaymentsPAY_PRINCIPAL.AsFloat := 0;
     end;
 end;
 
@@ -259,17 +259,17 @@ procedure TfrmEnterPayment.edPayPrincExit(Sender: TObject);
 begin
   if NewRow then
     begin
-      if DM.qryPaymentsInsterestBalance.AsFloat > 0 then
-        DM.qryPaymentsPayPrincipal.AsFloat := 0;
+      if DM.qryPaymentsINTEREST_BALANCE.AsFloat > 0 then
+        DM.qryPaymentsPAY_PRINCIPAL.AsFloat := 0;
 
-      DM.qryPaymentsPrincBalance.AsFloat := DM.qryTransactionsPRINC_BALANCE.AsCurrency - DM.qryPaymentsPayPrincipal.AsFloat;
+      DM.qryPaymentsPRINC_BALANCE.AsFloat := DM.qryTransactionsPRINC_BALANCE.AsCurrency - DM.qryPaymentsPAY_PRINCIPAL.AsFloat;
     end;
 end;
 
 procedure TfrmEnterPayment.edPayInterestExit(Sender: TObject);
 begin
   if NewRow then
-    DM.qryPaymentsInsterestBalance.AsFloat := InterestOwedToday - DM.qryPaymentsPayInterest.AsFloat;
+    DM.qryPaymentsINTEREST_BALANCE.AsFloat := InterestOwedToday - DM.qryPaymentsPAY_INTEREST.AsFloat;
 end;
 
 end.

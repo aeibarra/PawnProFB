@@ -1185,7 +1185,7 @@ object frmClients: TfrmClients
             item
               Alignment = taCenter
               Expanded = False
-              FieldName = 'PayDate'
+              FieldName = 'PAY_DATE'
               Title.Alignment = taCenter
               Title.Caption = 'Date'
               Title.Font.Charset = ANSI_CHARSET
@@ -1210,7 +1210,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PayAmount'
+              FieldName = 'PAY_AMOUNT'
               Title.Alignment = taCenter
               Title.Caption = 'Amount'
               Title.Font.Charset = ANSI_CHARSET
@@ -1223,7 +1223,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PayPrincipal'
+              FieldName = 'PAY_PRINCIPAL'
               Title.Caption = 'Principal'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -1234,7 +1234,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PayInterest'
+              FieldName = 'PAY_INTEREST'
               Title.Caption = 'Interest'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -1246,7 +1246,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'PrincBalance'
+              FieldName = 'PRINC_BALANCE'
               Title.Caption = 'P. Balance'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText
@@ -1258,7 +1258,7 @@ object frmClients: TfrmClients
             end
             item
               Expanded = False
-              FieldName = 'InsterestBalance'
+              FieldName = 'INTEREST_BALANCE'
               Title.Caption = 'I. Balance'
               Title.Font.Charset = ANSI_CHARSET
               Title.Font.Color = clWindowText

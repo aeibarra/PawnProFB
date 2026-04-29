@@ -86,7 +86,7 @@ var
   CloseLayaway: boolean;
 begin
   CloseLayaway := false;
-  if DM.qryPaymentsPayAmount.AsCurrency <= 0 then
+  if DM.qryPaymentsPAY_AMOUNT.AsCurrency <= 0 then
   begin
     MessageDlg('Please enter amount to pay.', mtInformation, [mbOk], 0);
     edAmount.SetFocus;
@@ -95,7 +95,7 @@ begin
 
   TotalPaid := DM.GetTotalPaid;
   if NewRow then
-    TotalPaid := TotalPaid + DM.qryPaymentsPayAmount.AsCurrency;
+    TotalPaid := TotalPaid + DM.qryPaymentsPAY_AMOUNT.AsCurrency;
   PricBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid;
 
   if PricBalance = 0  then
@@ -107,15 +107,15 @@ begin
       exit;
   end;
 
-  DM.qryPaymentsPayPrincipal.AsCurrency := DM.qryPaymentsPayAmount.AsCurrency;
-  DM.qryPaymentsPrincBalance.AsCurrency := PricBalance;
-  DM.qryPaymentsPayInterest.AsCurrency := 0;
-  DM.qryPaymentsInsterestBalance.AsCurrency := 0;
+  DM.qryPaymentsPAY_PRINCIPAL.AsCurrency := DM.qryPaymentsPAY_AMOUNT.AsCurrency;
+  DM.qryPaymentsPRINC_BALANCE.AsCurrency := PricBalance;
+  DM.qryPaymentsPAY_INTEREST.AsCurrency := 0;
+  DM.qryPaymentsINTEREST_BALANCE.AsCurrency := 0;
   DM.qryPayments.Post;
 
   DM.qryTransactions.Edit;
-  DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPrincBalance.AsFloat;
-  DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsInsterestBalance.AsFloat;
+  DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat;
+  DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat;
   DM.qryTransactions.Post;
 
   if CloseLayaway then
