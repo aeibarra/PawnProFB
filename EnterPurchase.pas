@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, DB, System.UITypes,
-  DBCtrls, Mask, RzEdit, RzDBEdit, RzButton, Data.Win.ADODB, RzForms,
+  DBCtrls, Mask, RzEdit, RzDBEdit, RzButton, RzForms,
   Vcl.ExtCtrls;
 
 type
@@ -20,9 +20,6 @@ type
     Label4: TLabel;
     Label2: TLabel;
     edTicketNo: TDBEdit;
-    qryNextTicket: TADODataSet;
-    qryNextTicketTableName: TStringField;
-    qryNextTicketLastKey: TIntegerField;
     RzDBDateTimeEdit1: TRzDBDateTimeEdit;
     RzDBDateTimeEdit2: TRzDBDateTimeEdit;
     btnSave: TRzBitBtn;
@@ -51,10 +48,9 @@ procedure TfrmEnterPurchase.FormShow(Sender: TObject);
 begin
   if NewRow then
     begin
-      qryNextTicket.Open;
       DM.qryTransactions.Append;
       DM.qryTransactionsTRAN_TYPE.AsString := 'U';
-      DM.qryTransactionsTRAN_TICKET_NO.AsInteger := qryNextTicketLastKey.AsInteger + 1;
+      DM.qryTransactionsTRAN_TICKET_NO.AsInteger := DM.GetNextTicketNo(PawnTicketNo);
       DM.qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
       DM.qryTransactionsTRAN_INTEREST.AsFloat := 0.0;
     end
@@ -77,9 +73,9 @@ begin
 
   if NewRow then
     begin
-      qryNextTicket.Edit;
-      qryNextTicketLastKey.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
-      qryNextTicket.Post;
+      ExecSQLStatementFB(Format(
+        'UPDATE TABLE_KEYS SET LAST_KEY = %d WHERE TABLE_NAME = %s',
+        [DM.qryTransactionsTRAN_TICKET_NO.AsInteger, QuotedStr(PawnTicketNo)]));
     end;
 
   DM.qryTransactionsTRAN_TIME.AsDateTime := Time;

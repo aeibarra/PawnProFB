@@ -4,7 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, Grids, DBGrids, DB, ComCtrls, ADODB;
+  Dialogs, StdCtrls, Buttons, Grids, DBGrids, DB, ComCtrls,
+  FireDAC.Comp.Client, FireDAC.Stan.Option, FireDAC.Stan.Intf,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmMaintenanceJ = class(TForm)
@@ -14,25 +17,26 @@ type
     btnClose: TBitBtn;
     dsMaintenace: TDataSource;
     DBGrid1: TDBGrid;
-    qryTypes: TADOQuery;
-    qryTypesJType: TStringField;
-    qryTypesJTypeDesc: TStringField;
-    qryStyles: TADOQuery;
-    qryStylesJStyle: TStringField;
-    qryStylesJStyleDesc: TStringField;
-    qryMetal: TADOQuery;
-    qryMetalJMetal: TStringField;
-    qryMetalJMetalDesc: TStringField;
-    qryStoneShapes: TADOQuery;
-    qryStoneShapesJShape: TStringField;
-    qryStoneShapesJShapeDesc: TStringField;
-    qryStoneColors: TADOQuery;
-    qryStoneColorsJStoneColor: TStringField;
-    qryStoneColorsJStoneDesc: TStringField;
+    qryTypes: TFDQuery;
+    qryTypesJ_TYPE: TStringField;
+    qryTypesJ_TYPE_DESC: TStringField;
+    qryStyles: TFDQuery;
+    qryStylesJ_STYLE: TStringField;
+    qryStylesJ_STYLE_DESC: TStringField;
+    qryMetal: TFDQuery;
+    qryMetalJ_METAL: TStringField;
+    qryMetalJ_METAL_DESC: TStringField;
+    qryStoneShapes: TFDQuery;
+    qryStoneShapesJ_SHAPE: TStringField;
+    qryStoneShapesJ_SHAPE_DESC: TStringField;
+    qryStoneColors: TFDQuery;
+    qryStoneColorsJ_STONE_COLOR: TStringField;
+    qryStoneColorsJ_STONE_DESC: TStringField;
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnAddCatClick(Sender: TObject);
     procedure btnEditCatClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -52,6 +56,8 @@ Uses PawnDM, EditMaintenance;
 
 procedure TfrmMaintenanceJ.btnCloseClick(Sender: TObject);
 begin
+  if Assigned(ActiveDataSet) and (ActiveDataSet.State in dsEditModes) then
+    ActiveDataSet.Cancel;
   Close;
 end;
 
@@ -94,7 +100,11 @@ begin
   end; //case
 
   dsMaintenace.DataSet := ActiveDataSet;
-  ActiveDataSet.Open;
+  if Assigned(ActiveDataSet) then
+    begin
+      ActiveDataSet.Close;
+      ActiveDataSet.Open;
+    end;
 end;
 
 procedure TfrmMaintenanceJ.btnAddCatClick(Sender: TObject);
@@ -105,7 +115,11 @@ begin
     frmEditMaintenance.dsMaintenance.DataSet := ActiveDataSet;
     if frmEditMaintenance.ShowModal = mrOK then
       begin
-      end;
+        ActiveDataSet.Refresh;
+        DM.RefreshLookupMemTables;
+      end
+    else if ActiveDataSet.State in dsEditModes then
+      ActiveDataSet.Cancel;
   finally
     frmEditMaintenance.Free;
   end;
@@ -117,10 +131,23 @@ begin
   try
     frmEditMaintenance.NewRow := false;
     frmEditMaintenance.dsMaintenance.DataSet := ActiveDataSet;
-    frmEditMaintenance.ShowModal;
+    if frmEditMaintenance.ShowModal = mrOK then
+      begin
+        ActiveDataSet.Refresh;
+        DM.RefreshLookupMemTables;
+      end
+    else if ActiveDataSet.State in dsEditModes then
+      ActiveDataSet.Cancel;
   finally
     frmEditMaintenance.Free;
   end;
+end;
+
+procedure TfrmMaintenanceJ.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if Assigned(ActiveDataSet) and (ActiveDataSet.State in dsEditModes) then
+    ActiveDataSet.Cancel;
+  DM.RefreshLookupMemTables;
 end;
 
 end.

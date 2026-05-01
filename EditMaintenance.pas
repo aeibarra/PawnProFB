@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, Mask, DBCtrls, DB, RzButton;
+  Dialogs, StdCtrls, Buttons, Mask, DBCtrls, DB, RzButton, Vcl.ExtCtrls;
 
 type
   TfrmEditMaintenance = class(TForm)

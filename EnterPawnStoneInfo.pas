@@ -4,21 +4,18 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, DBCtrls, Mask, ADODB, DB, RzButton,
-  Datasnap.DBClient, Vcl.ExtCtrls;
+  Dialogs, StdCtrls, Buttons, DBCtrls, Mask, DB, RzButton,
+  Datasnap.DBClient, Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TfrmEnterPawnStoneInfo = class(TForm)
-    qryStoneShapes: TADOQuery;
-    qryStoneShapesJShape: TStringField;
-    qryStoneShapesJShapeDesc: TStringField;
     dsStoneShapes: TDataSource;
-    qryStoneTypes: TADODataSet;
-    qryStoneTypesStoneType: TStringField;
+    qryStoneTypes: TFDQuery;
+    qryStoneTypesSTONE_TYPE: TStringField;
     dsStoneColors: TDataSource;
-    qryStoneColors: TADOQuery;
-    qryStoneColorsJStoneColor: TStringField;
-    qryStoneColorsJStoneDesc: TStringField;
     GroupBox2: TGroupBox;
     Label5: TLabel;
     Label6: TLabel;
@@ -65,68 +62,69 @@ begin
   FrmSetViewSize(Self);
 //  Width := 267;
 
+  dsStoneShapes.DataSet := DM.clnJStoneShapes;
+  dsStoneColors.DataSet := DM.clnJStoneColors;
+
+  qryStoneTypes.Close;
   qryStoneTypes.Open;
   cbStoneType.Items.Clear;
   while not qryStoneTypes.Eof do
    begin
-     if trim(qryStoneTypesStoneType.AsString) <> '' then
-       cbStoneType.Items.Add(trim(qryStoneTypesStoneType.AsString));
+     if trim(qryStoneTypesSTONE_TYPE.AsString) <> '' then
+       cbStoneType.Items.Add(trim(qryStoneTypesSTONE_TYPE.AsString));
      qryStoneTypes.Next;
    end;
   qryStoneTypes.Close;
-
-  qryStoneShapes.Open;
-  qryStoneColors.Open;
 
   DM.GetWeightUnits(clnWeigthUnits);
 
   if NewRow then
     begin
-      frmEnterItems.clnStones.Append;
+      frmEnterItems.qryStones.Append;
     end
   else
     begin
-      frmEnterItems.clnStones.Edit;
+      frmEnterItems.qryStones.Edit;
     end;
 end;
 
 procedure TfrmEnterPawnStoneInfo.btnSaveClick(Sender: TObject);
 begin
-  if frmEnterItems.clnStonesStoneNumber.IsNull then
+  if frmEnterItems.qryStonesSTONE_NUMBER.IsNull then
     begin
       MsgInfo('Please enter the number of stones.');
       edStoneNumber.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.clnStonesStoneShape.IsNull then
+  if frmEnterItems.qryStonesSTONE_SHAPE.IsNull then
     begin
       MsgInfo('Please enter the stone shape.');
       lkStoneShape.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.clnStonesStoneColor.IsNull then
+  if frmEnterItems.qryStonesSTONE_COLOR.IsNull then
     begin
       MsgInfo('Please enter the stone color.');
       lkStoneColor.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.clnStonesWT.IsNull then
-    frmEnterItems.clnStonesWT.AsFloat := 0;
+  if frmEnterItems.qryStonesWT.IsNull then
+    frmEnterItems.qryStonesWT.AsFloat := 0;
 
-  if frmEnterItems.clnStonesCT.IsNull then
-    frmEnterItems.clnStonesCT.AsFloat := 0;
+  if frmEnterItems.qryStonesCT.IsNull then
+    frmEnterItems.qryStonesCT.AsFloat := 0;
 
-  frmEnterItems.clnStones.Post;
+  frmEnterItems.qryStones.Post;
 
   ModalResult := mrOk;
 end;
 
 procedure TfrmEnterPawnStoneInfo.btnCancelClick(Sender: TObject);
 begin
-  frmEnterItems.clnStones.Cancel;
+  frmEnterItems.qryStones.Cancel;
   ModalResult := mrCancel;
 end;
 

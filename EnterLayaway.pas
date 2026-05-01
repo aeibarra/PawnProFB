@@ -73,7 +73,9 @@ begin
     DM.qryTransactionsPRINC_BALANCE.AsCurrency := DM.qryTransactionscTotalSalesAmount.AsCurrency;
   end;
 
-  DM.GetNextKey(LayawayTicketNo);
+  ExecSQLStatementFB(Format(
+    'UPDATE TABLE_KEYS SET LAST_KEY = %d WHERE TABLE_NAME = %s',
+    [DM.qryTransactionsTRAN_TICKET_NO.AsInteger, QuotedStr(LayawayTicketNo)]));
 
   DM.qryTransactions.Post;
 

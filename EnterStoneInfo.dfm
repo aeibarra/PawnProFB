@@ -8,12 +8,12 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
   OnShow = FormShow
-  TextHeight = 15
+  TextHeight = 17
   object GroupBox1: TGroupBox
     Left = 0
     Top = 162
@@ -86,53 +86,53 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
     object Label5: TLabel
       Left = 16
       Top = 64
-      Width = 68
-      Height = 15
+      Width = 76
+      Height = 17
       Caption = 'Stone Shape:'
     end
     object Label6: TLabel
       Left = 135
       Top = 64
-      Width = 65
-      Height = 15
+      Width = 72
+      Height = 17
       Caption = 'Stone Color:'
     end
     object Label1: TLabel
       Left = 16
       Top = 16
-      Width = 80
-      Height = 15
+      Width = 88
+      Height = 17
       Caption = 'Stone Number:'
     end
     object Label2: TLabel
       Left = 108
       Top = 16
       Width = 18
-      Height = 15
+      Height = 17
       Caption = 'CT:'
     end
     object Label3: TLabel
       Left = 184
       Top = 16
-      Width = 21
-      Height = 15
+      Width = 22
+      Height = 17
       Caption = 'WT:'
     end
     object Label4: TLabel
       Left = 16
       Top = 112
-      Width = 61
-      Height = 15
+      Width = 67
+      Height = 17
       Caption = 'Stone Type:'
     end
     object DBLookupComboBox4: TDBLookupComboBox
       Left = 16
       Top = 80
       Width = 105
-      Height = 23
+      Height = 25
       DataField = 'StoneShape'
-      KeyField = 'JShape'
-      ListField = 'JShapeDesc'
+      KeyField = 'J_SHAPE'
+      ListField = 'J_SHAPE_DESC'
       ListSource = dsStoneShapes
       TabOrder = 3
     end
@@ -140,10 +140,10 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       Left = 131
       Top = 80
       Width = 105
-      Height = 23
+      Height = 25
       DataField = 'StoneColor'
-      KeyField = 'JStoneColor'
-      ListField = 'JStoneDesc'
+      KeyField = 'J_STONE_COLOR'
+      ListField = 'J_STONE_DESC'
       ListSource = dsStoneColors
       TabOrder = 4
     end
@@ -151,7 +151,7 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       Left = 16
       Top = 32
       Width = 74
-      Height = 23
+      Height = 25
       DataField = 'StoneNumber'
       TabOrder = 0
     end
@@ -159,7 +159,7 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       Left = 100
       Top = 32
       Width = 65
-      Height = 23
+      Height = 25
       DataField = 'CT'
       TabOrder = 1
     end
@@ -167,7 +167,7 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       Left = 176
       Top = 32
       Width = 65
-      Height = 23
+      Height = 25
       DataField = 'WT'
       TabOrder = 2
     end
@@ -175,63 +175,31 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       Left = 16
       Top = 128
       Width = 145
-      Height = 23
+      Height = 25
       DataField = 'StoneType'
       TabOrder = 5
     end
   end
   object dsStoneShapes: TDataSource
-    DataSet = qryStoneShapes
     Left = 272
     Top = 64
   end
   object dsStoneColors: TDataSource
-    DataSet = qryStoneColors
     Left = 360
     Top = 64
   end
-  object qryStoneShapes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryStoneTypes: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT JShape, JShapeDesc'
-      'FROM JStoneShapes')
-    Left = 272
-    Top = 16
-    object qryStoneShapesJShape: TStringField
-      FieldName = 'JShape'
-      Size = 1
-    end
-    object qryStoneShapesJShapeDesc: TStringField
-      FieldName = 'JShapeDesc'
-      Size = 30
-    end
-  end
-  object qryStoneColors: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JStoneColor, JStoneDesc'
-      'FROM JStoneColors')
-    Left = 360
-    Top = 16
-    object qryStoneColorsJStoneColor: TStringField
-      FieldName = 'JStoneColor'
-      Size = 1
-    end
-    object qryStoneColorsJStoneDesc: TStringField
-      FieldName = 'JStoneDesc'
-      Size = 30
-    end
-  end
-  object qryStoneTypes: TADODataSet
-    Connection = DM.ConnDB
-    CommandText = 'SELECT DISTINCT StoneType'#13#10'FROM Stones'
-    Parameters = <>
+      'SELECT DISTINCT STONE_TYPE'
+      'FROM STONES'
+      'WHERE STONE_TYPE IS NOT NULL'
+      'ORDER BY STONE_TYPE')
     Left = 272
     Top = 120
-    object qryStoneTypesStoneType: TStringField
-      FieldName = 'StoneType'
+    object qryStoneTypesSTONE_TYPE: TStringField
+      FieldName = 'STONE_TYPE'
+      Origin = 'STONE_TYPE'
       Size = 30
     end
   end

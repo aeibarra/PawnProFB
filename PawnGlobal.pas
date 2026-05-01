@@ -48,6 +48,7 @@ const
   PawnItemStatus_Sold      = 'Sold';
   PawnItemStatus_Layaway   = 'Layaway';
 
+  PawnTicketNo = 'PawnTicketNo';
   LayawayTicketNo = 'LayawayTicketNo';
 
   PawnCloseReasons: array[0..4] of TCloseReasonRec = (

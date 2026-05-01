@@ -6,16 +6,14 @@ object frmEditInvItem: TfrmEditInvItem
   ClientHeight = 329
   ClientWidth = 553
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object GroupBox1: TGroupBox
     Left = 0
     Top = 291
@@ -30,9 +28,6 @@ object frmEditInvItem: TfrmEditInvItem
       Height = 25
       Cancel = True
       Caption = '&Cancel'
-      ModalResult = 2
-      TabOrder = 1
-      OnClick = btnCancelClick
       Glyph.Data = {
         DE010000424DDE01000000000000760000002800000024000000120000000100
         0400000000006801000000000000000000001000000000000000000000000000
@@ -50,7 +45,10 @@ object frmEditInvItem: TfrmEditInvItem
         38F338F300003333333333333919333333388333338FFF830000333333333333
         3333333333333333333888330000333333333333333333333333333333333333
         0000}
+      ModalResult = 2
       NumGlyphs = 2
+      TabOrder = 1
+      OnClick = btnCancelClick
     end
     object btnSave: TBitBtn
       Left = 198
@@ -59,8 +57,6 @@ object frmEditInvItem: TfrmEditInvItem
       Height = 25
       Caption = '&Save'
       Default = True
-      TabOrder = 0
-      OnClick = btnSaveClick
       Glyph.Data = {
         B6010000424DB60100000000000076000000280000001E000000140000000100
         0400000000004001000000000000000000001000000000000000000000000000
@@ -76,6 +72,8 @@ object frmEditInvItem: TfrmEditInvItem
         F44408991077777777007C44FFFFFFFFF44408799077777777007C44F00F0000
         F44408779977777777007CCC888888888CCCC777777777777700777777777777
         7777777777777777770077777777777777777777777777777700}
+      TabOrder = 0
+      OnClick = btnSaveClick
     end
   end
   object GroupBox2: TGroupBox
@@ -88,43 +86,43 @@ object frmEditInvItem: TfrmEditInvItem
     object Label1: TLabel
       Left = 16
       Top = 56
-      Width = 66
-      Height = 13
+      Width = 73
+      Height = 15
       Caption = 'Item Barcode:'
     end
     object Label2: TLabel
       Left = 16
       Top = 99
-      Width = 27
-      Height = 13
+      Width = 28
+      Height = 15
       Caption = 'Type:'
     end
     object Label3: TLabel
       Left = 136
       Top = 98
-      Width = 26
-      Height = 13
+      Width = 28
+      Height = 15
       Caption = 'Style:'
     end
     object Label4: TLabel
       Left = 256
       Top = 99
-      Width = 29
-      Height = 13
+      Width = 33
+      Height = 15
       Caption = 'Metal:'
     end
     object Label7: TLabel
       Left = 16
       Top = 227
-      Width = 31
-      Height = 13
+      Width = 34
+      Height = 15
       Caption = 'Notes:'
     end
     object Label5: TLabel
       Left = 168
       Top = 56
-      Width = 34
-      Height = 13
+      Width = 38
+      Height = 15
       Caption = 'Weight'
       FocusControl = DBEdit4
     end
@@ -132,59 +130,59 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 232
       Top = 56
       Width = 14
-      Height = 13
+      Height = 15
       Caption = 'KT'
       FocusControl = DBEdit5
     end
     object Label8: TLabel
       Left = 296
       Top = 56
-      Width = 56
-      Height = 13
+      Width = 60
+      Height = 15
       Caption = 'Size Length'
       FocusControl = DBEdit6
     end
     object Label9: TLabel
       Left = 96
       Top = 56
-      Width = 42
-      Height = 13
+      Width = 49
+      Height = 15
       Caption = 'Quantity:'
       FocusControl = edItemCount
     end
     object Label10: TLabel
       Left = 16
       Top = 184
-      Width = 46
-      Height = 13
+      Width = 52
+      Height = 15
       Caption = 'Unit Cost:'
     end
     object Label11: TLabel
       Left = 96
       Top = 184
-      Width = 49
-      Height = 13
+      Width = 54
+      Height = 15
       Caption = 'Unit Price:'
     end
     object Label12: TLabel
       Left = 16
       Top = 16
-      Width = 45
-      Height = 13
+      Width = 51
+      Height = 15
       Caption = 'Category:'
     end
     object Label13: TLabel
       Left = 16
       Top = 140
-      Width = 28
-      Height = 13
+      Width = 31
+      Height = 15
       Caption = 'Brand'
     end
     object DBEdit1: TDBEdit
       Left = 16
       Top = 72
       Width = 73
-      Height = 21
+      Height = 23
       DataField = 'InvItemBarcode'
       DataSource = dsInvItems
       TabOrder = 1
@@ -193,11 +191,11 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 113
       Width = 112
-      Height = 21
+      Height = 23
       DataField = 'JType'
       DataSource = dsInvItems
-      KeyField = 'JType'
-      ListField = 'JTypeDesc'
+      KeyField = 'J_TYPE'
+      ListField = 'J_TYPE_DESC'
       ListSource = dsTypes
       TabOrder = 6
     end
@@ -205,11 +203,11 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 132
       Top = 113
       Width = 112
-      Height = 21
+      Height = 23
       DataField = 'JStyle'
       DataSource = dsInvItems
-      KeyField = 'JStyle'
-      ListField = 'JStyleDesc'
+      KeyField = 'J_STYLE'
+      ListField = 'J_STYLE_DESC'
       ListSource = dsStyles
       TabOrder = 7
     end
@@ -217,11 +215,11 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 249
       Top = 113
       Width = 112
-      Height = 21
+      Height = 23
       DataField = 'JMetal'
       DataSource = dsInvItems
-      KeyField = 'JMetal'
-      ListField = 'JMetalDesc'
+      KeyField = 'J_METAL'
+      ListField = 'J_METAL_DESC'
       ListSource = dsMetal
       TabOrder = 8
     end
@@ -238,7 +236,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 168
       Top = 72
       Width = 57
-      Height = 21
+      Height = 23
       DataField = 'Weight'
       DataSource = dsInvItems
       TabOrder = 3
@@ -247,7 +245,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 232
       Top = 72
       Width = 57
-      Height = 21
+      Height = 23
       DataField = 'KT'
       DataSource = dsInvItems
       TabOrder = 4
@@ -256,7 +254,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 296
       Top = 72
       Width = 65
-      Height = 21
+      Height = 23
       DataField = 'SizeLength'
       DataSource = dsInvItems
       TabOrder = 5
@@ -265,7 +263,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 96
       Top = 72
       Width = 65
-      Height = 21
+      Height = 23
       DataField = 'InvItemCount'
       DataSource = dsInvItems
       TabOrder = 2
@@ -274,7 +272,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 200
       Width = 73
-      Height = 21
+      Height = 23
       DataField = 'UnitCost'
       DataSource = dsInvItems
       TabOrder = 9
@@ -283,16 +281,16 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 96
       Top = 200
       Width = 73
-      Height = 21
+      Height = 23
       DataField = 'UnitPrice'
       DataSource = dsInvItems
       TabOrder = 10
     end
     object DBRadioGroup1: TDBRadioGroup
       Left = 208
-      Top = 144
+      Top = 141
       Width = 129
-      Height = 91
+      Height = 95
       Caption = 'Status'
       DataField = 'InvItemStatus'
       DataSource = dsInvItems
@@ -312,11 +310,11 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 32
       Width = 145
-      Height = 21
+      Height = 23
       DataField = 'InvCatNo'
       DataSource = dsInvItems
-      KeyField = 'InvCatNo'
-      ListField = 'InvCategory'
+      KeyField = 'INV_CAT_NO'
+      ListField = 'INV_CATEGORY'
       ListSource = dsCategories
       TabOrder = 0
     end
@@ -324,25 +322,21 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 154
       Width = 154
-      Height = 21
+      Height = 23
       DataField = 'InvItemBrand'
       DataSource = dsInvItems
-      ItemHeight = 13
       TabOrder = 13
     end
   end
   object dsTypes: TDataSource
-    DataSet = qryTypes
     Left = 392
     Top = 64
   end
   object dsStyles: TDataSource
-    DataSet = qryStyles
     Left = 448
     Top = 64
   end
   object dsMetal: TDataSource
-    DataSet = qryMetal
     Left = 504
     Top = 64
   end
@@ -356,85 +350,37 @@ object frmEditInvItem: TfrmEditInvItem
     Left = 400
     Top = 184
   end
-  object qryMetal: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryCategories: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT JMetal, JMetalDesc'
-      'FROM JMetals')
-    Left = 504
-    Top = 16
-    object qryMetalJMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryMetalJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
-  end
-  object qryCategories: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM InvCategories'
-      'ORDER BY InvCategory')
+      'SELECT INV_CAT_NO, INV_CATEGORY'
+      'FROM INV_CATEGORIES'
+      'ORDER BY INV_CATEGORY')
     Left = 400
     Top = 136
-    object qryCategoriesInvCatNo: TAutoIncField
-      FieldName = 'InvCatNo'
-      ReadOnly = True
+    object qryCategoriesINV_CAT_NO: TIntegerField
+      FieldName = 'INV_CAT_NO'
+      Origin = 'INV_CAT_NO'
+      Required = True
     end
-    object qryCategoriesInvCategory: TStringField
-      FieldName = 'InvCategory'
+    object qryCategoriesINV_CATEGORY: TStringField
+      FieldName = 'INV_CATEGORY'
+      Origin = 'INV_CATEGORY'
       Size = 40
     end
   end
-  object qryStyles: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryBrands: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT JStyle, JStyleDesc'
-      'FROM JStyles')
-    Left = 448
-    Top = 16
-    object qryStylesJStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryStylesJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-  end
-  object qryTypes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JType,  JTypeDesc'
-      'FROM JTypes')
-    Left = 392
-    Top = 16
-    object qryTypesJType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryTypesJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-  end
-  object qryBrands: TADODataSet
-    Connection = DM.ConnDB
-    CommandText = 
-      'select distinct InvItemBrand'#13#10'from InventoryItems'#13#10'order by InvI' +
-      'temBrand'
-    Parameters = <>
+      'SELECT DISTINCT INV_ITEM_BRAND'
+      'FROM INVENTORY_ITEMS'
+      'WHERE INV_ITEM_BRAND IS NOT NULL'
+      'ORDER BY INV_ITEM_BRAND')
     Left = 400
     Top = 240
-    object qryBrandsInvItemBrand: TStringField
-      FieldName = 'InvItemBrand'
+    object qryBrandsINV_ITEM_BRAND: TStringField
+      FieldName = 'INV_ITEM_BRAND'
+      Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
   end

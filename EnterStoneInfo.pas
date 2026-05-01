@@ -4,7 +4,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, DBCtrls, DB, Mask, ADODB, Vcl.ExtCtrls;
+  Dialogs, StdCtrls, Buttons, DBCtrls, DB, Mask, Vcl.ExtCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TfrmEnterStoneInfo = class(TForm)
@@ -24,16 +28,10 @@ type
     DBEdit3: TDBEdit;
     Label2: TLabel;
     Label3: TLabel;
-    qryStoneShapes: TADOQuery;
-    qryStoneShapesJShape: TStringField;
-    qryStoneShapesJShapeDesc: TStringField;
-    qryStoneColors: TADOQuery;
-    qryStoneColorsJStoneColor: TStringField;
-    qryStoneColorsJStoneDesc: TStringField;
     cbStoneType: TDBComboBox;
     Label4: TLabel;
-    qryStoneTypes: TADODataSet;
-    qryStoneTypesStoneType: TStringField;
+    qryStoneTypes: TFDQuery;
+    qryStoneTypesSTONE_TYPE: TStringField;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -57,18 +55,19 @@ procedure TfrmEnterStoneInfo.FormShow(Sender: TObject);
 begin
   Width := 267;
 
+  dsStoneShapes.DataSet := DM.clnJStoneShapes;
+  dsStoneColors.DataSet := DM.clnJStoneColors;
+
+  qryStoneTypes.Close;
   qryStoneTypes.Open;
   cbStoneType.Items.Clear;
   while not qryStoneTypes.Eof do
    begin
-     if trim(qryStoneTypesStoneType.AsString) <> '' then
-       cbStoneType.Items.Add(trim(qryStoneTypesStoneType.AsString));
+     if trim(qryStoneTypesSTONE_TYPE.AsString) <> '' then
+       cbStoneType.Items.Add(trim(qryStoneTypesSTONE_TYPE.AsString));
      qryStoneTypes.Next;
    end;
   qryStoneTypes.Close;
-
-  qryStoneShapes.Open;
-  qryStoneColors.Open;
 
 //  if NewRow then
 //    begin

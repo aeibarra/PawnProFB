@@ -540,7 +540,8 @@ end;
 procedure TfrmPumpAsaFb50Main.PumpTableKeys;
 begin
   PumpTable('TableKeys -> TABLE_KEYS', 'TABLE_KEYS',
-    'SELECT TableName, LastKey FROM TableKeys',
+    'SELECT TableName, LastKey FROM TableKeys ' +
+    'WHERE TableName IN (''PawnTicketNo'', ''LayawayTicketNo'')',
     'INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) VALUES (:TABLE_NAME, :LAST_KEY)',
     procedure(src: TADOQuery; dst: TFDQuery)
     begin
@@ -1010,41 +1011,35 @@ end;
 //      DEFAULT does not advance the sequence on explicit-value inserts, so
 //      post-pump the sequences are still at 1 and would collide on first
 //      app-issued insert.
-//   2. For each app-managed key tracked in TABLE_KEYS (Transactions,
-//      InventoryItems), ensure LAST_KEY >= MAX(pk). Normally the pumped
-//      TABLE_KEYS row already carries the right value; this is belt-and-braces.
 procedure TfrmPumpAsaFb50Main.PostPumpReseed;
 const
-  IDENTITY_TBL: array[0..12] of string = (
+  IDENTITY_TBL: array[0..14] of string = (
     'CUSTOMER',                  'PAYMENTS',
     'INV_CATEGORIES',            'SALES_ITEMS',
     'STONES',                    'BACKUP_HISTORY',
     'EXPORT_FORMAT',             'EXPORT_FILE_LOG',
     'EXPORT_LOG_FILE_DETAIL',    'IMAGES_TYPES',
     'IMAGES_DATA',               'INVENTORY_ITEM_STATUS_LOG',
-    'GOLD_PRICE_HISTORY'
+    'GOLD_PRICE_HISTORY',        'INVENTORY_ITEMS',
+    'TRANSACTIONS'
   );
-  IDENTITY_COL: array[0..12] of string = (
+  IDENTITY_COL: array[0..14] of string = (
     'CUST_NO',                   'PAYMENT_NO',
     'INV_CAT_NO',                'SALES_ITEM_NO',
     'STONE_NO',                  'BCK_ID',
     'ID',                        'EXPORT_LOG_ID',
     'ID',                        'IMAGE_TYPE_NO',
     'IMAGES_DATA_NO',            'LOG_ID',
-    'PRICE_ID'
+    'PRICE_ID',                  'INV_ITEM_NO',
+    'TRANSACTION_NO'
   );
-
-  // TABLE_KEYS rows (ASA casing in TableName) -> FB target for MAX lookup.
-  KEY_TBL_NAME:  array[0..1] of string = ('Transactions',    'InventoryItems');
-  KEY_FB_TABLE:  array[0..1] of string = ('TRANSACTIONS',    'INVENTORY_ITEMS');
-  KEY_FB_COL:    array[0..1] of string = ('TRANSACTION_NO',  'INV_ITEM_NO');
 
 var
   q: TFDQuery;
-  i, maxVal, currentKey: Integer;
+  i, maxVal: Integer;
 begin
   lblCurrentProcess.Caption := 'Reseeding sequences...';
-  LogLine('Reseeding identity sequences and TABLE_KEYS...');
+  LogLine('Reseeding identity sequences...');
 
   q := TFDQuery.Create(nil);
   try
@@ -1063,39 +1058,6 @@ begin
                                   [IDENTITY_TBL[i], IDENTITY_COL[i], maxVal + 1]));
     end;
     LogLine(Format('  Identity sequences reseeded on %d tables.', [Length(IDENTITY_TBL)]));
-
-    // --- 2. TABLE_KEYS reconciliation for app-managed PKs ---
-    for i := Low(KEY_TBL_NAME) to High(KEY_TBL_NAME) do
-    begin
-      q.Close;
-      q.SQL.Text := Format('SELECT COALESCE(MAX(%s), 0) FROM %s',
-                           [KEY_FB_COL[i], KEY_FB_TABLE[i]]);
-      q.Open;
-      maxVal := q.Fields[0].AsInteger;
-
-      q.Close;
-      q.SQL.Text := 'SELECT LAST_KEY FROM TABLE_KEYS WHERE TABLE_NAME = :N';
-      q.ParamByName('N').AsString := KEY_TBL_NAME[i];
-      q.Open;
-      if q.Eof then
-      begin
-        LogLine(Format('  TABLE_KEYS[%s] row missing — skipped.', [KEY_TBL_NAME[i]]));
-        Continue;
-      end;
-      currentKey := q.Fields[0].AsInteger;
-
-      if currentKey < maxVal then
-      begin
-        ConnectionFB.ExecSQL(
-          Format('UPDATE TABLE_KEYS SET LAST_KEY = %d WHERE TABLE_NAME = ''%s''',
-                 [maxVal, KEY_TBL_NAME[i]]));
-        LogLine(Format('  TABLE_KEYS[%s] bumped %d -> %d.',
-                       [KEY_TBL_NAME[i], currentKey, maxVal]));
-      end
-      else
-        LogLine(Format('  TABLE_KEYS[%s] OK (%d >= max %d).',
-                       [KEY_TBL_NAME[i], currentKey, maxVal]));
-    end;
   finally
     q.Free;
   end;

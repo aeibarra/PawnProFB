@@ -5,7 +5,10 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, Mask, DBCtrls, DB, ExtCtrls, Grids,
-  DBGrids, ADODB;
+  DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, Data.Win.ADODB;
 
 type
   TfrmEditInvItem = class(TForm)
@@ -43,21 +46,12 @@ type
     DBLookupComboBox4: TDBLookupComboBox;
     Label12: TLabel;
     dsCategories: TDataSource;
-    qryMetal: TADOQuery;
-    qryCategories: TADOQuery;
-    qryMetalJMetal: TStringField;
-    qryMetalJMetalDesc: TStringField;
-    qryCategoriesInvCatNo: TAutoIncField;
-    qryCategoriesInvCategory: TStringField;
-    qryStyles: TADOQuery;
-    qryStylesJStyle: TStringField;
-    qryStylesJStyleDesc: TStringField;
-    qryTypes: TADOQuery;
-    qryTypesJType: TStringField;
-    qryTypesJTypeDesc: TStringField;
+    qryCategories: TFDQuery;
+    qryCategoriesINV_CAT_NO: TIntegerField;
+    qryCategoriesINV_CATEGORY: TStringField;
     Label13: TLabel;
-    qryBrands: TADODataSet;
-    qryBrandsInvItemBrand: TStringField;
+    qryBrands: TFDQuery;
+    qryBrandsINV_ITEM_BRAND: TStringField;
     cbBrand: TDBComboBox;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -82,19 +76,22 @@ procedure TfrmEditInvItem.FormShow(Sender: TObject);
 begin
   Width := 381;
 
+  dsTypes.DataSet := DM.clnJTypes;
+  dsStyles.DataSet := DM.clnJStyles;
+  dsMetal.DataSet := DM.clnJMetals;
+
+  qryBrands.Close;
   qryBrands.Open;
   cbBrand.Items.Clear;
   while not qryBrands.Eof do
     begin
-      if trim(qryBrandsInvItemBrand.AsString) <> '' then
-        cbBrand.Items.Add(qryBrandsInvItemBrand.AsString);
+      if trim(qryBrandsINV_ITEM_BRAND.AsString) <> '' then
+        cbBrand.Items.Add(qryBrandsINV_ITEM_BRAND.AsString);
       qryBrands.Next;
     end;
   qryBrands.Close;
 
-  qryTypes.Open;
-  qryStyles.Open;
-  qryMetal.Open;
+  qryCategories.Close;
   qryCategories.Open;
 //  qryStoneShapes.Open;
 //  qryStoneColors.Open;

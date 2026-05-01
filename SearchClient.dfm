@@ -13,7 +13,6 @@ object frmClients: TfrmClients
   KeyPreview = True
   OnClose = FormClose
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
@@ -190,48 +189,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -1230,6 +1237,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1277,6 +1285,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -1523,6 +1532,11 @@ object frmClients: TfrmClients
               Expanded = False
               FieldName = 'INV_ITEM_STATUS'
               Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'INV_ITEM_NO'
+              Visible = True
             end>
         end
         object Panel7: TPanel
@@ -1542,7 +1556,7 @@ object frmClients: TfrmClients
             Top = 2
             Width = 173
             Height = 50
-            Hint = 
+            Hint =
               'Divide total amount of the Pawn by total weight of all items in ' +
               'the Pawn and '
             Flat = False
@@ -3362,60 +3376,6 @@ object frmClients: TfrmClients
       Size = 30
     end
   end
-  object qryTypes: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JType,  JTypeDesc'
-      'FROM JTypes')
-    Left = 1340
-    Top = 520
-    object qryTypesJType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryTypesJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-  end
-  object qryStyles: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JStyle, JStyleDesc'
-      'FROM JStyles')
-    Left = 1340
-    Top = 463
-    object qryStylesJStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryStylesJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-  end
-  object qryMetal: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JMetal, JMetalDesc'
-      'FROM JMetals')
-    Left = 1340
-    Top = 586
-    object qryMetalJMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryMetalJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
-  end
   object qryInvItems_: TADOQuery
     Connection = DM.ConnDB
     CursorType = ctStatic
@@ -3434,7 +3394,7 @@ object frmClients: TfrmClients
         Value = Null
       end>
     SQL.Strings = (
-      
+
         'SELECT cast((case when exists(select * from ImagesData T01 where' +
         ' T01.ImagRefToRowNo = InventoryItems.InvItemNo) then 1 else 0 en' +
         'd) as bit) as HasPics,'
@@ -7666,7 +7626,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label147'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           'Description of Item (Inscription, color, size,marks, design, sch' +
           'ool year, Initials, Barrel length'
         Font.Charset = DEFAULT_CHARSET
@@ -9597,7 +9557,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label82'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           'The Pledgor/Seller represents and warrants that the pledge/sold ' +
           'property is not stolen, rented or leased and that they have'
         Font.Charset = DEFAULT_CHARSET
@@ -9619,7 +9579,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label163'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           ' to liens or emcumbraces against them. Pledgor/Seller also attes' +
           't to be the rightful owner  of the pledge/sold property,'
         Font.Charset = DEFAULT_CHARSET
@@ -9641,7 +9601,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label164'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           ' voluntary or involuntary bankrupcy of any type and  is at least' +
           ' 18 year of age.'
         Font.Charset = DEFAULT_CHARSET
@@ -9663,7 +9623,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label165'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           ' that Pledgor/Seller has the right to pledge/sell the property. ' +
           'Pledgor/Seller, attest that the Pledgor/Seller is not in a'
         Font.Charset = DEFAULT_CHARSET
@@ -9685,7 +9645,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label167'
         Border.mmPadding = 0
-        Caption = 
+        Caption =
           'I, the Pledgor/Seller, agree to all terms and conditions on the ' +
           'front and the back and acknowledge'
         Font.Charset = DEFAULT_CHARSET
@@ -14912,8 +14872,8 @@ object frmClients: TfrmClients
   end
   object PopMnuPawnItems: TPopupMenu
     OnPopup = PopMnuPawnItemsPopup
-    Left = 1249
-    Top = 465
+    Left = 755
+    Top = 475
     object popmnuItemPawned: TMenuItem
       Caption = 'Pawned'
       OnClick = popmnuItemPawnedClick
@@ -14963,13 +14923,14 @@ object frmClients: TfrmClients
     AfterScroll = qryInvItemsAfterScroll
     OnCalcFields = qryInvItemsCalcFields
     OnNewRecord = qryInvItemsNewRecord
+    MasterSource = DM.DSTransactions
+    MasterFields = 'TRANSACTION_NO'
     Connection = DM.ConnFB
     UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
     UpdateOptions.FetchGeneratorsPoint = gpImmediate
     UpdateOptions.UpdateTableName = 'INVENTORY_ITEMS'
     UpdateOptions.KeyFields = 'INV_ITEM_NO'
     UpdateOptions.AutoIncFields = 'INV_ITEM_NO'
-    DataSource = DM.DSTransactions
     SQL.Strings = (
       'SELECT'
       '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
@@ -15033,7 +14994,6 @@ object frmClients: TfrmClients
       AutoGenerateValue = arAutoInc
       FieldName = 'INV_ITEM_NO'
       Origin = 'INV_ITEM_NO'
-      Required = True
     end
     object qryInvItemsINV_ITEM_BARCODE: TStringField
       FieldName = 'INV_ITEM_BARCODE'
@@ -15182,6 +15142,69 @@ object frmClients: TfrmClients
     object qryInvItemsLAYAWAY_DATE: TDateField
       FieldName = 'LAYAWAY_DATE'
       Origin = 'LAYAWAY_DATE'
+    end
+  end
+  object qryStyles: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1170
+    Top = 465
+    object qryStylesJ_STYLE: TStringField
+      FieldName = 'J_STYLE'
+      Required = True
+      Size = 1
+    end
+    object qryStylesJ_STYLE_DESC: TStringField
+      FieldName = 'J_STYLE_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object qryTypes: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1170
+    Top = 521
+    object qryTypesJ_TYPE: TStringField
+      FieldName = 'J_TYPE'
+      Required = True
+      Size = 1
+    end
+    object qryTypesJ_TYPE_DESC: TStringField
+      FieldName = 'J_TYPE_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object qryMetal: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1170
+    Top = 578
+    object qryMetalJ_METAL: TStringField
+      FieldName = 'J_METAL'
+      Required = True
+      Size = 1
+    end
+    object qryMetalJ_METAL_DESC: TStringField
+      FieldName = 'J_METAL_DESC'
+      Required = True
+      Size = 30
     end
   end
 end

@@ -54,9 +54,6 @@ type
     qryPoliceRepCust: TADOQuery;
     qryPawnItems: TADOQuery;
     qryPawnStones: TADOQuery;
-    qryTypes: TADOQuery;
-    qryStyles: TADOQuery;
-    qryMetal: TADOQuery;
     qryInvItems_: TADOQuery;
     qryInvItems_cStyle: TStringField;
     qryInvItems_cMetal: TStringField;
@@ -142,12 +139,6 @@ type
     qryInvItems_ModelNumber: TStringField;
     qryInvItems_SerialNumber: TStringField;
     qryInvItems_Gender: TStringField;
-    qryTypesJType: TStringField;
-    qryTypesJTypeDesc: TStringField;
-    qryStylesJStyle: TStringField;
-    qryStylesJStyleDesc: TStringField;
-    qryMetalJMetal: TStringField;
-    qryMetalJMetalDesc: TStringField;
     qryInvItems_cType: TStringField;
     qryPawnItemscStone1Shape: TStringField;
     qryPawnItemscStone1Color: TStringField;
@@ -877,6 +868,15 @@ type
     qryInvItemscTotalWeight: TFloatField;
     qryInvItemscStatus: TStringField;
     qryInvItemscHasPics: TStringField;
+    qryStyles: TFDMemTable;
+    qryTypes: TFDMemTable;
+    qryMetal: TFDMemTable;
+    qryStylesJ_STYLE: TStringField;
+    qryStylesJ_STYLE_DESC: TStringField;
+    qryTypesJ_TYPE: TStringField;
+    qryTypesJ_TYPE_DESC: TStringField;
+    qryMetalJ_METAL: TStringField;
+    qryMetalJ_METAL_DESC: TStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -922,7 +922,6 @@ type
       var Text: String);
     procedure ppChkPurchasePrint(Sender: TObject);
     procedure ppChkPawnPrint(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure btnAdjPoliceReportClick(Sender: TObject);
     procedure ppLabel8GetText(Sender: TObject; var Text: string);
     procedure ppLabel9GetText(Sender: TObject; var Text: string);
@@ -1092,9 +1091,9 @@ begin
 
   btnAdjPoliceReport.Visible := DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4];
 
-  qryTypes.Open;
-  qryStyles.Open;
-  qryMetal.Open;
+  DM.GetJTypes(qryTypes);
+  DM.GetJStyles(qryStyles);
+  DM.GetJMetals(qryMetal);
 //  qryStatus.Open;
 
   qryInvItems.Open;
@@ -1827,14 +1826,14 @@ procedure TfrmClients.qryInvItemsCalcFields(DataSet: TDataSet);
 begin
   qryInvItemscTotalWeight.AsFloat := qryInvItemsINV_ITEM_COUNT.AsInteger * qryInvItemsWEIGHT.AsFloat;
 
-  if qryTypes.Locate('JType', qryInvItemsJ_TYPE.AsString, []) then
-    qryInvItemscType.AsString := qryTypesJTypeDesc.AsString;
+  if qryTypes.Locate('J_TYPE', qryInvItemsJ_TYPE.AsString, []) then
+    qryInvItemscType.AsString := qryTypesJ_TYPE_DESC.AsString;
 
-  if qryStyles.Locate('JStyle', qryInvItemsJ_STYLE.AsString, []) then
-     qryInvItemscStyle.AsString := qryStylesJStyleDesc.AsString;
+  if qryStyles.Locate('J_STYLE', qryInvItemsJ_STYLE.AsString, []) then
+     qryInvItemscStyle.AsString := qryStylesJ_STYLE_DESC.AsString;
 
-  if qryMetal.Locate('JMetal', qryInvItemsJ_METAL.AsString, []) then
-    qryInvItemscMetal.AsString := qryMetalJMetalDesc.AsString;
+  if qryMetal.Locate('J_METAL', qryInvItemsJ_METAL.AsString, []) then
+    qryInvItemscMetal.AsString := qryMetalJ_METAL_DESC.AsString;
 
   qryInvItemscStatus.AsString := GetPawnItemStatus;
 
@@ -2475,11 +2474,6 @@ begin
   ppChkPawn0924.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
   ppChkPawnLetter.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
   ppChkPawnLetterPrePrinted.Checked := DM.qryTransactionsTRAN_TYPE.AsString = TranPawn;
-end;
-
-procedure TfrmClients.FormDestroy(Sender: TObject);
-begin
-  PropertyStore.Save;
 end;
 
 procedure TfrmClients.PopulateFieldsWithDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);

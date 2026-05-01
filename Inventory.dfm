@@ -443,13 +443,14 @@ object frmInventory: TfrmInventory
           TabOrder = 2
         end
       end
-      object DBGrid2: TDBGrid
+      object dbGridStones: TDBGrid
         AlignWithMargins = True
         Left = 5
         Top = 22
         Width = 1148
         Height = 92
         Align = alClient
+        DataSource = dsStones
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
         ReadOnly = True
         TabOrder = 1
@@ -597,15 +598,23 @@ object frmInventory: TfrmInventory
     Left = 259
     Top = 184
   end
-  object qryCategories: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object dsStones: TDataSource
+    DataSet = qryStones
+    Left = 352
+    Top = 184
+  end
+  object qryCategories: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select null as C, 0 as InvCatNo, '#39'Categories'#39' as InvCategory'
-      'union'
-      'SELECT 0, *'
-      'FROM InvCategories'
+      'SELECT CAST(NULL AS SMALLINT) AS "C",'
+      '       0 AS "InvCatNo",'
+      '       CAST('#39'Categories'#39' AS VARCHAR(40)) AS "InvCategory"'
+      'FROM RDB$DATABASE'
+      'UNION ALL'
+      'SELECT 0 AS "C",'
+      '       INV_CAT_NO AS "InvCatNo",'
+      '       INV_CATEGORY AS "InvCategory"'
+      'FROM INV_CATEGORIES'
       'ORDER BY 1, 2')
     Left = 48
     Top = 95
@@ -617,165 +626,233 @@ object frmInventory: TfrmInventory
       FieldName = 'InvCatNo'
       ReadOnly = True
     end
-    object qryCategoriesInvCategory: TStringField
+    object qryCategoriesInvCategory: TWideStringField
       FieldName = 'InvCategory'
       ReadOnly = True
       Size = 40
     end
   end
-  object qryInvItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Filtered = True
+  object qryInvItems: TFDQuery
     OnCalcFields = qryInvItemsCalcFields
-    OnFilterRecord = qryInvItemsFilterRecord
     OnNewRecord = qryInvItemsNewRecord
-    Parameters = <>
+    Filtered = True
+    OnFilterRecord = qryInvItemsFilterRecord
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'INVENTORY_ITEMS'
+    UpdateOptions.KeyFields = 'InvItemNo'
     SQL.Strings = (
       'SELECT'
-      '    ii.InvItemNo,'
-      '    ii.InvItemBarcode,'
-      '    ii.InvCatNo,'
-      '    ii.JType,'
-      '    ii.JStyle,'
-      '    ii.JMetal,'
-      '    ii.InvItemCount,'
-      '    ii.Note,'
-      '    ii.SizeLength,'
-      '    ii.Weight,'
-      '    ii.KT,'
-      '    ii.Created,'
-      '    ii.UnitCost,'
-      '    ii.UnitPrice,'
-      '    ii.InvItemStatus,'
-      '    ii.TransactionNo,'
-      '    ii.InvOriginalItemNo,'
-      '    ii.InvItemBrand,'
-      '    ii.OwnerAppNumber,'
-      '    ii.ModelNumber,'
-      '    ii.SerialNumber,'
-      '    ii.Gender,'
-      '    ii.Description,'
-      '    (ii.InvItemCount * IsNull(ii.Weight, 0)) as TotalWeight,'
-      '    jt.JTypeDesc,'
-      '    js.JStyleDesc,'
-      '    jm.JMetalDesc,'
-      '    ist.StatusDesc'
-      'FROM InventoryItems ii'
-      'LEFT JOIN JTypes jt ON ii.JType = jt.JType'
-      'LEFT JOIN JStyles js ON ii.JStyle = js.JStyle'
-      'LEFT JOIN JMetals jm ON ii.JMetal = jm.JMetal'
-      'LEFT JOIN ItemStatus ist ON ii.InvItemStatus = ist.Status'
+      '    ii.INV_ITEM_NO AS "InvItemNo",'
+      '    ii.INV_ITEM_BARCODE AS "InvItemBarcode",'
+      '    ii.INV_CAT_NO AS "InvCatNo",'
+      '    ii.J_TYPE AS "JType",'
+      '    ii.J_STYLE AS "JStyle",'
+      '    ii.J_METAL AS "JMetal",'
+      '    ii.INV_ITEM_COUNT AS "InvItemCount",'
+      '    ii.NOTE AS "Note",'
+      '    ii.SIZE_LENGTH AS "SizeLength",'
+      '    ii.WEIGHT AS "Weight",'
+      '    ii.KT AS "KT",'
+      '    ii.CREATED AS "Created",'
+      '    ii.UNIT_COST AS "UnitCost",'
+      '    ii.UNIT_PRICE AS "UnitPrice",'
+      '    ii.INV_ITEM_STATUS AS "InvItemStatus",'
+      '    ii.TRANSACTION_NO AS "TransactionNo",'
+      '    ii.INV_ORIGINAL_ITEM_NO AS "InvOriginalItemNo",'
+      '    ii.INV_ITEM_BRAND AS "InvItemBrand",'
+      '    ii.OWNER_APP_NUMBER AS "OwnerAppNumber",'
+      '    ii.MODEL_NUMBER AS "ModelNumber",'
+      '    ii.SERIAL_NUMBER AS "SerialNumber",'
+      '    ii.GENDER AS "Gender",'
+      '    ii.DESCRIPTION AS "Description",'
+
+        '    (ii.INV_ITEM_COUNT * COALESCE(ii.WEIGHT, 0)) AS "TotalWeight' +
+        '",'
+      '    jt.J_TYPE_DESC AS "JTypeDesc",'
+      '    js.J_STYLE_DESC AS "JStyleDesc",'
+      '    jm.J_METAL_DESC AS "JMetalDesc",'
+      '    ist.STATUS_DESC AS "StatusDesc"'
+      'FROM INVENTORY_ITEMS ii'
+      'LEFT JOIN J_TYPES jt ON ii.J_TYPE = jt.J_TYPE'
+      'LEFT JOIN J_STYLES js ON ii.J_STYLE = js.J_STYLE'
+      'LEFT JOIN J_METALS jm ON ii.J_METAL = jm.J_METAL'
+      'LEFT JOIN ITEM_STATUS ist ON ii.INV_ITEM_STATUS = ist.STATUS'
       ' --<PARAMS>'
       '')
     Left = 259
     Top = 119
-    object qryInvItemsInvItemNo: TAutoIncField
+    object qryInvItemsInvItemNo: TIntegerField
       AutoGenerateValue = arAutoInc
       FieldName = 'InvItemNo'
+      Origin = 'INV_ITEM_NO'
     end
     object qryInvItemsInvItemBarcode: TStringField
       FieldName = 'InvItemBarcode'
+      Origin = 'INV_ITEM_BARCODE'
       Size = 30
     end
     object qryInvItemsInvCatNo: TIntegerField
       FieldName = 'InvCatNo'
+      Origin = 'INV_CAT_NO'
     end
     object qryInvItemsJType: TStringField
       FieldName = 'JType'
+      Origin = 'J_TYPE'
       Size = 1
     end
     object qryInvItemsJStyle: TStringField
       FieldName = 'JStyle'
+      Origin = 'J_STYLE'
       Size = 1
     end
     object qryInvItemsJMetal: TStringField
       FieldName = 'JMetal'
+      Origin = 'J_METAL'
       Size = 1
     end
     object qryInvItemsInvItemCount: TIntegerField
       FieldName = 'InvItemCount'
+      Origin = 'INV_ITEM_COUNT'
     end
     object qryInvItemsNote: TStringField
       FieldName = 'Note'
+      Origin = 'NOTE'
       Size = 80
     end
     object qryInvItemsSizeLength: TFloatField
       FieldName = 'SizeLength'
+      Origin = 'SIZE_LENGTH'
     end
     object qryInvItemsWeight: TFloatField
       FieldName = 'Weight'
+      Origin = 'WEIGHT'
     end
     object qryInvItemsKT: TFloatField
       FieldName = 'KT'
+      Origin = 'KT'
     end
-    object qryInvItemsCreated: TDateTimeField
+    object qryInvItemsCreated: TSQLTimeStampField
       FieldName = 'Created'
+      Origin = 'CREATED'
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryInvItemsUnitCost: TBCDField
+    object qryInvItemsUnitCost: TFMTBCDField
       FieldName = 'UnitCost'
+      Origin = 'UNIT_COST'
       currency = True
-      Precision = 19
+      Precision = 18
+      Size = 2
     end
-    object qryInvItemsUnitPrice: TBCDField
+    object qryInvItemsUnitPrice: TFMTBCDField
       FieldName = 'UnitPrice'
+      Origin = 'UNIT_PRICE'
       currency = True
-      Precision = 19
+      Precision = 18
+      Size = 2
     end
     object qryInvItemsInvItemStatus: TStringField
       FieldName = 'InvItemStatus'
+      Origin = 'INV_ITEM_STATUS'
       Size = 1
     end
     object qryInvItemsTransactionNo: TIntegerField
       FieldName = 'TransactionNo'
+      Origin = 'TRANSACTION_NO'
     end
     object qryInvItemsInvOriginalItemNo: TIntegerField
       FieldName = 'InvOriginalItemNo'
+      Origin = 'INV_ORIGINAL_ITEM_NO'
     end
     object qryInvItemsInvItemBrand: TStringField
       FieldName = 'InvItemBrand'
+      Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
     object qryInvItemsOwnerAppNumber: TStringField
       FieldName = 'OwnerAppNumber'
+      Origin = 'OWNER_APP_NUMBER'
       Size = 40
     end
     object qryInvItemsModelNumber: TStringField
       FieldName = 'ModelNumber'
+      Origin = 'MODEL_NUMBER'
       Size = 40
     end
     object qryInvItemsSerialNumber: TStringField
       FieldName = 'SerialNumber'
+      Origin = 'SERIAL_NUMBER'
       Size = 40
     end
     object qryInvItemsGender: TStringField
       FieldName = 'Gender'
+      Origin = 'GENDER'
       Size = 1
     end
     object qryInvItemsDescription: TStringField
       FieldName = 'Description'
+      Origin = 'DESCRIPTION'
       Size = 120
     end
     object qryInvItemsJTypeDesc: TStringField
       FieldName = 'JTypeDesc'
+      ProviderFlags = []
+      ReadOnly = True
       Size = 30
     end
     object qryInvItemsJStyleDesc: TStringField
       FieldName = 'JStyleDesc'
+      ProviderFlags = []
+      ReadOnly = True
       Size = 30
     end
     object qryInvItemsJMetalDesc: TStringField
       FieldName = 'JMetalDesc'
+      ProviderFlags = []
+      ReadOnly = True
       Size = 30
     end
     object qryInvItemsStatusDesc: TStringField
       FieldName = 'StatusDesc'
+      ProviderFlags = []
+      ReadOnly = True
       Size = 30
     end
     object qryInvItemsTotalWeight: TFloatField
       FieldName = 'TotalWeight'
+      ProviderFlags = []
+      ReadOnly = True
     end
+  end
+  object qryStones: TFDQuery
+    MasterSource = dsInvItems
+    MasterFields = 'InvItemNo'
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'SELECT'
+      '  s.STONE_NO AS "StoneNo",'
+      '  s.INV_ITEM_NO AS "InvItemNo",'
+      '  s.STONE_NUMBER AS "StoneNumber",'
+      '  s.STONE_SHAPE AS "StoneShape",'
+      '  s.STONE_COLOR AS "StoneColor",'
+      '  ss.J_SHAPE_DESC AS "cShape",'
+      '  sc.J_STONE_DESC AS "cColor",'
+      '  s.CT,'
+      '  s.WT,'
+      '  s.STONE_TYPE AS "StoneType",'
+      '  s.STONE_WEIGHT_UNIT AS "StoneWeightUnit"'
+      'FROM STONES s'
+      'LEFT JOIN J_STONE_SHAPES ss ON ss.J_SHAPE = s.STONE_SHAPE'
+      'LEFT JOIN J_STONE_COLORS sc ON sc.J_STONE_COLOR = s.STONE_COLOR'
+      'WHERE s.INV_ITEM_NO = :InvItemNo'
+      'ORDER BY s.STONE_NUMBER')
+    Left = 352
+    Top = 119
+    ParamData = <
+      item
+        Name = 'InvItemNo'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
   end
   object FormState: TRzFormState
     RegIniFile = DM.RegIniFile

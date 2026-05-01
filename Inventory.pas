@@ -5,8 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, IniFiles,
   Dialogs, StdCtrls, Grids, DBGrids, ExtCtrls, Printers, System.UITypes,
-  Buttons, DB, ADODB, Mask, ComCtrls,
-  RzForms, RzButton, RzTreeVw;
+  Buttons, DB, Mask, ComCtrls,
+  FireDAC.Comp.Client, Data.SqlTimSt,
+  RzForms, RzButton, RzTreeVw, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmInventory = class(TForm)
@@ -20,6 +23,7 @@ type
     btnEditCat: TBitBtn;
     dsCategories: TDataSource;
     dsInvItems: TDataSource;
+    dsStones: TDataSource;
     Panel6: TPanel;
     Panel5: TPanel;
     DBGrid1: TDBGrid;
@@ -28,16 +32,16 @@ type
     btnEditItem: TBitBtn;
     GroupBox1: TGroupBox;
     Panel9: TPanel;
-    DBGrid2: TDBGrid;
+    dbGridStones: TDBGrid;
     btnAddStone: TBitBtn;
     btnEditStone: TBitBtn;
     BitBtn2: TBitBtn;
     GroupBox2: TGroupBox;
     chkSale: TCheckBox;
     chkPawn: TCheckBox;
-    qryCategories: TADOQuery;
-    qryInvItems: TADOQuery;
-    qryInvItemsInvItemNo: TAutoIncField;
+    qryCategories: TFDQuery;
+    qryInvItems: TFDQuery;
+    qryInvItemsInvItemNo: TIntegerField;
     qryInvItemsInvItemBarcode: TStringField;
     qryInvItemsInvCatNo: TIntegerField;
     qryInvItemsJType: TStringField;
@@ -48,16 +52,16 @@ type
     qryInvItemsSizeLength: TFloatField;
     qryInvItemsWeight: TFloatField;
     qryInvItemsKT: TFloatField;
-    qryInvItemsCreated: TDateTimeField;
-    qryInvItemsUnitCost: TBCDField;
-    qryInvItemsUnitPrice: TBCDField;
+    qryInvItemsCreated: TSQLTimeStampField;
+    qryInvItemsUnitCost: TFMTBCDField;
+    qryInvItemsUnitPrice: TFMTBCDField;
     qryInvItemsInvItemStatus: TStringField;
     qryInvItemsTransactionNo: TIntegerField;
     qryInvItemsInvOriginalItemNo: TIntegerField;
     qryInvItemsInvItemBrand: TStringField;
     qryCategoriesC: TSmallintField;
     qryCategoriesInvCatNo: TIntegerField;
-    qryCategoriesInvCategory: TStringField;
+    qryCategoriesInvCategory: TWideStringField;
     FormState: TRzFormState;
     btnPrintLabel: TRzBitBtn;
     btnPrintOneLabel: TRzBitBtn;
@@ -77,6 +81,7 @@ type
     qryInvItemsStatusDesc: TStringField;
     qryInvItemsTotalWeight: TFloatField;
     CheckBox1: TCheckBox;
+    qryStones: TFDQuery;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnAddCatClick(Sender: TObject);
@@ -380,17 +385,9 @@ end;
 
 procedure TfrmInventory.qryInvItemsNewRecord(DataSet: TDataSet);
 begin
-  qryInvItemsInvItemNo.AsInteger := DM.GetNextKey('InventoryItems');
   qryInvItemsInvCatNo.AsInteger := qryCategoriesInvCatNo.AsInteger;
-  qryInvItemsInvItemBarcode.AsString := DM.GetBarcode(qryInvItemsInvItemNo.AsInteger);
   qryInvItemsInvItemCount.AsInteger := 1;
   qryInvItemsInvItemStatus.AsString := 'S';  //For Sale
-
-
-{  DM.fn_GetNextKey.ParamByName('PTableName').AsString := 'InventoryItems';
-  DM.fn_GetNextKey.ExecSQL;
-  qryInvItemsInvItemNo.AsInteger := DM.fn_GetNextKey.ParamByName('fn_GetNextKey').AsInteger;}
-
 end;
 
 procedure TfrmInventory.qryStonesCalcFields(DataSet: TDataSet);
@@ -457,27 +454,41 @@ procedure TfrmInventory.btnSearchClick(Sender: TObject);
 var
   WhereStr: string;
   SelectedCats: string;
-begin
-  if chkSale.Checked and not chkPawn.Checked then
-    WhereStr := ' = ''S'''
-  else if not chkSale.Checked and chkPawn.Checked then
-    WhereStr := ' = ''P'''
-  else
-    WhereStr := ' IN (''P'', ''S'')';
+  StatusList: string;
 
-  WhereStr := ' ii.InvItemStatus' + WhereStr;
+  procedure AddStatus(const AStatus: string);
+  begin
+    if StatusList <> '' then
+      StatusList := StatusList + ', ';
+    StatusList := StatusList + QuotedStr(AStatus);
+  end;
+begin
+  StatusList := '';
+  if chkSale.Checked then
+    AddStatus('S');
+  if chkPawn.Checked then
+    AddStatus('P');
+  if CheckBox1.Checked then
+    AddStatus('L');
+
+  if StatusList = '' then
+    WhereStr := '1 = 0'
+  else
+    WhereStr := 'ii.INV_ITEM_STATUS IN (' + StatusList + ')';
 
   SelectedCats := GetSelectedTreeCategories;
   if SelectedCats <> '' then
   begin
-    WhereStr := WhereStr + ' AND ii.InvCatNo IN (' + GetSelectedTreeCategories + ')';
+    WhereStr := WhereStr + ' AND ii.INV_CAT_NO IN (' + SelectedCats + ')';
   end;
 
   Screen.Cursor := crHourGlass;
   try
+    qryStones.Close;
     qryInvItems.Close;
     qryInvItems.SQL[Param_LineNo_qryInvItems] := 'WHERE ' + WhereStr;
     qryInvItems.Open;
+    qryStones.Open;
     lblTotals.Caption := 'Total Items: ' + qryInvItems.RecordCount.ToString;
   finally
     Screen.Cursor := crDefault;

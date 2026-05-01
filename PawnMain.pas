@@ -209,7 +209,7 @@ implementation
 
 Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory,
   MaintenanceJewle, SetupBarcodePrinter,
-  MaintenanceJTypes, BackupDB, TransactionList, ExportPoliceInformation,
+  BackupDB, TransactionList, ExportPoliceInformation,
   Report01, Report02, RepPurchases, GLbUtils, ReportExportTransactions,
   SetDefaultMaturityMonth, LeadsOnlineFTPParams, ImagesStorageSettings,
   BackupInProgress, uPawnDialogs;

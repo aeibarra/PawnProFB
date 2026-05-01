@@ -13,6 +13,7 @@ object frmMaintenanceJ: TfrmMaintenanceJ
   Font.Style = []
   PopupMode = pmAuto
   Position = poScreenCenter
+  OnClose = FormClose
   OnShow = FormShow
   TextHeight = 17
   object GroupBox1: TGroupBox
@@ -79,102 +80,111 @@ object frmMaintenanceJ: TfrmMaintenanceJ
     TitleFont.Style = []
   end
   object dsMaintenace: TDataSource
-    Left = 295
-    Top = 115
+    Left = 70
+    Top = 157
   end
-  object qryTypes: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryTypes: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'J_TYPES'
+    UpdateOptions.KeyFields = 'J_TYPE'
     SQL.Strings = (
-      'SELECT JType,  JTypeDesc'
-      'FROM JTypes')
+      'SELECT J_TYPE, J_TYPE_DESC'
+      'FROM J_TYPES'
+      'ORDER BY J_TYPE_DESC')
     Left = 100
     Top = 16
-    object qryTypesJType: TStringField
+    object qryTypesJ_TYPE: TStringField
       DisplayLabel = 'Type'
-      FieldName = 'JType'
+      FieldName = 'J_TYPE'
       Size = 1
     end
-    object qryTypesJTypeDesc: TStringField
+    object qryTypesJ_TYPE_DESC: TStringField
       DisplayLabel = 'Description'
-      FieldName = 'JTypeDesc'
+      FieldName = 'J_TYPE_DESC'
       Size = 30
     end
   end
-  object qryStyles: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryStyles: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'J_STYLES'
+    UpdateOptions.KeyFields = 'J_STYLE'
     SQL.Strings = (
-      'SELECT JStyle, JStyleDesc'
-      'FROM JStyles')
+      'SELECT J_STYLE, J_STYLE_DESC'
+      'FROM J_STYLES'
+      'ORDER BY J_STYLE_DESC')
     Left = 156
     Top = 16
-    object qryStylesJStyle: TStringField
+    object qryStylesJ_STYLE: TStringField
       DisplayLabel = 'Style'
-      FieldName = 'JStyle'
+      FieldName = 'J_STYLE'
       Size = 1
     end
-    object qryStylesJStyleDesc: TStringField
+    object qryStylesJ_STYLE_DESC: TStringField
       DisplayLabel = 'Description'
-      FieldName = 'JStyleDesc'
+      FieldName = 'J_STYLE_DESC'
       Size = 30
     end
   end
-  object qryMetal: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryMetal: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'J_METALS'
+    UpdateOptions.KeyFields = 'J_METAL'
     SQL.Strings = (
-      'SELECT JMetal, JMetalDesc'
-      'FROM JMetals')
+      'SELECT J_METAL, J_METAL_DESC'
+      'FROM J_METALS'
+      'ORDER BY J_METAL_DESC')
     Left = 212
     Top = 16
-    object qryMetalJMetal: TStringField
+    object qryMetalJ_METAL: TStringField
       DisplayLabel = 'Metal'
-      FieldName = 'JMetal'
+      FieldName = 'J_METAL'
       Size = 1
     end
-    object qryMetalJMetalDesc: TStringField
+    object qryMetalJ_METAL_DESC: TStringField
       DisplayLabel = 'Description'
-      FieldName = 'JMetalDesc'
+      FieldName = 'J_METAL_DESC'
       Size = 30
     end
   end
-  object qryStoneShapes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryStoneShapes: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'J_STONE_SHAPES'
+    UpdateOptions.KeyFields = 'J_SHAPE'
     SQL.Strings = (
-      'SELECT JShape, JShapeDesc'
-      'FROM JStoneShapes')
+      'SELECT J_SHAPE, J_SHAPE_DESC'
+      'FROM J_STONE_SHAPES'
+      'ORDER BY J_SHAPE_DESC')
     Left = 284
     Top = 16
-    object qryStoneShapesJShape: TStringField
+    object qryStoneShapesJ_SHAPE: TStringField
       DisplayLabel = 'Shape'
-      FieldName = 'JShape'
+      FieldName = 'J_SHAPE'
       Size = 1
     end
-    object qryStoneShapesJShapeDesc: TStringField
+    object qryStoneShapesJ_SHAPE_DESC: TStringField
       DisplayLabel = 'Description'
-      FieldName = 'JShapeDesc'
+      FieldName = 'J_SHAPE_DESC'
       Size = 30
     end
   end
-  object qryStoneColors: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryStoneColors: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'J_STONE_COLORS'
+    UpdateOptions.KeyFields = 'J_STONE_COLOR'
     SQL.Strings = (
-      'SELECT JStoneColor, JStoneDesc'
-      'FROM JStoneColors')
+      'SELECT J_STONE_COLOR, J_STONE_DESC'
+      'FROM J_STONE_COLORS'
+      'ORDER BY J_STONE_DESC')
     Left = 100
     Top = 72
-    object qryStoneColorsJStoneColor: TStringField
+    object qryStoneColorsJ_STONE_COLOR: TStringField
       DisplayLabel = 'Stone Color'
-      FieldName = 'JStoneColor'
+      FieldName = 'J_STONE_COLOR'
       Size = 1
     end
-    object qryStoneColorsJStoneDesc: TStringField
+    object qryStoneColorsJ_STONE_DESC: TStringField
       DisplayLabel = 'Description'
-      FieldName = 'JStoneDesc'
+      FieldName = 'J_STONE_DESC'
       Size = 30
     end
   end

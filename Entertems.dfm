@@ -302,8 +302,10 @@ object frmEnterItems: TfrmEnterItems
       Top = 100
       Width = 81
       Height = 25
+      TabStop = False
       DataField = 'INV_ITEM_BARCODE'
       DataSource = dsInvItems
+      ReadOnly = True
       TabOrder = 2
     end
     object DBLookupComboBox1: TDBLookupComboBox
@@ -313,8 +315,8 @@ object frmEnterItems: TfrmEnterItems
       Height = 25
       DataField = 'J_TYPE'
       DataSource = dsInvItems
-      KeyField = 'JType'
-      ListField = 'JTypeDesc'
+      KeyField = 'J_TYPE'
+      ListField = 'J_TYPE_DESC'
       ListSource = dsTypes
       TabOrder = 8
     end
@@ -325,8 +327,8 @@ object frmEnterItems: TfrmEnterItems
       Height = 25
       DataField = 'J_STYLE'
       DataSource = dsInvItems
-      KeyField = 'JStyle'
-      ListField = 'JStyleDesc'
+      KeyField = 'J_STYLE'
+      ListField = 'J_STYLE_DESC'
       ListSource = dsStyles
       TabOrder = 9
     end
@@ -337,8 +339,8 @@ object frmEnterItems: TfrmEnterItems
       Height = 25
       DataField = 'J_METAL'
       DataSource = dsInvItems
-      KeyField = 'JMetal'
-      ListField = 'JMetalDesc'
+      KeyField = 'J_METAL'
+      ListField = 'J_METAL_DESC'
       ListSource = dsMetal
       TabOrder = 10
     end
@@ -412,8 +414,8 @@ object frmEnterItems: TfrmEnterItems
       Height = 25
       DataField = 'INV_CAT_NO'
       DataSource = dsInvItems
-      KeyField = 'InvCatNo'
-      ListField = 'InvCategory'
+      KeyField = 'INV_CAT_NO'
+      ListField = 'INV_CATEGORY'
       ListSource = dsCategories
       TabOrder = 0
       TabStop = False
@@ -528,6 +530,14 @@ object frmEnterItems: TfrmEnterItems
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      object DBText1: TDBText
+        Left = 275
+        Top = 13
+        Width = 65
+        Height = 17
+        DataField = 'INV_ITEM_NO'
+        DataSource = dsInvItems
+      end
       object btnAddStone: TBitBtn
         Left = 16
         Top = 2
@@ -584,20 +594,24 @@ object frmEnterItems: TfrmEnterItems
       TitleFont.Style = []
       Columns = <
         item
+          Alignment = taCenter
           Expanded = False
-          FieldName = 'StoneNumber'
+          FieldName = 'STONE_NUMBER'
+          Title.Alignment = taCenter
           Title.Caption = 'Stone Number'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -13
           Title.Font.Name = 'Segoe UI Semibold'
           Title.Font.Style = [fsBold]
-          Width = 110
+          Width = 96
           Visible = True
         end
         item
+          Alignment = taCenter
           Expanded = False
           FieldName = 'cShape'
+          Title.Alignment = taCenter
           Title.Caption = 'Shape'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
@@ -608,120 +622,83 @@ object frmEnterItems: TfrmEnterItems
           Visible = True
         end
         item
+          Alignment = taCenter
           Expanded = False
           FieldName = 'cColor'
+          Title.Alignment = taCenter
           Title.Caption = 'Color'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -13
           Title.Font.Name = 'Segoe UI Semibold'
           Title.Font.Style = [fsBold]
-          Width = 79
+          Width = 89
           Visible = True
         end
         item
+          Alignment = taCenter
           Expanded = False
           FieldName = 'CT'
+          Title.Alignment = taCenter
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
           Title.Font.Height = -13
           Title.Font.Name = 'Segoe UI Semibold'
           Title.Font.Style = [fsBold]
+          Width = 61
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'WT'
+          Title.Alignment = taCenter
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -13
+          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Style = [fsBold]
+          Width = 66
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'WT'
-          Title.Font.Charset = ANSI_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
-          Title.Font.Style = [fsBold]
+          FieldName = 'STONE_NO'
           Visible = True
         end>
     end
   end
-  object qryTypes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JType,  JTypeDesc'
-      'FROM JTypes')
-    Left = 708
-    Top = 25
-    object qryTypesJType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryTypesJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-  end
-  object qryStyles: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JStyle, JStyleDesc'
-      'FROM JStyles')
-    Left = 764
-    Top = 25
-    object qryStylesJStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryStylesJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-  end
-  object qryMetal: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JMetal, JMetalDesc'
-      'FROM JMetals')
-    Left = 820
-    Top = 25
-    object qryMetalJMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryMetalJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
-  end
   object dsTypes: TDataSource
-    DataSet = qryTypes
-    Left = 708
-    Top = 73
+    DataSet = DM.clnJTypes
+    Left = 715
+    Top = 28
   end
   object dsStyles: TDataSource
-    DataSet = qryStyles
-    Left = 764
-    Top = 73
+    DataSet = DM.clnJStyles
+    Left = 771
+    Top = 28
   end
   object dsMetal: TDataSource
-    DataSet = qryMetal
-    Left = 820
-    Top = 73
+    DataSet = DM.clnJMetals
+    Left = 827
+    Top = 28
   end
-  object qryCategories: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryCategories: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT *'
-      'FROM InvCategories'
-      'ORDER BY InvCategory')
+      'SELECT INV_CAT_NO, INV_CATEGORY'
+      'FROM INV_CATEGORIES'
+      'ORDER BY INV_CATEGORY')
     Left = 716
     Top = 145
-    object qryCategoriesInvCatNo: TAutoIncField
-      FieldName = 'InvCatNo'
-      ReadOnly = True
+    object qryCategoriesINV_CAT_NO: TIntegerField
+      FieldName = 'INV_CAT_NO'
+      Origin = 'INV_CAT_NO'
+      Required = True
     end
-    object qryCategoriesInvCategory: TStringField
-      FieldName = 'InvCategory'
+    object qryCategoriesINV_CATEGORY: TStringField
+      FieldName = 'INV_CATEGORY'
+      Origin = 'INV_CATEGORY'
       Size = 40
     end
   end
@@ -735,172 +712,25 @@ object frmEnterItems: TfrmEnterItems
     Left = 716
     Top = 193
   end
-  object qryBrands: TADODataSet
-    Connection = DM.ConnDB
-    CommandText = 
-      'select distinct InvItemBrand'#13#10'from InventoryItems'#13#10'order by InvI' +
-      'temBrand'
-    Parameters = <>
+  object qryBrands: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'SELECT DISTINCT INV_ITEM_BRAND'
+      'FROM INVENTORY_ITEMS'
+      'WHERE INV_ITEM_BRAND IS NOT NULL'
+      'ORDER BY INV_ITEM_BRAND')
     Left = 716
     Top = 249
-    object qryBrandsInvItemBrand: TStringField
-      FieldName = 'InvItemBrand'
-      Size = 30
-    end
-  end
-  object qryStones: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    DataSource = dsInvItems
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        DataType = ftString
-        Size = -1
-        Value = Null
-      end>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM Stones'
-      'WHERE InvItemNo = :InvItemNo ')
-    Left = 979
-    Top = 25
-    object qryStonesStoneNo: TAutoIncField
-      AutoGenerateValue = arAutoInc
-      FieldName = 'StoneNo'
-      ReadOnly = True
-    end
-    object qryStonesInvItemNo: TIntegerField
-      FieldName = 'InvItemNo'
-    end
-    object qryStonesStoneNumber: TIntegerField
-      FieldName = 'StoneNumber'
-    end
-    object qryStonesStoneShape: TStringField
-      FieldName = 'StoneShape'
-      Size = 1
-    end
-    object qryStonesStoneColor: TStringField
-      FieldName = 'StoneColor'
-      Size = 1
-    end
-    object qryStonesCT: TFloatField
-      FieldName = 'CT'
-    end
-    object qryStonesWT: TFloatField
-      FieldName = 'WT'
-    end
-    object qryStonesStoneType: TStringField
-      FieldName = 'StoneType'
-      Size = 30
-    end
-    object qryStonesStoneWeightUnit: TStringField
-      FieldName = 'StoneWeightUnit'
-      Size = 1
-    end
-  end
-  object qryStoneShapes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JShape, JShapeDesc'
-      'FROM JStoneShapes')
-    Left = 887
-    Top = 25
-    object qryStoneShapesJShape: TStringField
-      FieldName = 'JShape'
-      Size = 1
-    end
-    object qryStoneShapesJShapeDesc: TStringField
-      FieldName = 'JShapeDesc'
-      Size = 30
-    end
-  end
-  object qryStoneColors: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JStoneColor, JStoneDesc'
-      'FROM JStoneColors')
-    Left = 887
-    Top = 73
-    object qryStoneColorsJStoneColor: TStringField
-      FieldName = 'JStoneColor'
-      Size = 1
-    end
-    object qryStoneColorsJStoneDesc: TStringField
-      FieldName = 'JStoneDesc'
+    object qryBrandsINV_ITEM_BRAND: TStringField
+      FieldName = 'INV_ITEM_BRAND'
+      Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
   end
   object dsStones: TDataSource
-    DataSet = clnStones
-    Left = 980
-    Top = 170
-  end
-  object prvStones: TDataSetProvider
     DataSet = qryStones
-    ResolveToDataSet = True
-    Left = 980
-    Top = 73
-  end
-  object clnStones: TClientDataSet
-    Aggregates = <>
-    Params = <
-      item
-        DataType = ftString
-        Name = 'InvItemNo'
-        ParamType = ptInput
-      end>
-    ProviderName = 'prvStones'
-    OnCalcFields = clnStonesCalcFields
-    OnNewRecord = clnStonesNewRecord
-    Left = 980
-    Top = 121
-    object clnStonescShape: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cShape'
-      Size = 30
-      Calculated = True
-    end
-    object clnStonescColor: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'cColor'
-      Size = 30
-      Calculated = True
-    end
-    object clnStonesStoneNo: TAutoIncField
-      FieldName = 'StoneNo'
-      ReadOnly = True
-    end
-    object clnStonesInvItemNo: TIntegerField
-      FieldName = 'InvItemNo'
-    end
-    object clnStonesStoneNumber: TIntegerField
-      FieldName = 'StoneNumber'
-    end
-    object clnStonesStoneShape: TStringField
-      FieldName = 'StoneShape'
-      Size = 1
-    end
-    object clnStonesStoneColor: TStringField
-      FieldName = 'StoneColor'
-      Size = 1
-    end
-    object clnStonesCT: TFloatField
-      FieldName = 'CT'
-    end
-    object clnStonesWT: TFloatField
-      FieldName = 'WT'
-    end
-    object clnStonesStoneType: TStringField
-      FieldName = 'StoneType'
-      Size = 30
-    end
-    object clnStonesStoneWeightUnit: TStringField
-      FieldName = 'StoneWeightUnit'
-      Size = 1
-    end
+    Left = 594
+    Top = 490
   end
   object clnWeigthUnits: TClientDataSet
     Aggregates = <>
@@ -933,5 +763,151 @@ object frmEnterItems: TfrmEnterItems
     DataSet = clnWeigthUnits
     Left = 714
     Top = 378
+  end
+  object updStones: TFDUpdateSQL
+    Connection = DM.ConnFB
+    InsertSQL.Strings = (
+      'INSERT INTO STONES'
+      '(INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, '
+      '  CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT)'
+
+        'VALUES (:NEW_INV_ITEM_NO, :NEW_STONE_NUMBER, :NEW_STONE_SHAPE, :' +
+        'NEW_STONE_COLOR, '
+      '  :NEW_CT, :NEW_WT, :NEW_STONE_TYPE, :NEW_STONE_WEIGHT_UNIT)'
+      'RETURNING STONE_NO')
+    ModifySQL.Strings = (
+      'UPDATE STONES'
+
+        'SET INV_ITEM_NO = :NEW_INV_ITEM_NO, STONE_NUMBER = :NEW_STONE_NU' +
+        'MBER, '
+
+        '  STONE_SHAPE = :NEW_STONE_SHAPE, STONE_COLOR = :NEW_STONE_COLOR' +
+        ', '
+      '  CT = :NEW_CT, WT = :NEW_WT, STONE_TYPE = :NEW_STONE_TYPE, '
+      '  STONE_WEIGHT_UNIT = :NEW_STONE_WEIGHT_UNIT'
+
+        'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
+        'NE_NUMBER AND '
+
+        '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
+        'LOR AND '
+
+        '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
+        ' AND '
+      '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT'
+      'RETURNING STONE_NO')
+    DeleteSQL.Strings = (
+      'DELETE FROM STONES'
+
+        'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
+        'NE_NUMBER AND '
+
+        '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
+        'LOR AND '
+
+        '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
+        ' AND '
+      '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT')
+    UnlockSQL.Strings = (
+      'SELECT *'
+      'FROM STONES'
+      'WHERE INV_ITEM_NO = :INV_ITEM_NO')
+    FetchRowSQL.Strings = (
+
+        'SELECT STONE_NO, INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_C' +
+        'OLOR, '
+      '  CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT'
+      'FROM STONES'
+
+        'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
+        'NE_NUMBER AND '
+
+        '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
+        'LOR AND '
+
+        '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
+        ' AND '
+      '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT')
+    Left = 592
+    Top = 556
+  end
+  object qryStones: TFDQuery
+    OnCalcFields = clnStonesCalcFields
+    OnNewRecord = clnStonesNewRecord
+    CachedUpdates = True
+    Connection = DM.ConnFB
+    UpdateObject = updStones
+    SQL.Strings = (
+      'SELECT *'
+      'FROM STONES'
+      'WHERE INV_ITEM_NO = :INV_ITEM_NO')
+    Left = 589
+    Top = 432
+    ParamData = <
+      item
+        Name = 'INV_ITEM_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryStonescShape: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cShape'
+      Size = 30
+      Calculated = True
+    end
+    object qryStonescColor: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'cColor'
+      Size = 30
+      Calculated = True
+    end
+    object qryStonesSTONE_NO: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'STONE_NO'
+      Origin = 'STONE_NO'
+    end
+    object qryStonesINV_ITEM_NO: TIntegerField
+      FieldName = 'INV_ITEM_NO'
+      Origin = 'INV_ITEM_NO'
+      Required = True
+    end
+    object qryStonesSTONE_NUMBER: TIntegerField
+      FieldName = 'STONE_NUMBER'
+      Origin = 'STONE_NUMBER'
+      Required = True
+    end
+    object qryStonesSTONE_SHAPE: TStringField
+      FieldName = 'STONE_SHAPE'
+      Origin = 'STONE_SHAPE'
+      Required = True
+      FixedChar = True
+      Size = 1
+    end
+    object qryStonesSTONE_COLOR: TStringField
+      FieldName = 'STONE_COLOR'
+      Origin = 'STONE_COLOR'
+      Required = True
+      FixedChar = True
+      Size = 1
+    end
+    object qryStonesCT: TFloatField
+      FieldName = 'CT'
+      Origin = 'CT'
+    end
+    object qryStonesWT: TFloatField
+      FieldName = 'WT'
+      Origin = 'WT'
+    end
+    object qryStonesSTONE_TYPE: TStringField
+      FieldName = 'STONE_TYPE'
+      Origin = 'STONE_TYPE'
+      Size = 30
+    end
+    object qryStonesSTONE_WEIGHT_UNIT: TStringField
+      FieldName = 'STONE_WEIGHT_UNIT'
+      Origin = 'STONE_WEIGHT_UNIT'
+      FixedChar = True
+      Size = 1
+    end
   end
 end

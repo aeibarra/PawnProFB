@@ -236,9 +236,6 @@
         <DCCReference Include="SetupBarcodePrinter.pas">
             <Form>frmSetupBarcodePrinter</Form>
         </DCCReference>
-        <DCCReference Include="MaintenanceJTypes.pas">
-            <Form>frmMaintenanceJType</Form>
-        </DCCReference>
         <DCCReference Include="Entertems.pas">
             <Form>frmEnterItems</Form>
         </DCCReference>

@@ -75,8 +75,6 @@ type
     svgMain: TSVGIconImageCollection;
     vilMain24: TSVGIconVirtualImageList;
     qryPawnPay: TFDMemTable;
-    qryNextTicketNo: TADOQuery;
-    qryNextTicketNoLastKey: TIntegerField;
     qryTotalPaid: TADOQuery;
     qryTotalPaidTotalPaid: TFloatField;
     qryItemImages: TADOQuery;
@@ -85,7 +83,6 @@ type
     ConnFB: TFDConnection;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     qryDummyFB: TFDQuery;
-    fn_GetNextKey: TFDStoredProc;
     qryBackupSetings: TFDQuery;
     qryBackupSetingsBACKUP_PATH: TStringField;
     qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP: TBooleanField;
@@ -199,6 +196,24 @@ type
     qryPaymentsINTEREST_BALANCE: TFloatField;
     clnItemStatus: TFDMemTable;
     qryItemStatus: TFDQuery;
+    clnJGenders: TFDMemTable;
+    clnJMetals: TFDMemTable;
+    clnJStoneColors: TFDMemTable;
+    clnJStoneShapes: TFDMemTable;
+    clnJStyles: TFDMemTable;
+    clnJTypes: TFDMemTable;
+    clnJGendersJ_GENDER: TStringField;
+    clnJGendersJ_GENDER_DESC: TStringField;
+    clnJMetalsJ_METAL: TStringField;
+    clnJMetalsJ_METAL_DESC: TStringField;
+    clnJStoneColorsJ_STONE_COLOR: TStringField;
+    clnJStoneColorsJ_STONE_DESC: TStringField;
+    clnJStoneShapesJ_SHAPE: TStringField;
+    clnJStoneShapesJ_SHAPE_DESC: TStringField;
+    clnJStylesJ_STYLE: TStringField;
+    clnJStylesJ_STYLE_DESC: TStringField;
+    clnJTypesJ_TYPE: TStringField;
+    clnJTypesJ_TYPE_DESC: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -219,6 +234,8 @@ type
   private
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
+    procedure LoadLookupMemTables;
+    procedure LoadLookupMemTable(AMemTable: TFDMemTable; const ASQL: string);
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
@@ -230,7 +247,6 @@ type
     procedure ConfigureFBConnection;
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
     function TestFBConnection(out ErrorMsg: string): Boolean;
-    function GetNextKey(TableName: string): integer;
     procedure RefreshStoreQry;
     function GetBarcode(Key: integer): string;
     procedure CalcInterest(Amount: currency; var IntRate, IntAmount: extended);
@@ -256,6 +272,14 @@ type
     function CalcPawnDefaultDate(TransactionDate: TDateTime; PawnDefaultMonths: integer): TDateTime;
     function GetPawnMaturityDate(TransactionDate: TDateTime): TDateTime;
     procedure GetWeightUnits(cln: TClientDataSet);
+    procedure CopyMemTableData(Source: TDataSet; Target: TFDMemTable);
+    procedure GetJGenders(MemTable: TFDMemTable);
+    procedure GetJMetals(MemTable: TFDMemTable);
+    procedure GetJStoneColors(MemTable: TFDMemTable);
+    procedure GetJStoneShapes(MemTable: TFDMemTable);
+    procedure GetJStyles(MemTable: TFDMemTable);
+    procedure GetJTypes(MemTable: TFDMemTable);
+    procedure RefreshLookupMemTables;
     function GetWeightUnitAbbr(WeightUnit: string): string;
     procedure FillPawnStatusCombobox(cb: TRzComboBox; StatusToSelect: String);
     procedure SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
@@ -301,20 +325,13 @@ end;
 
 function TDM.GetNextTicketNo(TicketKey: string): integer;
 begin
-  qryNextTicketNo.Close;
-  qryNextTicketNo.Parameters.ParamByName('KeyName').Value := TicketKey;
-  qryNextTicketNo.Open;
+  if not SameText(TicketKey, PawnTicketNo) and
+     not SameText(TicketKey, LayawayTicketNo) then
+    raise Exception.CreateFmt('Unsupported TABLE_KEYS ticket name: %s', [TicketKey]);
 
-  Result := qryNextTicketNoLastKey.AsInteger + 1;
-
-  qryNextTicketNo.Close;
-end;
-
-function TDM.GetNextKey(TableName: string): integer;
-begin
-  fn_GetNextKey.Params.ParamByName('TABLENAME').Value := TableName;
-  fn_GetNextKey.ExecProc;
-  Result := fn_GetNextKey.Params.ParamByName('NEXTTABLEKEY').Value;
+  Result := OpenSQLStatementFB(Format(
+    'SELECT LAST_KEY FROM TABLE_KEYS WHERE TABLE_NAME = %s',
+    [QuotedStr(TicketKey)])) + 1;
 end;
 
 function ExistsFieldInTable(const TableName, FieldName: string): boolean;
@@ -413,8 +430,6 @@ begin
 //     if OpenSQLStatement('SELECT COUNT(*) FROM TransactionTypes WHERE TranType = ''L''') = 0 then
 //       ExecSQLStatement('INSERT INTO TransactionTypes (TranType, TranTypeDesc) VALUES(''L'', ''Layaway'');');
 //
-//    if OpenSQLStatement('SELECT COUNT(*) FROM TableKeys WHERE TableName = ''LayawayTicketNo''') = 0 then
-//       ExecSQLStatement('INSERT INTO TableKeys (TableName, LastKey) VALUES(''LayawayTicketNo'', 0);');
 //
 //    if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''L''') = 0 then
 //       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''L'', ''Layaway'');');
@@ -596,6 +611,59 @@ begin
   cln.Data := clnWeigthUnits.Data;
 end;
 
+// Generic in-memory copy. Source is any TDataSet (TFDMemTable, TFDQuery, ...);
+// Target is a TFDMemTable. If Target has persistent fields, structure is
+// preserved (just rows replaced); if not, structure is copied from source.
+procedure TDM.CopyMemTableData(Source: TDataSet; Target: TFDMemTable);
+begin
+  if not Assigned(Source) or not Assigned(Target) then
+    Exit;
+
+  Target.DisableControls;
+  try
+    Target.Close;
+    if Target.FieldCount > 0 then
+    begin
+      Target.CreateDataSet;
+      Target.CopyDataSet(Source, [coRestart, coAppend]);
+    end
+    else
+      Target.CopyDataSet(Source, [coStructure, coRestart, coAppend]);
+  finally
+    Target.EnableControls;
+  end;
+end;
+
+procedure TDM.GetJGenders(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJGenders, MemTable);
+end;
+
+procedure TDM.GetJMetals(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJMetals, MemTable);
+end;
+
+procedure TDM.GetJStoneColors(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJStoneColors, MemTable);
+end;
+
+procedure TDM.GetJStoneShapes(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJStoneShapes, MemTable);
+end;
+
+procedure TDM.GetJStyles(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJStyles, MemTable);
+end;
+
+procedure TDM.GetJTypes(MemTable: TFDMemTable);
+begin
+  CopyMemTableData(clnJTypes, MemTable);
+end;
+
 procedure TDM.PopulateWeightUnits;
 begin
   clnWeigthUnits.Close;
@@ -612,6 +680,49 @@ begin
   clnWeigthUnits.Post;
 
 end;
+
+procedure TDM.LoadLookupMemTable(AMemTable: TFDMemTable; const ASQL: string);
+var
+  Qry: TFDQuery;
+begin
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := ConnFB;
+    Qry.SQL.Text := ASQL;
+    Qry.Open;
+    CopyMemTableData(Qry, AMemTable);
+  finally
+    Qry.Free;
+  end;
+end;
+
+procedure TDM.LoadLookupMemTables;
+begin
+  LoadLookupMemTable(clnJGenders,
+    'SELECT J_GENDER, J_GENDER_DESC FROM J_GENDERS ORDER BY J_GENDER_DESC');
+
+  LoadLookupMemTable(clnJMetals,
+    'SELECT J_METAL, J_METAL_DESC FROM J_METALS ORDER BY J_METAL_DESC');
+
+  LoadLookupMemTable(clnJStoneColors,
+    'SELECT J_STONE_COLOR, J_STONE_DESC FROM J_STONE_COLORS ORDER BY J_STONE_DESC');
+
+  LoadLookupMemTable(clnJStoneShapes,
+    'SELECT J_SHAPE, J_SHAPE_DESC FROM J_STONE_SHAPES ORDER BY J_SHAPE_DESC');
+
+  LoadLookupMemTable(clnJStyles,
+    'SELECT J_STYLE, J_STYLE_DESC FROM J_STYLES ORDER BY J_STYLE_DESC');
+
+  LoadLookupMemTable(clnJTypes,
+    'SELECT J_TYPE, J_TYPE_DESC FROM J_TYPES ORDER BY J_TYPE_DESC');
+end;
+
+procedure TDM.RefreshLookupMemTables;
+begin
+  LoadLookupMemTables;
+end;
+
+
 
 function TDM.GetConnectionStr: string;
 var
@@ -778,6 +889,8 @@ begin
   qryItemStatus.Open;
   clnItemStatus.CopyDataSet(qryItemStatus, [coStructure, coRestart, coAppend]);
   qryItemStatus.Close;
+
+  LoadLookupMemTables;
 
   RefreshStoreQry;
 
@@ -1256,7 +1369,10 @@ end;
 
 procedure TDM.SendMessageToRefreshPaymentDueDateText;
 begin
-  PostMessage(frmClients.Handle, sx_RefreshPaymentDueDateMesg, 0, 0);
+  if Assigned(frmClients) and
+     not (csDestroying in frmClients.ComponentState) and
+     frmClients.HandleAllocated then
+    PostMessage(frmClients.Handle, sx_RefreshPaymentDueDateMesg, 0, 0);
 end;
 
 procedure TDM.qryTransactionsAfterScroll(DataSet: TDataSet);
@@ -1426,8 +1542,8 @@ end;
 
 procedure TDM.clnSalesTranNewRecord(DataSet: TDataSet);
 begin
-  clnSalesTranTransactionNo.AsInteger := DM.GetNextKey('Transactions');
-  clnSalesTranTranTicketNo.AsInteger := DM.GetNextKey('SaleTicketNo');
+  clnSalesTranTransactionNo.Clear;
+  clnSalesTranTranTicketNo.Clear;
   clnSalesTranTranDate.AsDateTime := Now;
 //  qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
   clnSalesTranCustNo.AsInteger := 0;

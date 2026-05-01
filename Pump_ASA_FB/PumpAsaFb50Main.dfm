@@ -41,7 +41,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   end
   object btnGo: TButton
     Left = 8
-    Top = 245
+    Top = 249
     Width = 151
     Height = 34
     Caption = 'Start Pump'

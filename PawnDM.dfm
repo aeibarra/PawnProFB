@@ -1,7 +1,7 @@
 object DM: TDM
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Height = 1122
+  Height = 1097
   Width = 1736
   object ConnDB: TADOConnection
     ConnectionString = 
@@ -17,8 +17,8 @@ object DM: TDM
   end
   object DSCustomers: TDataSource
     DataSet = qryCustomers
-    Left = 565
-    Top = 824
+    Left = 559
+    Top = 823
   end
   object DSStates: TDataSource
     DataSet = qryStates
@@ -27,13 +27,13 @@ object DM: TDM
   end
   object DSTransactions: TDataSource
     DataSet = qryTransactions
-    Left = 425
-    Top = 824
+    Left = 422
+    Top = 823
   end
   object DSPayments: TDataSource
     DataSet = qryPayments
     Left = 697
-    Top = 824
+    Top = 823
   end
   object DSStore: TDataSource
     DataSet = qryStore
@@ -4509,8 +4509,8 @@ object DM: TDM
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 53
-    Top = 973
+    Left = 1316
+    Top = 760
     object clnWeigthUnitsWeigthUnitValue: TStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
@@ -4852,8 +4852,8 @@ object DM: TDM
     Width = 40
     Height = 40
     Size = 40
-    Left = 184
-    Top = 592
+    Left = 115
+    Top = 119
   end
   object svgMain: TSVGIconImageCollection
     SVGIconItems = <
@@ -7382,8 +7382,8 @@ object DM: TDM
           'inearGradient><circle cx="25" cy="15" r="3" fill="url(#y4DIm6YSk' +
           'RVXQC2YLIiGPh)"/></svg>'
       end>
-    Left = 104
-    Top = 591
+    Left = 35
+    Top = 118
   end
   object vilMain24: TSVGIconVirtualImageList
     Tag = 1
@@ -7642,8 +7642,8 @@ object DM: TDM
     Width = 32
     Height = 32
     Size = 32
-    Left = 180
-    Top = 650
+    Left = 111
+    Top = 177
   end
   object qryPawnPay: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -7655,28 +7655,6 @@ object DM: TDM
     UpdateOptions.AutoCommitUpdates = True
     Left = 496
     Top = 280
-  end
-  object qryNextTicketNo: TADOQuery
-    Connection = ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'KeyName'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      'select  LastKey'
-      'from TableKeys'
-      'where TableName = :KeyName')
-    Left = 917
-    Top = 199
-    object qryNextTicketNoLastKey: TIntegerField
-      FieldName = 'LastKey'
-    end
   end
   object qryTotalPaid: TADOQuery
     Connection = ConnDB
@@ -7733,8 +7711,8 @@ object DM: TDM
       'Password=masterkey'
       'DriverID=FB')
     LoginPrompt = False
-    Left = 59
-    Top = 762
+    Left = 58
+    Top = 760
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
     Left = 53
@@ -7743,29 +7721,7 @@ object DM: TDM
   object qryDummyFB: TFDQuery
     Connection = ConnFB
     Left = 169
-    Top = 762
-  end
-  object fn_GetNextKey: TFDStoredProc
-    Connection = ConnFB
-    StoredProcName = 'SP_GET_NEXT_KEY'
-    Left = 170
-    Top = 823
-    ParamData = <
-      item
-        Position = 1
-        Name = 'TABLENAME'
-        DataType = ftFixedChar
-        FDDataType = dtWideString
-        ParamType = ptInput
-        Size = 15
-      end
-      item
-        Position = 2
-        Name = 'NEXTTABLEKEY'
-        DataType = ftInteger
-        FDDataType = dtInt32
-        ParamType = ptOutput
-      end>
+    Top = 760
   end
   object qryBackupSetings: TFDQuery
     Connection = ConnFB
@@ -7776,7 +7732,7 @@ object DM: TDM
       '  BACKUP_IMAGES_PATH'
       'FROM BACKUP_SETTINGS;')
     Left = 275
-    Top = 762
+    Top = 760
     object qryBackupSetingsBACKUP_PATH: TStringField
       FieldName = 'BACKUP_PATH'
       Origin = 'BACKUP_PATH'
@@ -7814,7 +7770,7 @@ object DM: TDM
       'WHERE CUST_NO = :CUST_NO AND TRAN_TYPE IN ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
       'ORDER BY TRAN_STATUS, TRAN_DATE DESC, TRAN_TICKET_NO DESC')
     Left = 422
-    Top = 762
+    Top = 760
     ParamData = <
       item
         Name = 'CUST_NO'
@@ -7877,7 +7833,6 @@ object DM: TDM
       AutoGenerateValue = arAutoInc
       FieldName = 'TRANSACTION_NO'
       Origin = 'TRANSACTION_NO'
-      Required = True
     end
     object qryTransactionsCUST_NO: TIntegerField
       FieldName = 'CUST_NO'
@@ -7946,7 +7901,6 @@ object DM: TDM
     object qryTransactionsTRAN_CLOSE_REASON: TSmallintField
       FieldName = 'TRAN_CLOSE_REASON'
       Origin = 'TRAN_CLOSE_REASON'
-      Required = True
     end
     object qryTransactionsTRAN_SALES_TAX: TFloatField
       FieldName = 'TRAN_SALES_TAX'
@@ -8149,7 +8103,7 @@ object DM: TDM
       '   --SearchByPhone'
       'ORDER BY CUST_FIRST, CUST_LAST')
     Left = 559
-    Top = 762
+    Top = 759
     ParamData = <
       item
         Name = 'CUST_LAST'
@@ -8352,7 +8306,7 @@ object DM: TDM
       'WHERE TRANSACTION_NO = :TRANSACTION_NO'
       'ORDER BY PAYMENT_NO DESC')
     Left = 697
-    Top = 762
+    Top = 760
     ParamData = <
       item
         Name = 'TRANSACTION_NO'
@@ -8456,7 +8410,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 989
-    Top = 762
+    Top = 760
   end
   object qryItemStatus: TFDQuery
     Connection = ConnFB
@@ -8466,5 +8420,131 @@ object DM: TDM
       'ORDER BY STATUS_DESC')
     Left = 989
     Top = 824
+  end
+  object clnJGenders: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1494
+    Top = 629
+    object clnJGendersJ_GENDER: TStringField
+      FieldName = 'J_GENDER'
+      Required = True
+      Size = 1
+    end
+    object clnJGendersJ_GENDER_DESC: TStringField
+      FieldName = 'J_GENDER_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object clnJMetals: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1494
+    Top = 683
+    object clnJMetalsJ_METAL: TStringField
+      FieldName = 'J_METAL'
+      Required = True
+      Size = 1
+    end
+    object clnJMetalsJ_METAL_DESC: TStringField
+      FieldName = 'J_METAL_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object clnJStoneColors: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1494
+    Top = 736
+    object clnJStoneColorsJ_STONE_COLOR: TStringField
+      FieldName = 'J_STONE_COLOR'
+      Required = True
+      Size = 1
+    end
+    object clnJStoneColorsJ_STONE_DESC: TStringField
+      FieldName = 'J_STONE_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object clnJStoneShapes: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1567
+    Top = 629
+    object clnJStoneShapesJ_SHAPE: TStringField
+      FieldName = 'J_SHAPE'
+      Required = True
+      Size = 1
+    end
+    object clnJStoneShapesJ_SHAPE_DESC: TStringField
+      FieldName = 'J_SHAPE_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object clnJStyles: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1567
+    Top = 683
+    object clnJStylesJ_STYLE: TStringField
+      FieldName = 'J_STYLE'
+      Required = True
+      Size = 1
+    end
+    object clnJStylesJ_STYLE_DESC: TStringField
+      FieldName = 'J_STYLE_DESC'
+      Required = True
+      Size = 30
+    end
+  end
+  object clnJTypes: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 1567
+    Top = 736
+    object clnJTypesJ_TYPE: TStringField
+      FieldName = 'J_TYPE'
+      Required = True
+      Size = 1
+    end
+    object clnJTypesJ_TYPE_DESC: TStringField
+      FieldName = 'J_TYPE_DESC'
+      Required = True
+      Size = 30
+    end
   end
 end

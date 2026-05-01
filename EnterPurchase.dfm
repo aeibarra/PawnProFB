@@ -141,18 +141,4 @@ object frmEnterPurchase: TfrmEnterPurchase
       OnClick = btnCancelClick
     end
   end
-  object qryNextTicket: TADODataSet
-    Connection = DM.ConnDB
-    CommandText = 'select  *'#13#10'from TableKeys'#13#10'where TableName = '#39'PawnTicketNo'#39
-    Parameters = <>
-    Left = 269
-    Top = 122
-    object qryNextTicketTableName: TStringField
-      FieldName = 'TableName'
-      Size = 15
-    end
-    object qryNextTicketLastKey: TIntegerField
-      FieldName = 'LastKey'
-    end
-  end
 end

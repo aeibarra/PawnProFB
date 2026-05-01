@@ -22,7 +22,6 @@ uses
   EditMaintenance in 'EditMaintenance.pas' {frmEditMaintenance},
   EnterStoneInfo in 'EnterStoneInfo.pas' {frmEnterStoneInfo},
   SetupBarcodePrinter in 'SetupBarcodePrinter.pas' {frmSetupBarcodePrinter},
-  MaintenanceJTypes in 'MaintenanceJTypes.pas' {frmMaintenanceJType},
   Entertems in 'Entertems.pas' {frmEnterItems},
   EnterPawnStoneInfo in 'EnterPawnStoneInfo.pas' {frmEnterPawnStoneInfo},
   BackupDB in 'BackupDB.pas' {frmBackupDB},

@@ -5,16 +5,16 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, StrUtils, Graphics, Controls, Forms, Dialogs, Db,
   StdCtrls, Buttons, DBCtrls, Mask, System.UITypes, DateUtils, Variants,
-  ADODB, Grids, DBGrids, ExtCtrls,  RzButton, RzEdit, RzDBEdit, Vcl.Menus,
-  RzCommon, RzLabel, Datasnap.DBClient;
+  Grids, DBGrids, ExtCtrls,  RzButton, RzEdit, RzDBEdit, Vcl.Menus,
+  RzCommon, RzLabel, Datasnap.DBClient, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TfrmEnterTransaction = class(TForm)
     gbBottom: TGroupBox;
     btnCancel: TBitBtn;
-    qryNextTicket: TADODataSet;
-    qryNextTicketTableName: TStringField;
-    qryNextTicketLastKey: TIntegerField;
     gbTop: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -30,45 +30,7 @@ type
     Label7: TLabel;
     Label8: TLabel;
     DBEdit1: TDBEdit;
-    qryInvItems: TADOQuery;
     dsInvItems: TDataSource;
-    qryTypes: TADOQuery;
-    qryTypesJType: TStringField;
-    qryTypesJTypeDesc: TStringField;
-    qryStyles: TADOQuery;
-    qryStylesJStyle: TStringField;
-    qryStylesJStyleDesc: TStringField;
-    qryMetal: TADOQuery;
-    qryMetalJMetal: TStringField;
-    qryMetalJMetalDesc: TStringField;
-    qryCategories: TADOQuery;
-    qryCategoriesInvCatNo: TAutoIncField;
-    qryCategoriesInvCategory: TStringField;
-    qryInsItems: TADOQuery;
-    qryInvItems__: TADOQuery;
-    qryInvItems__InvItemNo: TIntegerField;
-    qryInvItems__InvItemBarcode: TStringField;
-    qryInvItems__InvCatNo: TIntegerField;
-    qryInvItems__JType: TStringField;
-    qryInvItems__JStyle: TStringField;
-    qryInvItems__JMetal: TStringField;
-    qryInvItems__InvItemCount: TIntegerField;
-    qryInvItems__Note: TStringField;
-    qryInvItems__SizeLength: TFloatField;
-    qryInvItems__Weight: TFloatField;
-    qryInvItems__KT: TFloatField;
-    qryInvItems__Created: TDateTimeField;
-    qryInvItems__UnitCost: TBCDField;
-    qryInvItems__UnitPrice: TBCDField;
-    qryInvItems__InvItemStatus: TStringField;
-    qryInvItems__TransactionNo: TIntegerField;
-    qryInvItems__InvOriginalItemNo: TIntegerField;
-    qryInvItems__InvItemBrand: TStringField;
-    qryInvItems__OwnerAppNumber: TStringField;
-    qryInvItems__ModelNumber: TStringField;
-    qryInvItems__SerialNumber: TStringField;
-    qryInvItems__Gender: TStringField;
-    qryInvItems__Description: TStringField;
     pnSelectItemsToCopy: TPanel;
     Panel2: TPanel;
     btnCheckAll: TButton;
@@ -76,11 +38,6 @@ type
     Panel3: TPanel;
     Label9: TLabel;
     dbGridItems: TDBGrid;
-    qryInvItems__InvCategory: TStringField;
-    qryInvItems__JStyleDesc: TStringField;
-    qryInvItems__JTypeDesc: TStringField;
-    qryInvItems__JMetalDesc: TStringField;
-    SpeedButton2: TSpeedButton;
     btnSave: TRzBitBtn;
     edPawnTranDate: TRzDBDateTimeEdit;
     edMaturityDate: TRzDBDateTimeEdit;
@@ -119,35 +76,50 @@ type
     clnItemsToSelectJMetalDesc: TStringField;
     clnItemsToSelectInvItemNo: TIntegerField;
     clnItemsToSelectInvCategory: TStringField;
-    qryInvItemsInvItemNo: TIntegerField;
-    qryInvItemsInvItemBarcode: TStringField;
-    qryInvItemsInvCatNo: TIntegerField;
-    qryInvItemsJType: TStringField;
-    qryInvItemsJStyle: TStringField;
-    qryInvItemsJMetal: TStringField;
-    qryInvItemsInvItemCount: TIntegerField;
-    qryInvItemsNote: TStringField;
-    qryInvItemsSizeLength: TFloatField;
-    qryInvItemsWeight: TFloatField;
-    qryInvItemsKT: TFloatField;
-    qryInvItemsCreated: TDateTimeField;
-    qryInvItemsUnitCost: TBCDField;
-    qryInvItemsUnitPrice: TBCDField;
-    qryInvItemsInvItemStatus: TStringField;
-    qryInvItemsTransactionNo: TIntegerField;
-    qryInvItemsInvOriginalItemNo: TIntegerField;
-    qryInvItemsInvItemBrand: TStringField;
-    qryInvItemsOwnerAppNumber: TStringField;
-    qryInvItemsModelNumber: TStringField;
-    qryInvItemsSerialNumber: TStringField;
-    qryInvItemsGender: TStringField;
-    qryInvItemsDescription: TStringField;
-    qryInvItemsInvCategory: TStringField;
-    qryInvItemsJStyleDesc: TStringField;
-    qryInvItemsJTypeDesc: TStringField;
-    qryInvItemsJMetalDesc: TStringField;
     clnItemsToSelectNote: TStringField;
     lblUnderAge: TLabel;
+    qryInvItems: TFDQuery;
+    qryInvItemsINV_ITEM_NO: TIntegerField;
+    qryInvItemsINV_ITEM_BARCODE: TStringField;
+    qryInvItemsINV_CAT_NO: TIntegerField;
+    qryInvItemsJ_TYPE: TStringField;
+    qryInvItemsJ_STYLE: TStringField;
+    qryInvItemsJ_METAL: TStringField;
+    qryInvItemsINV_ITEM_COUNT: TIntegerField;
+    qryInvItemsNOTE: TStringField;
+    qryInvItemsSIZE_LENGTH: TFloatField;
+    qryInvItemsWEIGHT: TFloatField;
+    qryInvItemsKT: TFloatField;
+    qryInvItemsCREATED: TSQLTimeStampField;
+    qryInvItemsUNIT_COST: TFMTBCDField;
+    qryInvItemsUNIT_PRICE: TFMTBCDField;
+    qryInvItemsINV_ITEM_STATUS: TStringField;
+    qryInvItemsTRANSACTION_NO: TIntegerField;
+    qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField;
+    qryInvItemsINV_ITEM_BRAND: TStringField;
+    qryInvItemsSERIAL_NUMBER: TStringField;
+    qryInvItemsOWNER_APP_NUMBER: TStringField;
+    qryInvItemsMODEL_NUMBER: TStringField;
+    qryInvItemsGENDER: TStringField;
+    qryInvItemsDESCRIPTION: TStringField;
+    qryInvItemsWEIGHT_UNIT: TStringField;
+    qryInvItemsPAWNED_DATE: TDateField;
+    qryInvItemsPURCHASE_DATE: TDateField;
+    qryInvItemsREDEEMED_DATE: TDateField;
+    qryInvItemsDEFAULTED_DATE: TDateField;
+    qryInvItemsMELTED_DATE: TDateField;
+    qryInvItemsFORSALE_DATE: TDateField;
+    qryInvItemsSOLD_DATE: TDateField;
+    qryInvItemsLAYAWAY_DATE: TDateField;
+    qryInvItemsINV_CATEGORY: TStringField;
+    qryInvItemsJ_STYLE_DESC: TStringField;
+    qryInvItemsJ_TYPE_DESC: TStringField;
+    qryInvItemsJ_METAL_DESC: TStringField;
+    qryInsItems: TFDQuery;
+    qryNextTicket: TFDQuery;
+    qryNextTicketTABLE_NAME: TStringField;
+    qryNextTicketLAST_KEY: TIntegerField;
+    btnViewInLargeGrid: TRzToolButton;
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -160,15 +132,14 @@ type
     procedure btnCheckAllClick(Sender: TObject);
     procedure btnClearAllClick(Sender: TObject);
     procedure edPawnAmountExit(Sender: TObject);
-    procedure qryInvItems__CalcFields(DataSet: TDataSet);
     procedure dbGridItemsTitleClick(Column: TColumn);
-    procedure SpeedButton2Click(Sender: TObject);
     procedure First1Click(Sender: TObject);
     procedure Second1Click(Sender: TObject);
     procedure chkShowOnlyInTranClick(Sender: TObject);
     procedure btnGetPawnAddingAllItemCostClick(Sender: TObject);
     procedure edInterestExit(Sender: TObject);
     procedure edInterestChange(Sender: TObject);
+    procedure btnViewInLargeGridClick(Sender: TObject);
   private
     LastIndexUsed: string;
     IntChanged: boolean;
@@ -200,21 +171,6 @@ uses PawnDM, PawnGlobal, ItemsToCopyLargeGrid, GLbUtils, SearchClient;
 function TfrmEnterTransaction.InItemList(ItemNo: integer): boolean;
 begin
   Result := SelectedItemList.IndexOf(IntToStr(ItemNo)) >= 0;
-end;
-
-procedure TfrmEnterTransaction.qryInvItems__CalcFields(DataSet: TDataSet);
-begin
-{  if qryTypes.Locate('JType', qryInvItemsJType.AsString, []) then
-    qryInvItemscType.AsString := qryTypesJTypeDesc.AsString;
-
-  if qryStyles.Locate('JStyle', qryInvItemsJStyle.AsString, []) then
-     qryInvItemscStyle.AsString := qryStylesJStyleDesc.AsString;
-
-  if qryMetal.Locate('JMetal', qryInvItemsJMetal.AsString, []) then
-    qryInvItemscMetal.AsString := qryMetalJMetalDesc.AsString;
-
-  if qryCategories.Locate('InvCatNo', qryInvItemsInvCatNo.AsInteger, []) then
-    qryInvItemscCatName.AsString := qryCategoriesInvCategory.AsString;}
 end;
 
 procedure TfrmEnterTransaction.AddToItemList(ItemNo: integer);
@@ -255,19 +211,18 @@ begin
       FilterByTransactionNoVar := FilterByTransactionNo;
 
     qryInvItems.Close;
-    qryInvItems.Parameters.ParamByName('TransactionNo').Value := FilterByTransactionNoVar;
-    qryInvItems.Parameters.ParamByName('CustNo').Value := CustNo;
+    qryInvItems.Params.ParamByName('TRANSACTION_NO').Value := FilterByTransactionNoVar;
+    qryInvItems.Params.ParamByName('CUST_NO').AsInteger := CustNo;
     qryInvItems.Open;
-//    qryInvItems.Sort := 'Description';
 
     //Load ClientDataSet
     while not qryInvItems.Eof do
       begin
         //Check if the item does not exits. We add it
-        if not clnItemsToSelect.Locate('Description;Weight;SizeLength;JStyleDesc;JTypeDesc;JMetalDesc',
-                       VarArrayOf([qryInvItemsDescription.AsString, qryInvItemsWeight.AsFloat,
-                                   qryInvItemsSizeLength.AsFloat, qryInvItemsJStyleDesc.AsString,
-                                  qryInvItemsJTypeDesc.AsString, qryInvItemsJMetalDesc.AsString]), []) then
+        if not clnItemsToSelect.Locate('DESCRIPTION;WEIGHT;SIZE_LENGTH;J_STYLE_DESC;J_TYPE_DESC;J_METAL_DESC',
+                       VarArrayOf([qryInvItemsDESCRIPTION.AsString, qryInvItemsWEIGHT.AsFloat,
+                                   qryInvItemsSIZE_LENGTH.AsFloat, qryInvItemsJ_STYLE_DESC.AsString,
+                                  qryInvItemsJ_TYPE_DESC.AsString, qryInvItemsJ_METAL_DESC.AsString]), []) then
           begin
             clnItemsToSelect.Append;
 
@@ -302,7 +257,7 @@ function TfrmEnterTransaction.GetLastTicketNo: integer;
 begin
   qryNextTicket.Close;
   qryNextTicket.Open;
-  Result := qryNextTicketLastKey.AsInteger;
+  Result := qryNextTicketLAST_KEY.AsInteger;
   qryNextTicket.Close;
 end;
 
@@ -314,11 +269,6 @@ begin
 //      Height := 512;
 //      Width := 643;
       pnSelectItemsToCopy.Visible := true;
-
-      qryTypes.Open;
-      qryStyles.Open;
-      qryMetal.Open;
-      qryCategories.Open;
 
       OpenLookupItemQry;
 
@@ -363,8 +313,11 @@ var
   NewInvItemNo: integer;
   IntRate, IntAmount: Extended;
   AskIfUpdateTicketNo: boolean;
+  StoneQry: TFDQuery;
+  StartedFBTrans: Boolean;
 begin
   AskIfUpdateTicketNo := false;
+  StartedFBTrans := False;
   btnSave.SetFocus;
 
   if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
@@ -374,7 +327,11 @@ begin
       exit;
     end;
 
-  DM.ConnDB.BeginTrans;
+  if not DM.ConnFB.InTransaction then
+  begin
+    DM.ConnFB.StartTransaction;
+    StartedFBTrans := True;
+  end;
   try
    if NewRow then
      begin
@@ -394,8 +351,8 @@ begin
        begin
          if MessageDlg('Warning!!! The ticket number you entered is lower then the previous one. Continue?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
            begin
-             if DM.ConnDB.Connected and DM.ConnDB.InTransaction then
-               DM.ConnDB.RollbackTrans;
+             if StartedFBTrans and DM.ConnFB.InTransaction then
+               DM.ConnFB.Rollback;
 
              exit;
            end;
@@ -411,7 +368,7 @@ begin
        if not AskIfUpdateTicketNo or (AskIfUpdateTicketNo and (MessageDlg('Update Ticket Number?', mtConfirmation, [mbYes, mbNo], 0) = mrYes)) then
          begin
            qryNextTicket.Edit;
-           qryNextTicketLastKey.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
+           qryNextTicketLAST_KEY.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
            qryNextTicket.Post;
          end;
 
@@ -422,6 +379,15 @@ begin
 
     if clnItemsToSelect.Active then
       begin
+        StoneQry := TFDQuery.Create(nil);
+        try
+          StoneQry.Connection := DM.ConnFB;
+          StoneQry.SQL.Text :=
+            'INSERT INTO STONES (INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE) ' +
+            'SELECT :NEW_INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE ' +
+            'FROM STONES ' +
+            'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO';
+
         clnItemsToSelect.DisableControls;
         try
           clnItemsToSelect.First;
@@ -429,35 +395,37 @@ begin
             begin
               if SelectedItemList.IndexOf(clnItemsToSelectInvItemNo.AsString) >= 0 then
                 begin
-                  NewInvItemNo := DM.GetNextKey('InventoryItems');
-                  qryInsItems.Parameters.ParamByName('InvItemNo').Value := NewInvItemNo;
-                  qryInsItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
-                  qryInsItems.Parameters.ParamByName('InvItemBarcode').Value := DM.GetBarcode(NewInvItemNo);
-                  qryInsItems.Parameters.ParamByName('InvCatNo').Value :=  clnItemsToSelectInvCatNo.AsInteger;
-                  qryInsItems.Parameters.ParamByName('JType').Value := clnItemsToSelectJType.Value;
-                  qryInsItems.Parameters.ParamByName('JStyle').Value := clnItemsToSelectJStyle.Value;
-                  qryInsItems.Parameters.ParamByName('JMetal').Value := clnItemsToSelectJMetal.AsString;
-                  qryInsItems.Parameters.ParamByName('InvItemCount').Value := clnItemsToSelectInvItemCount.Value;
-                  qryInsItems.Parameters.ParamByName('Note').Value := clnItemsToSelectNote.Value;
-                  qryInsItems.Parameters.ParamByName('SizeLength').Value := clnItemsToSelectSizeLength.Value;
-                  qryInsItems.Parameters.ParamByName('Weight').Value := clnItemsToSelectWeight.Value;
-                  qryInsItems.Parameters.ParamByName('KT').Value := clnItemsToSelectKT.Value;
-                  qryInsItems.Parameters.ParamByName('InvItemStatus').Value := 'P';
-                  qryInsItems.Parameters.ParamByName('InvItemBrand').Value := clnItemsToSelectInvItemBrand.Value;
+                  qryInsItems.Close;
+                  qryInsItems.Params.ParamByName('TRANSACTION_NO').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+                  qryInsItems.Params.ParamByName('INV_CAT_NO').Value := clnItemsToSelectInvCatNo.AsInteger;
+                  qryInsItems.Params.ParamByName('J_TYPE').Value := clnItemsToSelectJType.Value;
+                  qryInsItems.Params.ParamByName('J_STYLE').Value := clnItemsToSelectJStyle.Value;
+                  qryInsItems.Params.ParamByName('J_METAL').Value := clnItemsToSelectJMetal.AsString;
+                  qryInsItems.Params.ParamByName('INV_ITEM_COUNT').Value := clnItemsToSelectInvItemCount.Value;
+                  qryInsItems.Params.ParamByName('NOTE').Value := clnItemsToSelectNote.Value;
+                  qryInsItems.Params.ParamByName('SIZE_LENGTH').Value := clnItemsToSelectSizeLength.Value;
+                  qryInsItems.Params.ParamByName('WEIGHT').Value := clnItemsToSelectWeight.Value;
+                  qryInsItems.Params.ParamByName('KT').Value := clnItemsToSelectKT.Value;
+                  qryInsItems.Params.ParamByName('INV_ITEM_STATUS').Value := 'P';
+                  qryInsItems.Params.ParamByName('INV_ITEM_BRAND').Value := clnItemsToSelectInvItemBrand.Value;
 
-                  qryInsItems.Parameters.ParamByName('SerialNumber').Value := clnItemsToSelectSerialNumber.Value;
-                  qryInsItems.Parameters.ParamByName('OwnerAppNumber').Value := clnItemsToSelectOwnerAppNumber.Value;
-                  qryInsItems.Parameters.ParamByName('ModelNumber').Value := clnItemsToSelectModelNumber.Value;
-                  qryInsItems.Parameters.ParamByName('Description').Value := clnItemsToSelectDescription.Value;
-                  qryInsItems.Parameters.ParamByName('Gender').Value := clnItemsToSelectGender.Value;
+                  qryInsItems.Params.ParamByName('SERIAL_NUMBER').Value := clnItemsToSelectSerialNumber.Value;
+                  qryInsItems.Params.ParamByName('OWNER_APP_NUMBER').Value := clnItemsToSelectOwnerAppNumber.Value;
+                  qryInsItems.Params.ParamByName('MODEL_NUMBER').Value := clnItemsToSelectModelNumber.Value;
+                  qryInsItems.Params.ParamByName('DESCRIPTION').Value := clnItemsToSelectDescription.Value;
+                  qryInsItems.Params.ParamByName('GENDER').Value := clnItemsToSelectGender.Value;
 
-                  qryInsItems.ExecSQL;
+                  qryInsItems.Open;
+                  NewInvItemNo := qryInsItems.FieldByName('INV_ITEM_NO').AsInteger;
+                  qryInsItems.Close;
 
-                  DM.ConnDB.Execute(
-                    'INSERT INTO Stones (InvItemNo, StoneNumber, StoneShape, StoneColor, CT, WT, StoneType) ' +
-                    '             SELECT ' + IntToStr(NewInvItemNo) + ', StoneNumber, StoneShape, StoneColor, CT, WT, StoneType ' +
-                    '             FROM Stones  ' +
-                    '             WHERE InvItemNo = ' + clnItemsToSelectInvItemNo.AsString);
+                  ExecSQLStatementFB(Format(
+                    'UPDATE INVENTORY_ITEMS SET INV_ITEM_BARCODE = %s WHERE INV_ITEM_NO = %d',
+                    [QuotedStr(DM.GetBarcode(NewInvItemNo)), NewInvItemNo]));
+
+                  StoneQry.Params.ParamByName('NEW_INV_ITEM_NO').AsInteger := NewInvItemNo;
+                  StoneQry.Params.ParamByName('OLD_INV_ITEM_NO').AsInteger := clnItemsToSelectInvItemNo.AsInteger;
+                  StoneQry.ExecSQL;
                 end;
 
               clnItemsToSelect.Next;
@@ -465,14 +433,18 @@ begin
         finally
           clnItemsToSelect.EnableControls;
         end;
+        finally
+          StoneQry.Free;
+        end;
       end;
 
-    DM.ConnDB.CommitTrans;
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Commit;
     Application.ProcessMessages;
     DM.qryTransactions.Refresh;
   except
-    if DM.ConnDB.InTransaction then
-      DM.ConnDB.RollbackTrans;
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Rollback;
     DM.qryTransactions.Refresh;
     Raise;
   end;
@@ -613,6 +585,17 @@ begin
   dbGridItems.Invalidate;
 end;
 
+procedure TfrmEnterTransaction.btnViewInLargeGridClick(Sender: TObject);
+begin
+  frmItemsToCopyLargeGrid := TfrmItemsToCopyLargeGrid.Create(Self);
+  try
+    frmItemsToCopyLargeGrid.ShowModal;
+    dbGridItems.Invalidate;
+  finally
+    frmItemsToCopyLargeGrid.Free;
+  end;
+end;
+
 procedure TfrmEnterTransaction.btnCheckAllClick(Sender: TObject);
 begin
   CheckAllItems;
@@ -664,17 +647,6 @@ begin
 
       DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.CalcNextInt(Amount, (DM.qryTransactionsTRAN_INTEREST.AsFloat / 100.00), MonthSinceLastPayment);
     end;
-end;
-
-procedure TfrmEnterTransaction.SpeedButton2Click(Sender: TObject);
-begin
-  frmItemsToCopyLargeGrid := TfrmItemsToCopyLargeGrid.Create(Self);
-  try
-    frmItemsToCopyLargeGrid.ShowModal;
-    dbGridItems.Invalidate; 
-  finally
-    frmItemsToCopyLargeGrid.Free;
-  end;
 end;
 
 end.

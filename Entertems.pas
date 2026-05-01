@@ -4,61 +4,28 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, DBCtrls, ExtCtrls, Mask, ADODB, DB, Grids,
+  Dialogs, StdCtrls, Buttons, DBCtrls, ExtCtrls, Mask, DB, Grids,
   DBGrids, DBClient, Provider, RzButton, System.UITypes, RzCmboBx, RzDBCmbo,
-  RzPanel, RzRadGrp, RzDBRGrp;
+  RzPanel, RzRadGrp, RzDBRGrp, FireDAC.Stan.Intf, FireDAC.Stan.Param,
+  FireDAC.Phys.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TfrmEnterItems = class(TForm)
     GroupBox1: TGroupBox;
     btnCancel: TBitBtn;
-    qryTypes: TADOQuery;
-    qryTypesJType: TStringField;
-    qryTypesJTypeDesc: TStringField;
-    qryStyles: TADOQuery;
-    qryStylesJStyle: TStringField;
-    qryStylesJStyleDesc: TStringField;
-    qryMetal: TADOQuery;
-    qryMetalJMetal: TStringField;
-    qryMetalJMetalDesc: TStringField;
     dsTypes: TDataSource;
     dsStyles: TDataSource;
     dsMetal: TDataSource;
-    qryCategories: TADOQuery;
-    qryCategoriesInvCatNo: TAutoIncField;
-    qryCategoriesInvCategory: TStringField;
+    qryCategories: TFDQuery;
+    qryCategoriesINV_CAT_NO: TIntegerField;
+    qryCategoriesINV_CATEGORY: TStringField;
     dsInvItems: TDataSource;
     dsCategories: TDataSource;
-    qryBrands: TADODataSet;
-    qryBrandsInvItemBrand: TStringField;
-    qryStones: TADOQuery;
-    qryStonesStoneNo: TAutoIncField;
-    qryStonesInvItemNo: TIntegerField;
-    qryStonesStoneNumber: TIntegerField;
-    qryStonesStoneShape: TStringField;
-    qryStonesStoneColor: TStringField;
-    qryStonesCT: TFloatField;
-    qryStonesWT: TFloatField;
-    qryStonesStoneType: TStringField;
-    qryStoneShapes: TADOQuery;
-    qryStoneShapesJShape: TStringField;
-    qryStoneShapesJShapeDesc: TStringField;
-    qryStoneColors: TADOQuery;
-    qryStoneColorsJStoneColor: TStringField;
-    qryStoneColorsJStoneDesc: TStringField;
+    qryBrands: TFDQuery;
+    qryBrandsINV_ITEM_BRAND: TStringField;
     dsStones: TDataSource;
-    prvStones: TDataSetProvider;
-    clnStones: TClientDataSet;
-    clnStonescShape: TStringField;
-    clnStonescColor: TStringField;
-    clnStonesStoneNo: TAutoIncField;
-    clnStonesInvItemNo: TIntegerField;
-    clnStonesStoneNumber: TIntegerField;
-    clnStonesStoneShape: TStringField;
-    clnStonesStoneColor: TStringField;
-    clnStonesCT: TFloatField;
-    clnStonesWT: TFloatField;
-    clnStonesStoneType: TStringField;
     btnSave: TRzBitBtn;
     GroupBox2: TGroupBox;
     Label1: TLabel;
@@ -108,8 +75,20 @@ type
     cbWeightUnit: TDBLookupComboBox;
     clnWeigthUnitsWeigthUnitValue: TStringField;
     clnWeigthUnitsWeightUnit: TStringField;
-    qryStonesStoneWeightUnit: TStringField;
-    clnStonesStoneWeightUnit: TStringField;
+    updStones: TFDUpdateSQL;
+    qryStones: TFDQuery;
+    qryStonesSTONE_NO: TIntegerField;
+    qryStonesINV_ITEM_NO: TIntegerField;
+    qryStonesSTONE_NUMBER: TIntegerField;
+    qryStonesSTONE_SHAPE: TStringField;
+    qryStonesSTONE_COLOR: TStringField;
+    qryStonesCT: TFloatField;
+    qryStonesWT: TFloatField;
+    qryStonesSTONE_TYPE: TStringField;
+    qryStonesSTONE_WEIGHT_UNIT: TStringField;
+    qryStonescShape: TStringField;
+    qryStonescColor: TStringField;
+    DBText1: TDBText;
     procedure FormShow(Sender: TObject);
     procedure clnStonesCalcFields(DataSet: TDataSet);
     procedure clnStonesNewRecord(DataSet: TDataSet);
@@ -141,23 +120,23 @@ begin
 
   edItemDesc.SetFocus;
 
+  dsTypes.DataSet := DM.clnJTypes;
+  dsStyles.DataSet := DM.clnJStyles;
+  dsMetal.DataSet := DM.clnJMetals;
+
+  qryBrands.Close;
   qryBrands.Open;
   cbBrand.Items.Clear;
   while not qryBrands.Eof do
     begin
-      if trim(qryBrandsInvItemBrand.AsString) <> '' then
-        cbBrand.Items.Add(qryBrandsInvItemBrand.AsString);
+      if trim(qryBrandsINV_ITEM_BRAND.AsString) <> '' then
+        cbBrand.Items.Add(qryBrandsINV_ITEM_BRAND.AsString);
       qryBrands.Next;
     end;
   qryBrands.Close;
 
-  qryTypes.Open;
-  qryStyles.Open;
-  qryMetal.Open;
+  qryCategories.Close;
   qryCategories.Open;
-
-  qryStoneShapes.Open;
-  qryStoneColors.Open;
 
   if NewRow then
     begin
@@ -168,29 +147,29 @@ begin
       frmClients.qryInvItems.Edit;
     end;
 
-  clnStones.Params.ParamByName('InvItemNo').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
-  clnStones.Open;
+  qryStones.Params.ParamByName('INV_ITEM_NO').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
+  qryStones.Open;
 
   DM.GetWeightUnits(clnWeigthUnits);
 end;
 
 procedure TfrmEnterItems.clnStonesCalcFields(DataSet: TDataSet);
 begin
-  if qryStoneShapes.Locate('JShape', clnStonesStoneShape.AsString, []) then
-    clnStonescShape.AsString := qryStoneShapesJShapeDesc.AsString;
-  if qryStoneColors.Locate('JStoneColor', clnStonesStoneColor.AsString, []) then
-    clnStonescColor.AsString := qryStoneColorsJStoneDesc.AsString;
+  if DM.clnJStoneShapes.Locate('J_SHAPE', qryStonesSTONE_SHAPE.AsString, []) then
+    qryStonescShape.AsString := DM.clnJStoneShapesJ_SHAPE_DESC.AsString;
+  if DM.clnJStoneColors.Locate('J_STONE_COLOR', qryStonesSTONE_COLOR.AsString, []) then
+    qryStonescColor.AsString := DM.clnJStoneColorsJ_STONE_DESC.AsString;
 end;
 
 procedure TfrmEnterItems.clnStonesNewRecord(DataSet: TDataSet);
 begin
-  clnStonesInvItemNo.AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
-  clnStonesStoneWeightUnit.AsString := DefaultWeightMeasureUnit;
+  qryStonesINV_ITEM_NO.AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
+  qryStonesSTONE_WEIGHT_UNIT.AsString := DefaultWeightMeasureUnit;
 end;
 
 procedure TfrmEnterItems.btnRemoveStoneClick(Sender: TObject);
 begin
-  clnStones.Delete;
+  qryStones.Delete;
 end;
 
 procedure TfrmEnterItems.btnAddStoneClick(Sender: TObject);
@@ -216,6 +195,8 @@ begin
 end;
 
 procedure TfrmEnterItems.btnSaveClick(Sender: TObject);
+var
+  StoneNeedPosting: boolean;
 begin
   if frmClients.qryInvItemsINV_CAT_NO.IsNull then
     begin
@@ -224,14 +205,42 @@ begin
     end;
 
   frmClients.qryInvItems.Post;
-  clnStones.ApplyUpdates(0);
 
-  if trim(frmClients.qryInvItems.FieldByName('InvItemBarcode').AsString) = '' then
+  StoneNeedPosting := (NewRow and (qryStones.RecordCount > 0)) or (not NewRow and qryStones.UpdatesPending);
+
+  if StoneNeedPosting then
     begin
-      frmClients.qryInvItems.Edit;
-      frmClients.qryInvItems.FieldByName('InvItemBarcode').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
-      frmClients.qryInvItems.Post;
+      qryStones.DisableControls;
+      try
+        qryStones.First;
+        while not qryStones.Eof do
+        begin
+          if (qryStonesINV_ITEM_NO.AsInteger <= 0) or qryStonesINV_ITEM_NO.IsNull then
+            begin
+              qryStones.Edit;
+              qryStonesINV_ITEM_NO.AsInteger := frmClients.qryInvItems.FieldByName('INV_ITEM_NO').AsInteger;
+              qryStones.Post;
+            end;
+
+          qryStones.Next;
+        end;
+
+      finally
+        qryStones.EnableControls;
+      end;
+
+      qryStones.ApplyUpdates(0);
+      qryStones.CommitUpdates;
     end;
+
+
+
+//  if trim(frmClients.qryInvItems.FieldByName('INV_ITEM_BARCODE').AsString) = '' then
+//    begin
+//      frmClients.qryInvItems.Edit;
+//      frmClients.qryInvItems.FieldByName('INV_ITEM_BARCODE').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
+//      frmClients.qryInvItems.Post;
+//    end;
 
   ModalResult := mrOk;
 

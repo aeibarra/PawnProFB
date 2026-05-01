@@ -4,7 +4,7 @@ object frmEnterTransaction: TfrmEnterTransaction
   BorderStyle = bsDialog
   Caption = 'Pawn information'
   ClientHeight = 650
-  ClientWidth = 954
+  ClientWidth = 1189
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -186,7 +186,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 163
       Width = 443
       Height = 75
-      DataField = 'TranComment'
+      DataField = 'TRAN_COMMENT'
       DataSource = DM.DSTransactions
       ScrollBars = ssVertical
       TabOrder = 7
@@ -196,7 +196,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 42
       Width = 79
       Height = 28
-      DataField = 'TranTicketNo'
+      DataField = 'TRAN_TICKET_NO'
       DataSource = DM.DSTransactions
       TabOrder = 1
     end
@@ -205,7 +205,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Top = 95
       Width = 106
       Height = 28
-      DataField = 'TranPawnAmount'
+      DataField = 'TRAN_PAWN_AMOUNT'
       DataSource = DM.DSTransactions
       TabOrder = 2
       OnExit = edPawnAmountExit
@@ -293,6 +293,9 @@ object frmEnterTransaction: TfrmEnterTransaction
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
+        DesignSize = (
+          735
+          35)
         object Label9: TLabel
           Left = 14
           Top = 16
@@ -300,13 +303,16 @@ object frmEnterTransaction: TfrmEnterTransaction
           Height = 20
           Caption = 'Items:'
         end
-        object SpeedButton2: TSpeedButton
-          Left = 480
-          Top = 4
-          Width = 130
-          Height = 28
-          Caption = 'View a large grid'
-          OnClick = SpeedButton2Click
+        object btnViewInLargeGrid: TRzToolButton
+          Left = 569
+          Top = 7
+          Width = 159
+          Flat = False
+          ShowCaption = True
+          UseToolbarShowCaption = False
+          Anchors = [akTop, akRight, akBottom]
+          Caption = 'View in Large Grid'
+          OnClick = btnViewInLargeGridClick
         end
       end
       object dbGridItems: TDBGrid
@@ -344,7 +350,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'InvCategory'
+            FieldName = 'INV_CATEGORY'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -356,7 +362,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'Description'
+            FieldName = 'DESCRIPTION'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -367,7 +373,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'Weight'
+            FieldName = 'WEIGHT'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -378,7 +384,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'SizeLength'
+            FieldName = 'SIZE_LENGTH'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -390,7 +396,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'JStyleDesc'
+            FieldName = 'J_STYLE_DESC'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -402,7 +408,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'JTypeDesc'
+            FieldName = 'J_TYPE_DESC'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -414,7 +420,7 @@ object frmEnterTransaction: TfrmEnterTransaction
           end
           item
             Expanded = False
-            FieldName = 'JMetalDesc'
+            FieldName = 'J_METAL_DESC'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -432,7 +438,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Width = 106
       Height = 28
       DataSource = DM.DSTransactions
-      DataField = 'TranDate'
+      DataField = 'TRAN_DATE'
       TabOrder = 0
       EditType = etDate
     end
@@ -442,7 +448,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Width = 116
       Height = 28
       DataSource = DM.DSTransactions
-      DataField = 'TranMaturity'
+      DataField = 'TRAN_MATURITY'
       TabOrder = 5
       EditType = etDate
     end
@@ -456,540 +462,10 @@ object frmEnterTransaction: TfrmEnterTransaction
       DropDownMenu = PopupMenu1
     end
   end
-  object qryNextTicket: TADODataSet
-    Connection = DM.ConnDB
-    CommandText = 'select  *'#13#10'from TableKeys'#13#10'where TableName = '#39'PawnTicketNo'#39
-    Parameters = <>
-    Left = 850
-    Top = 77
-    object qryNextTicketTableName: TStringField
-      FieldName = 'TableName'
-      Size = 15
-    end
-    object qryNextTicketLastKey: TIntegerField
-      FieldName = 'LastKey'
-    end
-  end
-  object qryInvItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'CustNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      
-        'SELECT DISTINCT  T2.*, T3.InvCategory, JStyleDesc, JTypeDesc, JM' +
-        'etalDesc'
-      'FROM Transactions T1 '
-      '  JOIN InventoryItems T2 ON T1.TransactionNo = T2.TransactionNo'
-      
-        '  left outer join InvCategories as T3 on T3.InvCatNo = T2.InvCat' +
-        'No'
-      '  left outer join JStyles as T4 on T4.JStyle = T2.JStyle'
-      '  left outer join JTypes as T5 on T5.JType = T2.JType'
-      '  left outer join JMetals as T6 on T6.JMetal = T2.JMetal'
-      'WHERE CustNo = :CustNo and TranStatus = '#39'A'#39' and TranType = '#39'P'#39
-      
-        '   and T2.TransactionNo = IsNull(:TransactionNo, T2.TransactionN' +
-        'o)'
-      
-        'ORDER BY T2.Description, T2.Weight, T2.SizeLength, T4.JStyleDesc' +
-        ','
-      '         T5.JTypeDesc, T6.JMetalDesc, T2.InvItemNo DESC'
-      '')
-    Left = 765
-    Top = 288
-    object qryInvItemsInvItemNo: TIntegerField
-      FieldName = 'InvItemNo'
-    end
-    object qryInvItemsInvItemBarcode: TStringField
-      FieldName = 'InvItemBarcode'
-      Size = 30
-    end
-    object qryInvItemsInvCatNo: TIntegerField
-      FieldName = 'InvCatNo'
-    end
-    object qryInvItemsJType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryInvItemsJStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryInvItemsJMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryInvItemsInvItemCount: TIntegerField
-      FieldName = 'InvItemCount'
-    end
-    object qryInvItemsNote: TStringField
-      FieldName = 'Note'
-      Size = 80
-    end
-    object qryInvItemsSizeLength: TFloatField
-      FieldName = 'SizeLength'
-    end
-    object qryInvItemsWeight: TFloatField
-      FieldName = 'Weight'
-    end
-    object qryInvItemsKT: TFloatField
-      FieldName = 'KT'
-    end
-    object qryInvItemsCreated: TDateTimeField
-      FieldName = 'Created'
-    end
-    object qryInvItemsUnitCost: TBCDField
-      FieldName = 'UnitCost'
-      Precision = 19
-    end
-    object qryInvItemsUnitPrice: TBCDField
-      FieldName = 'UnitPrice'
-      Precision = 19
-    end
-    object qryInvItemsInvItemStatus: TStringField
-      FieldName = 'InvItemStatus'
-      Size = 1
-    end
-    object qryInvItemsTransactionNo: TIntegerField
-      FieldName = 'TransactionNo'
-    end
-    object qryInvItemsInvOriginalItemNo: TIntegerField
-      FieldName = 'InvOriginalItemNo'
-    end
-    object qryInvItemsInvItemBrand: TStringField
-      FieldName = 'InvItemBrand'
-      Size = 30
-    end
-    object qryInvItemsOwnerAppNumber: TStringField
-      FieldName = 'OwnerAppNumber'
-      Size = 40
-    end
-    object qryInvItemsModelNumber: TStringField
-      FieldName = 'ModelNumber'
-      Size = 40
-    end
-    object qryInvItemsSerialNumber: TStringField
-      FieldName = 'SerialNumber'
-      Size = 40
-    end
-    object qryInvItemsGender: TStringField
-      FieldName = 'Gender'
-      Size = 1
-    end
-    object qryInvItemsDescription: TStringField
-      FieldName = 'Description'
-      Size = 40
-    end
-    object qryInvItemsInvCategory: TStringField
-      FieldName = 'InvCategory'
-      Size = 40
-    end
-    object qryInvItemsJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-    object qryInvItemsJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-    object qryInvItemsJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
-  end
   object dsInvItems: TDataSource
     DataSet = clnItemsToSelect
-    Left = 855
-    Top = 428
-  end
-  object qryTypes: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JType,  JTypeDesc'
-      'FROM JTypes')
-    Left = 741
-    Top = 3
-    object qryTypesJType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryTypesJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-  end
-  object qryStyles: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JStyle, JStyleDesc'
-      'FROM JStyles')
-    Left = 855
-    Top = 268
-    object qryStylesJStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryStylesJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-  end
-  object qryMetal: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT JMetal, JMetalDesc'
-      'FROM JMetals')
-    Left = 855
-    Top = 316
-    object qryMetalJMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryMetalJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
-  end
-  object qryCategories: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM InvCategories'
-      'ORDER BY InvCategory')
-    Left = 741
-    Top = 51
-    object qryCategoriesInvCatNo: TAutoIncField
-      FieldName = 'InvCatNo'
-      ReadOnly = True
-    end
-    object qryCategoriesInvCategory: TStringField
-      FieldName = 'InvCategory'
-      Size = 40
-    end
-  end
-  object qryInsItems: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvItemBarcode'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvCatNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'JType'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'JStyle'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'JMetal'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvItemCount'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'Note'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'SizeLength'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'Weight'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'KT'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvItemStatus'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvItemBrand'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'SerialNumber'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'OwnerAppNumber'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'ModelNumber'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'Description'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'Gender'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
-    SQL.Strings = (
-      
-        'INSERT INTO InventoryItems (InvItemNo, TransactionNo, InvItemBar' +
-        'code, InvCatNo, JType, JStyle, JMetal, InvItemCount, '
-      
-        '                            Note, SizeLength, Weight, KT, InvIte' +
-        'mStatus, InvItemBrand, SerialNumber,'
-      
-        '                            OwnerAppNumber, ModelNumber, Descrip' +
-        'tion, Gender)'
-      
-        '                     Values(:InvItemNo, :TransactionNo, :InvItem' +
-        'Barcode, :InvCatNo, :JType, :JStyle, :JMetal, :InvItemCount,'
-      
-        '                            :Note, :SizeLength, :Weight, :KT, :I' +
-        'nvItemStatus, :InvItemBrand, :SerialNumber,'
-      
-        '                            :OwnerAppNumber, :ModelNumber, :Desc' +
-        'ription, :Gender)')
-    Left = 822
-    Top = 182
-  end
-  object qryInvItems__: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    OnCalcFields = qryInvItems__CalcFields
-    Parameters = <
-      item
-        Name = 'CustNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Direction = pdInputOutput
-        Precision = 255
-        Size = 10
-        Value = 416
-      end>
-    SQL.Strings = (
-      'exec sps_CustItemsToCopy :CustNo'
-      ''
-      '/*'
-      'select distinct T2.*'
-      'from Transactions T1, InventoryItems T2'
-      'where T1.CustNo = CustNo and T1.TransactionNo = T2.TransactionNo'
-      'SELECT *'
-      'FROM InventoryItems '
-      'WHERE TransactionNo = TransactionNo'
-      '*/')
-    Left = 741
-    Top = 111
-    object qryInvItems__InvItemNo: TIntegerField
-      FieldName = 'InvItemNo'
-    end
-    object qryInvItems__InvItemBarcode: TStringField
-      FieldName = 'InvItemBarcode'
-      Size = 30
-    end
-    object qryInvItems__InvCatNo: TIntegerField
-      FieldName = 'InvCatNo'
-    end
-    object qryInvItems__JType: TStringField
-      FieldName = 'JType'
-      Size = 1
-    end
-    object qryInvItems__JStyle: TStringField
-      FieldName = 'JStyle'
-      Size = 1
-    end
-    object qryInvItems__JMetal: TStringField
-      FieldName = 'JMetal'
-      Size = 1
-    end
-    object qryInvItems__InvItemCount: TIntegerField
-      FieldName = 'InvItemCount'
-    end
-    object qryInvItems__Note: TStringField
-      FieldName = 'Note'
-      Size = 80
-    end
-    object qryInvItems__SizeLength: TFloatField
-      FieldName = 'SizeLength'
-    end
-    object qryInvItems__Weight: TFloatField
-      FieldName = 'Weight'
-    end
-    object qryInvItems__KT: TFloatField
-      FieldName = 'KT'
-    end
-    object qryInvItems__Created: TDateTimeField
-      FieldName = 'Created'
-    end
-    object qryInvItems__UnitCost: TBCDField
-      FieldName = 'UnitCost'
-      Precision = 19
-    end
-    object qryInvItems__UnitPrice: TBCDField
-      FieldName = 'UnitPrice'
-      Precision = 19
-    end
-    object qryInvItems__InvItemStatus: TStringField
-      FieldName = 'InvItemStatus'
-      Size = 1
-    end
-    object qryInvItems__TransactionNo: TIntegerField
-      FieldName = 'TransactionNo'
-    end
-    object qryInvItems__InvOriginalItemNo: TIntegerField
-      FieldName = 'InvOriginalItemNo'
-    end
-    object qryInvItems__InvItemBrand: TStringField
-      FieldName = 'InvItemBrand'
-      Size = 30
-    end
-    object qryInvItems__OwnerAppNumber: TStringField
-      FieldName = 'OwnerAppNumber'
-      Size = 40
-    end
-    object qryInvItems__ModelNumber: TStringField
-      FieldName = 'ModelNumber'
-      Size = 40
-    end
-    object qryInvItems__SerialNumber: TStringField
-      FieldName = 'SerialNumber'
-      Size = 40
-    end
-    object qryInvItems__Gender: TStringField
-      FieldName = 'Gender'
-      Size = 1
-    end
-    object qryInvItems__Description: TStringField
-      FieldName = 'Description'
-      Size = 40
-    end
-    object qryInvItems__InvCategory: TStringField
-      FieldName = 'InvCategory'
-      Size = 40
-    end
-    object qryInvItems__JStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
-      Size = 30
-    end
-    object qryInvItems__JTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
-      Size = 30
-    end
-    object qryInvItems__JMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
-      Size = 30
-    end
+    Left = 549
+    Top = 446
   end
   object PopupMenu1: TPopupMenu
     Left = 272
@@ -1010,112 +486,475 @@ object frmEnterTransaction: TfrmEnterTransaction
         PropertyName = 'Checked'
       end>
     RegIniFile = DM.RegIniFile
-    Left = 891
-    Top = 13
+    Left = 586
+    Top = 103
   end
   object clnItemsToSelect: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 855
-    Top = 376
+    Left = 550
+    Top = 390
     object clnItemsToSelectInvItemNo: TIntegerField
-      FieldName = 'InvItemNo'
+      FieldName = 'INV_ITEM_NO'
     end
     object clnItemsToSelectInvItemBarcode: TStringField
-      FieldName = 'InvItemBarcode'
+      FieldName = 'INV_ITEM_BARCODE'
       Size = 30
     end
     object clnItemsToSelectInvCatNo: TIntegerField
-      FieldName = 'InvCatNo'
+      FieldName = 'INV_CAT_NO'
     end
     object clnItemsToSelectInvCategory: TStringField
-      FieldName = 'InvCategory'
+      FieldName = 'INV_CATEGORY'
       Size = 40
     end
     object clnItemsToSelectJType: TStringField
-      FieldName = 'JType'
+      FieldName = 'J_TYPE'
       Size = 1
     end
     object clnItemsToSelectJStyle: TStringField
-      FieldName = 'JStyle'
+      FieldName = 'J_STYLE'
       Size = 1
     end
     object clnItemsToSelectJMetal: TStringField
-      FieldName = 'JMetal'
+      FieldName = 'J_METAL'
       Size = 1
     end
     object clnItemsToSelectInvItemCount: TIntegerField
-      FieldName = 'InvItemCount'
+      FieldName = 'INV_ITEM_COUNT'
     end
     object clnItemsToSelectSizeLength: TFloatField
-      FieldName = 'SizeLength'
+      FieldName = 'SIZE_LENGTH'
     end
     object clnItemsToSelectNote: TStringField
-      FieldName = 'Note'
+      FieldName = 'NOTE'
       Size = 80
     end
     object clnItemsToSelectWeight: TFloatField
-      FieldName = 'Weight'
+      FieldName = 'WEIGHT'
     end
     object clnItemsToSelectKT: TFloatField
       FieldName = 'KT'
     end
     object clnItemsToSelectCreated: TDateTimeField
-      FieldName = 'Created'
+      FieldName = 'CREATED'
     end
     object clnItemsToSelectUnitCost: TBCDField
-      FieldName = 'UnitCost'
+      FieldName = 'UNIT_COST'
       Precision = 19
     end
     object clnItemsToSelectUnitPrice: TBCDField
-      FieldName = 'UnitPrice'
+      FieldName = 'UNIT_PRICE'
       Precision = 19
     end
     object clnItemsToSelectInvItemStatus: TStringField
-      FieldName = 'InvItemStatus'
+      FieldName = 'INV_ITEM_STATUS'
       Size = 1
     end
     object clnItemsToSelectTransactionNo: TIntegerField
-      FieldName = 'TransactionNo'
+      FieldName = 'TRANSACTION_NO'
     end
     object clnItemsToSelectInvOriginalItemNo: TIntegerField
-      FieldName = 'InvOriginalItemNo'
+      FieldName = 'INV_ORIGINAL_ITEM_NO'
     end
     object clnItemsToSelectInvItemBrand: TStringField
-      FieldName = 'InvItemBrand'
+      FieldName = 'INV_ITEM_BRAND'
       Size = 30
     end
     object clnItemsToSelectSerialNumber: TStringField
-      FieldName = 'SerialNumber'
+      FieldName = 'SERIAL_NUMBER'
       Size = 40
     end
     object clnItemsToSelectOwnerAppNumber: TStringField
-      FieldName = 'OwnerAppNumber'
+      FieldName = 'OWNER_APP_NUMBER'
       Size = 40
     end
     object clnItemsToSelectModelNumber: TStringField
-      FieldName = 'ModelNumber'
+      FieldName = 'MODEL_NUMBER'
       Size = 40
     end
     object clnItemsToSelectGender: TStringField
-      FieldName = 'Gender'
+      FieldName = 'GENDER'
       Size = 1
     end
     object clnItemsToSelectDescription: TStringField
-      FieldName = 'Description'
+      FieldName = 'DESCRIPTION'
       Size = 40
     end
     object clnItemsToSelectJStyleDesc: TStringField
-      FieldName = 'JStyleDesc'
+      FieldName = 'J_STYLE_DESC'
       Size = 30
     end
     object clnItemsToSelectJTypeDesc: TStringField
-      FieldName = 'JTypeDesc'
+      FieldName = 'J_TYPE_DESC'
       Size = 30
     end
     object clnItemsToSelectJMetalDesc: TStringField
-      FieldName = 'JMetalDesc'
+      FieldName = 'J_METAL_DESC'
       Size = 30
+    end
+  end
+  object qryInvItems: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+
+        'SELECT DISTINCT T2.*, T3.INV_CATEGORY, T4.J_STYLE_DESC, T5.J_TYP' +
+        'E_DESC, T6.J_METAL_DESC'
+      'FROM TRANSACTIONS T1'
+
+        '  JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_' +
+        'NO'
+
+        '  LEFT OUTER JOIN INV_CATEGORIES T3 ON T3.INV_CAT_NO = T2.INV_CA' +
+        'T_NO'
+      '  LEFT OUTER JOIN J_STYLES T4 ON T4.J_STYLE = T2.J_STYLE'
+      '  LEFT OUTER JOIN J_TYPES T5 ON T5.J_TYPE = T2.J_TYPE'
+      '  LEFT OUTER JOIN J_METALS T6 ON T6.J_METAL = T2.J_METAL'
+      'WHERE T1.CUST_NO = :CUST_NO'
+      '  AND T1.TRAN_STATUS = '#39'A'#39
+      '  AND T1.TRAN_TYPE = '#39'P'#39
+
+        '  AND T2.TRANSACTION_NO = COALESCE(:TRANSACTION_NO, T2.TRANSACTI' +
+        'ON_NO)'
+      'ORDER BY T2.DESCRIPTION, T2.WEIGHT, T2.SIZE_LENGTH,'
+      '         T4.J_STYLE_DESC, T5.J_TYPE_DESC, T6.J_METAL_DESC,'
+      '         T2.INV_ITEM_NO DESC')
+    Left = 411
+    Top = 391
+    ParamData = <
+      item
+        Name = 'CUST_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryInvItemsINV_ITEM_NO: TIntegerField
+      FieldName = 'INV_ITEM_NO'
+      Origin = 'INV_ITEM_NO'
+      Required = True
+    end
+    object qryInvItemsINV_ITEM_BARCODE: TStringField
+      FieldName = 'INV_ITEM_BARCODE'
+      Origin = 'INV_ITEM_BARCODE'
+      Size = 30
+    end
+    object qryInvItemsINV_CAT_NO: TIntegerField
+      FieldName = 'INV_CAT_NO'
+      Origin = 'INV_CAT_NO'
+      Required = True
+    end
+    object qryInvItemsJ_TYPE: TStringField
+      FieldName = 'J_TYPE'
+      Origin = 'J_TYPE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsJ_STYLE: TStringField
+      FieldName = 'J_STYLE'
+      Origin = 'J_STYLE'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsJ_METAL: TStringField
+      FieldName = 'J_METAL'
+      Origin = 'J_METAL'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsINV_ITEM_COUNT: TIntegerField
+      FieldName = 'INV_ITEM_COUNT'
+      Origin = 'INV_ITEM_COUNT'
+    end
+    object qryInvItemsNOTE: TStringField
+      FieldName = 'NOTE'
+      Origin = 'NOTE'
+      Size = 80
+    end
+    object qryInvItemsSIZE_LENGTH: TFloatField
+      FieldName = 'SIZE_LENGTH'
+      Origin = 'SIZE_LENGTH'
+    end
+    object qryInvItemsWEIGHT: TFloatField
+      FieldName = 'WEIGHT'
+      Origin = 'WEIGHT'
+    end
+    object qryInvItemsKT: TFloatField
+      FieldName = 'KT'
+      Origin = 'KT'
+    end
+    object qryInvItemsCREATED: TSQLTimeStampField
+      FieldName = 'CREATED'
+      Origin = 'CREATED'
+    end
+    object qryInvItemsUNIT_COST: TFMTBCDField
+      FieldName = 'UNIT_COST'
+      Origin = 'UNIT_COST'
+      Precision = 18
+      Size = 2
+    end
+    object qryInvItemsUNIT_PRICE: TFMTBCDField
+      FieldName = 'UNIT_PRICE'
+      Origin = 'UNIT_PRICE'
+      Precision = 18
+      Size = 2
+    end
+    object qryInvItemsINV_ITEM_STATUS: TStringField
+      FieldName = 'INV_ITEM_STATUS'
+      Origin = 'INV_ITEM_STATUS'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsTRANSACTION_NO: TIntegerField
+      FieldName = 'TRANSACTION_NO'
+      Origin = 'TRANSACTION_NO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+    end
+    object qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField
+      FieldName = 'INV_ORIGINAL_ITEM_NO'
+      Origin = 'INV_ORIGINAL_ITEM_NO'
+    end
+    object qryInvItemsINV_ITEM_BRAND: TStringField
+      FieldName = 'INV_ITEM_BRAND'
+      Origin = 'INV_ITEM_BRAND'
+      Size = 30
+    end
+    object qryInvItemsSERIAL_NUMBER: TStringField
+      FieldName = 'SERIAL_NUMBER'
+      Origin = 'SERIAL_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsOWNER_APP_NUMBER: TStringField
+      FieldName = 'OWNER_APP_NUMBER'
+      Origin = 'OWNER_APP_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsMODEL_NUMBER: TStringField
+      FieldName = 'MODEL_NUMBER'
+      Origin = 'MODEL_NUMBER'
+      Size = 40
+    end
+    object qryInvItemsGENDER: TStringField
+      FieldName = 'GENDER'
+      Origin = 'GENDER'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsDESCRIPTION: TStringField
+      FieldName = 'DESCRIPTION'
+      Origin = 'DESCRIPTION'
+      Size = 120
+    end
+    object qryInvItemsWEIGHT_UNIT: TStringField
+      FieldName = 'WEIGHT_UNIT'
+      Origin = 'WEIGHT_UNIT'
+      FixedChar = True
+      Size = 1
+    end
+    object qryInvItemsPAWNED_DATE: TDateField
+      FieldName = 'PAWNED_DATE'
+      Origin = 'PAWNED_DATE'
+    end
+    object qryInvItemsPURCHASE_DATE: TDateField
+      FieldName = 'PURCHASE_DATE'
+      Origin = 'PURCHASE_DATE'
+    end
+    object qryInvItemsREDEEMED_DATE: TDateField
+      FieldName = 'REDEEMED_DATE'
+      Origin = 'REDEEMED_DATE'
+    end
+    object qryInvItemsDEFAULTED_DATE: TDateField
+      FieldName = 'DEFAULTED_DATE'
+      Origin = 'DEFAULTED_DATE'
+    end
+    object qryInvItemsMELTED_DATE: TDateField
+      FieldName = 'MELTED_DATE'
+      Origin = 'MELTED_DATE'
+    end
+    object qryInvItemsFORSALE_DATE: TDateField
+      FieldName = 'FORSALE_DATE'
+      Origin = 'FORSALE_DATE'
+    end
+    object qryInvItemsSOLD_DATE: TDateField
+      FieldName = 'SOLD_DATE'
+      Origin = 'SOLD_DATE'
+    end
+    object qryInvItemsLAYAWAY_DATE: TDateField
+      FieldName = 'LAYAWAY_DATE'
+      Origin = 'LAYAWAY_DATE'
+    end
+    object qryInvItemsINV_CATEGORY: TStringField
+      FieldName = 'INV_CATEGORY'
+      Origin = 'INV_CATEGORY'
+      Size = 40
+    end
+    object qryInvItemsJ_STYLE_DESC: TStringField
+      FieldName = 'J_STYLE_DESC'
+      Origin = 'J_STYLE_DESC'
+      Size = 30
+    end
+    object qryInvItemsJ_TYPE_DESC: TStringField
+      FieldName = 'J_TYPE_DESC'
+      Origin = 'J_TYPE_DESC'
+      Size = 30
+    end
+    object qryInvItemsJ_METAL_DESC: TStringField
+      FieldName = 'J_METAL_DESC'
+      Origin = 'J_METAL_DESC'
+      Size = 30
+    end
+  end
+  object qryInsItems: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+
+        'INSERT INTO INVENTORY_ITEMS (TRANSACTION_NO, INV_CAT_NO,'
+
+        '                             J_TYPE, J_STYLE, J_METAL, INV_ITEM_' +
+        'COUNT,'
+
+        '                             NOTE, SIZE_LENGTH, WEIGHT, KT, INV_' +
+        'ITEM_STATUS, INV_ITEM_BRAND, SERIAL_NUMBER,'
+
+        '                             OWNER_APP_NUMBER, MODEL_NUMBER, DES' +
+        'CRIPTION, GENDER)'
+
+        '                     VALUES (:TRANSACTION_NO, :INV_CAT_NO,'
+
+        '                             :J_TYPE, :J_STYLE, :J_METAL, :INV_I' +
+        'TEM_COUNT,'
+
+        '                             :NOTE, :SIZE_LENGTH, :WEIGHT, :KT, ' +
+        ':INV_ITEM_STATUS, :INV_ITEM_BRAND, :SERIAL_NUMBER,'
+
+        '                             :OWNER_APP_NUMBER, :MODEL_NUMBER, :' +
+        'DESCRIPTION, :GENDER)'
+        '                     RETURNING INV_ITEM_NO')
+    Left = 813
+    Top = 381
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'INV_CAT_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'J_TYPE'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end
+      item
+        Name = 'J_STYLE'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end
+      item
+        Name = 'J_METAL'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end
+      item
+        Name = 'INV_ITEM_COUNT'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'NOTE'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 80
+      end
+      item
+        Name = 'SIZE_LENGTH'
+        DataType = ftFloat
+        ParamType = ptInput
+      end
+      item
+        Name = 'WEIGHT'
+        DataType = ftFloat
+        ParamType = ptInput
+      end
+      item
+        Name = 'KT'
+        DataType = ftFloat
+        ParamType = ptInput
+      end
+      item
+        Name = 'INV_ITEM_STATUS'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end
+      item
+        Name = 'INV_ITEM_BRAND'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 30
+      end
+      item
+        Name = 'SERIAL_NUMBER'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 40
+      end
+      item
+        Name = 'OWNER_APP_NUMBER'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 40
+      end
+      item
+        Name = 'MODEL_NUMBER'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 40
+      end
+      item
+        Name = 'DESCRIPTION'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 120
+      end
+      item
+        Name = 'GENDER'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end>
+  end
+  object qryNextTicket: TFDQuery
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'TABLE_KEYS'
+    UpdateOptions.KeyFields = 'TABLE_NAME'
+    SQL.Strings = (
+      'SELECT TABLE_NAME, LAST_KEY'
+      'FROM TABLE_KEYS'
+      'WHERE TABLE_NAME = '#39'PawnTicketNo'#39';')
+    Left = 843
+    Top = 49
+    object qryNextTicketTABLE_NAME: TStringField
+      FieldName = 'TABLE_NAME'
+      Origin = 'TABLE_NAME'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      FixedChar = True
+      Size = 15
+    end
+    object qryNextTicketLAST_KEY: TIntegerField
+      FieldName = 'LAST_KEY'
+      Origin = 'LAST_KEY'
+      Required = True
     end
   end
 end
