@@ -3,41 +3,42 @@ object frmItemPictures: TfrmItemPictures
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Item Pictures'
-  ClientHeight = 572
-  ClientWidth = 995
+  ClientHeight = 598
+  ClientWidth = 1098
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
-  Font.Name = 'Tahoma'
+  Font.Height = -15
+  Font.Name = 'Segoe UI'
   Font.Style = []
   PopupMode = pmAuto
   Position = poOwnerFormCenter
   OnShow = FormShow
-  TextHeight = 16
+  TextHeight = 20
   object ImageJewelrySet: TImage
-    Left = 321
+    Left = 364
     Top = 0
-    Width = 674
-    Height = 491
+    Width = 734
+    Height = 517
     Align = alClient
     AutoSize = True
     ExplicitLeft = 1019
     ExplicitWidth = 594
+    ExplicitHeight = 491
   end
   object gbFooter: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 494
-    Width = 989
+    Top = 520
+    Width = 1092
     Height = 75
     Align = alBottom
     TabOrder = 0
     DesignSize = (
-      989
+      1092
       75)
     object btnExit: TBitBtn
-      Left = 865
+      Left = 968
       Top = 14
       Width = 109
       Height = 49
@@ -46,7 +47,7 @@ object frmItemPictures: TfrmItemPictures
       Caption = ' &Close'
       ImageIndex = 2
       ImageName = 'actExit'
-      Images = DM.vilMain
+      Images = DM.vilMain24
       Margin = 10
       ModalResult = 2
       TabOrder = 0
@@ -58,6 +59,12 @@ object frmItemPictures: TfrmItemPictures
       Width = 129
       Height = 49
       Caption = 'Take New Picture'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
       OnClick = btnTakeNewPicClick
       ImageIndex = 15
@@ -70,6 +77,12 @@ object frmItemPictures: TfrmItemPictures
       Width = 129
       Height = 49
       Caption = 'Re-take Picture'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
       OnClick = btnReTakePicClick
       ImageIndex = 16
@@ -81,20 +94,26 @@ object frmItemPictures: TfrmItemPictures
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 315
-    Height = 485
+    Width = 358
+    Height = 511
     Align = alLeft
     Caption = 'Images'
     TabOrder = 1
     object DBGrid1: TDBGrid
       AlignWithMargins = True
       Left = 5
-      Top = 21
-      Width = 305
-      Height = 459
+      Top = 25
+      Width = 348
+      Height = 481
       Align = alClient
       DataSource = dsItemImages
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ParentFont = False
       ReadOnly = True
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
@@ -105,58 +124,72 @@ object frmItemPictures: TfrmItemPictures
       Columns = <
         item
           Expanded = False
-          FieldName = 'ImagesDataNo'
+          FieldName = 'IMAGES_DATA_NO'
+          Title.Alignment = taCenter
           Title.Caption = 'No'
           Width = 47
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'ImageDesc'
-          Width = 215
+          FieldName = 'IMAGE_DESC'
+          Title.Caption = 'Image Description'
+          Width = 249
           Visible = True
         end>
     end
   end
-  object qryItemImages: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryItemImages: TFDQuery
     AfterScroll = qryItemImagesAfterScroll
     OnNewRecord = qryItemImagesNewRecord
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+    Connection = DM.ConnFB
+    UpdateOptions.UpdateTableName = 'IMAGES_DATA'
+    UpdateOptions.KeyFields = 'IMAGES_DATA_NO'
+    UpdateOptions.AutoIncFields = 'IMAGES_DATA_NO'
     SQL.Strings = (
-      
-        'select ImagesDataNo, ImageTypeNo, ImagRefToRowNo, ImageDesc, Cre' +
-        'ated'
-      'from ImagesData'
-      'where ImageTypeNo = 2 and ImagRefToRowNo = :InvItemNo'
-      'order by ImagesDataNo')
+      'select'
+      '  IMAGES_DATA_NO,'
+      '  IMAGE_TYPE_NO,'
+      '  IMAG_REF_TO_ROW_NO,'
+      '  IMAGE_DESC,'
+      '  IMAGE_DATA,'
+      '  CREATED'
+      'from IMAGES_DATA'
+      'where IMAGE_TYPE_NO = 2 and IMAG_REF_TO_ROW_NO = :INV_ITEM_NO'
+      'order by IMAGES_DATA_NO')
     Left = 55
     Top = 75
-    object qryItemImagesImagesDataNo: TIntegerField
+    ParamData = <
+      item
+        Name = 'INV_ITEM_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryItemImagesIMAGES_DATA_NO: TIntegerField
       AutoGenerateValue = arAutoInc
-      FieldName = 'ImagesDataNo'
+      FieldName = 'IMAGES_DATA_NO'
+      Origin = 'IMAGES_DATA_NO'
     end
-    object qryItemImagesImageTypeNo: TIntegerField
-      FieldName = 'ImageTypeNo'
+    object qryItemImagesIMAGE_TYPE_NO: TIntegerField
+      FieldName = 'IMAGE_TYPE_NO'
+      Origin = 'IMAGE_TYPE_NO'
     end
-    object qryItemImagesImagRefToRowNo: TIntegerField
-      FieldName = 'ImagRefToRowNo'
+    object qryItemImagesIMAG_REF_TO_ROW_NO: TIntegerField
+      FieldName = 'IMAG_REF_TO_ROW_NO'
+      Origin = 'IMAG_REF_TO_ROW_NO'
     end
-    object qryItemImagesImageDesc: TStringField
-      FieldName = 'ImageDesc'
+    object qryItemImagesIMAGE_DESC: TStringField
+      FieldName = 'IMAGE_DESC'
+      Origin = 'IMAGE_DESC'
       Size = 125
     end
-    object qryItemImagesCreated: TDateTimeField
-      FieldName = 'Created'
+    object qryItemImagesIMAGE_DATA: TBlobField
+      FieldName = 'IMAGE_DATA'
+      Origin = 'IMAGE_DATA'
+    end
+    object qryItemImagesCREATED: TSQLTimeStampField
+      FieldName = 'CREATED'
+      Origin = 'CREATED'
     end
   end
   object dsItemImages: TDataSource

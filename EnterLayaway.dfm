@@ -105,7 +105,7 @@ object frmEnterLayaway: TfrmEnterLayaway
       Width = 200
       Height = 143
       TabStop = False
-      DataField = 'TranComment'
+      DataField = 'TRAN_COMMENT'
       DataSource = DM.DSTransactions
       ScrollBars = ssVertical
       TabOrder = 3
@@ -115,7 +115,7 @@ object frmEnterLayaway: TfrmEnterLayaway
       Top = 72
       Width = 88
       Height = 28
-      DataField = 'TranPawnAmount'
+      DataField = 'TRAN_PAWN_AMOUNT'
       DataSource = DM.DSTransactions
       TabOrder = 2
       OnExit = edAmountExit
@@ -126,7 +126,7 @@ object frmEnterLayaway: TfrmEnterLayaway
       Top = 33
       Width = 88
       Height = 28
-      DataField = 'TranTicketNo'
+      DataField = 'TRAN_TICKET_NO'
       DataSource = DM.DSTransactions
       TabOrder = 1
     end
@@ -136,7 +136,7 @@ object frmEnterLayaway: TfrmEnterLayaway
       Width = 98
       Height = 28
       DataSource = DM.DSTransactions
-      DataField = 'TranDate'
+      DataField = 'TRAN_DATE'
       TabOrder = 0
       EditType = etDate
     end
@@ -147,7 +147,7 @@ object frmEnterLayaway: TfrmEnterLayaway
       Height = 28
       TabStop = False
       Color = clBtnFace
-      DataField = 'TranSalesTax'
+      DataField = 'TRAN_SALES_TAX'
       DataSource = DM.DSTransactions
       TabOrder = 4
     end

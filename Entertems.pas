@@ -88,7 +88,6 @@ type
     qryStonesSTONE_WEIGHT_UNIT: TStringField;
     qryStonescShape: TStringField;
     qryStonescColor: TStringField;
-    DBText1: TDBText;
     procedure FormShow(Sender: TObject);
     procedure clnStonesCalcFields(DataSet: TDataSet);
     procedure clnStonesNewRecord(DataSet: TDataSet);

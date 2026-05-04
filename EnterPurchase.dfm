@@ -64,7 +64,7 @@ object frmEnterPurchase: TfrmEnterPurchase
       Top = 91
       Width = 400
       Height = 81
-      DataField = 'TranComment'
+      DataField = 'TRAN_COMMENT'
       DataSource = DM.DSTransactions
       ScrollBars = ssVertical
       TabOrder = 4
@@ -74,7 +74,7 @@ object frmEnterPurchase: TfrmEnterPurchase
       Top = 33
       Width = 83
       Height = 26
-      DataField = 'TranPawnAmount'
+      DataField = 'TRAN_PAWN_AMOUNT'
       DataSource = DM.DSTransactions
       TabOrder = 2
     end
@@ -83,7 +83,7 @@ object frmEnterPurchase: TfrmEnterPurchase
       Top = 33
       Width = 83
       Height = 26
-      DataField = 'TranTicketNo'
+      DataField = 'TRAN_TICKET_NO'
       DataSource = DM.DSTransactions
       TabOrder = 1
     end
@@ -93,7 +93,7 @@ object frmEnterPurchase: TfrmEnterPurchase
       Width = 98
       Height = 26
       DataSource = DM.DSTransactions
-      DataField = 'TranDate'
+      DataField = 'TRAN_DATE'
       TabOrder = 0
       EditType = etDate
     end
@@ -103,7 +103,7 @@ object frmEnterPurchase: TfrmEnterPurchase
       Width = 96
       Height = 26
       DataSource = DM.DSTransactions
-      DataField = 'TranMaturity'
+      DataField = 'TRAN_MATURITY'
       TabOrder = 3
       EditType = etDate
     end

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.DBCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.DBCtrls, FireDAC.Stan.Param,
   Data.DB, RzForms, RzButton;
 
 type
@@ -59,7 +59,7 @@ end;
 procedure TfrmViewImage.FormShow(Sender: TObject);
 begin
   DM.qryImage.Close;
-  DM.qryImage.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  DM.qryImage.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
   DM.qryImage.Open;
 
   btnSaveImg.Enabled := DM.qryImage.RecordCount > 0;

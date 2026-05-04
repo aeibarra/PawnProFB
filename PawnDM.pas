@@ -34,32 +34,9 @@ type
     DSTransactions: TDataSource;
     DSPayments: TDataSource;
     DSStore: TDataSource;
-    qrySalesTran_: TADOQuery;
-    qrySalesTran_TransactionNo: TIntegerField;
-    qrySalesTran_CustNo: TIntegerField;
-    qrySalesTran_TranDate: TDateTimeField;
-    qrySalesTran_TranTicketNo: TStringField;
-    qrySalesTran_TranComment: TMemoField;
-    qrySalesTran_TranMaturity: TDateField;
-    qrySalesTran_TranType: TStringField;
-    qrySalesTran_TranStatus: TStringField;
-    qrySalesTran_TranVoidDate: TDateTimeField;
-    prvSalesTran: TDataSetProvider;
-    clnSalesTran: TClientDataSet;
-    clnSalesTranTransactionNo: TIntegerField;
-    clnSalesTrancComment: TStringField;
-    clnSalesTranCustNo: TIntegerField;
-    clnSalesTranTranDate: TDateTimeField;
-    clnSalesTranTranTicketNo: TStringField;
-    clnSalesTranTranComment: TMemoField;
-    clnSalesTranTranMaturity: TDateField;
-    clnSalesTranTranType: TStringField;
-    clnSalesTranTranStatus: TStringField;
-    clnSalesTranTranVoidDate: TDateTimeField;
-    dsSalesTran: TDataSource;
     RegIniFile: TRzRegIniFile;
     ImageListBtn: TImageList;
-    qryImage: TADOQuery;
+    qryImage: TFDQuery;
     qryImageImagesDataNo: TIntegerField;
     qryImageImageDesc: TStringField;
     qryImageImageData: TBlobField;
@@ -67,17 +44,17 @@ type
     clnWeigthUnits: TClientDataSet;
     clnWeigthUnitsWeigthUnitValue: TStringField;
     clnWeigthUnitsWeightUnit: TStringField;
-    qryUpdPawnStatus: TADOQuery;
-    qryGetPawnStatusFromItems: TADOQuery;
+    qryUpdPawnStatus: TFDQuery;
+    qryGetPawnStatusFromItems: TFDQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
     qryGetPawnStatusFromItemsItemCount: TIntegerField;
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     vilMain24: TSVGIconVirtualImageList;
     qryPawnPay: TFDMemTable;
-    qryTotalPaid: TADOQuery;
+    qryTotalPaid: TFDQuery;
     qryTotalPaidTotalPaid: TFloatField;
-    qryItemImages: TADOQuery;
+    qryItemImages: TFDQuery;
     qryItemImagesImagesDataNo: TIntegerField;
     qryItemImagesImageData: TBlobField;
     ConnFB: TFDConnection;
@@ -214,6 +191,7 @@ type
     clnJStylesJ_STYLE_DESC: TStringField;
     clnJTypesJ_TYPE: TStringField;
     clnJTypesJ_TYPE_DESC: TStringField;
+    qryCalcUnitCostFromWeight: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -222,8 +200,6 @@ type
     procedure qryTransactionsCalcFields(DataSet: TDataSet);
     procedure qryTransactionsNewRecord(DataSet: TDataSet);
     procedure qryCustomersNewRecord(DataSet: TDataSet);
-    procedure clnSalesTranCalcFields(DataSet: TDataSet);
-    procedure clnSalesTranNewRecord(DataSet: TDataSet);
     procedure qryCustomersAfterScroll(DataSet: TDataSet);
     procedure qryCustomersCalcFields(DataSet: TDataSet);
     procedure qryTransactionsTranDateChange(Sender: TField);
@@ -242,7 +218,7 @@ type
   public
     SaveCustQry, SaveConnectionStr: string;
     ReCalcMaturity: boolean;
-    function RoutineExists(const Conn: TADOConnection; const Schema, Name, RoutineType: string): Boolean;
+    function RoutineExists(const Conn: TFDConnection; const Name, RoutineType: string): Boolean;
     function GetConnectionStr: string;
     procedure ConfigureFBConnection;
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
@@ -284,7 +260,6 @@ type
     procedure FillPawnStatusCombobox(cb: TRzComboBox; StatusToSelect: String);
     procedure SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
     procedure PutPawnBackToActive(TransactionNo: integer);
-    procedure RefreshADOQry(Qry: TADOQuery);
     procedure RefreshFBQry(Qry: TFDQuery);
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     function GetPawnStatusFromItems(TransactionNo: integer): integer;
@@ -300,6 +275,8 @@ type
     procedure RecalcLayawayPBalance;
     procedure ReactivateLayway(TransactionNo: integer);
     procedure LaywayClosePayoffBalance(TransactionNo: integer; AddBalancePayment: boolean);
+    procedure UpdateLastTicketNo(TicketKey: string; TicketNo: integer);
+    procedure CalcUnitCostFromWeight(TransactionNo: integer);
     function GetItemStatus(qryInvItems: TDataSet): string;
   end;
 
@@ -334,6 +311,23 @@ begin
     [QuotedStr(TicketKey)])) + 1;
 end;
 
+procedure TDM.UpdateLastTicketNo(TicketKey: string; TicketNo: integer);
+begin
+  if not SameText(TicketKey, PawnTicketNo) and
+     not SameText(TicketKey, LayawayTicketNo) then
+    raise Exception.CreateFmt('Unsupported TABLE_KEYS ticket name: %s', [TicketKey]);
+
+  ConnFB.ExecSQL(
+    'UPDATE TABLE_KEYS SET LAST_KEY = :LAST_KEY WHERE TABLE_NAME = :TABLE_NAME',
+    [TicketNo, TicketKey]);
+end;
+
+procedure TDM.CalcUnitCostFromWeight(TransactionNo: integer);
+begin
+  qryCalcUnitCostFromWeight.Params.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
+  qryCalcUnitCostFromWeight.ExecSQL;
+end;
+
 function ExistsFieldInTable(const TableName, FieldName: string): boolean;
 begin
   Result := false;
@@ -342,8 +336,11 @@ begin
     exit;
 
   try
-    OpenSQLStatementFB('SELECT TOP 1 ' + FieldName + ' FROM ' + TableName);
-    Result := true;
+    Result := OpenSQLStatementFB(
+      'SELECT COUNT(*) ' +
+      'FROM RDB$RELATION_FIELDS ' +
+      'WHERE RDB$RELATION_NAME = ' + QuotedStr(UpperCase(TableName)) +
+      '  AND RDB$FIELD_NAME = ' + QuotedStr(UpperCase(FieldName))) > 0;
   except
   end;
 end;
@@ -356,32 +353,35 @@ begin
     exit;
 
   try
-    OpenSQLStatementFB('SELECT 1 FROM SYS.SYSINDEX WHERE index_name = ' + QuotedStr(IndexName) +
-                     ' AND table_id IN (SELECT table_id FROM SYS.SYSTABLE WHERE table_name = ' + QuotedStr(TableName) + ')');
-    Result := true;
+    Result := OpenSQLStatementFB(
+      'SELECT COUNT(*) ' +
+      'FROM RDB$INDICES ' +
+      'WHERE RDB$RELATION_NAME = ' + QuotedStr(UpperCase(TableName)) +
+      '  AND RDB$INDEX_NAME = ' + QuotedStr(UpperCase(IndexName))) > 0;
   except
   end;
 end;
 
-function SqlStr(const S: string): string;
-begin
-  Result := '''' + StringReplace(S, '''', '''''', [rfReplaceAll]) + '''';
-end;
-
-function TDM.RoutineExists(const Conn: TADOConnection;
-  const Schema, Name, RoutineType: string): Boolean;
+function TDM.RoutineExists(const Conn: TFDConnection;
+  const Name, RoutineType: string): Boolean;
 var
-  Q: TADOQuery;
+  Q: TFDQuery;
 begin
-  Q := TADOQuery.Create(nil);
+  Q := TFDQuery.Create(nil);
   try
     Q.Connection := Conn;
-    Q.ParamCheck := False;
     Q.SQL.Text :=
       'SELECT 1 ' + sLineBreak +
-      'FROM sys.sysprocedure p ' + sLineBreak +
-      'WHERE p.proc_name = ' + SqlStr(Name) + sLineBreak +
-      '  AND user_name(p.creator) = ' + SqlStr(Schema);
+      'FROM RDB$PROCEDURES p ' + sLineBreak +
+      'WHERE p.RDB$PROCEDURE_NAME = :ROUTINE_NAME ' + sLineBreak +
+      '  AND :ROUTINE_TYPE = ''PROCEDURE'' ' + sLineBreak +
+      'UNION ALL ' + sLineBreak +
+      'SELECT 1 ' + sLineBreak +
+      'FROM RDB$FUNCTIONS f ' + sLineBreak +
+      'WHERE f.RDB$FUNCTION_NAME = :ROUTINE_NAME ' + sLineBreak +
+      '  AND :ROUTINE_TYPE = ''FUNCTION''';
+    Q.ParamByName('ROUTINE_NAME').AsString := UpperCase(Name);
+    Q.ParamByName('ROUTINE_TYPE').AsString := UpperCase(RoutineType);
     Q.Open;
     Result := not Q.IsEmpty;
   finally
@@ -392,207 +392,6 @@ end;
 
 procedure TDM.CheckForMissingDBChanges;
 begin
-  if UpperCase(ParamStr(1)) = 'UPDB' then
-    begin
-//      if not ExistsFieldInTable('Store', 'PawnDateCalculationBase') then
-//        ExecSQLStatementFB('ALTER TABLE Store ADD "PawnDateCalculationBase" char(1) NULL DEFAULT ''D''');
-//
-//      if not ExistsFieldInTable('Store', 'SalesTaxPerc') then
-//        ExecSQLStatementFB('ALTER TABLE Store ADD "SalesTaxPerc" double NULL DEFAULT 7');
-//
-//      //Unit weight
-//      if not ExistsFieldInTable('Store', 'DefaultWeightMeasureUnit') then
-//        ExecSQLStatementFB('ALTER TABLE Store ADD "DefaultWeightMeasureUnit" char(1) NULL ');
-//
-//      // Update DefaultWeightMeasureUnit with 'P' if it's NULL
-//      if OpenSQLStatementFB('SELECT COUNT(*) FROM Store WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''') > 0 then
-//        ExecSQLStatementFB('UPDATE Store SET DefaultWeightMeasureUnit = ''P'' WHERE DefaultWeightMeasureUnit IS NULL OR DefaultWeightMeasureUnit = ''''');
-//
-//      // Default Pawn Interest Rate
-//      if not ExistsFieldInTable('Store', 'DefaultPawnInterestRate') then
-//        ExecSQLStatementFB('ALTER TABLE Store ADD "DefaultPawnInterestRate" double NULL ');
-//
-//      // Update DefaultPawnInterestRate with 10 if it's NULL
-//      if OpenSQLStatementFB('SELECT COUNT(*) FROM Store WHERE DefaultPawnInterestRate IS NULL') > 0 then
-//        ExecSQLStatementFB('UPDATE Store SET DefaultPawnInterestRate = 10 WHERE DefaultPawnInterestRate IS NULL');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'WeightUnit') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "WeightUnit" char(1) NULL ');
-//
-//      if not ExistsFieldInTable('Stones', 'StoneWeightUnit') then
-//        ExecSQLStatement('ALTER TABLE Stones ADD "StoneWeightUnit" char(1) NULL ');
-//
-//      EnsureLatePayObjects(ConnDB);
-/////
-//     if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''C''') = 0 then
-//       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''C'', ''Close'');');
-//
-//     if OpenSQLStatement('SELECT COUNT(*) FROM TransactionTypes WHERE TranType = ''L''') = 0 then
-//       ExecSQLStatement('INSERT INTO TransactionTypes (TranType, TranTypeDesc) VALUES(''L'', ''Layaway'');');
-//
-//
-//    if OpenSQLStatement('SELECT COUNT(*) FROM ItemStatus WHERE Status = ''L''') = 0 then
-//       ExecSQLStatement('INSERT INTO ItemStatus (Status, StatusDesc) VALUES(''L'', ''Layaway'');');
-//
-//     if not ExistsFieldInTable('Transactions', 'TranCloseReason') then
-//       ExecSQLStatement('ALTER TABLE Transactions ADD TranCloseReason SMALLINT DEFAULT 0 NOT NULL; ' +
-//                        'COMMENT ON COLUMN Transactions.TranCloseReason IS ''0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Defaulted/Redeemed''');
-//
-//      if not ExistsFieldInTable('Transactions', 'TranSalesTax') then
-//        ExecSQLStatement('ALTER TABLE Transactions ADD "TranSalesTax" double NULL');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'PawnedDate') then
-//      begin
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PawnedDate" Date NULL ');
-//        ExecSQLStatement('UPDATE InventoryItems SET PawnedDate = cast(Created as Date) ' +
-//                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''P'') ')
-//      end;
-//
-//      if not ExistsFieldInTable('InventoryItems', 'PurchaseDate') then
-//      begin
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "PurchaseDate" Date NULL ');
-//        ExecSQLStatement('UPDATE InventoryItems SET PurchaseDate= cast(Created as Date) ' +
-//                         'WHERE TransactionNo in (SELECT TransactionNo FROM Transactions WHERE TranType = ''U'') ')
-//      end;
-//
-//      if not ExistsFieldInTable('InventoryItems', 'RedeemedDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "RedeemedDate" Date NULL ');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'DefaultedDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "DefaultedDate" Date NULL ');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'MeltedDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "MeltedDate" Date NULL ');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'ForSaleDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "ForSaleDate" Date NULL ');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'SoldDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "SoldDate" Date NULL ');
-//
-//      if not ExistsFieldInTable('InventoryItems', 'LayawayDate') then
-//        ExecSQLStatement('ALTER TABLE InventoryItems ADD "LayawayDate" Date NULL ');
-//
-//      // Add BackupImagesPath to BackupSettings if it doesn't exist
-//      if not ExistsFieldInTable('BackupSettings', 'BackupImagesPath') then
-//        ExecSQLStatement('ALTER TABLE BackupSettings ADD "BackupImagesPath" varchar(255) NULL ');
-//
-//      // Create ImagesDataBackup table if it doesn't exist
-//      if not ExistsFieldInTable('ImagesDataBackup', 'ID') then
-//      begin
-//        ExecSQLStatement('CREATE TABLE "DBA"."ImagesDataBackup" ( ' +
-//                         '"ID" bigint NOT NULL, ' +
-//                         '"ImagesDataNo" integer NOT NULL, ' +
-//                         'PRIMARY KEY CLUSTERED ("ID" ASC) )');
-//        ExecSQLStatement('CREATE UNIQUE INDEX "idx_ImagesDataNo" ON "DBA"."ImagesDataBackup" ( "ImagesDataNo" )');
-//      end;
-//
-//      // Create covering index on InventoryItems if it doesn't exist
-//      if not ExistsIndexOnTable('InventoryItems', 'idx_InvItemStatus_Covering') then
-//        ExecSQLStatement('CREATE INDEX "idx_InvItemStatus_Covering" ON "DBA"."InventoryItems" ' +
-//                         '( "InvItemStatus" ASC, "JType" ASC, "JStyle" ASC, "JMetal" ASC, ' +
-//                         '"InvItemNo", "InvItemBarcode", "InvCatNo", "InvItemCount", "Note", ' +
-//                         '"SizeLength", "Weight", "KT", "Created", "UnitCost", "UnitPrice" )');
-//
-//      // Audit table for inventory status/date changes
-//      if not ExistsFieldInTable('InventoryItemStatusLog', 'LogId') then
-//      begin
-//        ExecSQLStatement('CREATE TABLE "DBA"."InventoryItemStatusLog" ( ' +
-//                         '"LogId" bigint NOT NULL DEFAULT autoincrement, ' +
-//                         '"InvItemNo" integer NOT NULL, ' +
-//                         '"OldStatus" char(1) NULL, "NewStatus" char(1) NOT NULL, ' +
-//                         '"OldPawnedDate" date NULL, "NewPawnedDate" date NULL, ' +
-//                         '"OldPurchaseDate" date NULL, "NewPurchaseDate" date NULL, ' +
-//                         '"OldRedeemedDate" date NULL, "NewRedeemedDate" date NULL, ' +
-//                         '"OldDefaultedDate" date NULL, "NewDefaultedDate" date NULL, ' +
-//                         '"OldMeltedDate" date NULL, "NewMeltedDate" date NULL, ' +
-//                         '"OldForSaleDate" date NULL, "NewForSaleDate" date NULL, ' +
-//                         '"OldSoldDate" date NULL, "NewSoldDate" date NULL, ' +
-//                         '"OldLayawayDate" date NULL, "NewLayawayDate" date NULL, ' +
-//                         '"ChangedBy" varchar(50) NULL, ' +
-//                         '"ChangedAt" "datetime" NOT NULL DEFAULT current timestamp, ' +
-//                         'PRIMARY KEY ("LogId" ASC) )');
-//        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
-//      end
-//      else if not ExistsIndexOnTable('InventoryItemStatusLog', 'idx_InvStatusLog_Item') then
-//        ExecSQLStatement('CREATE INDEX "idx_InvStatusLog_Item" ON "DBA"."InventoryItemStatusLog" ( "InvItemNo", "ChangedAt" DESC )');
-//
-//      // Trigger to log status/date changes on InventoryItems
-//      if OpenSQLStatement('SELECT COUNT(*) FROM sys.systrigger WHERE trigger_name = ''trg_InvItems_StatusLog''') = 0 then
-//        ExecSQLStatement('CREATE TRIGGER "DBA"."trg_InvItems_StatusLog" ' +
-//                         'AFTER UPDATE OF InvItemStatus, PawnedDate, PurchaseDate, RedeemedDate, ' +
-//                         '                DefaultedDate, MeltedDate, ForSaleDate, SoldDate, LayawayDate ' +
-//                         'ON "DBA"."InventoryItems" ' +
-//                         'REFERENCING OLD AS oldrow NEW AS newrow ' +
-//                         'FOR EACH ROW ' +
-//                         'BEGIN ' +
-//                         '  IF oldrow.InvItemStatus IS DISTINCT FROM newrow.InvItemStatus ' +
-//                         '     OR oldrow.PawnedDate    IS DISTINCT FROM newrow.PawnedDate ' +
-//                         '     OR oldrow.PurchaseDate  IS DISTINCT FROM newrow.PurchaseDate ' +
-//                         '     OR oldrow.RedeemedDate  IS DISTINCT FROM newrow.RedeemedDate ' +
-//                         '     OR oldrow.DefaultedDate IS DISTINCT FROM newrow.DefaultedDate ' +
-//                         '     OR oldrow.MeltedDate    IS DISTINCT FROM newrow.MeltedDate ' +
-//                         '     OR oldrow.ForSaleDate   IS DISTINCT FROM newrow.ForSaleDate ' +
-//                         '     OR oldrow.SoldDate      IS DISTINCT FROM newrow.SoldDate ' +
-//                         '     OR oldrow.LayawayDate   IS DISTINCT FROM newrow.LayawayDate ' +
-//                         '  THEN ' +
-//                         '    INSERT INTO "DBA"."InventoryItemStatusLog" ( ' +
-//                         '      InvItemNo, OldStatus, NewStatus, ' +
-//                         '      OldPawnedDate,    NewPawnedDate, ' +
-//                         '      OldPurchaseDate,  NewPurchaseDate, ' +
-//                         '      OldRedeemedDate,  NewRedeemedDate, ' +
-//                         '      OldDefaultedDate, NewDefaultedDate, ' +
-//                         '      OldMeltedDate,    NewMeltedDate, ' +
-//                         '      OldForSaleDate,   NewForSaleDate, ' +
-//                         '      OldSoldDate,      NewSoldDate, ' +
-//                         '      OldLayawayDate,   NewLayawayDate, ' +
-//                         '      ChangedBy ' +
-//                         '    ) ' +
-//                         '    VALUES ( ' +
-//                         '      newrow.InvItemNo, oldrow.InvItemStatus, newrow.InvItemStatus, ' +
-//                         '      oldrow.PawnedDate,    newrow.PawnedDate, ' +
-//                         '      oldrow.PurchaseDate,  newrow.PurchaseDate, ' +
-//                         '      oldrow.RedeemedDate,  newrow.RedeemedDate, ' +
-//                         '      oldrow.DefaultedDate, newrow.DefaultedDate, ' +
-//                         '      oldrow.MeltedDate,    newrow.MeltedDate, ' +
-//                         '      oldrow.ForSaleDate,   newrow.ForSaleDate, ' +
-//                         '      oldrow.SoldDate,      newrow.SoldDate, ' +
-//                         '      oldrow.LayawayDate,   newrow.LayawayDate, ' +
-//                         '      USER ' +
-//                         '    ); ' +
-//                         '  END IF; ' +
-//                         'END');
-//
-//      // Create GoldPriceHistory table if it doesn't exist
-//      if not ExistsFieldInTable('GoldPriceHistory', 'PriceID') then
-//      begin
-//        ExecSQLStatement('CREATE TABLE "DBA"."GoldPriceHistory" (' +
-//                         '"PriceID" integer NOT NULL DEFAULT autoincrement,' +
-//                         '"PricePerOunce" numeric(10, 2) NOT NULL,' +
-//                         '"Currency" varchar(3) NOT NULL DEFAULT ''USD'',' +
-//                         '"FetchDateTime" "datetime" NOT NULL DEFAULT current timestamp,' +
-//                         '"Source" varchar(50) NOT NULL DEFAULT ''CryptoCompare'',' +
-//                         '"APIResponse" long varchar NULL,' +
-//                         'PRIMARY KEY ("PriceID" ASC))');
-//
-//        // Create index on GoldPriceHistory
-//        ExecSQLStatement('CREATE INDEX "idx_GoldPrice_FetchDateTime" ON "DBA"."GoldPriceHistory" ( "FetchDateTime" DESC )');
-//      end;
-//
-//      // Create stored procedure for gold price if it doesn't exist
-//      if not RoutineExists(ConnDB, 'DBA', 'spi_GoldPrice', 'PROCEDURE') then
-//        ExecSQLStatement('CREATE PROCEDURE "DBA"."spi_GoldPrice"( @PricePerOunce numeric(10,2),@Currency varchar(3) ) ' +
-//                         'as ' +
-//                         'begin ' +
-//                         'declare @LastGPrice numeric(10,2) ' +
-//                         'select top 1 @LastGPrice = PricePerOunce from GoldPriceHistory order by PriceID desc ' +
-//                         'set @LastGPrice = isnull(@LastGPrice,0) ' +
-//                         'if @LastGPrice <> @PricePerOunce ' +
-//                         'insert into GoldPriceHistory( PricePerOunce,Currency,FetchDateTime,Source ) values( @PricePerOunce,@Currency,current timestamp,''CryptoCompare'' ) ' +
-//                         'select LastGPrice=@LastGPrice ' +
-//                         'end');
-//
-    end;
 end;
 
 function TDM.GetWeightUnitAbbr(WeightUnit: string): string;
@@ -1535,22 +1334,6 @@ begin
   end;
 end;
 
-procedure TDM.clnSalesTranCalcFields(DataSet: TDataSet);
-begin
-  clnSalesTrancComment.AsString := clnSalesTranTranComment.AsString;
-end;
-
-procedure TDM.clnSalesTranNewRecord(DataSet: TDataSet);
-begin
-  clnSalesTranTransactionNo.Clear;
-  clnSalesTranTranTicketNo.Clear;
-  clnSalesTranTranDate.AsDateTime := Now;
-//  qryTransactionsTRAN_MATURITY.AsDateTime := IncMonth(Date, 1);
-  clnSalesTranCustNo.AsInteger := 0;
-  clnSalesTranTranType.AsString := 'S';
-  clnSalesTranTranStatus.AsString := 'A'
-end;
-
 procedure TDM.qryCustomersAfterScroll(DataSet: TDataSet);
 begin
   qryTransactions.Close;
@@ -1603,7 +1386,7 @@ end;
 procedure TDM.SaveImageToFile(ImagesDataNo: integer; FileName: string);
 begin
   qryImage.Close;
-  qryImage.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  qryImage.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
   qryImage.Open;
   qryImageImageData.SaveToFile(FileName);
   qryImage.Close;
@@ -1611,22 +1394,22 @@ end;
 
 procedure TDM.ExportImageToPath(ImagesDataNo: integer; DestPath: string);
 var
-  LookupQuery: TADOQuery;
+  LookupQuery: TFDQuery;
   ImageDate: TDateTime;
   SrcPath: string;
 begin
   if ImageStorageMode = 'FILE' then
   begin
-    LookupQuery := TADOQuery.Create(nil);
+    LookupQuery := TFDQuery.Create(nil);
     try
-      LookupQuery.Connection := ConnDB;
-      LookupQuery.SQL.Text := 'SELECT Created FROM ImagesData WHERE ImagesDataNo = :ImagesDataNo';
-      LookupQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+      LookupQuery.Connection := ConnFB;
+      LookupQuery.SQL.Text := 'SELECT CREATED FROM IMAGES_DATA WHERE IMAGES_DATA_NO = :ImagesDataNo';
+      LookupQuery.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
       LookupQuery.Open;
-      if LookupQuery.Eof or LookupQuery.FieldByName('Created').IsNull then
+      if LookupQuery.Eof or LookupQuery.FieldByName('CREATED').IsNull then
         ImageDate := 0
       else
-        ImageDate := LookupQuery.FieldByName('Created').AsDateTime;
+        ImageDate := LookupQuery.FieldByName('CREATED').AsDateTime;
     finally
       LookupQuery.Free;
     end;
@@ -1719,9 +1502,9 @@ begin
 
   if NeedUpdate then
     begin
-      qryUpdPawnStatus.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
-      qryUpdPawnStatus.Parameters.ParamByName('TranCloseReason').Value := CloseReason;
-      qryUpdPawnStatus.Parameters.ParamByName('TranStatus').Value := TranStatus;
+      qryUpdPawnStatus.Params.ParamByName('TransactionNo').Value := TransactionNo;
+      qryUpdPawnStatus.Params.ParamByName('TranCloseReason').Value := CloseReason;
+      qryUpdPawnStatus.Params.ParamByName('TranStatus').Value := TranStatus;
       qryUpdPawnStatus.ExecSQL;
     end;
 
@@ -1749,11 +1532,11 @@ begin
   if not VarIsNull(ForSaleDate) then
     sForSaleDate := AsaDateToStr(ForSaleDate);
 
-  sSQL := Format('UPDATE InventoryItems SET RedeemedDate = %s, DefaultedDate = %s, MeltedDate = %s, ForSaleDate = %s ' +
-                 ' WHERE InvItemNo = %d ',
+  sSQL := Format('UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = %s, DEFAULTED_DATE = %s, MELTED_DATE = %s, FORSALE_DATE = %s ' +
+                 ' WHERE INV_ITEM_NO = %d ',
                 [sRedeemedDate, sDefaultedDate, sMeltedDate, sForSaleDate, InvItemNo]);
 
-  ConnDB.Execute(sSQL);
+  ConnFB.ExecSQL(sSQL);
 
 end;
 
@@ -1784,32 +1567,40 @@ begin
         sForSaleDate := AsaDateToStr(Date);
     end;
 
-    sSQL := Format('UPDATE InventoryItems SET RedeemedDate = %s, DefaultedDate = %s, MeltedDate = %s, ForSaleDate = %s ' +
-                   ' WHERE TransactionNo = %d and InvItemStatus = ''P'' and RedeemedDate is null and DefaultedDate is NULL ',
+    sSQL := Format('UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = %s, DEFAULTED_DATE = %s, MELTED_DATE = %s, FORSALE_DATE = %s ' +
+                   ' WHERE TRANSACTION_NO = %d and INV_ITEM_STATUS = ''P'' and REDEEMED_DATE is null and DEFAULTED_DATE is NULL ',
                   [sRedeemedDate, sDefaultedDate, sMeltedDate, sForSaleDate, TransactionNo]);
 
-    ConnDB.Execute(sSQL);
+    ConnFB.ExecSQL(sSQL);
 
 end;
 
 procedure TDM.SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
+var
+  StartedFBTrans: Boolean;
 begin
+  StartedFBTrans := False;
   try
-    ConnDB.BeginTrans;
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
 
-    qryUpdPawnStatus.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
-    qryUpdPawnStatus.Parameters.ParamByName('TranCloseReason').Value := CloseReason;
-    qryUpdPawnStatus.Parameters.ParamByName('TranStatus').Value := TranStatus;
+    qryUpdPawnStatus.Params.ParamByName('TransactionNo').Value := TransactionNo;
+    qryUpdPawnStatus.Params.ParamByName('TranCloseReason').Value := CloseReason;
+    qryUpdPawnStatus.Params.ParamByName('TranStatus').Value := TranStatus;
     qryUpdPawnStatus.ExecSQL;
 
     UpdatePawnItemStatusAndStage(TransactionNo, CloseReason, PawnDefaultedItemAction);
 
-    ConnDB.CommitTrans;
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
   except
     on E: Exception do
     begin
-      if ConnDB.InTransaction then
-        ConnDB.RollbackTrans;
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
 
       raise Exception.Create('Error updating pawn status: ' + E.Message);
     end;
@@ -1820,24 +1611,31 @@ procedure TDM.PutPawnBackToActive(TransactionNo: integer);
 var
   sSQLItemsStatus: string;
   sTransactionNo: string;
+  StartedFBTrans: Boolean;
 begin
+  StartedFBTrans := False;
   sTransactionNo := IntToStr(TransactionNo);
-  sSQLItemsStatus := 'UPDATE InventoryItems SET RedeemedDate = null, DefaultedDate = null, MeltedDate = null, ForSaleDate = null ' + sLineBreak +
-                     'WHERE TransactionNo = ' + sTransactionNo + ' and InvItemStatus = ''P'' and SoldDate is null';
+  sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = null, DEFAULTED_DATE = null, MELTED_DATE = null, FORSALE_DATE = null ' + sLineBreak +
+                     'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS = ''P'' and SOLD_DATE is null';
 
   try
-    ConnDB.BeginTrans;
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
 
-    ConnDB.Execute('update Transactions set TranStatus = ''A'', TranCloseReason=0 where TransactionNo = ' + sTransactionNo);
+    ConnFB.ExecSQL('update TRANSACTIONS set TRAN_STATUS = ''A'', TRAN_CLOSE_REASON=0 where TRANSACTION_NO = ' + sTransactionNo);
 
-    ConnDB.Execute(sSQLItemsStatus);
+    ConnFB.ExecSQL(sSQLItemsStatus);
 
-    ConnDB.CommitTrans;
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
   except
     on E: Exception do
     begin
-      if ConnDB.InTransaction then
-        ConnDB.RollbackTrans;
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
 
       raise Exception.Create('Error updating pawn status: ' + E.Message);
     end;
@@ -1850,28 +1648,35 @@ procedure TDM.ReactivateLayway(TransactionNo: integer);
 var
   sSQLItemsStatus: string;
   sTransactionNo: string;
+  StartedFBTrans: Boolean;
 begin
+  StartedFBTrans := False;
   sTransactionNo := IntToStr(TransactionNo);
 
   try
-    ConnDB.BeginTrans;
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
 
     qryTransactions.Edit;
     qryTransactionsTRAN_STATUS.AsString := TranStatus_Active;
     qryTransactionsPRINC_BALANCE.AsCurrency := 0;
     qryTransactions.Post;
 
-    sSQLItemsStatus := 'UPDATE InventoryItems SET SoldDate=null ' + sLineBreak +
-                       'WHERE TransactionNo = ' + sTransactionNo + ' and InvItemStatus = ''L'' ';
+    sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET SOLD_DATE=null ' + sLineBreak +
+                       'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS = ''L'' ';
 
-    ConnDB.Execute(sSQLItemsStatus);
+    ConnFB.ExecSQL(sSQLItemsStatus);
 
-    ConnDB.CommitTrans;
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
   except
     on E: Exception do
     begin
-      if ConnDB.InTransaction then
-        ConnDB.RollbackTrans;
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
 
       raise Exception.Create('Error updating Layaway status: ' + E.Message);
     end;
@@ -1884,7 +1689,9 @@ var
   TotalPaid: Currency;
   sSQLItemsStatus: string;
   sTransactionNo: string;
+  StartedFBTrans: Boolean;
 begin
+  StartedFBTrans := False;
   sTransactionNo := IntToStr(TransactionNo);
   if AddBalancePayment then
     TotalPaid := GetTotalPaid
@@ -1892,7 +1699,11 @@ begin
     TotalPaid := 0;
 
   try
-    ConnDB.BeginTrans;
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
 
     //////////// Payment /////////////
     if AddBalancePayment then
@@ -1916,40 +1727,22 @@ begin
     qryTransactionsPRINC_BALANCE.AsCurrency := 0;
     qryTransactions.Post;
 
-    sSQLItemsStatus := 'UPDATE InventoryItems SET SoldDate=current timestamp ' + sLineBreak +
-                       'WHERE TransactionNo = ' + sTransactionNo + ' and InvItemStatus = ''L'' and LayawayDate is not NULL AND SoldDate is null';
+    sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET SOLD_DATE=current_timestamp ' + sLineBreak +
+                       'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS = ''L'' and LAYAWAY_DATE is not NULL AND SOLD_DATE is null';
 
-    ConnDB.Execute(sSQLItemsStatus);
+    ConnFB.ExecSQL(sSQLItemsStatus);
 
-    ConnDB.CommitTrans;
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
   except
     on E: Exception do
     begin
-      if ConnDB.InTransaction then
-        ConnDB.RollbackTrans;
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
 
       raise Exception.Create('Error updating Layaway status: ' + E.Message);
     end;
   end;
-end;
-
-procedure TDM.RefreshADOQry(Qry: TADOQuery);
-var
-  SavePos: integer;
-begin
-  if Qry.RecNo > 0 then
-    begin
-      SavePos := Qry.RecNo;
-
-      Qry.DisableControls;
-      try
-        Qry.Close;
-        Qry.Open;
-        Qry.RecNo := SavePos;
-      finally
-        Qry.EnableControls;
-      end;
-    end;
 end;
 
 procedure TDM.RefreshFBQry(Qry: TFDQuery);
@@ -1975,7 +1768,7 @@ function TDM.GetPawnStatusFromItems(TransactionNo: integer): integer;
 begin
   Result := -1;
   qryGetPawnStatusFromItems.Close;
-  qryGetPawnStatusFromItems.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
+  qryGetPawnStatusFromItems.Params.ParamByName('TransactionNo').Value := TransactionNo;
   qryGetPawnStatusFromItems.Open;
 
   if qryGetPawnStatusFromItemsItemCount.AsInteger > 0 then
@@ -1987,7 +1780,7 @@ end;
 function TDM.GetTotalPaid: Currency;
 begin
   qryTotalPaid.Close;
-  qryTotalPaid.Parameters.ParamByName('TransactionNo').Value := qryTransactionsTRANSACTION_NO.AsInteger;
+  qryTotalPaid.Params.ParamByName('TransactionNo').Value := qryTransactionsTRANSACTION_NO.AsInteger;
   qryTotalPaid.Open;
 
   Result := qryTotalPaidTotalPaid.AsCurrency;
@@ -2048,7 +1841,7 @@ end;
 procedure TDM.SaveImageToDatabase(ImagesDataNo: integer; ImageData: TStream; ImageDate: TDateTime);
 begin
   qryItemImages.Close;
-  qryItemImages.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  qryItemImages.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
   qryItemImages.Open;
 
   qryItemImages.Edit;
@@ -2061,7 +1854,7 @@ var
   BlobStream: TStream;
 begin
   qryImage.Close;
-  qryImage.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  qryImage.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
   qryImage.Open;
   
   if not qryImage.Eof then
@@ -2079,30 +1872,29 @@ end;
 procedure TDM.GetImageFromFile(ImagesDataNo: integer; ImageComponent: TImage);
 var
   FilePath: string;
-  SelectQuery: TADOQuery;
+  SelectQuery: TFDQuery;
   ImageDate: TDateTime;
 begin
-  SelectQuery := TADOQuery.Create(nil);
+  SelectQuery := TFDQuery.Create(nil);
   try
-    SelectQuery.Connection := ConnDB;
+    SelectQuery.Connection := ConnFB;
 
     SelectQuery.SQL.Text :=
-      'SELECT Created ' +
-      'FROM ImagesData ' +
-      'WHERE ImagesDataNo = :ImagesDataNo';
+      'SELECT CREATED ' +
+      'FROM IMAGES_DATA ' +
+      'WHERE IMAGES_DATA_NO = :ImagesDataNo';
 
-    // ADO: use parameter name WITHOUT the colon
-    SelectQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    SelectQuery.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
 
     SelectQuery.Open;
 
     if not SelectQuery.Eof then
     begin
       // Guard against NULL Created
-      if SelectQuery.FieldByName('Created').IsNull then
+      if SelectQuery.FieldByName('CREATED').IsNull then
         ImageDate := 0
       else
-        ImageDate := SelectQuery.FieldByName('Created').AsDateTime;
+        ImageDate := SelectQuery.FieldByName('CREATED').AsDateTime;
 
       FilePath := GetImageFilePath(ImagesDataNo, ImageDate);
 
@@ -2169,15 +1961,14 @@ end;
 
 procedure TDM.DeleteImageFromDatabase(ImagesDataNo: Integer);
 var
-  DeleteQuery: TADOQuery;
+  DeleteQuery: TFDQuery;
 begin
-  DeleteQuery := TADOQuery.Create(nil);
+  DeleteQuery := TFDQuery.Create(nil);
   try
-    DeleteQuery.Connection := ConnDB;
-    DeleteQuery.SQL.Text := 'DELETE FROM ImagesData WHERE ImagesDataNo = :ImagesDataNo';
+    DeleteQuery.Connection := ConnFB;
+    DeleteQuery.SQL.Text := 'DELETE FROM IMAGES_DATA WHERE IMAGES_DATA_NO = :ImagesDataNo';
 
-    // ADO: use parameter name WITHOUT the colon
-    DeleteQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    DeleteQuery.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
 
     DeleteQuery.ExecSQL;
   finally
@@ -2188,26 +1979,25 @@ end;
 procedure TDM.DeleteImageFromFile(ImagesDataNo: Integer);
 var
   FilePath: string;
-  SelectQuery: TADOQuery;
+  SelectQuery: TFDQuery;
   ImageDate: TDateTime;
 begin
-  SelectQuery := TADOQuery.Create(nil);
+  SelectQuery := TFDQuery.Create(nil);
   try
-    SelectQuery.Connection := ConnDB;
-    SelectQuery.SQL.Text := 'SELECT Created FROM ImagesData WHERE ImagesDataNo = :ImagesDataNo';
+    SelectQuery.Connection := ConnFB;
+    SelectQuery.SQL.Text := 'SELECT CREATED FROM IMAGES_DATA WHERE IMAGES_DATA_NO = :ImagesDataNo';
 
-    // ADO: use parameter name WITHOUT the colon
-    SelectQuery.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    SelectQuery.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
 
     SelectQuery.Open;
 
     if not SelectQuery.Eof then
     begin
       // Guard against NULL Created
-      if SelectQuery.FieldByName('Created').IsNull then
+      if SelectQuery.FieldByName('CREATED').IsNull then
         ImageDate := 0
       else
-        ImageDate := SelectQuery.FieldByName('Created').AsDateTime;
+        ImageDate := SelectQuery.FieldByName('CREATED').AsDateTime;
 
       FilePath := GetImageFilePath(ImagesDataNo, ImageDate);
 
@@ -2574,7 +2364,7 @@ end;
 
 procedure TDM.ExportAllImagesToFolder(var ExportCount: integer; var ErrorMessage: string; ProgressLabel: TLabel = nil);
 var
-  ExportQuery: TADOQuery;
+  ExportQuery: TFDQuery;
   FilePath, Directory: string;
   ImageStream: TStream;
   FileStream: TFileStream;
@@ -2605,10 +2395,10 @@ begin
     end;
   end;
 
-  ExportQuery := TADOQuery.Create(nil);
+  ExportQuery := TFDQuery.Create(nil);
   try
-    ExportQuery.Connection := ConnDB;
-    ExportQuery.SQL.Text := 'SELECT ImagesDataNo, ImageData, Created FROM ImagesData ORDER BY ImagesDataNo';
+    ExportQuery.Connection := ConnFB;
+    ExportQuery.SQL.Text := 'SELECT IMAGES_DATA_NO, IMAGE_DATA, CREATED FROM IMAGES_DATA ORDER BY IMAGES_DATA_NO';
     ExportQuery.Open;
     
     // Get total count for progress display
@@ -2620,8 +2410,8 @@ begin
     while not ExportQuery.Eof do
     begin
       try
-        ImagesDataNo := ExportQuery.FieldByName('ImagesDataNo').AsInteger;
-        ImageDate := ExportQuery.FieldByName('Created').AsDateTime;
+        ImagesDataNo := ExportQuery.FieldByName('IMAGES_DATA_NO').AsInteger;
+        ImageDate := ExportQuery.FieldByName('CREATED').AsDateTime;
         
         // Update progress label
         if ProgressLabel <> nil then
@@ -2639,7 +2429,7 @@ begin
           ForceDirectories(Directory);
         
         // Export the BLOB to file
-        ImageStream := ExportQuery.CreateBlobStream(ExportQuery.FieldByName('ImageData'), bmRead);
+        ImageStream := ExportQuery.CreateBlobStream(ExportQuery.FieldByName('IMAGE_DATA'), bmRead);
         try
           FileStream := TFileStream.Create(FilePath, fmCreate);
           try

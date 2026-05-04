@@ -530,14 +530,6 @@ object frmEnterItems: TfrmEnterItems
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
-      object DBText1: TDBText
-        Left = 275
-        Top = 13
-        Width = 65
-        Height = 17
-        DataField = 'INV_ITEM_NO'
-        DataSource = dsInvItems
-      end
       object btnAddStone: TBitBtn
         Left = 16
         Top = 2
@@ -659,11 +651,6 @@ object frmEnterItems: TfrmEnterItems
           Title.Font.Name = 'Segoe UI Semibold'
           Title.Font.Style = [fsBold]
           Width = 66
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'STONE_NO'
           Visible = True
         end>
     end

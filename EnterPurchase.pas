@@ -73,9 +73,7 @@ begin
 
   if NewRow then
     begin
-      ExecSQLStatementFB(Format(
-        'UPDATE TABLE_KEYS SET LAST_KEY = %d WHERE TABLE_NAME = %s',
-        [DM.qryTransactionsTRAN_TICKET_NO.AsInteger, QuotedStr(PawnTicketNo)]));
+      DM.UpdateLastTicketNo(PawnTicketNo, DM.qryTransactionsTRAN_TICKET_NO.AsInteger);
     end;
 
   DM.qryTransactionsTRAN_TIME.AsDateTime := Time;

@@ -116,9 +116,6 @@ type
     qryInvItemsJ_TYPE_DESC: TStringField;
     qryInvItemsJ_METAL_DESC: TStringField;
     qryInsItems: TFDQuery;
-    qryNextTicket: TFDQuery;
-    qryNextTicketTABLE_NAME: TStringField;
-    qryNextTicketLAST_KEY: TIntegerField;
     btnViewInLargeGrid: TRzToolButton;
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -255,10 +252,7 @@ end;
 
 function TfrmEnterTransaction.GetLastTicketNo: integer;
 begin
-  qryNextTicket.Close;
-  qryNextTicket.Open;
-  Result := qryNextTicketLAST_KEY.AsInteger;
-  qryNextTicket.Close;
+  Result := DM.GetNextTicketNo(PawnTicketNo) - 1;
 end;
 
 procedure TfrmEnterTransaction.FormShow(Sender: TObject);
@@ -360,16 +354,9 @@ begin
          AskIfUpdateTicketNo := true;
        end;
 
-       if not qryNextTicket.Active then
-         begin
-           qryNextTicket.Open;
-         end;
-
        if not AskIfUpdateTicketNo or (AskIfUpdateTicketNo and (MessageDlg('Update Ticket Number?', mtConfirmation, [mbYes, mbNo], 0) = mrYes)) then
          begin
-           qryNextTicket.Edit;
-           qryNextTicketLAST_KEY.AsInteger := DM.qryTransactionsTRAN_TICKET_NO.AsInteger;
-           qryNextTicket.Post;
+           DM.UpdateLastTicketNo(PawnTicketNo, DM.qryTransactionsTRAN_TICKET_NO.AsInteger);
          end;
 
      end;

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, DB,
   DBCtrls, StdCtrls, Buttons, DateUtils, System.UITypes,
-  ADODB, RzButton, RzEdit, RzDBEdit, Vcl.Mask, Vcl.ExtCtrls, Vcl.Menus;
+  RzButton, RzEdit, RzDBEdit, Vcl.Mask, Vcl.ExtCtrls, Vcl.Menus;
 
 type
   TfrmEnterPayment = class(TForm)
@@ -130,7 +130,6 @@ end;   }
 procedure TfrmEnterPayment.FormShow(Sender: TObject);
 begin
 //  qryLastPayment.Close;
-//  qryLastPayment.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
 //  qryLastPayment.Open;
 //  DM.LastPaymentForTransaction(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
@@ -180,6 +179,8 @@ begin
 end;
 
 procedure TfrmEnterPayment.btnSaveClick(Sender: TObject);
+var
+  StartedFBTrans: Boolean;
 begin
   if DM.qryPaymentsPAY_AMOUNT.AsFloat <> (DM.qryPaymentsPAY_PRINCIPAL.AsFloat + DM.qryPaymentsPAY_INTEREST.AsFloat) then
     begin
@@ -193,7 +194,13 @@ begin
       DM.qryPaymentsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat - DM.qryPaymentsPAY_INTEREST.AsFloat;
     end;}
 
-  DM.ConnDB.BeginTrans;
+  StartedFBTrans := False;
+  if not DM.ConnFB.InTransaction then
+  begin
+    DM.ConnFB.StartTransaction;
+    StartedFBTrans := True;
+  end;
+
   try
     DM.qryPayments.Post;
 
@@ -201,10 +208,14 @@ begin
     DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat;
     DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat;
     DM.qryTransactions.Post;
+
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Commit;
   except
-    DM.ConnDB.RollbackTrans;
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Rollback;
+    raise;
   end;
-  DM.ConnDB.CommitTrans;
   
   ModalResult := mrOK;
 end;

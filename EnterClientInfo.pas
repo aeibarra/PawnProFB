@@ -5,8 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, System.UITypes,
   StdCtrls, Buttons, DBCtrls, Mask, DB, ActnList, RzButton, RzCmboBx, RzEdit, RzDBEdit,
-  System.Actions, PawnGlobal, Vcl.ExtCtrls, Data.Win.ADODB,
-  DrvLic_PDF417Parsing, RzForms, RzLabel, uPawnPhoneEdit;
+  System.Actions, PawnGlobal, Vcl.ExtCtrls, FireDAC.Comp.Client,
+  DrvLic_PDF417Parsing, RzForms, RzLabel, uPawnPhoneEdit, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 const
   sx_ProcessCardScanning = wm_User + 100;
@@ -63,7 +66,7 @@ type
     cbCustDOB: TRzDBDateTimeEdit;
     DBEdit1: TDBEdit;
     TimerScanningTimeOut: TTimer;
-    qryCheckClient: TADOQuery;
+    qryCheckClient: TFDQuery;
     qryCheckClientTClients: TIntegerField;
     TimerForScan: TTimer;
     FormState: TRzFormState;
@@ -537,9 +540,9 @@ begin
   if NewRow then
     begin
       qryCheckClient.Close;
-      qryCheckClient.Parameters.ParamByName('CustLast').Value := DM.qryCustomersCUST_LAST.AsString;
-      qryCheckClient.Parameters.ParamByName('CustFirst').Value := DM.qryCustomersCUST_FIRST.AsString;
-      qryCheckClient.Parameters.ParamByName('CustDOB').Value := DM.qryCustomersCUST_DOB.AsDateTime;
+      qryCheckClient.Params.ParamByName('CustLast').Value := DM.qryCustomersCUST_LAST.AsString;
+      qryCheckClient.Params.ParamByName('CustFirst').Value := DM.qryCustomersCUST_FIRST.AsString;
+      qryCheckClient.Params.ParamByName('CustDOB').Value := DM.qryCustomersCUST_DOB.AsDateTime;
       qryCheckClient.Open;
 
       if qryCheckClientTClients.AsInteger > 0 then

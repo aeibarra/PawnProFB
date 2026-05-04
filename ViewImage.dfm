@@ -10,11 +10,9 @@ object frmViewImage: TfrmViewImage
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   PopupMode = pmAuto
   Position = poOwnerFormCenter
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object GroupBox2: TGroupBox
     AlignWithMargins = True

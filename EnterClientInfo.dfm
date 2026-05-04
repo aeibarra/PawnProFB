@@ -555,13 +555,19 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     Left = 706
     Top = 153
   end
-  object qryCheckClient: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryCheckClient: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'SELECT CAST(COUNT(*) AS INTEGER) as "TClients"'
+      'FROM CUSTOMER'
+
+        'WHERE CUST_LAST = :CustLast AND CUST_FIRST = :CustFirst AND CUST' +
+        '_DOB = :CustDOB')
+    Left = 702
+    Top = 24
+    ParamData = <
       item
         Name = 'CustLast'
-        Attributes = [paNullable]
         DataType = ftString
         Precision = 255
         Size = 32767
@@ -569,7 +575,6 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       end
       item
         Name = 'CustFirst'
-        Attributes = [paNullable]
         DataType = ftString
         Precision = 255
         Size = 32767
@@ -577,20 +582,11 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       end
       item
         Name = 'CustDOB'
-        Attributes = [paNullable]
         DataType = ftDateTime
         Precision = 255
         Size = 32767
         Value = 32874d
       end>
-    SQL.Strings = (
-      'SELECT Count(*) as TClients'
-      'FROM Customer'
-      
-        'WHERE CustLast = :CustLast AND CustFirst = :CustFirst AND CustDO' +
-        'B = :CustDOB')
-    Left = 702
-    Top = 24
     object qryCheckClientTClients: TIntegerField
       FieldName = 'TClients'
     end

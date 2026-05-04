@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RzButton, Vcl.StdCtrls, Vcl.Buttons, System.UITypes,
-  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask, RzEdit, RzDBEdit, Data.DB, Data.Win.ADODB;
+  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask, RzEdit, RzDBEdit, Data.DB;
 
 type
   TfrmPaymentLayaway = class(TForm)
@@ -84,8 +84,10 @@ var
   TotalPaid: Currency;
   PricBalance: Currency;
   CloseLayaway: boolean;
+  StartedFBTrans: Boolean;
 begin
   CloseLayaway := false;
+  StartedFBTrans := False;
   if DM.qryPaymentsPAY_AMOUNT.AsCurrency <= 0 then
   begin
     MessageDlg('Please enter amount to pay.', mtInformation, [mbOk], 0);
@@ -111,15 +113,31 @@ begin
   DM.qryPaymentsPRINC_BALANCE.AsCurrency := PricBalance;
   DM.qryPaymentsPAY_INTEREST.AsCurrency := 0;
   DM.qryPaymentsINTEREST_BALANCE.AsCurrency := 0;
-  DM.qryPayments.Post;
 
-  DM.qryTransactions.Edit;
-  DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat;
-  DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat;
-  DM.qryTransactions.Post;
+  if not DM.ConnFB.InTransaction then
+  begin
+    DM.ConnFB.StartTransaction;
+    StartedFBTrans := True;
+  end;
 
-  if CloseLayaway then
-    DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
+  try
+    DM.qryPayments.Post;
+
+    DM.qryTransactions.Edit;
+    DM.qryTransactionsPRINC_BALANCE.AsFloat := DM.qryPaymentsPRINC_BALANCE.AsFloat;
+    DM.qryTransactionsINTEREST_BALANCE.AsFloat := DM.qryPaymentsINTEREST_BALANCE.AsFloat;
+    DM.qryTransactions.Post;
+
+    if CloseLayaway then
+      DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
+
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Commit;
+  except
+    if StartedFBTrans and DM.ConnFB.InTransaction then
+      DM.ConnFB.Rollback;
+    raise;
+  end;
 
   ModalResult := mrOk;
 

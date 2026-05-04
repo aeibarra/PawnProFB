@@ -933,28 +933,4 @@ object frmEnterTransaction: TfrmEnterTransaction
         Size = 1
       end>
   end
-  object qryNextTicket: TFDQuery
-    Connection = DM.ConnFB
-    UpdateOptions.UpdateTableName = 'TABLE_KEYS'
-    UpdateOptions.KeyFields = 'TABLE_NAME'
-    SQL.Strings = (
-      'SELECT TABLE_NAME, LAST_KEY'
-      'FROM TABLE_KEYS'
-      'WHERE TABLE_NAME = '#39'PawnTicketNo'#39';')
-    Left = 843
-    Top = 49
-    object qryNextTicketTABLE_NAME: TStringField
-      FieldName = 'TABLE_NAME'
-      Origin = 'TABLE_NAME'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-      FixedChar = True
-      Size = 15
-    end
-    object qryNextTicketLAST_KEY: TIntegerField
-      FieldName = 'LAST_KEY'
-      Origin = 'LAST_KEY'
-      Required = True
-    end
-  end
 end

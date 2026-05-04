@@ -256,7 +256,7 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       'FROM STONES'
       'WHERE STONE_TYPE IS NOT NULL'
       'ORDER BY STONE_TYPE')
-    Left = 523
+    Left = 522
     Top = 100
     object qryStoneTypesSTONE_TYPE: TStringField
       FieldName = 'STONE_TYPE'
