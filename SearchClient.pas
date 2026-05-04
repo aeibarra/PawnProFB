@@ -1381,21 +1381,21 @@ end;
 
 procedure TfrmClients.btnPrintEnvLabelClick(Sender: TObject);
 var
-  qry: TADOQuery;
+  qry: TFDQuery;
   TotalItems, iPos: integer;
 begin
-  qry := TADOQuery.Create(nil);
+  qry := TFDQuery.Create(nil);
   try
-    qry.Connection := DM.ConnDB;
-    qry.SQL.Text := 'select InvItemNo from InventoryItems where TransactionNo = :TransactionNo order by InvItemNo';
-    qry.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+    qry.Connection := DM.ConnFB;
+    qry.SQL.Text := 'select INV_ITEM_NO from INVENTORY_ITEMS where TRANSACTION_NO = :TRANSACTION_NO order by INV_ITEM_NO';
+    qry.Params.ParamByName('TRANSACTION_NO').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
     qry.Open;
     TotalItems := qry.RecordCount;
     iPos := 0;
     while not qry.Eof do
     begin
       inc(iPos);
-      DMReports.PrintItemEnvelopeLable(qry.FieldByName('InvItemNo').AsInteger, iPos, TotalItems);
+      DMReports.PrintItemEnvelopeLable(qry.FieldByName('INV_ITEM_NO').AsInteger, iPos, TotalItems);
       qry.Next;
     end;
   finally
@@ -1405,7 +1405,8 @@ end;
 
 procedure TfrmClients.btnPrintPayReceiptClick(Sender: TObject);
 begin
-  DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+  if DM.qryPayments.RecordCount > 0 then
+    DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
 end;
 
 procedure TfrmClients.btnPrintPolRptClick(Sender: TObject);

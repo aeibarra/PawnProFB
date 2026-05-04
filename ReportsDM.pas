@@ -4,12 +4,15 @@ interface
 
 uses
   System.SysUtils, System.Classes, ppProd, ppClass, ppReport, ppComm, ppRelatv,
-  ppDB, ppDBPipe, Data.DB, Data.Win.ADODB, DateUtils, ppBands, ppCache, ppDesignLayer,
-  ppParameter, ppPrnabl, ppCtrls, ppVar, ppStrtch, ppMemo, ppSubRpt;
+  ppDB, ppDBPipe, Data.DB, DateUtils, ppBands, ppCache, ppDesignLayer,
+  ppParameter, ppPrnabl, ppCtrls, ppVar, ppStrtch, ppMemo, ppSubRpt,
+  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TDMReports = class(TDataModule)
-    qryPrnPayReceipt: TADOQuery;
+    qryPrnPayReceipt: TFDQuery;
     dsPrnPayReceipt: TDataSource;
     plPrnPayReceipt: TppDBPipeline;
     RepPrintPayReceipt: TppReport;
@@ -34,29 +37,29 @@ type
     qryPrnPayReceiptTranPawnAmount: TFloatField;
     qryPrnPayReceiptTranTicketNo: TStringField;
     qryPrnPayReceiptPrincBalance: TFloatField;
-    qryPrnPayReceiptCustFirst: TStringField;
-    qryPrnPayReceiptCustMid: TStringField;
-    qryPrnPayReceiptCustLast: TStringField;
-    qryPrnPayReceiptCustPhCell: TStringField;
-    qryPrnPayReceiptCustPhHome: TStringField;
-    qryPrnPayReceiptCustPhBussiness: TStringField;
+    qryPrnPayReceiptCustFirst: TWideStringField;
+    qryPrnPayReceiptCustMid: TWideStringField;
+    qryPrnPayReceiptCustLast: TWideStringField;
+    qryPrnPayReceiptCustPhCell: TWideStringField;
+    qryPrnPayReceiptCustPhHome: TWideStringField;
+    qryPrnPayReceiptCustPhBussiness: TWideStringField;
     qryPrnPayReceiptcFullName: TStringField;
     ppDBText2: TppDBText;
     ppDBText3: TppDBText;
     ppLabel1: TppLabel;
     qryPrnPayReceiptcCustomerPhones: TStringField;
     qryPrnPayReceiptcCustId: TStringField;
-    qryPrnPayReceiptCustFlDrvLic: TStringField;
-    qryPrnPayReceiptCustIDType: TStringField;
-    qryPrnPayReceiptCustID: TStringField;
-    qryPrnPayReceiptCustIDAgencyState: TStringField;
+    qryPrnPayReceiptCustFlDrvLic: TWideStringField;
+    qryPrnPayReceiptCustIDType: TWideStringField;
+    qryPrnPayReceiptCustID: TWideStringField;
+    qryPrnPayReceiptCustIDAgencyState: TWideStringField;
     ppDBText4: TppDBText;
-    qryTranItems: TADOQuery;
+    qryTranItems: TFDQuery;
     dsTranItems: TDataSource;
     qryTranItemsDescription: TStringField;
     qryTranItemsKT: TFloatField;
     qryTranItemsWeight: TFloatField;
-    qryTranItemsWUnit: TStringField;
+    qryTranItemsWUnit: TWideStringField;
     ppLine1: TppLine;
     qryTranItemsInvItemCount: TIntegerField;
     ppLabel2: TppLabel;
@@ -85,7 +88,7 @@ type
     qryPrnPayReceiptcDueDate: TDateTimeField;
     rptEnvelopeItemLabel: TppReport;
     dbpEnvelopeItemLabel: TppDBPipeline;
-    qryInvItem: TADOQuery;
+    qryInvItem: TFDQuery;
     dsInvItem: TDataSource;
     ppParameterList2: TppParameterList;
     ppDesignLayers2: TppDesignLayers;
@@ -96,9 +99,9 @@ type
     qryInvItemSizeLength: TFloatField;
     qryInvItemTranDate: TDateField;
     qryInvItemTranTicketNo: TStringField;
-    qryInvItemCustFirst: TStringField;
-    qryInvItemCustMid: TStringField;
-    qryInvItemCustLast: TStringField;
+    qryInvItemCustFirst: TWideStringField;
+    qryInvItemCustMid: TWideStringField;
+    qryInvItemCustLast: TWideStringField;
     qryInvItemcFullName: TStringField;
     ppDetailBand2: TppDetailBand;
     ppDBText13: TppDBText;
@@ -118,25 +121,25 @@ type
     dbpLayawayInfo: TppDBPipeline;
     RepLayawayRcpt: TppReport;
     dbpStore: TppDBPipeline;
-    qryLayawayRcpt: TADOQuery;
+    qryLayawayRcpt: TFDQuery;
     dsLayawayRcpt: TDataSource;
     ppHeaderBand2: TppHeaderBand;
     ppDetailBand3: TppDetailBand;
     ppLabel11: TppLabel;
     qryLayawayRcptCustNo: TIntegerField;
-    qryLayawayRcptCustLast: TStringField;
-    qryLayawayRcptCustFirst: TStringField;
-    qryLayawayRcptCustMid: TStringField;
-    qryLayawayRcptCustAddr: TStringField;
-    qryLayawayRcptCustApt: TStringField;
-    qryLayawayRcptCustCity: TStringField;
-    qryLayawayRcptCustState: TStringField;
-    qryLayawayRcptCustZip: TStringField;
-    qryLayawayRcptCustPhoneNumber: TStringField;
+    qryLayawayRcptCustLast: TWideStringField;
+    qryLayawayRcptCustFirst: TWideStringField;
+    qryLayawayRcptCustMid: TWideStringField;
+    qryLayawayRcptCustAddr: TWideStringField;
+    qryLayawayRcptCustApt: TWideStringField;
+    qryLayawayRcptCustCity: TWideStringField;
+    qryLayawayRcptCustState: TWideStringField;
+    qryLayawayRcptCustZip: TWideStringField;
+    qryLayawayRcptCustPhoneNumber: TWideStringField;
     qryLayawayRcptItemDescription: TStringField;
     qryLayawayRcptWeight: TFloatField;
     qryLayawayRcptWeightUnit: TStringField;
-    qryLayawayRcptTranDate: TDateTimeField;
+    qryLayawayRcptTranDate: TDateField;
     qryLayawayRcptTranMaturity: TDateField;
     qryLayawayRcptTranPawnAmount: TFloatField;
     qryLayawayRcptTranSalesTax: TFloatField;
@@ -163,7 +166,7 @@ type
     ppLine6: TppLine;
     ppDBText32: TppDBText;
     ppDBText33: TppDBText;
-    qryLayawayRcptUnitPrice: TBCDField;
+    qryLayawayRcptUnitPrice: TFMTBCDField;
     ppDBText34: TppDBText;
     ppLabel18: TppLabel;
     ppLabel19: TppLabel;
@@ -194,7 +197,7 @@ type
     ppDesignLayers4: TppDesignLayers;
     ppDesignLayer4: TppDesignLayer;
     ppDetailBand4: TppDetailBand;
-    qryLayawayPayments: TADOQuery;
+    qryLayawayPayments: TFDQuery;
     dsLayawayPayments: TDataSource;
     dbpLayawayPayments: TppDBPipeline;
     ppLabel29: TppLabel;
@@ -276,6 +279,10 @@ begin
   if (qryLayawayRcptTranStatus.AsString = TranStatus_Inactive) and (qryLayawayRcptDDate.AsDateTime > 0) then
     begin
       Text := FormatDateTime('mm/dd/yyyy', qryLayawayRcptDDate.AsDateTime);
+    end
+  else
+    begin
+      Text := '';
     end;
 end;
 
@@ -291,7 +298,7 @@ begin
     exit;
 
   qryInvItem.Close;
-  qryInvItem.Parameters.ParamByName('InvItemNo').Value := InvItemNo;
+  qryInvItem.Params.ParamByName('INV_ITEM_NO').AsInteger := InvItemNo;
   qryInvItem.Open;
 
   with rptEnvelopeItemLabel.PrinterSetup do
@@ -332,7 +339,7 @@ begin
     end;
 
   // Configure ReportBuilder for direct printing
-  AReport.DeviceType := 'Printer';
+  AReport.DeviceType := 'Screen'; //'Printer';
   AReport.ShowPrintDialog := False;
   AReport.PrinterSetup.PrinterName := APrinterName;
 
@@ -370,11 +377,11 @@ begin
   DM.RefreshStoreQry;
 
   qryPrnPayReceipt.Close;
-  qryPrnPayReceipt.Parameters.ParamByName('PaymentNo').Value := PaymentNo;
+  qryPrnPayReceipt.Params.ParamByName('PAYMENT_NO').AsInteger := PaymentNo;
   qryPrnPayReceipt.Open;
 
   qryTranItems.Close;
-  qryTranItems.Parameters.ParamByName('PaymentNo').Value := PaymentNo;
+  qryTranItems.Params.ParamByName('PAYMENT_NO').AsInteger := PaymentNo;
   qryTranItems.Open;
 
   PrintToTray(RepPrintPayReceipt, PrinterName, PrinterTray);
@@ -432,14 +439,14 @@ end;
 procedure TDMReports.PrintLAYAWAYReceipt(TransactionNo: integer; const PrinterName, PrinterTray: string);
 begin
   qryLayawayRcpt.Close;
-  qryLayawayRcpt.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
+  qryLayawayRcpt.Params.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
   qryLayawayRcpt.Open;
 
-  LayawayBalance := OpenSQLStatementFB('select SUM(PAY_AMOUNT) as TotalPaid from PAYMENTS where TRANSACTION_NO = ' + DM.qryTransactionsTRANSACTION_NO.AsString);
+  LayawayBalance := OpenSQLStatementFB('select coalesce(SUM(PAY_AMOUNT), 0) as TotalPaid from PAYMENTS where TRANSACTION_NO = ' + DM.qryTransactionsTRANSACTION_NO.AsString);
   LayawayBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - LayawayBalance;
 
   qryLayawayPayments.Close;
-  qryLayawayPayments.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  qryLayawayPayments.Params.ParamByName('TRANSACTION_NO').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
   qryLayawayPayments.Open;
 
   ppSubReportPayments.Visible := qryLayawayPayments.RecordCount > 0;

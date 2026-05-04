@@ -1,36 +1,27 @@
 object DMReports: TDMReports
   Height = 411
   Width = 1064
-  object qryPrnPayReceipt: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryPrnPayReceipt: TFDQuery
+    Connection = DM.ConnFB
     OnCalcFields = qryPrnPayReceiptCalcFields
-    Parameters = <
-      item
-        Name = 'PaymentNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
     SQL.Strings = (
-      
-        'SELECT T1.TransactionNo, T1.PayDate, T1.PayAmount, T1.PayInteres' +
-        't, T1.PayPrincipal,'
-      
-        '     T2.TranDate, T2.TranPawnAmount, T2.TranTicketNo, T1.PrincBa' +
-        'lance,'
-      
-        '     T3.CustFirst, T3.CustMid, T3.CustLast, T3.CustPhCell, T3.Cu' +
-        'stPhHome, T3.CustPhBussiness,'
-      
-        '     T3.CustFlDrvLic, T3.CustIDType, T3.CustID, T3.CustIDAgencyS' +
-        'tate'
-      'FROM Payments T1'
-      '  JOIN Transactions T2 ON T1.TransactionNo = T2.TransactionNo'
-      '  JOIN Customer T3 ON T3.Custno = T2.CustNo'
-      'WHERE PaymentNo = :PaymentNo')
+      'select T1.TRANSACTION_NO, T1.PAY_DATE, T1.PAY_AMOUNT, T1.PAY_INTEREST,'
+      '       T1.PAY_PRINCIPAL, T2.TRAN_DATE, T2.TRAN_PAWN_AMOUNT,'
+      '       T2.TRAN_TICKET_NO, T1.PRINC_BALANCE,'
+      '       T3.CUST_FIRST, T3.CUST_MID, T3.CUST_LAST, T3.CUST_PH_CELL,'
+      '       T3.CUST_PH_HOME, T3.CUST_PH_BUSINESS,'
+      '       T3.CUST_FL_DRV_LIC, T3.CUST_ID_TYPE, T3.CUST_ID,'
+      '       T3.CUST_ID_AGENCY_STATE'
+      'from PAYMENTS T1'
+      '  join TRANSACTIONS T2 on T1.TRANSACTION_NO = T2.TRANSACTION_NO'
+      '  join CUSTOMER T3 on T3.CUST_NO = T2.CUST_NO'
+      'where T1.PAYMENT_NO = :PAYMENT_NO')
+    ParamData = <
+      item
+        Name = 'PAYMENT_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     Left = 38
     Top = 16
     object qryPrnPayReceiptcFullName: TStringField
@@ -57,69 +48,69 @@ object DMReports: TDMReports
       Calculated = True
     end
     object qryPrnPayReceiptTransactionNo: TIntegerField
-      FieldName = 'TransactionNo'
+      FieldName = 'TRANSACTION_NO'
     end
     object qryPrnPayReceiptPayDate: TDateField
-      FieldName = 'PayDate'
+      FieldName = 'PAY_DATE'
     end
     object qryPrnPayReceiptPayAmount: TFloatField
-      FieldName = 'PayAmount'
+      FieldName = 'PAY_AMOUNT'
     end
     object qryPrnPayReceiptPayInterest: TFloatField
-      FieldName = 'PayInterest'
+      FieldName = 'PAY_INTEREST'
     end
     object qryPrnPayReceiptPayPrincipal: TFloatField
-      FieldName = 'PayPrincipal'
+      FieldName = 'PAY_PRINCIPAL'
     end
     object qryPrnPayReceiptTranDate: TDateField
-      FieldName = 'TranDate'
+      FieldName = 'TRAN_DATE'
     end
     object qryPrnPayReceiptTranPawnAmount: TFloatField
-      FieldName = 'TranPawnAmount'
+      FieldName = 'TRAN_PAWN_AMOUNT'
     end
     object qryPrnPayReceiptTranTicketNo: TStringField
-      FieldName = 'TranTicketNo'
+      FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
     object qryPrnPayReceiptPrincBalance: TFloatField
-      FieldName = 'PrincBalance'
+      FieldName = 'PRINC_BALANCE'
     end
-    object qryPrnPayReceiptCustFirst: TStringField
-      FieldName = 'CustFirst'
+    object qryPrnPayReceiptCustFirst: TWideStringField
+      FieldName = 'CUST_FIRST'
       Size = 35
     end
-    object qryPrnPayReceiptCustMid: TStringField
-      FieldName = 'CustMid'
+    object qryPrnPayReceiptCustMid: TWideStringField
+      FieldName = 'CUST_MID'
       Size = 1
     end
-    object qryPrnPayReceiptCustLast: TStringField
-      FieldName = 'CustLast'
+    object qryPrnPayReceiptCustLast: TWideStringField
+      FieldName = 'CUST_LAST'
       Size = 35
     end
-    object qryPrnPayReceiptCustPhCell: TStringField
-      FieldName = 'CustPhCell'
+    object qryPrnPayReceiptCustPhCell: TWideStringField
+      FieldName = 'CUST_PH_CELL'
       Size = 14
     end
-    object qryPrnPayReceiptCustPhHome: TStringField
-      FieldName = 'CustPhHome'
+    object qryPrnPayReceiptCustPhHome: TWideStringField
+      FieldName = 'CUST_PH_HOME'
       Size = 14
     end
-    object qryPrnPayReceiptCustPhBussiness: TStringField
-      FieldName = 'CustPhBussiness'
+    object qryPrnPayReceiptCustPhBussiness: TWideStringField
+      FieldName = 'CUST_PH_BUSINESS'
       Size = 14
     end
-    object qryPrnPayReceiptCustFlDrvLic: TStringField
-      FieldName = 'CustFlDrvLic'
+    object qryPrnPayReceiptCustFlDrvLic: TWideStringField
+      FieldName = 'CUST_FL_DRV_LIC'
     end
-    object qryPrnPayReceiptCustIDType: TStringField
-      FieldName = 'CustIDType'
+    object qryPrnPayReceiptCustIDType: TWideStringField
+      FieldName = 'CUST_ID_TYPE'
     end
-    object qryPrnPayReceiptCustID: TStringField
-      FieldName = 'CustID'
+    object qryPrnPayReceiptCustID: TWideStringField
+      FieldName = 'CUST_ID'
       Size = 25
     end
-    object qryPrnPayReceiptCustIDAgencyState: TStringField
-      FieldName = 'CustIDAgencyState'
+    object qryPrnPayReceiptCustIDAgencyState: TWideStringField
+      FieldName = 'CUST_ID_AGENCY_STATE'
       Size = 10
     end
   end
@@ -175,8 +166,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField5: TppField
-      FieldAlias = 'TransactionNo'
-      FieldName = 'TransactionNo'
+      FieldAlias = 'TRANSACTION_NO'
+      FieldName = 'TRANSACTION_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -185,8 +176,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField6: TppField
-      FieldAlias = 'PayDate'
-      FieldName = 'PayDate'
+      FieldAlias = 'PAY_DATE'
+      FieldName = 'PAY_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -195,8 +186,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField7: TppField
-      FieldAlias = 'PayAmount'
-      FieldName = 'PayAmount'
+      FieldAlias = 'PAY_AMOUNT'
+      FieldName = 'PAY_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -205,8 +196,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField8: TppField
-      FieldAlias = 'PayInterest'
-      FieldName = 'PayInterest'
+      FieldAlias = 'PAY_INTEREST'
+      FieldName = 'PAY_INTEREST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -215,8 +206,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField9: TppField
-      FieldAlias = 'PayPrincipal'
-      FieldName = 'PayPrincipal'
+      FieldAlias = 'PAY_PRINCIPAL'
+      FieldName = 'PAY_PRINCIPAL'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -225,8 +216,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField10: TppField
-      FieldAlias = 'TranDate'
-      FieldName = 'TranDate'
+      FieldAlias = 'TRAN_DATE'
+      FieldName = 'TRAN_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -235,8 +226,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField11: TppField
-      FieldAlias = 'TranPawnAmount'
-      FieldName = 'TranPawnAmount'
+      FieldAlias = 'TRAN_PAWN_AMOUNT'
+      FieldName = 'TRAN_PAWN_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -245,8 +236,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField12: TppField
-      FieldAlias = 'TranTicketNo'
-      FieldName = 'TranTicketNo'
+      FieldAlias = 'TRAN_TICKET_NO'
+      FieldName = 'TRAN_TICKET_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -255,8 +246,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField13: TppField
-      FieldAlias = 'PrincBalance'
-      FieldName = 'PrincBalance'
+      FieldAlias = 'PRINC_BALANCE'
+      FieldName = 'PRINC_BALANCE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -265,8 +256,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField14: TppField
-      FieldAlias = 'CustFirst'
-      FieldName = 'CustFirst'
+      FieldAlias = 'CUST_FIRST'
+      FieldName = 'CUST_FIRST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -275,8 +266,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField15: TppField
-      FieldAlias = 'CustMid'
-      FieldName = 'CustMid'
+      FieldAlias = 'CUST_MID'
+      FieldName = 'CUST_MID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -285,8 +276,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField16: TppField
-      FieldAlias = 'CustLast'
-      FieldName = 'CustLast'
+      FieldAlias = 'CUST_LAST'
+      FieldName = 'CUST_LAST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -295,8 +286,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField17: TppField
-      FieldAlias = 'CustPhCell'
-      FieldName = 'CustPhCell'
+      FieldAlias = 'CUST_PH_CELL'
+      FieldName = 'CUST_PH_CELL'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -305,8 +296,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField18: TppField
-      FieldAlias = 'CustPhHome'
-      FieldName = 'CustPhHome'
+      FieldAlias = 'CUST_PH_HOME'
+      FieldName = 'CUST_PH_HOME'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -315,8 +306,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField19: TppField
-      FieldAlias = 'CustPhBussiness'
-      FieldName = 'CustPhBussiness'
+      FieldAlias = 'CUST_PH_BUSINESS'
+      FieldName = 'CUST_PH_BUSINESS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -325,8 +316,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField20: TppField
-      FieldAlias = 'CustFlDrvLic'
-      FieldName = 'CustFlDrvLic'
+      FieldAlias = 'CUST_FL_DRV_LIC'
+      FieldName = 'CUST_FL_DRV_LIC'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -335,8 +326,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField21: TppField
-      FieldAlias = 'CustIDType'
-      FieldName = 'CustIDType'
+      FieldAlias = 'CUST_ID_TYPE'
+      FieldName = 'CUST_ID_TYPE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -345,8 +336,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField22: TppField
-      FieldAlias = 'CustID'
-      FieldName = 'CustID'
+      FieldAlias = 'CUST_ID'
+      FieldName = 'CUST_ID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -355,8 +346,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object plPrnPayReceiptppField23: TppField
-      FieldAlias = 'CustIDAgencyState'
-      FieldName = 'CustIDAgencyState'
+      FieldAlias = 'CUST_ID_AGENCY_STATE'
+      FieldName = 'CUST_ID_AGENCY_STATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -630,7 +621,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer1
         UserName = 'DBText7'
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = plPrnPayReceipt
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -785,7 +776,7 @@ object DMReports: TDMReports
         UserName = 'DBText16'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'PayDate'
+        DataField = 'PAY_DATE'
         DataPipeline = plPrnPayReceipt
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -813,7 +804,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer1
         UserName = 'DBText9'
         Border.mmPadding = 0
-        DataField = 'InvItemCount'
+        DataField = 'INV_ITEM_COUNT'
         DataPipeline = dbpTranItems
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -834,7 +825,7 @@ object DMReports: TDMReports
         UserName = 'DBText10'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Description'
+        DataField = 'DESCRIPTION'
         DataPipeline = dbpTranItems
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -876,7 +867,7 @@ object DMReports: TDMReports
         UserName = 'DBText12'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Weight'
+        DataField = 'WEIGHT'
         DataPipeline = dbpTranItems
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -898,7 +889,7 @@ object DMReports: TDMReports
         UserName = 'DBText13'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'WUnit'
+        DataField = 'W_UNIT'
         DataPipeline = dbpTranItems
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -932,7 +923,7 @@ object DMReports: TDMReports
         Font.Size = 10
         Font.Style = []
         Lines.Strings = (
-          
+
             'Pawner hereby certifies that he or she is legally empowered to s' +
             'ell or dispose of the above property and that said property is f' +
             'ree and clear of all liens and encumbrances. Pawner will be resp' +
@@ -966,7 +957,7 @@ object DMReports: TDMReports
         Font.Size = 10
         Font.Style = []
         Lines.Strings = (
-          
+
             'PLEASE READ: 1, the undersigned pawner, have carefully read the ' +
             'terms and conditions of this pawn and agree to them.')
         RemoveEmptyLines = False
@@ -1007,7 +998,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer1
         UserName = 'DBText14'
         Border.mmPadding = 0
-        DataField = 'PayAmount'
+        DataField = 'PAY_AMOUNT'
         DataPipeline = plPrnPayReceipt
         DisplayFormat = '$#,0.00;($#,0.00)'
         Font.Charset = DEFAULT_CHARSET
@@ -1159,7 +1150,7 @@ object DMReports: TDMReports
         UserName = 'DBText40'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'PrincBalance'
+        DataField = 'PRINC_BALANCE'
         DataPipeline = plPrnPayReceipt
         DisplayFormat = '$#,0.00;($#,0.00)'
         Font.Charset = DEFAULT_CHARSET
@@ -1471,50 +1462,42 @@ object DMReports: TDMReports
       Sortable = False
     end
   end
-  object qryTranItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'PaymentNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+  object qryTranItems: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT T4.InvItemCount, T4.Description,T4.KT, T4.Weight,'
-      '    cast('
-      '        (case'
-      '           when T4.WeightUnit is NULL then '#39'dwt'#39
-      '           when T4.WeightUnit = '#39'P'#39' then '#39'dwt'#39
-      '           when T4.WeightUnit = '#39'G'#39' then '#39'g'#39
-      '         end)'
-      '      as varchar(10)) as WUnit'
-      'FROM Payments T1 '
-      '  JOIN Transactions T2 ON T1.TransactionNo = T2.TransactionNo'
-      '  JOIN Customer T3 ON T3.Custno = T2.CustNo'
-      '  JOIN InventoryItems T4 ON T4.TransactionNo = T2.TransactionNo'
-      'WHERE PaymentNo = :PaymentNo'
-      '')
+      'select T4.INV_ITEM_COUNT, T4.DESCRIPTION, T4.KT, T4.WEIGHT,'
+      '       cast(case'
+      '              when T4.WEIGHT_UNIT is null then ''dwt'''
+      '              when T4.WEIGHT_UNIT = ''P'' then ''dwt'''
+      '              when T4.WEIGHT_UNIT = ''G'' then ''g'''
+      '            end as varchar(10)) as W_UNIT'
+      'from PAYMENTS T1'
+      '  join TRANSACTIONS T2 on T1.TRANSACTION_NO = T2.TRANSACTION_NO'
+      '  join INVENTORY_ITEMS T4 on T4.TRANSACTION_NO = T2.TRANSACTION_NO'
+      'where T1.PAYMENT_NO = :PAYMENT_NO')
+    ParamData = <
+      item
+        Name = 'PAYMENT_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     Left = 38
     Top = 136
     object qryTranItemsInvItemCount: TIntegerField
-      FieldName = 'InvItemCount'
+      FieldName = 'INV_ITEM_COUNT'
     end
     object qryTranItemsDescription: TStringField
-      FieldName = 'Description'
-      Size = 40
+      FieldName = 'DESCRIPTION'
+      Size = 120
     end
     object qryTranItemsKT: TFloatField
       FieldName = 'KT'
     end
     object qryTranItemsWeight: TFloatField
-      FieldName = 'Weight'
+      FieldName = 'WEIGHT'
     end
-    object qryTranItemsWUnit: TStringField
-      FieldName = 'WUnit'
+    object qryTranItemsWUnit: TWideStringField
+      FieldName = 'W_UNIT'
       Size = 10
     end
   end
@@ -1530,8 +1513,8 @@ object DMReports: TDMReports
     Left = 141
     Top = 136
     object dbpTranItemsppField1: TppField
-      FieldAlias = 'InvItemCount'
-      FieldName = 'InvItemCount'
+      FieldAlias = 'INV_ITEM_COUNT'
+      FieldName = 'INV_ITEM_COUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1540,8 +1523,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpTranItemsppField2: TppField
-      FieldAlias = 'Description'
-      FieldName = 'Description'
+      FieldAlias = 'DESCRIPTION'
+      FieldName = 'DESCRIPTION'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1560,8 +1543,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpTranItemsppField4: TppField
-      FieldAlias = 'Weight'
-      FieldName = 'Weight'
+      FieldAlias = 'WEIGHT'
+      FieldName = 'WEIGHT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1570,8 +1553,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpTranItemsppField5: TppField
-      FieldAlias = 'WUnit'
-      FieldName = 'WUnit'
+      FieldAlias = 'W_UNIT'
+      FieldName = 'W_UNIT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1713,7 +1696,7 @@ object DMReports: TDMReports
         UserName = 'DBText2'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1734,7 +1717,7 @@ object DMReports: TDMReports
         UserName = 'DBText3'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranDate'
+        DataField = 'TRAN_DATE'
         DataPipeline = dbpEnvelopeItemLabel
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -1757,7 +1740,7 @@ object DMReports: TDMReports
         UserName = 'DBText4'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Weight'
+        DataField = 'WEIGHT'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1779,7 +1762,7 @@ object DMReports: TDMReports
         UserName = 'DBText17'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Description'
+        DataField = 'DESCRIPTION'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1799,7 +1782,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer2
         UserName = 'DBText18'
         Border.mmPadding = 0
-        DataField = 'TranType'
+        DataField = 'TRAN_TYPE'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1822,7 +1805,7 @@ object DMReports: TDMReports
         UserName = 'DBText19'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'SizeLength'
+        DataField = 'SIZE_LENGTH'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1866,7 +1849,7 @@ object DMReports: TDMReports
         UserName = 'DBText21'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Qty'
+        DataField = 'QTY'
         DataPipeline = dbpEnvelopeItemLabel
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1960,8 +1943,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField3: TppField
-      FieldAlias = 'Description'
-      FieldName = 'Description'
+      FieldAlias = 'DESCRIPTION'
+      FieldName = 'DESCRIPTION'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1970,8 +1953,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField4: TppField
-      FieldAlias = 'Weight'
-      FieldName = 'Weight'
+      FieldAlias = 'WEIGHT'
+      FieldName = 'WEIGHT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -1990,8 +1973,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField6: TppField
-      FieldAlias = 'SizeLength'
-      FieldName = 'SizeLength'
+      FieldAlias = 'SIZE_LENGTH'
+      FieldName = 'SIZE_LENGTH'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2000,8 +1983,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField7: TppField
-      FieldAlias = 'TranDate'
-      FieldName = 'TranDate'
+      FieldAlias = 'TRAN_DATE'
+      FieldName = 'TRAN_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2010,8 +1993,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField8: TppField
-      FieldAlias = 'TranTicketNo'
-      FieldName = 'TranTicketNo'
+      FieldAlias = 'TRAN_TICKET_NO'
+      FieldName = 'TRAN_TICKET_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2020,8 +2003,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField9: TppField
-      FieldAlias = 'CustFirst'
-      FieldName = 'CustFirst'
+      FieldAlias = 'CUST_FIRST'
+      FieldName = 'CUST_FIRST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2030,8 +2013,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField10: TppField
-      FieldAlias = 'CustMid'
-      FieldName = 'CustMid'
+      FieldAlias = 'CUST_MID'
+      FieldName = 'CUST_MID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2040,8 +2023,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField11: TppField
-      FieldAlias = 'CustLast'
-      FieldName = 'CustLast'
+      FieldAlias = 'CUST_LAST'
+      FieldName = 'CUST_LAST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2050,8 +2033,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField12: TppField
-      FieldAlias = 'TranType'
-      FieldName = 'TranType'
+      FieldAlias = 'TRAN_TYPE'
+      FieldName = 'TRAN_TYPE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2060,8 +2043,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpEnvelopeItemLabelppField13: TppField
-      FieldAlias = 'Qty'
-      FieldName = 'Qty'
+      FieldAlias = 'QTY'
+      FieldName = 'QTY'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2070,29 +2053,23 @@ object DMReports: TDMReports
       Sortable = False
     end
   end
-  object qryInvItem: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryInvItem: TFDQuery
+    Connection = DM.ConnFB
     OnCalcFields = qryInvItemCalcFields
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
     SQL.Strings = (
-      
-        'select I.Description, I.Weight, I.KT, I.SizeLength, T.TranDate, ' +
-        'T.TranTicketNo, C.CustFirst, C.CustMid, C.CustLast, T.TranType, ' +
-        'I.InvItemCount as Qty'
-      'from InventoryItems I'
-      '  join Transactions T ON T.TransactionNo = I.TransactionNo'
-      '  join Customer C ON C.Custno = T.CustNo'
-      'where InvItemNo = :InvItemNo'
-      '')
+      'select I.DESCRIPTION, I.WEIGHT, I.KT, I.SIZE_LENGTH, T.TRAN_DATE,'
+      '       T.TRAN_TICKET_NO, C.CUST_FIRST, C.CUST_MID, C.CUST_LAST,'
+      '       T.TRAN_TYPE, I.INV_ITEM_COUNT as QTY'
+      'from INVENTORY_ITEMS I'
+      '  join TRANSACTIONS T on T.TRANSACTION_NO = I.TRANSACTION_NO'
+      '  join CUSTOMER C on C.CUST_NO = T.CUST_NO'
+      'where I.INV_ITEM_NO = :INV_ITEM_NO')
+    ParamData = <
+      item
+        Name = 'INV_ITEM_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     Left = 38
     Top = 248
     object qryInvItemcFullName: TStringField
@@ -2107,43 +2084,43 @@ object DMReports: TDMReports
       Calculated = True
     end
     object qryInvItemDescription: TStringField
-      FieldName = 'Description'
-      Size = 40
+      FieldName = 'DESCRIPTION'
+      Size = 120
     end
     object qryInvItemWeight: TFloatField
-      FieldName = 'Weight'
+      FieldName = 'WEIGHT'
     end
     object qryInvItemKT: TFloatField
       FieldName = 'KT'
     end
     object qryInvItemSizeLength: TFloatField
-      FieldName = 'SizeLength'
+      FieldName = 'SIZE_LENGTH'
     end
     object qryInvItemTranDate: TDateField
-      FieldName = 'TranDate'
+      FieldName = 'TRAN_DATE'
     end
     object qryInvItemTranTicketNo: TStringField
-      FieldName = 'TranTicketNo'
+      FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
-    object qryInvItemCustFirst: TStringField
-      FieldName = 'CustFirst'
+    object qryInvItemCustFirst: TWideStringField
+      FieldName = 'CUST_FIRST'
       Size = 35
     end
-    object qryInvItemCustMid: TStringField
-      FieldName = 'CustMid'
+    object qryInvItemCustMid: TWideStringField
+      FieldName = 'CUST_MID'
       Size = 1
     end
-    object qryInvItemCustLast: TStringField
-      FieldName = 'CustLast'
+    object qryInvItemCustLast: TWideStringField
+      FieldName = 'CUST_LAST'
       Size = 35
     end
     object qryInvItemTranType: TStringField
-      FieldName = 'TranType'
+      FieldName = 'TRAN_TYPE'
       Size = 1
     end
     object qryInvItemQty: TIntegerField
-      FieldName = 'Qty'
+      FieldName = 'QTY'
     end
   end
   object dsInvItem: TDataSource
@@ -2208,8 +2185,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField6: TppField
-      FieldAlias = 'TranDate'
-      FieldName = 'TranDate'
+      FieldAlias = 'TRAN_DATE'
+      FieldName = 'TRAN_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2218,8 +2195,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField7: TppField
-      FieldAlias = 'TranMaturity'
-      FieldName = 'TranMaturity'
+      FieldAlias = 'TRAN_MATURITY'
+      FieldName = 'TRAN_MATURITY'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2228,8 +2205,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField8: TppField
-      FieldAlias = 'TranPawnAmount'
-      FieldName = 'TranPawnAmount'
+      FieldAlias = 'TRAN_PAWN_AMOUNT'
+      FieldName = 'TRAN_PAWN_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2238,8 +2215,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField9: TppField
-      FieldAlias = 'TranSalesTax'
-      FieldName = 'TranSalesTax'
+      FieldAlias = 'TRAN_SALES_TAX'
+      FieldName = 'TRAN_SALES_TAX'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2248,8 +2225,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField10: TppField
-      FieldAlias = 'TotalAmount'
-      FieldName = 'TotalAmount'
+      FieldAlias = 'TOTAL_AMOUNT'
+      FieldName = 'TOTAL_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2258,8 +2235,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField11: TppField
-      FieldAlias = 'TranTicketNo'
-      FieldName = 'TranTicketNo'
+      FieldAlias = 'TRAN_TICKET_NO'
+      FieldName = 'TRAN_TICKET_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2268,8 +2245,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField12: TppField
-      FieldAlias = 'CustNo'
-      FieldName = 'CustNo'
+      FieldAlias = 'TRAN_STATUS'
+      FieldName = 'TRAN_STATUS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2278,8 +2255,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField13: TppField
-      FieldAlias = 'CustLast'
-      FieldName = 'CustLast'
+      FieldAlias = 'CUST_NO'
+      FieldName = 'CUST_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2288,8 +2265,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField14: TppField
-      FieldAlias = 'CustFirst'
-      FieldName = 'CustFirst'
+      FieldAlias = 'CUST_LAST'
+      FieldName = 'CUST_LAST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2298,8 +2275,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField15: TppField
-      FieldAlias = 'CustMid'
-      FieldName = 'CustMid'
+      FieldAlias = 'CUST_FIRST'
+      FieldName = 'CUST_FIRST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2308,8 +2285,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField16: TppField
-      FieldAlias = 'CustAddr'
-      FieldName = 'CustAddr'
+      FieldAlias = 'CUST_MID'
+      FieldName = 'CUST_MID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2318,8 +2295,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField17: TppField
-      FieldAlias = 'CustApt'
-      FieldName = 'CustApt'
+      FieldAlias = 'CUST_ADDR'
+      FieldName = 'CUST_ADDR'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2328,8 +2305,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField18: TppField
-      FieldAlias = 'CustCity'
-      FieldName = 'CustCity'
+      FieldAlias = 'CUST_APT'
+      FieldName = 'CUST_APT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2338,8 +2315,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField19: TppField
-      FieldAlias = 'CustState'
-      FieldName = 'CustState'
+      FieldAlias = 'CUST_CITY'
+      FieldName = 'CUST_CITY'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2348,8 +2325,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField20: TppField
-      FieldAlias = 'CustZip'
-      FieldName = 'CustZip'
+      FieldAlias = 'CUST_STATE'
+      FieldName = 'CUST_STATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2358,8 +2335,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField21: TppField
-      FieldAlias = 'CustPhoneNumber'
-      FieldName = 'CustPhoneNumber'
+      FieldAlias = 'CUST_ZIP'
+      FieldName = 'CUST_ZIP'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2368,8 +2345,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField22: TppField
-      FieldAlias = 'ItemDescription'
-      FieldName = 'ItemDescription'
+      FieldAlias = 'CUST_PHONE_NUMBER'
+      FieldName = 'CUST_PHONE_NUMBER'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2378,8 +2355,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField23: TppField
-      FieldAlias = 'Weight'
-      FieldName = 'Weight'
+      FieldAlias = 'ITEM_DESCRIPTION'
+      FieldName = 'ITEM_DESCRIPTION'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2388,8 +2365,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField24: TppField
-      FieldAlias = 'WeightUnit'
-      FieldName = 'WeightUnit'
+      FieldAlias = 'WEIGHT'
+      FieldName = 'WEIGHT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2398,12 +2375,32 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayInfoppField25: TppField
-      FieldAlias = 'UnitPrice'
-      FieldName = 'UnitPrice'
+      FieldAlias = 'WEIGHT_UNIT'
+      FieldName = 'WEIGHT_UNIT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
       Position = 24
+      Searchable = False
+      Sortable = False
+    end
+    object dbpLayawayInfoppField26: TppField
+      FieldAlias = 'UNIT_PRICE'
+      FieldName = 'UNIT_PRICE'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 25
+      Searchable = False
+      Sortable = False
+    end
+    object dbpLayawayInfoppField27: TppField
+      FieldAlias = 'D_DATE'
+      FieldName = 'D_DATE'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 26
       Searchable = False
       Sortable = False
     end
@@ -2502,7 +2499,7 @@ object DMReports: TDMReports
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 812
-    Top = 16
+    Top = 15
     Version = '23.02'
     mmColumnWidth = 0
     DataPipelineName = 'dbpLayawayInfo'
@@ -2537,7 +2534,7 @@ object DMReports: TDMReports
         UserName = 'DBText22'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = dbpLayawayInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2558,7 +2555,7 @@ object DMReports: TDMReports
         UserName = 'DBText23'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranMaturity'
+        DataField = 'TRAN_MATURITY'
         DataPipeline = dbpLayawayInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -2815,7 +2812,7 @@ object DMReports: TDMReports
         UserName = 'DBText29'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'CustAddr'
+        DataField = 'CUST_ADDR'
         DataPipeline = dbpLayawayInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3054,7 +3051,7 @@ object DMReports: TDMReports
         DesignLayer = ppDesignLayer3
         UserName = 'DBText31'
         Border.mmPadding = 0
-        DataField = 'ItemDescription'
+        DataField = 'ITEM_DESCRIPTION'
         DataPipeline = dbpLayawayInfo
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3075,7 +3072,7 @@ object DMReports: TDMReports
         UserName = 'DBText32'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'Weight'
+        DataField = 'WEIGHT'
         DataPipeline = dbpLayawayInfo
         DisplayFormat = '#,0.00;-#,0.00'
         Font.Charset = DEFAULT_CHARSET
@@ -3096,6 +3093,7 @@ object DMReports: TDMReports
       object ppDBText33: TppDBText
         DesignLayer = ppDesignLayer3
         UserName = 'DBText33'
+        AutoSize = True
         Border.mmPadding = 0
         DataField = 'cWeightUnit'
         DataPipeline = dbpLayawayInfo
@@ -3107,17 +3105,18 @@ object DMReports: TDMReports
         Transparent = True
         DataPipelineName = 'dbpLayawayInfo'
         mmHeight = 4763
-        mmLeft = 80875
+        mmLeft = 80963
         mmTop = 529
-        mmWidth = 17198
+        mmWidth = 22225
         BandType = 4
         LayerName = Foreground2
       end
       object ppDBText34: TppDBText
         DesignLayer = ppDesignLayer3
         UserName = 'DBText34'
+        AutoSize = True
         Border.mmPadding = 0
-        DataField = 'UnitPrice'
+        DataField = 'UNIT_PRICE'
         DataPipeline = dbpLayawayInfo
         DisplayFormat = '$#,0.00;-$#,0.00'
         Font.Charset = DEFAULT_CHARSET
@@ -3129,9 +3128,9 @@ object DMReports: TDMReports
         Transparent = True
         DataPipelineName = 'dbpLayawayInfo'
         mmHeight = 4763
-        mmLeft = 113042
+        mmLeft = 106098
         mmTop = 529
-        mmWidth = 17198
+        mmWidth = 24077
         BandType = 4
         LayerName = Foreground2
       end
@@ -3553,7 +3552,7 @@ object DMReports: TDMReports
               UserName = 'DBText37'
               AutoSize = True
               Border.mmPadding = 0
-              DataField = 'PayDate'
+              DataField = 'PAY_DATE'
               DataPipeline = dbpLayawayPayments
               DisplayFormat = 'mm/dd/yyyy'
               Font.Charset = DEFAULT_CHARSET
@@ -3576,7 +3575,7 @@ object DMReports: TDMReports
               UserName = 'DBText38'
               AutoSize = True
               Border.mmPadding = 0
-              DataField = 'PayAmount'
+              DataField = 'PAY_AMOUNT'
               DataPipeline = dbpLayawayPayments
               DisplayFormat = '$#,0.00;-$#,0.00'
               Font.Charset = DEFAULT_CHARSET
@@ -3599,7 +3598,7 @@ object DMReports: TDMReports
               UserName = 'DBText39'
               AutoSize = True
               Border.mmPadding = 0
-              DataField = 'PrincBalance'
+              DataField = 'PRINC_BALANCE'
               DataPipeline = dbpLayawayPayments
               DisplayFormat = '$#,0.00;-$#,0.00'
               Font.Charset = DEFAULT_CHARSET
@@ -3640,7 +3639,7 @@ object DMReports: TDMReports
               UserName = 'DBCalc1'
               AutoSize = True
               Border.mmPadding = 0
-              DataField = 'PayAmount'
+              DataField = 'PAY_AMOUNT'
               DataPipeline = dbpLayawayPayments
               DisplayFormat = '$#,0.00;-$#,0.00'
               Font.Charset = DEFAULT_CHARSET
@@ -3763,44 +3762,42 @@ object DMReports: TDMReports
     Left = 703
     Top = 77
   end
-  object qryLayawayRcpt: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryLayawayRcpt: TFDQuery
     OnCalcFields = qryLayawayRcptCalcFields
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+    Connection = DM.ConnFB
     SQL.Strings = (
-      
-        'select t.TranDate, t.TranMaturity, t.TranPawnAmount, t.TranSales' +
-        'Tax, (IsNull(t.TranPawnAmount,0) + IsNull(t.TranSalesTax,0)) as ' +
-        'TotalAmount,'
-      '       t.TranTicketNo,  TranStatus,'
-      
-        '       t.CustNo, c.CustLast, c.CustFirst, c.CustMid, c.CustAddr,' +
-        ' c.CustApt, c.CustCity, c.CustState, c.CustZip,'
-      
-        '       COALESCE(c.CustPhCell, c.CustPhHome, c.CustPhBussiness, c' +
-        '.CustPhBeep) as CustPhoneNumber,'
-      
-        '       i.Description as ItemDescription, Weight, WeightUnit, i.U' +
-        'nitPrice,'
-      
-        '       (select max(PayDate) from Payments p where p.TransactionN' +
-        'o = t.TransactionNo) as DDate'
-      'from Customer c'
-      '  JOIN Transactions t ON c.Custno = t.Custno'
-      '  JOIN InventoryItems i on i.TransactionNo = t.TransactionNo'
-      'where t.TransactionNo = :TransactionNo'
-      '')
+
+        'select t.TRAN_DATE, t.TRAN_MATURITY, t.TRAN_PAWN_AMOUNT, t.TRAN_' +
+        'SALES_TAX,'
+
+        '       (coalesce(t.TRAN_PAWN_AMOUNT, 0) + coalesce(t.TRAN_SALES_' +
+        'TAX, 0)) as TOTAL_AMOUNT,'
+      '       t.TRAN_TICKET_NO, t.TRAN_STATUS,'
+
+        '       t.CUST_NO, c.CUST_LAST, c.CUST_FIRST, c.CUST_MID, c.CUST_' +
+        'ADDR,'
+      '       c.CUST_APT, c.CUST_CITY, c.CUST_STATE, c.CUST_ZIP,'
+
+        '       coalesce(c.CUST_PH_CELL, c.CUST_PH_HOME, c.CUST_PH_BUSINE' +
+        'SS, c.CUST_PH_BEEP) as CUST_PHONE_NUMBER,'
+
+        '       i.DESCRIPTION as ITEM_DESCRIPTION, i.WEIGHT, i.WEIGHT_UNI' +
+        'T, i.UNIT_PRICE,'
+
+        '       (select max(p.PAY_DATE) from PAYMENTS p where p.TRANSACTI' +
+        'ON_NO = t.TRANSACTION_NO) as D_DATE'
+      'from CUSTOMER c'
+      '  join TRANSACTIONS t on c.CUST_NO = t.CUST_NO'
+      '  join INVENTORY_ITEMS i on i.TRANSACTION_NO = t.TRANSACTION_NO'
+      'where t.TRANSACTION_NO = :TRANSACTION_NO')
     Left = 566
     Top = 17
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryLayawayRcptcCustName: TStringField
       FieldKind = fkCalculated
       FieldName = 'cCustName'
@@ -3828,89 +3825,90 @@ object DMReports: TDMReports
       FieldName = 'cTotalItemCost'
       Calculated = True
     end
-    object qryLayawayRcptTranDate: TDateTimeField
-      FieldName = 'TranDate'
+    object qryLayawayRcptTranDate: TDateField
+      FieldName = 'TRAN_DATE'
     end
     object qryLayawayRcptTranMaturity: TDateField
-      FieldName = 'TranMaturity'
+      FieldName = 'TRAN_MATURITY'
     end
     object qryLayawayRcptTranPawnAmount: TFloatField
-      FieldName = 'TranPawnAmount'
+      FieldName = 'TRAN_PAWN_AMOUNT'
       currency = True
     end
     object qryLayawayRcptTranSalesTax: TFloatField
-      FieldName = 'TranSalesTax'
+      FieldName = 'TRAN_SALES_TAX'
       currency = True
     end
     object qryLayawayRcptTotalAmount: TFloatField
-      FieldName = 'TotalAmount'
+      FieldName = 'TOTAL_AMOUNT'
       currency = True
     end
     object qryLayawayRcptTranTicketNo: TStringField
-      FieldName = 'TranTicketNo'
+      FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
     object qryLayawayRcptTranStatus: TStringField
-      FieldName = 'TranStatus'
+      FieldName = 'TRAN_STATUS'
       Size = 1
     end
     object qryLayawayRcptCustNo: TIntegerField
-      FieldName = 'CustNo'
+      FieldName = 'CUST_NO'
     end
-    object qryLayawayRcptCustLast: TStringField
-      FieldName = 'CustLast'
+    object qryLayawayRcptCustLast: TWideStringField
+      FieldName = 'CUST_LAST'
       Size = 35
     end
-    object qryLayawayRcptCustFirst: TStringField
-      FieldName = 'CustFirst'
+    object qryLayawayRcptCustFirst: TWideStringField
+      FieldName = 'CUST_FIRST'
       Size = 35
     end
-    object qryLayawayRcptCustMid: TStringField
-      FieldName = 'CustMid'
+    object qryLayawayRcptCustMid: TWideStringField
+      FieldName = 'CUST_MID'
       Size = 1
     end
-    object qryLayawayRcptCustAddr: TStringField
-      FieldName = 'CustAddr'
+    object qryLayawayRcptCustAddr: TWideStringField
+      FieldName = 'CUST_ADDR'
       Size = 55
     end
-    object qryLayawayRcptCustApt: TStringField
-      FieldName = 'CustApt'
+    object qryLayawayRcptCustApt: TWideStringField
+      FieldName = 'CUST_APT'
       Size = 5
     end
-    object qryLayawayRcptCustCity: TStringField
-      FieldName = 'CustCity'
+    object qryLayawayRcptCustCity: TWideStringField
+      FieldName = 'CUST_CITY'
       Size = 40
     end
-    object qryLayawayRcptCustState: TStringField
-      FieldName = 'CustState'
+    object qryLayawayRcptCustState: TWideStringField
+      FieldName = 'CUST_STATE'
       Size = 2
     end
-    object qryLayawayRcptCustZip: TStringField
-      FieldName = 'CustZip'
+    object qryLayawayRcptCustZip: TWideStringField
+      FieldName = 'CUST_ZIP'
       Size = 11
     end
-    object qryLayawayRcptCustPhoneNumber: TStringField
-      FieldName = 'CustPhoneNumber'
+    object qryLayawayRcptCustPhoneNumber: TWideStringField
+      FieldName = 'CUST_PHONE_NUMBER'
       Size = 14
     end
     object qryLayawayRcptItemDescription: TStringField
-      FieldName = 'ItemDescription'
+      FieldName = 'ITEM_DESCRIPTION'
       Size = 120
     end
     object qryLayawayRcptWeight: TFloatField
-      FieldName = 'Weight'
+      FieldName = 'WEIGHT'
     end
     object qryLayawayRcptWeightUnit: TStringField
-      FieldName = 'WeightUnit'
+      FieldName = 'WEIGHT_UNIT'
       Size = 1
     end
-    object qryLayawayRcptUnitPrice: TBCDField
-      FieldName = 'UnitPrice'
+    object qryLayawayRcptUnitPrice: TFMTBCDField
+      FieldName = 'UNIT_PRICE'
       currency = True
-      Precision = 19
+      Precision = 18
+      Size = 2
     end
     object qryLayawayRcptDDate: TDateField
-      FieldName = 'DDate'
+      FieldName = 'D_DATE'
     end
   end
   object dsLayawayRcpt: TDataSource
@@ -3918,36 +3916,32 @@ object DMReports: TDMReports
     Left = 568
     Top = 74
   end
-  object qryLayawayPayments: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+  object qryLayawayPayments: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select PaymentNo, PayDate, PayAmount, PrincBalance'
-      'from Payments'
-      'where TransactionNo = :TransactionNo'
-      'order by PayDate, PaymentNo ')
+      'select PAYMENT_NO, PAY_DATE, PAY_AMOUNT, PRINC_BALANCE'
+      'from PAYMENTS'
+      'where TRANSACTION_NO = :TRANSACTION_NO'
+      'order by PAY_DATE, PAYMENT_NO')
     Left = 568
     Top = 145
+    ParamData = <
+      item
+        Name = 'TRANSACTION_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryLayawayPaymentsPaymentNo: TIntegerField
-      FieldName = 'PaymentNo'
+      FieldName = 'PAYMENT_NO'
     end
     object qryLayawayPaymentsPayDate: TDateField
-      FieldName = 'PayDate'
+      FieldName = 'PAY_DATE'
     end
     object qryLayawayPaymentsPayAmount: TFloatField
-      FieldName = 'PayAmount'
+      FieldName = 'PAY_AMOUNT'
     end
     object qryLayawayPaymentsPrincBalance: TFloatField
-      FieldName = 'PrincBalance'
+      FieldName = 'PRINC_BALANCE'
     end
   end
   object dsLayawayPayments: TDataSource
@@ -3962,8 +3956,8 @@ object DMReports: TDMReports
     Left = 703
     Top = 145
     object dbpLayawayPaymentsppField1: TppField
-      FieldAlias = 'PaymentNo'
-      FieldName = 'PaymentNo'
+      FieldAlias = 'PAYMENT_NO'
+      FieldName = 'PAYMENT_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -3972,8 +3966,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayPaymentsppField2: TppField
-      FieldAlias = 'PayDate'
-      FieldName = 'PayDate'
+      FieldAlias = 'PAY_DATE'
+      FieldName = 'PAY_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -3982,8 +3976,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayPaymentsppField3: TppField
-      FieldAlias = 'PayAmount'
-      FieldName = 'PayAmount'
+      FieldAlias = 'PAY_AMOUNT'
+      FieldName = 'PAY_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -3992,8 +3986,8 @@ object DMReports: TDMReports
       Sortable = False
     end
     object dbpLayawayPaymentsppField4: TppField
-      FieldAlias = 'PrincBalance'
-      FieldName = 'PrincBalance'
+      FieldAlias = 'PRINC_BALANCE'
+      FieldName = 'PRINC_BALANCE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0

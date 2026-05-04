@@ -99,6 +99,8 @@ type
     procedure btnRemoveStoneClick(Sender: TObject);
   private
     { Private declarations }
+    function SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem: Currency;
+    function ValidateLayawayItemsTotal: Boolean;
   public
     { Public declarations }
     NewRow: boolean;
@@ -109,7 +111,7 @@ var
 
 implementation
 
-Uses SearchClient, PawnDM, EnterPawnStoneInfo, PawnGlobal, GLbUtils;
+Uses SearchClient, PawnDM, EnterPawnStoneInfo, PawnGlobal, GLbUtils, uPawnDialogs;
 
 {$R *.dfm}
 
@@ -203,6 +205,9 @@ begin
       exit;
     end;
 
+  if not ValidateLayawayItemsTotal then
+    exit;
+
   frmClients.qryInvItems.Post;
 
   StoneNeedPosting := (NewRow and (qryStones.RecordCount > 0)) or (not NewRow and qryStones.UpdatesPending);
@@ -243,6 +248,68 @@ begin
 
   ModalResult := mrOk;
 
+end;
+
+function TfrmEnterItems.SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem: Currency;
+var
+  Query: TFDQuery;
+  CurrentInvItemNo: Integer;
+begin
+  Result := 0;
+
+  if DM.qryTransactionsTRANSACTION_NO.IsNull then
+    Exit;
+
+  if frmClients.qryInvItemsINV_ITEM_NO.IsNull then
+    CurrentInvItemNo := 0
+  else
+    CurrentInvItemNo := frmClients.qryInvItemsINV_ITEM_NO.AsInteger;
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DM.ConnFB;
+    Query.SQL.Text :=
+      'select coalesce(sum(UNIT_PRICE), 0) as TOTAL_UNIT_PRICE ' +
+      'from INVENTORY_ITEMS ' +
+      'where TRANSACTION_NO = :TRANSACTION_NO';
+    if CurrentInvItemNo > 0 then
+      Query.SQL.Add('  and INV_ITEM_NO <> :INV_ITEM_NO');
+
+    Query.Params.ParamByName('TRANSACTION_NO').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+    if CurrentInvItemNo > 0 then
+      Query.Params.ParamByName('INV_ITEM_NO').AsInteger := CurrentInvItemNo;
+    Query.Open;
+
+    Result := Query.FieldByName('TOTAL_UNIT_PRICE').AsCurrency;
+  finally
+    Query.Free;
+  end;
+end;
+
+function TfrmEnterItems.ValidateLayawayItemsTotal: Boolean;
+var
+  ExistingItemsTotal: Currency;
+  NewItemsTotal: Currency;
+  LayawayAmount: Currency;
+begin
+  Result := True;
+
+  if DM.qryTransactionsTRAN_TYPE.AsString <> TranLayaway then
+    Exit;
+
+  ExistingItemsTotal := SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem;
+  NewItemsTotal := ExistingItemsTotal + frmClients.qryInvItemsUNIT_PRICE.AsCurrency;
+  LayawayAmount := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency;
+
+  if NewItemsTotal > LayawayAmount then
+  begin
+    Result := PawnConfirm(
+      Format('The total item prices (%m) are greater than the layaway amount (%m).' + sLineBreak + sLineBreak +
+             'Do you want to proceed with saving this item?',
+             [NewItemsTotal, LayawayAmount]),
+      'Layaway Item Total',
+      Self);
+  end;
 end;
 
 procedure TfrmEnterItems.btnCancelClick(Sender: TObject);
