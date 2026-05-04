@@ -4509,8 +4509,8 @@ object DM: TDM
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 1316
-    Top = 760
+    Left = 1396
+    Top = 637
     object clnWeigthUnitsWeigthUnitValue: TStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
