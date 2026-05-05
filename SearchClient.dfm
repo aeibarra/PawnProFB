@@ -189,48 +189,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -1229,6 +1237,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1276,6 +1285,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -2070,7 +2080,7 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField31: TppField
+    object PDBPoliceRepppField29: TppField
       FieldAlias = 'CCustPhHome'
       FieldName = 'CCustPhHome'
       FieldLength = 0
@@ -2080,7 +2090,7 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField32: TppField
+    object PDBPoliceRepppField30: TppField
       FieldAlias = 'CCustPhBussiness'
       FieldName = 'CCustPhBussiness'
       FieldLength = 0
@@ -2090,9 +2100,9 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField35: TppField
-      FieldAlias = 'cCustFlDrvLic'
-      FieldName = 'cCustFlDrvLic'
+    object PDBPoliceRepppField31: TppField
+      FieldAlias = 'CCustPhBeep'
+      FieldName = 'CCustPhBeep'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2100,9 +2110,9 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField33: TppField
-      FieldAlias = 'CCustPhBeep'
-      FieldName = 'CCustPhBeep'
+    object PDBPoliceRepppField32: TppField
+      FieldAlias = 'cCustPhCell'
+      FieldName = 'cCustPhCell'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2110,9 +2120,9 @@ object frmClients: TfrmClients
       Searchable = False
       Sortable = False
     end
-    object PDBPoliceRepppField36: TppField
-      FieldAlias = 'cPrnHPhone'
-      FieldName = 'cPrnHPhone'
+    object PDBPoliceRepppField33: TppField
+      FieldAlias = 'cCustFlDrvLic'
+      FieldName = 'cCustFlDrvLic'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2121,8 +2131,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object PDBPoliceRepppField34: TppField
-      FieldAlias = 'cCustPhCell'
-      FieldName = 'cCustPhCell'
+      FieldAlias = 'cPrnHPhone'
+      FieldName = 'cPrnHPhone'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2173,8 +2183,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField4: TppField
-      FieldAlias = 'StoreNo'
-      FieldName = 'StoreNo'
+      FieldAlias = 'STORE_NO'
+      FieldName = 'STORE_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2183,8 +2193,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField5: TppField
-      FieldAlias = 'StoreName'
-      FieldName = 'StoreName'
+      FieldAlias = 'STORE_NAME'
+      FieldName = 'STORE_NAME'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2193,8 +2203,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField6: TppField
-      FieldAlias = 'StoreAddr'
-      FieldName = 'StoreAddr'
+      FieldAlias = 'STORE_ADDR'
+      FieldName = 'STORE_ADDR'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2203,8 +2213,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField7: TppField
-      FieldAlias = 'StoreCityStZIP'
-      FieldName = 'StoreCityStZIP'
+      FieldAlias = 'STORE_CITY_ST_ZIP'
+      FieldName = 'STORE_CITY_ST_ZIP'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2213,8 +2223,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField8: TppField
-      FieldAlias = 'StorePhone'
-      FieldName = 'StorePhone'
+      FieldAlias = 'STORE_PHONE'
+      FieldName = 'STORE_PHONE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2223,8 +2233,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField9: TppField
-      FieldAlias = 'StorePoliceID'
-      FieldName = 'StorePoliceID'
+      FieldAlias = 'STORE_POLICE_ID'
+      FieldName = 'STORE_POLICE_ID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2233,8 +2243,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField10: TppField
-      FieldAlias = 'StoreAdjTopMarg'
-      FieldName = 'StoreAdjTopMarg'
+      FieldAlias = 'STORE_ADJ_TOP_MARG'
+      FieldName = 'STORE_ADJ_TOP_MARG'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2243,8 +2253,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField11: TppField
-      FieldAlias = 'Storenumber'
-      FieldName = 'Storenumber'
+      FieldAlias = 'STORE_NUMBER'
+      FieldName = 'STORE_NUMBER'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2253,8 +2263,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField12: TppField
-      FieldAlias = 'StoreAdjDetailHeight'
-      FieldName = 'StoreAdjDetailHeight'
+      FieldAlias = 'STORE_ADJ_DETAIL_HEIGHT'
+      FieldName = 'STORE_ADJ_DETAIL_HEIGHT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2263,8 +2273,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField13: TppField
-      FieldAlias = 'StoreAdjFooterHeight'
-      FieldName = 'StoreAdjFooterHeight'
+      FieldAlias = 'STORE_ADJ_FOOTER_HEIGHT'
+      FieldName = 'STORE_ADJ_FOOTER_HEIGHT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2273,8 +2283,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField14: TppField
-      FieldAlias = 'InterestCalcMethod'
-      FieldName = 'InterestCalcMethod'
+      FieldAlias = 'INTEREST_CALC_METHOD'
+      FieldName = 'INTEREST_CALC_METHOD'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2283,8 +2293,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField15: TppField
-      FieldAlias = 'PoliceReportToPrint'
-      FieldName = 'PoliceReportToPrint'
+      FieldAlias = 'POLICE_REPORT_TO_PRINT'
+      FieldName = 'POLICE_REPORT_TO_PRINT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2293,8 +2303,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField16: TppField
-      FieldAlias = 'PoliceReportLaserCopies'
-      FieldName = 'PoliceReportLaserCopies'
+      FieldAlias = 'POLICE_REPORT_LASER_COPIES'
+      FieldName = 'POLICE_REPORT_LASER_COPIES'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2303,8 +2313,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField17: TppField
-      FieldAlias = 'DefaultMaturityMonths'
-      FieldName = 'DefaultMaturityMonths'
+      FieldAlias = 'DEFAULT_MATURITY_MONTHS'
+      FieldName = 'DEFAULT_MATURITY_MONTHS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2313,8 +2323,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField18: TppField
-      FieldAlias = 'PawnDefaultMonths'
-      FieldName = 'PawnDefaultMonths'
+      FieldAlias = 'PAWN_DEFAULT_MONTHS'
+      FieldName = 'PAWN_DEFAULT_MONTHS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2323,8 +2333,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField19: TppField
-      FieldAlias = 'LeadsStoreId'
-      FieldName = 'LeadsStoreId'
+      FieldAlias = 'LEADS_STORE_ID'
+      FieldName = 'LEADS_STORE_ID'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2333,8 +2343,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField20: TppField
-      FieldAlias = 'LeadsOnlineFTPAddress'
-      FieldName = 'LeadsOnlineFTPAddress'
+      FieldAlias = 'LEADS_ONLINE_FTP_ADDRESS'
+      FieldName = 'LEADS_ONLINE_FTP_ADDRESS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2343,8 +2353,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField21: TppField
-      FieldAlias = 'LeadsOnlineUserName'
-      FieldName = 'LeadsOnlineUserName'
+      FieldAlias = 'LEADS_ONLINE_USER_NAME'
+      FieldName = 'LEADS_ONLINE_USER_NAME'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2353,8 +2363,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField22: TppField
-      FieldAlias = 'LeadsOnlinePassword'
-      FieldName = 'LeadsOnlinePassword'
+      FieldAlias = 'LEADS_ONLINE_PASSWORD'
+      FieldName = 'LEADS_ONLINE_PASSWORD'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2363,8 +2373,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField23: TppField
-      FieldAlias = 'FTPPassive'
-      FieldName = 'FTPPassive'
+      FieldAlias = 'FTP_PASSIVE'
+      FieldName = 'FTP_PASSIVE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2373,8 +2383,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField24: TppField
-      FieldAlias = 'PawnDateCalculationBase'
-      FieldName = 'PawnDateCalculationBase'
+      FieldAlias = 'PAWN_DATE_CALCULATION_BASE'
+      FieldName = 'PAWN_DATE_CALCULATION_BASE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2383,12 +2393,32 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPStoreInfoppField25: TppField
-      FieldAlias = 'DefaultWeightMeasureUnit'
-      FieldName = 'DefaultWeightMeasureUnit'
+      FieldAlias = 'DEFAULT_WEIGHT_MEASURE_UNIT'
+      FieldName = 'DEFAULT_WEIGHT_MEASURE_UNIT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
       Position = 24
+      Searchable = False
+      Sortable = False
+    end
+    object DBPStoreInfoppField26: TppField
+      FieldAlias = 'SALES_TAX_PERC'
+      FieldName = 'SALES_TAX_PERC'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 25
+      Searchable = False
+      Sortable = False
+    end
+    object DBPStoreInfoppField27: TppField
+      FieldAlias = 'DEFAULT_PAWN_INTERESTRATE'
+      FieldName = 'DEFAULT_PAWN_INTERESTRATE'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 26
       Searchable = False
       Sortable = False
     end
@@ -2460,8 +2490,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField7: TppField
-      FieldAlias = 'cNextInterestToPay'
-      FieldName = 'cNextInterestToPay'
+      FieldAlias = 'cPawnNextMinPayment'
+      FieldName = 'cPawnNextMinPayment'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2490,8 +2520,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField10: TppField
-      FieldAlias = 'TransactionNo'
-      FieldName = 'TransactionNo'
+      FieldAlias = 'cTotalSalesAmount'
+      FieldName = 'cTotalSalesAmount'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2500,8 +2530,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField11: TppField
-      FieldAlias = 'CustNo'
-      FieldName = 'CustNo'
+      FieldAlias = 'TRANSACTION_NO'
+      FieldName = 'TRANSACTION_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2510,8 +2540,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField12: TppField
-      FieldAlias = 'TranDate'
-      FieldName = 'TranDate'
+      FieldAlias = 'CUST_NO'
+      FieldName = 'CUST_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2520,8 +2550,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField13: TppField
-      FieldAlias = 'TranTicketNo'
-      FieldName = 'TranTicketNo'
+      FieldAlias = 'TRAN_DATE'
+      FieldName = 'TRAN_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2530,8 +2560,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField14: TppField
-      FieldAlias = 'TranComment'
-      FieldName = 'TranComment'
+      FieldAlias = 'TRAN_TICKET_NO'
+      FieldName = 'TRAN_TICKET_NO'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2540,8 +2570,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField15: TppField
-      FieldAlias = 'TranMaturity'
-      FieldName = 'TranMaturity'
+      FieldAlias = 'TRAN_COMMENT'
+      FieldName = 'TRAN_COMMENT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2550,8 +2580,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField16: TppField
-      FieldAlias = 'TranType'
-      FieldName = 'TranType'
+      FieldAlias = 'TRAN_MATURITY'
+      FieldName = 'TRAN_MATURITY'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2560,8 +2590,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField17: TppField
-      FieldAlias = 'TranStatus'
-      FieldName = 'TranStatus'
+      FieldAlias = 'TRAN_TYPE'
+      FieldName = 'TRAN_TYPE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2570,8 +2600,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField18: TppField
-      FieldAlias = 'TranPawnAmount'
-      FieldName = 'TranPawnAmount'
+      FieldAlias = 'TRAN_STATUS'
+      FieldName = 'TRAN_STATUS'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2580,8 +2610,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField19: TppField
-      FieldAlias = 'TranInterest'
-      FieldName = 'TranInterest'
+      FieldAlias = 'TRAN_VOID_DATE'
+      FieldName = 'TRAN_VOID_DATE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2590,8 +2620,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField20: TppField
-      FieldAlias = 'PrincBalance'
-      FieldName = 'PrincBalance'
+      FieldAlias = 'TRAN_PAWN_AMOUNT'
+      FieldName = 'TRAN_PAWN_AMOUNT'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2600,8 +2630,8 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField21: TppField
-      FieldAlias = 'InsterestBalance'
-      FieldName = 'InsterestBalance'
+      FieldAlias = 'TRAN_INTEREST'
+      FieldName = 'TRAN_INTEREST'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -2610,12 +2640,52 @@ object frmClients: TfrmClients
       Sortable = False
     end
     object DBPTransactionppField22: TppField
-      FieldAlias = 'TranTime'
-      FieldName = 'TranTime'
+      FieldAlias = 'PRINC_BALANCE'
+      FieldName = 'PRINC_BALANCE'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
       Position = 21
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTransactionppField23: TppField
+      FieldAlias = 'INTEREST_BALANCE'
+      FieldName = 'INTEREST_BALANCE'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 22
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTransactionppField24: TppField
+      FieldAlias = 'TRAN_TIME'
+      FieldName = 'TRAN_TIME'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 23
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTransactionppField25: TppField
+      FieldAlias = 'TRAN_CLOSE_REASON'
+      FieldName = 'TRAN_CLOSE_REASON'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 24
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTransactionppField26: TppField
+      FieldAlias = 'TRAN_SALES_TAX'
+      FieldName = 'TRAN_SALES_TAX'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 25
       Searchable = False
       Sortable = False
     end
@@ -2995,127 +3065,151 @@ object frmClients: TfrmClients
     Left = 352
     Top = 151
   end
-  object qryPoliceRepCust: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryPoliceRepCust: TFDQuery
     OnCalcFields = qryPoliceRepCustCalcFields
-    Parameters = <
-      item
-        Name = 'Custno'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT *  '
-      'FROM Customer'
-      'WHERE Custno = :Custno'
+      'SELECT'
+      '  C.CUST_NO AS "Custno",'
+      '  CAST('#39#39' AS VARCHAR(15) CHARACTER SET UTF8) AS "CustTicketNo",'
+      '  C.CUST_LAST AS "CustLast",'
+      '  C.CUST_FIRST AS "CustFirst",'
+      '  C.CUST_MID AS "CustMid",'
+      '  C.CUST_DOB AS "CustDOB",'
+      '  C.CUST_GENDER AS "CustGender",'
+      '  C.CUST_RACE AS "CustRace",'
+      '  C.CUST_HAIR AS "CustHair",'
+      '  C.CUST_EYES AS "CustEyes",'
+      '  C.CUST_MARK AS "CustMark",'
+      '  C.CUST_WEIGHT AS "CustWeight",'
+      '  C.CUST_HEIGHT AS "CustHeight",'
+      '  C.CUST_ADDR AS "CustAddr",'
+      '  C.CUST_APT AS "CustApt",'
+      '  C.CUST_CITY AS "CustCity",'
+      '  C.CUST_STATE AS "CustState",'
+      '  C.CUST_ZIP AS "CustZip",'
+      '  C.CUST_PLACE_EMPLY AS "CustPlaceEmply",'
+      '  C.CUST_FL_DRV_LIC AS "CustFlDrvLic",'
+      '  C.CUST_ID AS "CustID",'
+      '  C.CUST_ID_TYPE AS "CustIDType",'
+      '  C.CUST_ID_AGENCY_STATE AS "CustIDAgencyState",'
+      '  C.CUST_PH_HOME AS "CustPhHome",'
+      '  C.CUST_PH_BUSINESS AS "CustPhBussiness",'
+      '  C.CUST_PH_BEEP AS "CustPhBeep",'
+      '  C.CUST_PH_CELL AS "CustPhCell",'
+      '  C.CUST_COMMENT AS "CustComment"'
+      'FROM CUSTOMER C'
+      'WHERE C.CUST_NO = :Custno'
       '')
     Left = 253
     Top = 98
-    object qryPoliceRepCustCustno: TAutoIncField
+    ParamData = <
+      item
+        Name = 'CUSTNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryPoliceRepCustCustno: TIntegerField
       FieldName = 'Custno'
       ReadOnly = True
     end
-    object qryPoliceRepCustCustTicketNo: TStringField
+    object qryPoliceRepCustCustTicketNo: TWideStringField
       FieldName = 'CustTicketNo'
       Size = 15
     end
-    object qryPoliceRepCustCustLast: TStringField
+    object qryPoliceRepCustCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryPoliceRepCustCustFirst: TStringField
+    object qryPoliceRepCustCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryPoliceRepCustCustMid: TStringField
+    object qryPoliceRepCustCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
     object qryPoliceRepCustCustDOB: TDateField
       FieldName = 'CustDOB'
     end
-    object qryPoliceRepCustCustGender: TStringField
+    object qryPoliceRepCustCustGender: TWideStringField
       FieldName = 'CustGender'
       Size = 1
     end
-    object qryPoliceRepCustCustRace: TStringField
+    object qryPoliceRepCustCustRace: TWideStringField
       FieldName = 'CustRace'
       Size = 1
     end
-    object qryPoliceRepCustCustHair: TStringField
+    object qryPoliceRepCustCustHair: TWideStringField
       FieldName = 'CustHair'
       Size = 5
     end
-    object qryPoliceRepCustCustEyes: TStringField
+    object qryPoliceRepCustCustEyes: TWideStringField
       FieldName = 'CustEyes'
       Size = 5
     end
-    object qryPoliceRepCustCustMark: TStringField
+    object qryPoliceRepCustCustMark: TWideStringField
       FieldName = 'CustMark'
       Size = 10
     end
     object qryPoliceRepCustCustWeight: TFloatField
       FieldName = 'CustWeight'
     end
-    object qryPoliceRepCustCustHeight: TStringField
+    object qryPoliceRepCustCustHeight: TWideStringField
       FieldName = 'CustHeight'
       Size = 8
     end
-    object qryPoliceRepCustCustAddr: TStringField
+    object qryPoliceRepCustCustAddr: TWideStringField
       FieldName = 'CustAddr'
       Size = 55
     end
-    object qryPoliceRepCustCustApt: TStringField
+    object qryPoliceRepCustCustApt: TWideStringField
       FieldName = 'CustApt'
       Size = 5
     end
-    object qryPoliceRepCustCustCity: TStringField
+    object qryPoliceRepCustCustCity: TWideStringField
       FieldName = 'CustCity'
       Size = 40
     end
-    object qryPoliceRepCustCustState: TStringField
+    object qryPoliceRepCustCustState: TWideStringField
       FieldName = 'CustState'
       Size = 2
     end
-    object qryPoliceRepCustCustZip: TStringField
+    object qryPoliceRepCustCustZip: TWideStringField
       FieldName = 'CustZip'
       Size = 11
     end
-    object qryPoliceRepCustCustPlaceEmply: TStringField
+    object qryPoliceRepCustCustPlaceEmply: TWideStringField
       FieldName = 'CustPlaceEmply'
       Size = 30
     end
-    object qryPoliceRepCustCustFlDrvLic: TStringField
+    object qryPoliceRepCustCustFlDrvLic: TWideStringField
       FieldName = 'CustFlDrvLic'
     end
-    object qryPoliceRepCustCustID: TStringField
+    object qryPoliceRepCustCustID: TWideStringField
       FieldName = 'CustID'
       Size = 25
     end
-    object qryPoliceRepCustCustIDType: TStringField
+    object qryPoliceRepCustCustIDType: TWideStringField
       FieldName = 'CustIDType'
     end
-    object qryPoliceRepCustCustIDAgencyState: TStringField
+    object qryPoliceRepCustCustIDAgencyState: TWideStringField
       FieldName = 'CustIDAgencyState'
       Size = 10
     end
-    object qryPoliceRepCustCustPhHome: TStringField
+    object qryPoliceRepCustCustPhHome: TWideStringField
       FieldName = 'CustPhHome'
       Size = 14
     end
-    object qryPoliceRepCustCustPhBussiness: TStringField
+    object qryPoliceRepCustCustPhBussiness: TWideStringField
       FieldName = 'CustPhBussiness'
       Size = 14
     end
-    object qryPoliceRepCustCustPhBeep: TStringField
+    object qryPoliceRepCustCustPhBeep: TWideStringField
       FieldName = 'CustPhBeep'
       Size = 14
     end
-    object qryPoliceRepCustCustPhCell: TStringField
+    object qryPoliceRepCustCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
       Size = 14
     end
@@ -3158,24 +3252,46 @@ object frmClients: TfrmClients
       Calculated = True
     end
   end
-  object qryPawnItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryPawnItems: TFDQuery
     OnCalcFields = qryPawnItemsCalcFields
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT *'
-      'FROM InventoryItems '
-      'WHERE TransactionNo = :TransactionNo')
+      'SELECT'
+      '  INV_ITEM_NO AS "InvItemNo",'
+      '  INV_ITEM_BARCODE AS "InvItemBarcode",'
+      '  INV_CAT_NO AS "InvCatNo",'
+      '  J_TYPE AS "JType",'
+      '  J_STYLE AS "JStyle",'
+      '  J_METAL AS "JMetal",'
+      '  INV_ITEM_COUNT AS "InvItemCount",'
+      '  NOTE AS "Note",'
+      '  SIZE_LENGTH AS "SizeLength",'
+      '  WEIGHT AS "Weight",'
+      '  WEIGHT_UNIT AS "WeightUnit",'
+      '  KT AS "KT",'
+      '  CREATED AS "Created",'
+      '  UNIT_COST AS "UnitCost",'
+      '  UNIT_PRICE AS "UnitPrice",'
+      '  INV_ITEM_STATUS AS "InvItemStatus",'
+      '  TRANSACTION_NO AS "TransactionNo",'
+      '  INV_ORIGINAL_ITEM_NO AS "InvOriginalItemNo",'
+      '  INV_ITEM_BRAND AS "InvItemBrand",'
+      '  OWNER_APP_NUMBER AS "OwnerAppNumber",'
+      '  MODEL_NUMBER AS "ModelNumber",'
+      '  SERIAL_NUMBER AS "SerialNumber",'
+      '  GENDER AS "Gender",'
+      '  DESCRIPTION AS "Description"'
+      'FROM INVENTORY_ITEMS'
+      'WHERE TRANSACTION_NO = :TransactionNo'
+      'ORDER BY INV_ITEM_NO')
     Left = 350
     Top = 98
+    ParamData = <
+      item
+        Name = 'TRANSACTIONNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryPawnItemscStone1Shape: TStringField
       FieldKind = fkCalculated
       FieldName = 'cStone1Shape'
@@ -3230,14 +3346,14 @@ object frmClients: TfrmClients
     object qryPawnItemsKT: TFloatField
       FieldName = 'KT'
     end
-    object qryPawnItemsCreated: TDateTimeField
+    object qryPawnItemsCreated: TSQLTimeStampField
       FieldName = 'Created'
     end
-    object qryPawnItemsUnitCost: TBCDField
+    object qryPawnItemsUnitCost: TFMTBCDField
       FieldName = 'UnitCost'
       Precision = 19
     end
-    object qryPawnItemsUnitPrice: TBCDField
+    object qryPawnItemsUnitPrice: TFMTBCDField
       FieldName = 'UnitPrice'
       Precision = 19
     end
@@ -3323,25 +3439,31 @@ object frmClients: TfrmClients
       Calculated = True
     end
   end
-  object qryPawnStones: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+  object qryPawnStones: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT *'
-      'FROM Stones'
-      'WHERE InvItemNo = :InvItemNo ')
+      'SELECT'
+      '  STONE_NO AS "StoneNo",'
+      '  INV_ITEM_NO AS "InvItemNo",'
+      '  STONE_NUMBER AS "StoneNumber",'
+      '  STONE_SHAPE AS "StoneShape",'
+      '  STONE_COLOR AS "StoneColor",'
+      '  CT AS "CT",'
+      '  WT AS "WT",'
+      '  STONE_WEIGHT_UNIT AS "StoneWeightUnit",'
+      '  STONE_TYPE AS "StoneType"'
+      'FROM STONES'
+      'WHERE INV_ITEM_NO = :InvItemNo'
+      'ORDER BY STONE_NO')
     Left = 545
     Top = 98
-    object qryPawnStonesStoneNo: TAutoIncField
+    ParamData = <
+      item
+        Name = 'INVITEMNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object qryPawnStonesStoneNo: TIntegerField
       FieldName = 'StoneNo'
       ReadOnly = True
     end
@@ -3644,7 +3766,7 @@ object frmClients: TfrmClients
         UserName = 'DBText5'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -3657,7 +3779,7 @@ object frmClients: TfrmClients
         mmHeight = 3969
         mmLeft = 148961
         mmTop = 0
-        mmWidth = 529
+        mmWidth = 21960
         BandType = 0
         LayerName = Foreground1
       end
@@ -3688,7 +3810,7 @@ object frmClients: TfrmClients
         UserName = 'DBText7'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranMaturity'
+        DataField = 'TRAN_MATURITY'
         DataPipeline = DBPTransaction
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -3702,7 +3824,7 @@ object frmClients: TfrmClients
         mmHeight = 4233
         mmLeft = 153988
         mmTop = 15346
-        mmWidth = 529
+        mmWidth = 21960
         BandType = 0
         LayerName = Foreground1
       end
@@ -4050,7 +4172,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'DBText8'
         Border.mmPadding = 0
-        DataField = 'TranTime'
+        DataField = 'TRAN_TIME'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -4071,7 +4193,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'DBText9'
         Border.mmPadding = 0
-        DataField = 'TranDate'
+        DataField = 'TRAN_DATE'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -9675,14 +9797,14 @@ object frmClients: TfrmClients
     object clnPawnItemsKT: TFloatField
       FieldName = 'KT'
     end
-    object clnPawnItemsCreated: TDateTimeField
+    object clnPawnItemsCreated: TSQLTimeStampField
       FieldName = 'Created'
     end
-    object clnPawnItemsUnitCost: TBCDField
+    object clnPawnItemsUnitCost: TFMTBCDField
       FieldName = 'UnitCost'
       Precision = 19
     end
-    object clnPawnItemsUnitPrice: TBCDField
+    object clnPawnItemsUnitPrice: TFMTBCDField
       FieldName = 'UnitPrice'
       Precision = 19
     end
@@ -10388,7 +10510,7 @@ object frmClients: TfrmClients
         UserName = 'DBText5'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -10400,8 +10522,8 @@ object frmClients: TfrmClients
         DataPipelineName = 'DBPTransaction'
         mmHeight = 4233
         mmLeft = 148961
-        mmTop = 1590
-        mmWidth = 20108
+        mmTop = 1588
+        mmWidth = 29369
         BandType = 0
         LayerName = Foreground2
       end
@@ -10432,7 +10554,7 @@ object frmClients: TfrmClients
         UserName = 'DBText7'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranMaturity'
+        DataField = 'TRAN_MATURITY'
         DataPipeline = DBPTransaction
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -10443,10 +10565,10 @@ object frmClients: TfrmClients
         ParentDataPipeline = False
         Transparent = True
         DataPipelineName = 'DBPTransaction'
-        mmHeight = 4233
+        mmHeight = 4234
         mmLeft = 156634
-        mmTop = 19581
-        mmWidth = 19050
+        mmTop = 19579
+        mmWidth = 27781
         BandType = 0
         LayerName = Foreground2
       end
@@ -10856,7 +10978,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer3
         UserName = 'DBText8'
         Border.mmPadding = 0
-        DataField = 'TranTime'
+        DataField = 'TRAN_TIME'
         DataPipeline = DBPTransaction
         DisplayFormat = 'h:nn:ss AM/PM'
         Font.Charset = DEFAULT_CHARSET
@@ -10879,7 +11001,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer3
         UserName = 'DBText9'
         Border.mmPadding = 0
-        DataField = 'TranDate'
+        DataField = 'TRAN_DATE'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -11915,7 +12037,7 @@ object frmClients: TfrmClients
         UserName = 'DBText5'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -11928,7 +12050,7 @@ object frmClients: TfrmClients
         mmHeight = 4233
         mmLeft = 148961
         mmTop = 0
-        mmWidth = 20108
+        mmWidth = 29369
         BandType = 0
         LayerName = Foreground3
       end
@@ -11959,7 +12081,7 @@ object frmClients: TfrmClients
         UserName = 'DBText7'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranMaturity'
+        DataField = 'TRAN_MATURITY'
         DataPipeline = DBPTransaction
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -11973,7 +12095,7 @@ object frmClients: TfrmClients
         mmHeight = 4233
         mmLeft = 156634
         mmTop = 17992
-        mmWidth = 19050
+        mmWidth = 27781
         BandType = 0
         LayerName = Foreground3
       end
@@ -12384,7 +12506,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer4
         UserName = 'DBText8'
         Border.mmPadding = 0
-        DataField = 'TranTime'
+        DataField = 'TRAN_TIME'
         DataPipeline = DBPTransaction
         DisplayFormat = 'h:nn:ss AM/PM'
         Font.Charset = DEFAULT_CHARSET
@@ -12407,7 +12529,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer4
         UserName = 'DBText9'
         Border.mmPadding = 0
-        DataField = 'TranDate'
+        DataField = 'TRAN_DATE'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13384,7 +13506,7 @@ object frmClients: TfrmClients
         UserName = 'DBText5'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranTicketNo'
+        DataField = 'TRAN_TICKET_NO'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -13394,10 +13516,10 @@ object frmClients: TfrmClients
         ParentDataPipeline = False
         Transparent = True
         DataPipelineName = 'DBPTransaction'
-        mmHeight = 4233
+        mmHeight = 4234
         mmLeft = 148961
-        mmTop = 1060
-        mmWidth = 20108
+        mmTop = 1058
+        mmWidth = 29369
         BandType = 0
         LayerName = Foreground
       end
@@ -13428,7 +13550,7 @@ object frmClients: TfrmClients
         UserName = 'DBText7'
         AutoSize = True
         Border.mmPadding = 0
-        DataField = 'TranMaturity'
+        DataField = 'TRAN_MATURITY'
         DataPipeline = DBPTransaction
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
@@ -13442,7 +13564,7 @@ object frmClients: TfrmClients
         mmHeight = 4233
         mmLeft = 156634
         mmTop = 17992
-        mmWidth = 19050
+        mmWidth = 27781
         BandType = 0
         LayerName = Foreground
       end
@@ -13855,7 +13977,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer1
         UserName = 'DBText8'
         Border.mmPadding = 0
-        DataField = 'TranTime'
+        DataField = 'TRAN_TIME'
         DataPipeline = DBPTransaction
         DisplayFormat = 'h:nn:ss AM/PM'
         Font.Charset = DEFAULT_CHARSET
@@ -13878,7 +14000,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer1
         UserName = 'DBText9'
         Border.mmPadding = 0
-        DataField = 'TranDate'
+        DataField = 'TRAN_DATE'
         DataPipeline = DBPTransaction
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack

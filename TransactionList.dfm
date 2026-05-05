@@ -736,18 +736,34 @@ object frmTransactionList: TfrmTransactionList
       TabOrder = 1
     end
   end
-  object qryTranList: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryTranList: TFDQuery
+    Connection = DM.ConnFB
     AfterScroll = qryTranListAfterScroll
     OnCalcFields = qryTranListCalcFields
-    Parameters = <>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     SQL.Strings = (
-      'SELECT T1.*, CustLast, CustFirst, CustMid'
-      'FROM Transactions T1'
-      ' join Customer T2 on T1.CustNo = T2.CustNo'
+      'SELECT'
+      '  T1.TRANSACTION_NO AS "TransactionNo",'
+      '  T1.CUST_NO AS "CustNo",'
+      '  T1.TRAN_DATE AS "TranDate",'
+      '  T1.TRAN_TICKET_NO AS "TranTicketNo",'
+      '  T1.TRAN_COMMENT AS "TranComment",'
+      '  T1.TRAN_MATURITY AS "TranMaturity",'
+      '  T1.TRAN_TYPE AS "TranType",'
+      '  T1.TRAN_STATUS AS "TranStatus",'
+      '  T1.TRAN_VOID_DATE AS "TranVoidDate",'
+      '  T1.TRAN_PAWN_AMOUNT AS "TranPawnAmount",'
+      '  T1.TRAN_INTEREST AS "TranInterest",'
+      '  T1.PRINC_BALANCE AS "PrincBalance",'
+      '  T1.INTEREST_BALANCE AS "InsterestBalance",'
+      '  T2.CUST_LAST AS "CustLast",'
+      '  T2.CUST_FIRST AS "CustFirst",'
+      '  T2.CUST_MID AS "CustMid"'
+      'FROM TRANSACTIONS T1'
+      ' join CUSTOMER T2 on T1.CUST_NO = T2.CUST_NO'
       '--<PARAMS>'
-      'ORDER BY TranDate, TranTicketNo'
+      'ORDER BY T1.TRAN_DATE, T1.TRAN_TICKET_NO'
       '')
     Left = 104
     Top = 231
@@ -769,7 +785,7 @@ object frmTransactionList: TfrmTransactionList
     object qryTranListCustNo: TIntegerField
       FieldName = 'CustNo'
     end
-    object qryTranListTranDate: TDateTimeField
+    object qryTranListTranDate: TDateField
       FieldName = 'TranDate'
       DisplayFormat = 'mm/dd/yyyy'
     end
@@ -792,7 +808,7 @@ object frmTransactionList: TfrmTransactionList
       FieldName = 'TranStatus'
       Size = 1
     end
-    object qryTranListTranVoidDate: TDateTimeField
+    object qryTranListTranVoidDate: TSQLTimeStampField
       FieldName = 'TranVoidDate'
       DisplayFormat = 'mm/dd/yyyy'
     end
@@ -812,15 +828,15 @@ object frmTransactionList: TfrmTransactionList
       FieldName = 'InsterestBalance'
       currency = True
     end
-    object qryTranListCustLast: TStringField
+    object qryTranListCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryTranListCustFirst: TStringField
+    object qryTranListCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryTranListCustMid: TStringField
+    object qryTranListCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
@@ -830,36 +846,39 @@ object frmTransactionList: TfrmTransactionList
     Left = 104
     Top = 288
   end
-  object qryTranTotals: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryTranTotals: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      
+        'SELECT T1.TRAN_TYPE as "TranType", T3.TRAN_TYPE_DESC as "TranTyp' +
+        'eDesc",'
+      
+        '       CAST(Count(*) AS INTEGER) as "TranCount", SUM(T1.TRAN_PAW' +
+        'N_AMOUNT) as "TotalAmount"'
+      'FROM TRANSACTIONS T1'
+      '  JOIN CUSTOMER T2 ON T1.CUST_NO = T2.CUST_NO'
+      '  JOIN TRANSACTION_TYPES T3 ON T1.TRAN_TYPE = T3.TRAN_TYPE'
+      
+        'WHERE T1.TRAN_STATUS = '#39'A'#39' AND T1.TRAN_DATE between :FDate and ' +
+        ':ToDate'
+      'GROUP BY T1.TRAN_TYPE, T3.TRAN_TYPE_DESC')
+    Left = 248
+    Top = 232
+    ParamData = <
       item
         Name = 'FDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = Null
       end
       item
         Name = 'ToDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = Null
       end>
-    SQL.Strings = (
-      
-        'SELECT T1.TranType, TranTypeDesc, Count(*) as TranCount, SUM(Tra' +
-        'nPawnAmount) as TotalAmount'
-      'FROM Transactions T1, Customer T2, TransactionTypes T3'
-      'WHERE T1.CustNo = T2.CustNo and T1.TranType= T3.TranType and '
-      '      TranStatus = '#39'A'#39' and TranDate between :FDate and :ToDate'
-      'GROUP BY T1.TranType, TranTypeDesc')
-    Left = 248
-    Top = 232
     object qryTranTotalsTranType: TStringField
       FieldName = 'TranType'
       ReadOnly = True
@@ -1715,28 +1734,62 @@ object frmTransactionList: TfrmTransactionList
     object ppParameterList1: TppParameterList
     end
   end
-  object qryInvItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryInvItems: TFDQuery
+    Connection = DM.ConnFB
     OnCalcFields = qryInvItemsCalcFields
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     SQL.Strings = (
-      'SELECT t.JTypeDesc, s.JStyleDesc, m.JMetalDesc, i.*'
-      'FROM InventoryItems i'
-      '  LEFT OUTER JOIN JTypes t on i.JType = t.JType'
-      '  LEFT OUTER JOIN JStyles s on i.JStyle = s.JStyle'
-      '  LEFT OUTER JOIN JMetalS M ON M.JMetal = i.JMetal'
-      'WHERE TransactionNo = :TransactionNo')
+      'SELECT'
+      '  t.J_TYPE_DESC AS "JTypeDesc",'
+      '  s.J_STYLE_DESC AS "JStyleDesc",'
+      '  m.J_METAL_DESC AS "JMetalDesc",'
+      '  i.INV_ITEM_NO AS "InvItemNo",'
+      '  i.INV_ITEM_BARCODE AS "InvItemBarcode",'
+      '  i.INV_CAT_NO AS "InvCatNo",'
+      '  i.J_TYPE AS "JType",'
+      '  i.J_STYLE AS "JStyle",'
+      '  i.J_METAL AS "JMetal",'
+      '  i.INV_ITEM_COUNT AS "InvItemCount",'
+      '  i.NOTE AS "Note",'
+      '  i.SIZE_LENGTH AS "SizeLength",'
+      '  i.WEIGHT AS "Weight",'
+      '  i.KT AS "KT",'
+      '  i.CREATED AS "Created",'
+      '  i.UNIT_COST AS "UnitCost",'
+      '  i.UNIT_PRICE AS "UnitPrice",'
+      '  i.INV_ITEM_STATUS AS "InvItemStatus",'
+      '  i.TRANSACTION_NO AS "TransactionNo",'
+      '  i.INV_ORIGINAL_ITEM_NO AS "InvOriginalItemNo",'
+      '  i.INV_ITEM_BRAND AS "InvItemBrand",'
+      '  i.OWNER_APP_NUMBER AS "OwnerAppNumber",'
+      '  i.MODEL_NUMBER AS "ModelNumber",'
+      '  i.SERIAL_NUMBER AS "SerialNumber",'
+      '  i.GENDER AS "Gender",'
+      '  i.DESCRIPTION AS "Description",'
+      '  i.WEIGHT_UNIT AS "WeightUnit",'
+      '  i.PAWNED_DATE AS "PawnedDate",'
+      '  i.PURCHASE_DATE AS "PurchaseDate",'
+      '  i.REDEEMED_DATE AS "RedeemedDate",'
+      '  i.DEFAULTED_DATE AS "DefaultedDate",'
+      '  i.MELTED_DATE AS "MeltedDate",'
+      '  i.FORSALE_DATE AS "ForSaleDate",'
+      '  i.SOLD_DATE AS "SoldDate",'
+      '  i.LAYAWAY_DATE AS "LayawayDate"'
+      'FROM INVENTORY_ITEMS i'
+      '  LEFT OUTER JOIN J_TYPES t on i.J_TYPE = t.J_TYPE'
+      '  LEFT OUTER JOIN J_STYLES s on i.J_STYLE = s.J_STYLE'
+      '  LEFT OUTER JOIN J_METALS m ON m.J_METAL = i.J_METAL'
+      'WHERE i.TRANSACTION_NO = :TransactionNo')
     Left = 1188
     Top = 214
+    ParamData = <
+      item
+        Name = 'TransactionNo'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
     object qryInvItemscTotalWeight: TFloatField
       FieldKind = fkCalculated
       FieldName = 'cTotalWeight'
@@ -1786,15 +1839,15 @@ object frmTransactionList: TfrmTransactionList
     object qryInvItemsKT: TFloatField
       FieldName = 'KT'
     end
-    object qryInvItemsCreated: TDateTimeField
+    object qryInvItemsCreated: TSQLTimeStampField
       FieldName = 'Created'
     end
-    object qryInvItemsUnitCost: TBCDField
+    object qryInvItemsUnitCost: TFMTBCDField
       FieldName = 'UnitCost'
       currency = True
       Precision = 19
     end
-    object qryInvItemsUnitPrice: TBCDField
+    object qryInvItemsUnitPrice: TFMTBCDField
       FieldName = 'UnitPrice'
       currency = True
       Precision = 19
@@ -1831,7 +1884,7 @@ object frmTransactionList: TfrmTransactionList
     end
     object qryInvItemsDescription: TStringField
       FieldName = 'Description'
-      Size = 40
+      Size = 120
     end
     object qryInvItemsJTypeDesc: TStringField
       FieldName = 'JTypeDesc'
@@ -1894,22 +1947,20 @@ object frmTransactionList: TfrmTransactionList
     Left = 1135
     Top = 18
   end
-  object qryTotals: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryTotals: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
       
-        'SELECT SUM(CASE WHEN PawnedDate BETWEEN '#39'2000-01-01'#39' AND '#39'2025-1' +
-        '2-01'#39' THEN 1 ELSE 0 END) AS PawnedCount,'
+        'SELECT CAST(SUM(CASE WHEN PAWNED_DATE BETWEEN '#39'2000-01-01'#39' AND '#39 +
+        '2025-12-01'#39' THEN 1 ELSE 0 END) AS INTEGER) AS "PawnedCount",'
       
-        '      SUM(CASE WHEN RedeemedDate  BETWEEN '#39'2000-01-01'#39' AND '#39'2025' +
-        '-12-01'#39' THEN 1 ELSE 0 END) AS RedeemedCount,'
+        '      CAST(SUM(CASE WHEN REDEEMED_DATE BETWEEN '#39'2000-01-01'#39' AND ' +
+        #39'2025-12-01'#39' THEN 1 ELSE 0 END) AS INTEGER) AS "RedeemedCount",'
       
-        '      SUM(CASE WHEN DefaultedDate BETWEEN '#39'2000-01-01'#39' AND '#39'2025' +
-        '-12-01'#39' THEN 1 ELSE 0 END) AS DefaultedCount'
-      'FROM InventoryItems'
-      'WHERE PawnedDate IS NOT NULL;'
+        '      CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN '#39'2000-01-01'#39' AND' +
+        ' '#39'2025-12-01'#39' THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedCount"'
+      'FROM INVENTORY_ITEMS'
+      'WHERE PAWNED_DATE IS NOT NULL;'
       '')
     Left = 425
     Top = 436
@@ -1928,20 +1979,18 @@ object frmTransactionList: TfrmTransactionList
     Left = 427
     Top = 498
   end
-  object qryDefaultTotals: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryDefaultTotals: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
       
-        'SELECT SUM(CASE WHEN DefaultedDate BETWEEN '#39'2000-01-01'#39' AND '#39'202' +
-        '5-12-01'#39' AND MeltedDate IS NOT NULL THEN 1 ELSE 0 END) AS Defaul' +
-        'tedMeltedCount, '
+        'SELECT CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN '#39'2000-01-01'#39' AN' +
+        'D '#39'2025-12-01'#39' AND MELTED_DATE IS NOT NULL THEN 1 ELSE 0 END) AS' +
+        ' INTEGER) AS "DefaultedMeltedCount", '
       
-        'SUM(CASE WHEN DefaultedDate BETWEEN '#39'2000-01-01'#39' AND '#39'2025-12-01' +
-        #39' AND ForSaleDate IS NOT NULL THEN 1 ELSE 0 END) AS DefaultedFor' +
-        'SaleCount '
-      'FROM InventoryItems WHERE PawnedDate IS NOT NULL ')
+        'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN '#39'2000-01-01'#39' AND '#39'2025' +
+        '-12-01'#39' AND FORSALE_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEG' +
+        'ER) AS "DefaultedForSaleCount" '
+      'FROM INVENTORY_ITEMS WHERE PAWNED_DATE IS NOT NULL ')
     Left = 566
     Top = 436
     object qryDefaultTotalsDefaultedMeltedCount: TIntegerField

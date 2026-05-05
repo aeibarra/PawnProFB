@@ -25,40 +25,40 @@ object frmReport01: TfrmReport01
       381
       71)
     object RzBitBtn1: TRzBitBtn
-      Left = 13
-      Top = 7
+      Left = 11
+      Top = 12
       Width = 112
-      Height = 56
+      Height = 49
       Caption = 'Preview'
       TabOrder = 0
       OnClick = RzBitBtn1Click
       ImageIndex = 30
-      Images = DM.vilMain
+      Images = DM.vilMain24
       Spacing = 0
     end
     object RzBitBtn2: TRzBitBtn
-      Left = 135
-      Top = 7
+      Left = 133
+      Top = 12
       Width = 112
-      Height = 56
+      Height = 49
       Caption = 'Print'
       TabOrder = 1
       OnClick = RzBitBtn2Click
       ImageIndex = 0
-      Images = DM.vilMain
+      Images = DM.vilMain24
       Spacing = 0
     end
     object btnExit: TBitBtn
-      Left = 276
-      Top = 7
+      Left = 274
+      Top = 12
       Width = 97
-      Height = 56
+      Height = 49
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = ' &Close'
-      ImageIndex = 12
-      ImageName = 'acrExit01'
-      Images = DM.vilMain
+      ImageIndex = 2
+      ImageName = 'actExit'
+      Images = DM.vilMain24
       ModalResult = 2
       TabOrder = 2
     end
@@ -103,7 +103,7 @@ object frmReport01: TfrmReport01
   object dsLatePawn: TDataSource
     DataSet = clnLatePawn
     Left = 683
-    Top = 56
+    Top = 73
   end
   object DBPLatePawn: TppDBPipeline
     DataSource = dsLatePawn
@@ -351,7 +351,7 @@ object frmReport01: TfrmReport01
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 768
-    Top = 56
+    Top = 73
     Version = '23.02'
     mmColumnWidth = 0
     DataPipelineName = 'DBPLatePawn'
@@ -859,34 +859,42 @@ object frmReport01: TfrmReport01
     object ppParameterList1: TppParameterList
     end
   end
-  object qryPayments: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryPayments: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'select'
+      '  PAYMENT_NO as "PaymentNo",'
+      '  TRANSACTION_NO as "TransactionNo",'
+      '  PAY_DATE as "PayDate",'
+      '  PAY_AMOUNT as "PayAmount",'
+      '  PAY_COMMENT as "PayComment",'
+      '  PAY_METHOD as "PayMethod",'
+      '  PAY_INTEREST as "PayInterest",'
+      '  PAY_PRINCIPAL as "PayPrincipal",'
+      '  PRINC_BALANCE as "PrincBalance",'
+      '  INTEREST_BALANCE as "InsterestBalance"'
+      'from PAYMENTS'
+      'where TRANSACTION_NO = :TransactionNo'
+      'order by PAY_DATE, PAYMENT_NO')
+    Left = 432
+    Top = 11
+    ParamData = <
       item
         Name = 'TransactionNo'
-        Attributes = [paNullable]
         DataType = ftInteger
-        Precision = 255
-        Size = 32767
+        ParamType = ptInput
         Value = Null
       end>
-    SQL.Strings = (
-      'select *'
-      'from Payments'
-      'where TransactionNo = :TransactionNo')
-    Left = 432
-    Top = 16
   end
   object dsPayments: TDataSource
     DataSet = qryPayments
     Left = 432
-    Top = 64
+    Top = 73
   end
   object prvLatePawn: TDataSetProvider
     DataSet = spLatePawn
     Left = 603
-    Top = 56
+    Top = 73
   end
   object clnLatePawn: TClientDataSet
     Aggregates = <>
@@ -894,9 +902,9 @@ object frmReport01: TfrmReport01
     Params = <
       item
         DataType = ftInteger
-        Name = '@Mons'
+        Name = 'Mons'
         ParamType = ptInput
-        Value = '1'
+        Value = 1
       end>
     ProviderName = 'prvLatePawn'
     AfterScroll = clnLatePawnAfterScroll
@@ -922,7 +930,7 @@ object frmReport01: TfrmReport01
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object clnLatePawnTranDate: TDateTimeField
+    object clnLatePawnTranDate: TDateField
       FieldName = 'TranDate'
       DisplayFormat = 'mm/dd/yyyy'
     end
@@ -965,7 +973,7 @@ object frmReport01: TfrmReport01
     OpenDataSource = False
     UserName = 'DBPPayments'
     Left = 504
-    Top = 16
+    Top = 11
     object DBPPaymentsppField1: TppField
       FieldAlias = 'PaymentNo'
       FieldName = 'PaymentNo'
@@ -1067,18 +1075,31 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
   end
-  object spLatePawn: TADOStoredProc
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    ProcedureName = 'Rep_CustomerWithLatePayments'
-    Parameters = <
-      item
-        Name = '@Mons'
-        DataType = ftWideString
-        Size = 1
-        Value = '1'
-      end>
+  object spLatePawn: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'select'
+      '  TRANSACTION_NO as "TransactionNo",'
+      '  TRAN_TICKET_NO as "TranTicketNo",'
+      '  CAST(TRAN_DATE AS DATE) as "TranDate",'
+      '  CAST(LATE_PAYMENT AS INTEGER) as "LatePayment",'
+      '  CUST_NO as "Custno",'
+      '  CUST_LAST as "CustLast",'
+      '  CUST_FIRST as "CustFirst",'
+      '  CUST_MID as "CustMid",'
+      '  TRAN_PAWN_AMOUNT as "TranPawnAmount",'
+      '  CUST_PH_CELL as "CustPhCell",'
+      '  CUST_PH_HOME as "CustPhHome",'
+      '  CUST_PH_BUSINESS as "CustPhBussiness"'
+      'from REP_CUSTOMER_WITH_LATE_PAYMENTS(:Mons)')
     Left = 603
     Top = 11
+    ParamData = <
+      item
+        Name = 'Mons'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
   end
 end

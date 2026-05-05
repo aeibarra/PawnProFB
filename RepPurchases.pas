@@ -5,9 +5,11 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RzButton, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.Mask, RzEdit, Data.DB, Data.Win.ADODB, ppProd, ppClass, ppReport, ppComm,
+  Vcl.Mask, RzEdit, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, ppProd, ppClass, ppReport, ppComm,
   ppRelatv, ppDB, ppDBPipe, ppCtrls, ppVar, ppPrnabl, ppBands, ppCache,
-  ppDesignLayer, ppParameter;
+  ppDesignLayer, ppParameter, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmRepPurchases = class(TForm)
@@ -20,8 +22,8 @@ type
     btnExit: TBitBtn;
     btnPreview: TRzBitBtn;
     btnPrint: TRzBitBtn;
-    qryPruchases: TADOQuery;
-    qryPruchasesTranDate: TDateTimeField;
+    qryPruchases: TFDQuery;
+    qryPruchasesTranDate: TDateField;
     qryPruchasesTranTicketNo: TStringField;
     qryPruchasesPurchaseAmount: TFloatField;
     dsPruchases: TDataSource;
@@ -93,8 +95,8 @@ begin
   Screen.Cursor := crHourGlass;
   try
     qryPruchases.Close;
-    qryPruchases.Parameters.ParamByName('FDate').Value := edFrom.Date;
-    qryPruchases.Parameters.ParamByName('TDate').Value := edTo.Date;
+    qryPruchases.Params.ParamByName('FDate').AsDate := edFrom.Date;
+    qryPruchases.Params.ParamByName('TDate').AsDate := edTo.Date;
     qryPruchases.Open;
   finally
     Screen.Cursor := crDefault;

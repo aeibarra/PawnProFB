@@ -4,18 +4,18 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, DB, ADODB, Grids, DBGrids;
+  Dialogs, StdCtrls, Buttons, DB, FireDAC.Comp.Client, Grids, DBGrids;
 
 type
   TfrmViewBackupHist = class(TForm)
     GroupBox1: TGroupBox;
     btnClose: TBitBtn;
     GroupBox2: TGroupBox;
-    qryBckHist: TADOQuery;
+    qryBckHist: TFDQuery;
     dsBckHist: TDataSource;
     DBGrid1: TDBGrid;
-    qryBckHistBckId: TAutoIncField;
-    qryBckHistBckDate: TDateTimeField;
+    qryBckHistBckId: TIntegerField;
+    qryBckHistBckDate: TSQLTimeStampField;
     qryBckHistBckPath: TStringField;
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);

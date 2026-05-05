@@ -5,21 +5,25 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Data.DB, Vcl.FileCtrl,
-  Data.Win.ADODB, Vcl.Grids, Vcl.DBGrids, Vcl.Mask, RzEdit, RzButton, RzRadChk,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Mask, RzEdit, RzButton, RzRadChk,
   Vcl.ExtCtrls, RzPanel, RzShellDialogs, RzCommon, RzTabs, Vcl.Menus,
   IdComponent, IdBaseComponent, IdTCPConnection, IdTCPClient,
-  IdExplicitTLSClientServerBase, IdFTP, Vcl.DBCtrls;
+  IdExplicitTLSClientServerBase, IdFTP, Vcl.DBCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TfrmExportPoliceInformation = class(TForm)
     GroupBox2: TGroupBox;
     btnExit: TBitBtn;
-    qryHistTranDays: TADOQuery;
+    qryHistTranDays: TFDQuery;
     dsHistTranDays: TDataSource;
     SaveDialog: TSaveDialog;
     PropertyStore: TRzPropertyStore;
     qryHistTranDaysExportLogID: TIntegerField;
-    qryHistTranDaysExportDate: TDateTimeField;
+    qryHistTranDaysExportDate: TSQLTimeStampField;
     qryHistTranDaysFileName: TStringField;
     qryHistTranDaysItemCount: TIntegerField;
     PageControlExport: TRzPageControl;
@@ -45,7 +49,7 @@ type
     edExportFolder: TLabeledEdit;
     btnGenAndExport: TRzBitBtn;
     GroupBox3: TGroupBox;
-    qryImagesNotExp: TADOQuery;
+    qryImagesNotExp: TFDQuery;
     qryImagesNotExpTransactionNo: TIntegerField;
     qryImagesNotExpInvItemNo: TIntegerField;
     qryImagesNotExpItemSeq: TIntegerField;
@@ -58,7 +62,7 @@ type
     ViewImages1: TMenuItem;
     btnSendImages: TRzToolButton;
     qryImagesNotExpTranType: TStringField;
-    qryImagesNotExpTranDate: TDateTimeField;
+    qryImagesNotExpTranDate: TDateField;
     MemoTxResult: TMemo;
     FTP: TIdFTP;
     lblFTPStatus: TLabel;
@@ -71,17 +75,17 @@ type
     RzPanel1: TRzPanel;
     DBGrid2: TDBGrid;
     DBGrid3: TDBGrid;
-    qrySentImg: TADOQuery;
+    qrySentImg: TFDQuery;
     qrySentImgImagesDataNo: TIntegerField;
     qrySentImgImageDesc: TStringField;
-    qrySentImgUploadTime: TDateTimeField;
+    qrySentImgUploadTime: TSQLTimeStampField;
     qrySentImgUploadFileName: TStringField;
     dsSentImg: TDataSource;
     popMnu2: TPopupMenu;
     MenuItem1: TMenuItem;
     TabSheet3: TRzTabSheet;
     Button1: TButton;
-    qryExpLogDetail: TADOQuery;
+    qryExpLogDetail: TFDQuery;
     btnOpen: TButton;
     dsExpLogDetail: TDataSource;
     qryExpLogDetailID: TIntegerField;
@@ -92,7 +96,7 @@ type
     qryExpLogDetailItemSeq: TIntegerField;
     lblItemSeq: TLabel;
     lblItemInvNo: TLabel;
-    qryGetItemNo: TADOQuery;
+    qryGetItemNo: TFDQuery;
     qryGetItemNoInvItemNo: TIntegerField;
     lblRowProgress: TLabel;
     chkFTPOnlyOne: TCheckBox;
@@ -401,7 +405,7 @@ begin
   Result := -1;
 
   qryGetItemNo.Close;
-  qryGetItemNo.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
+  qryGetItemNo.Params.ParamByName('TransactionNo').AsInteger := TransactionNo;
   qryGetItemNo.Open;
 
   if (qryGetItemNo.RecordCount = 0) or qryGetItemNoInvItemNo.IsNull then
@@ -421,7 +425,8 @@ end;
 
 procedure TfrmExportPoliceInformation.UpdateExportLogFileDetail_InvItemNo_ItemSeq(ID, ItemSeq, InvItemNo: integer);
 begin
-  DM.ConnDB.Execute(Format('UPDATE ExportLogFileDetail Set InvItemNo = %d, ItemSeq = %d WHERE ID = %d', [InvItemNo, ItemSeq, ID]));
+  DM.ConnFB.ExecSQL('UPDATE EXPORT_LOG_FILE_DETAIL SET INV_ITEM_NO = :INV_ITEM_NO, ITEM_SEQ = :ITEM_SEQ WHERE ID = :ID',
+                    [InvItemNo, ItemSeq, ID]);
 end;
 
 procedure TfrmExportPoliceInformation.Button1Click(Sender: TObject);
@@ -451,7 +456,7 @@ begin
          if InvItemNo > 0 then
            begin
              lblItemInvNo.Caption := IntToStr(InvItemNo);
-             UpdateExportLogFileDetail_InvItemNo_ItemSeq(qryExpLogDetailID.AsInteger, InvItemNo, ItemSeq);
+             UpdateExportLogFileDetail_InvItemNo_ItemSeq(qryExpLogDetailID.AsInteger, ItemSeq, InvItemNo);
            end;
        end;
 

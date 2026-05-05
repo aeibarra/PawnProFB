@@ -3,18 +3,6 @@ object DM: TDM
   OnDestroy = DataModuleDestroy
   Height = 788
   Width = 1736
-  object ConnDB: TADOConnection
-    ConnectionString =
-      'Provider=SAOLEDB.12;Password=kakita;Persist Security Info=True;U' +
-      'ser ID=dba;Initial Catalog=Pawn;Data Source=Pawn;Location=127.0.' +
-      '0.1'
-    KeepConnection = False
-    LoginPrompt = False
-    Mode = cmReadWrite
-    Provider = 'SAOLEDB.12'
-    Left = 32
-    Top = 12
-  end
   object DSCustomers: TDataSource
     DataSet = qryCustomers
     Left = 635
@@ -4383,15 +4371,15 @@ object DM: TDM
     SQL.Strings = (
       'SELECT'
       '  CASE'
-
+      
         '    WHEN SUM(CASE WHEN REDEEMED_DATE IS NULL AND DEFAULTED_DATE ' +
         'IS NULL THEN 1 ELSE 0 END) > 0 THEN 0  -- any open item means Pa' +
         'wn Open'
-
+      
         '    WHEN SUM(CASE WHEN REDEEMED_DATE IS NOT NULL AND DEFAULTED_D' +
         'ATE IS NULL THEN 1 ELSE 0 END) = COUNT(*) THEN 2  -- all redeeme' +
         'd'
-
+      
         '    WHEN SUM(CASE WHEN REDEEMED_DATE IS NULL AND DEFAULTED_DATE ' +
         'IS NOT NULL THEN 1 ELSE 0 END) = COUNT(*) THEN 3  -- all default' +
         'ed'
@@ -4682,7 +4670,7 @@ object DM: TDM
     SVGIconItems = <
       item
         IconName = 'actSearch'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30" wid' +
           'th="30px" height="30px"><path fill="#b6c9d6" d="M2.931,28.5c-0.3' +
           '82,0-0.742-0.149-1.012-0.419c-0.558-0.558-0.558-1.466,0-2.024l14' +
@@ -4701,7 +4689,7 @@ object DM: TDM
       end
       item
         IconName = 'actExit'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><linearGradient id="TLxN4xXGVHxg8pzyp~Oe' +
           'ga" x1="10.183" x2="36.857" y1="4.879" y2="41.792" gradientUnits' +
@@ -4722,7 +4710,7 @@ object DM: TDM
       end
       item
         IconName = 'actPayment'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="50px" height="50px"><linearGradient id="IJp77CY8NayMJKO1sTz3' +
           '1a" x1="24" x2="24" y1="3.882" y2="48.182" gradientUnits="userSp' +
@@ -4825,7 +4813,7 @@ object DM: TDM
       end
       item
         IconName = 'actPrint2'
-        SVGText =
+        SVGText = 
           '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"  vi' +
           'ewBox="0 0 50 50" width="50px" height="50px">    <path d="M 11 2' +
           ' L 11 15 L 5 15 C 3.3550302 15 2 16.35503 2 18 L 2 36 C 2 37.644' +
@@ -4848,7 +4836,7 @@ object DM: TDM
       end
       item
         IconName = 'actPrint4'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" wid' +
           'th="50px" height="50px"><path d="M 11 2 L 11 15 L 5 15 C 3.346 1' +
           '5 2 16.346 2 18 L 2 36 C 2 37.654 3.346 39 5 39 L 11 39 L 11 48 ' +
@@ -4865,7 +4853,7 @@ object DM: TDM
       end
       item
         IconName = 'actSearch2'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#616161" d="M34.6 28.1H38.6V' +
           '45.1H34.6z" transform="rotate(-45.001 36.586 36.587)"/><path fil' +
@@ -4880,7 +4868,7 @@ object DM: TDM
       end
       item
         IconName = 'actSearch3'
-        SVGText =
+        SVGText = 
           '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"  vi' +
           'ewBox="0 0 50 50" width="50px" height="50px">    <path d="M 7 7 ' +
           'C 5.346 7 4 8.346 4 10 L 4 40 C 4 41.654 5.346 43 7 43 L 26.2675' +
@@ -4903,7 +4891,7 @@ object DM: TDM
       end
       item
         IconName = 'actSearch4'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" wi' +
           'dth="60px" height="60px" baseProfile="basic">'#13#10'  <rect width="15' +
           '" height="62.367" x="76.95" y="57.266" opacity=".35" transform="' +
@@ -4916,7 +4904,7 @@ object DM: TDM
       end
       item
         IconName = 'actSearch5'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" widt' +
           'h="64px" height="64px">'#13#10'  <path d="M 31 11 C 19.973 11 11 19.97' +
           '3 11 31 C 11 42.027 19.973 51 31 51 C 34.974166 51 38.672385 49.' +
@@ -4930,7 +4918,7 @@ object DM: TDM
       end
       item
         IconName = 'actFindUserMale'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 80 80" wid' +
           'th="40px" height="40px">'#13#10'  <path fill="#6ca9ff" d="M2.506,71.5c' +
           '0.272-11.625,10.034-21,21.994-21h15c7.506,0,14.378,3.656,18.46,9' +
@@ -5011,7 +4999,7 @@ object DM: TDM
       end
       item
         IconName = 'actFindUserMale2'
-        SVGText =
+        SVGText = 
           '<svg fill="#4D4D4D" xmlns="http://www.w3.org/2000/svg"  viewBox=' +
           '"0 0 50 50" width="50px" height="50px"><path d="M 19.875 0.40625' +
           ' C 19.414063 0.414063 18.992188 0.425781 18.5625 0.46875 C 18.45' +
@@ -5055,7 +5043,7 @@ object DM: TDM
       end
       item
         IconName = 'Add User Male 2'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" widt' +
           'h="40px" height="40px">'#13#10'  <path fill="#8bb7f0" d="M1.512,35.5c0' +
           '.268-5.559,4.982-10,10.738-10h7.5c5.756,0,10.47,4.441,10.738,10H' +
@@ -5121,7 +5109,7 @@ object DM: TDM
       end
       item
         IconName = 'Registration1'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" widt' +
           'h="40px" height="40px">'#13#10'  <path fill="#8bb7f0" d="M1.512,35.5c0' +
           '.268-5.559,4.982-10,10.738-10h7.5c3.605,0,6.911,1.725,8.917,4.63' +
@@ -5210,7 +5198,7 @@ object DM: TDM
       end
       item
         IconName = 'Denied 2'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" widt' +
           'h="40px" height="40px">'#13#10'  <path fill="#8bb7f0" d="M1.512,35.5c0' +
           '.269-5.559,4.982-10,10.738-10h7.5c5.756,0,10.47,4.441,10.738,10H' +
@@ -5275,7 +5263,7 @@ object DM: TDM
       end
       item
         IconName = 'actlabels1'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 40 40" wid' +
           'th="40px" height="40px"><path fill="#b6dcfe" d="M14.93,32.5c-0.4' +
           '78,0-0.927-0.186-1.265-0.524L2.024,20.336c-0.697-0.698-0.697-1.8' +
@@ -5313,7 +5301,7 @@ object DM: TDM
       end
       item
         IconName = 'acrExit01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" wid' +
           'th="50px" height="50px"><path d="M 3 0 C 1.355469 0 0 1.355469 0' +
           ' 3 L 0 47 C 0 48.644531 1.355469 50 3 50 L 37 50 C 38.644531 50 ' +
@@ -5335,7 +5323,7 @@ object DM: TDM
       end
       item
         IconName = 'actEdit01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 120 120" w' +
           'idth="60px" height="60px" baseProfile="basic"><polygon points="9' +
           '1.661,16.661 18.661,89.661 15,111 36.339,107.339 109.339,34.339"' +
@@ -5350,7 +5338,7 @@ object DM: TDM
       end
       item
         IconName = 'actEdit02'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><linearGradient id="DIL4YXqTpzKGN6Y0goTo' +
           'Wa" x1="2.315" x2="27.991" y1="21.22" y2="46.895" gradientUnits=' +
@@ -5385,7 +5373,7 @@ object DM: TDM
       end
       item
         IconName = 'actAddFld01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" widt' +
           'h="40px" height="40px">'#13#10'  <path fill="#dbb065" d="M2.5,71.5v-63' +
           'h21.3l6,6h47.7V68c0,1.9-1.6,3.5-3.5,3.5H2.5z" />'#13#10'  <path fill="' +
@@ -5404,7 +5392,7 @@ object DM: TDM
       end
       item
         IconName = 'actReceipt01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 26 26" wid' +
           'th="52px" height="52px"><path d="M 6 0.03125 C 4.949219 0.03125 ' +
           '4.03125 0.859375 4.03125 1.9375 C 4.03125 2.023438 4.042969 2.10' +
@@ -5444,7 +5432,7 @@ object DM: TDM
       end
       item
         IconName = 'actSigma'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" wid' +
           'th="50px" height="50px"><path d="M 42.199219 50 L 4.101563 50 C ' +
           '3.28125 50 2.101563 49.429688 2.101563 48.398438 C 2.101563 48.1' +
@@ -5471,7 +5459,7 @@ object DM: TDM
       end
       item
         IconName = 'actTakePicture'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" wid' +
           'th="50px" height="50px"><path d="M 24.375 4 C 22.578125 4 20.699' +
           '219 5.421875 19.9375 7.375 L 19.3125 9 L 14 9 L 14 8 C 14 7.4453' +
@@ -5490,7 +5478,7 @@ object DM: TDM
       end
       item
         IconName = 'actSave01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#3498db" d="M42 42L6 42 6 6 ' +
           '37 6 42 11z"/><path fill="#fff" d="M39,39c0,0.553-0.447,1-1,1H10' +
@@ -5503,7 +5491,7 @@ object DM: TDM
       end
       item
         IconName = 'actAddItems'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" wid' +
           'th="50px" height="50px"><path d="M 2.8125 0 C 1.269531 0 0 1.269' +
           '531 0 2.8125 L 0 7 L 44 7 L 44 2.8125 C 44 1.269531 42.730469 0 ' +
@@ -5522,7 +5510,7 @@ object DM: TDM
       end
       item
         IconName = 'actItems'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#3F51B5" d="M38,13c0,0.553-0' +
           '.447,1-1,1H5c-0.552,0-1-0.447-1-1V6c0-0.553,0.448-1,1-1h32c0.553' +
@@ -5538,7 +5526,7 @@ object DM: TDM
       end
       item
         IconName = 'actTrash'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 64 64" wid' +
           'th="64px" height="64px"><ellipse cx="32" cy="61" opacity=".3" rx' +
           '="19" ry="3"/><path fill="#7c8aa3" d="M43.299,55H20.701c-1.535,0' +
@@ -5567,7 +5555,7 @@ object DM: TDM
       end
       item
         IconName = 'actTrash01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" widt' +
           'h="48px" height="48px">'#13#10'  <defs>'#13#10'    <linearGradient id="43ym0' +
           '06WvMIEg~65JO87Ba" x1="15.478" x2="34.518" y1=".586" y2="52.898"' +
@@ -5591,7 +5579,7 @@ object DM: TDM
       end
       item
         IconName = 'actBackupDB'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" wid' +
           'th="48px" height="48px"><path fill="#303C42" d="M23.788147,15.12' +
           '18872l0.0072632-0.0032349l-4.3095703-9.6391602 C19.0834961,4.580' +
@@ -5650,7 +5638,7 @@ object DM: TDM
       end
       item
         IconName = 'actExportCDV'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 80 80" wid' +
           'th="40px" height="40px"><path fill="#fff" d="M6.5 75.5L6.5 4.5 4' +
           '3.793 4.5 61.5 22.207 61.5 75.5z"/><path fill="#788b9c" d="M43.5' +
@@ -5687,7 +5675,7 @@ object DM: TDM
       end
       item
         IconName = 'actDollar01'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.' +
           'w3.org/1999/xlink" viewBox="0 0 48 48" width="48px" height="48px' +
           '"><defs><linearGradient id="4v2C4sghTVC3qosVcg4Mcc" x1="1.059" x' +
@@ -5787,7 +5775,7 @@ object DM: TDM
       end
       item
         IconName = 'actPawnPurchase'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px" baseProfile="basic"><path fill="#e39d36"' +
           ' d="M31.215,31.291l-12.147,7.178l2.853,3.681l11.687-6.994c1.012-' +
@@ -5846,7 +5834,7 @@ object DM: TDM
       end
       item
         IconName = 'actCashOnHand'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" widt' +
           'h="40px" height="40px">'#13#10'  <path fill="#eaba1b" d="M36,77.5c-3.0' +
           '33,0-5.5-2.467-5.5-5.5V54.5h11V72C41.5,75.033,39.033,77.5,36,77.' +
@@ -5923,7 +5911,7 @@ object DM: TDM
       end
       item
         IconName = 'actActiveIventory'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" widt' +
           'h="40px" height="40px">'#13#10'  <rect width="51" height="71" x="14.5"' +
           ' y="2.5" fill="#c4dbf7" />'#13#10'  <path fill="#496482" d="M65,3v70H1' +
@@ -5952,7 +5940,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-transaction-list'
-        SVGText =
+        SVGText = 
           '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"  vi' +
           'ewBox="0 0 128 128" width="64px" height="64px">    <path d="M 10' +
           '6.81055 1.9589844 C 106.08203 1.9951172 105.36328 2.3007812 104.' +
@@ -6010,7 +5998,7 @@ object DM: TDM
       end
       item
         IconName = 'actPreviewDocument'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 128 128" w' +
           'idth="64px" height="64px"><path d="M 32 6 C 24.8 6 19 11.8 19 19' +
           ' L 19 109 C 19 116.2 24.8 122 32 122 L 80 122 C 81.7 122 83 120.' +
@@ -6047,7 +6035,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-report'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 480 480" w' +
           'idth="60px" height="60px"><path fill="#d1e7ff" d="M365,51c13.25,' +
           '0,24,10.75,24,24v373c0,13.25-10.75,24-24,24H115c-13.25,0-24-10.7' +
@@ -6080,7 +6068,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-gear'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#61676c" d="M24,17.596c-3.53' +
           '7,0-6.404,2.867-6.404,6.404s2.867,6.404,6.404,6.404s6.404-2.867,' +
@@ -6501,7 +6489,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-send-file'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#90CAF9" d="M40 45L8 45 8 3 ' +
           '30 3 40 13z"/><path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"/><' +
@@ -6510,7 +6498,7 @@ object DM: TDM
       end
       item
         IconName = 'Report'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#90CAF9" d="M40 45L8 45 8 3 ' +
           '30 3 40 13z"/><path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"/><' +
@@ -6519,7 +6507,7 @@ object DM: TDM
       end
       item
         IconName = 'Report02'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px" baseProfile="basic"><path fill="#50e6ff"' +
           ' d="M39,16v25c-0.003,1.103-0.897,1.997-2,2H11c-1.103-0.003-1.997' +
@@ -6572,7 +6560,7 @@ object DM: TDM
       end
       item
         IconName = 'actCSVUpload'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#e1f5fe" d="M38.5 14L29 14 2' +
           '9 4.5z"/><path fill="#c8e6c9" d="M40 45L8 45 8 3 30 3 40 13z"/><' +
@@ -6605,7 +6593,7 @@ object DM: TDM
       end
       item
         IconName = 'inventory'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#607D8B" d="M13.1,33c-0.7,0-' +
           '1.2-0.5-1.3-1.2L9.2,9.7C9,8.1,7.7,7,6.2,7H5v2h1.2c0.5,0,0.9,0.4,' +
@@ -6623,7 +6611,7 @@ object DM: TDM
       end
       item
         IconName = 'Calendar'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><linearGradient id="WWZG4nXidbdKz8SNbGF5' +
           'Za" x1="6.414" x2="41.774" y1="13.662" y2="39.488" gradientUnits' +
@@ -6672,7 +6660,7 @@ object DM: TDM
       end
       item
         IconName = 'Diamond-ring'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 80 80" wid' +
           'th="40px" height="40px"><path fill="#97c9ff" d="M34 0H46V8H34z"/' +
           '><path fill="#589cdb" d="M43 22L37 22 34 8 46 8z"/><path fill="#' +
@@ -6701,7 +6689,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-add-dollar'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><linearGradient id="W01NBxnhQzZDl0srcBku' +
           'Za" x1="10.273" x2="38.112" y1="177.728" y2="149.887" gradientTr' +
@@ -6741,7 +6729,7 @@ object DM: TDM
       end
       item
         IconName = 'ForSaleItems'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#3F51B5" d="M34,13c0,0.553-0' +
           '.447,1-1,1H5c-0.553,0-1-0.447-1-1V6c0-0.553,0.447-1,1-1h28c0.553' +
@@ -6763,7 +6751,7 @@ object DM: TDM
       end
       item
         IconName = 'LeadsOnline Logo'
-        SVGText =
+        SVGText = 
           '<svg width="32" height="31" viewBox="0 0 32 31" fill="none" xmln' +
           's="http://www.w3.org/2000/svg">'#13#10'  <path d="M7.91174 0.368408V3.' +
           '07962H3.29031V7.70104H0.579102V0.368408H7.91174Z" fill="#00094C"' +
@@ -6793,7 +6781,7 @@ object DM: TDM
       end
       item
         IconName = 'StoneShape'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 80 80" wid' +
           'th="30px" height="30px"><path fill="#f75252" d="M4.5 70.527L4.5 ' +
           '37.207 38.207 3.5 71.527 3.5 75.47 74.47z"/><path fill="#c74343"' +
@@ -6811,7 +6799,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-gold'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 356 356" w' +
           'idth="32px" height="32px" fill-rule="evenodd" clip-rule="evenodd' +
           '"><path fill="url(#_Linear1)" d="M327.249,234.233c-2.195,-10.246' +
@@ -6915,7 +6903,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-ring'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 80 80" wid' +
           'th="30px" height="30px"><path fill="#c29653" d="M51.6,4c-8.8,0-2' +
           '1,6.5-31.1,16.6C13.4,27.8,8,35.9,5.5,43.5c-2.4,7.1-1.9,12.7,1.2,' +
@@ -7050,7 +7038,7 @@ object DM: TDM
       end
       item
         IconName = 'icons8-diamond'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path d="M45 23L28.62 39.38 33.77 23zM14' +
           '.23 23L19.38 39.38 3 23zM6.97 9.54L13.25 20 0 20zM22.13 8L15.14 ' +
@@ -7060,7 +7048,7 @@ object DM: TDM
       end
       item
         IconName = 'stocks-growth'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px"><path fill="#61e3a7" d="M44,28v14h-8V27h' +
           '7C43.552,27,44,27.448,44,28z"/><path fill="#33c481" d="M36,27v15' +
@@ -7094,7 +7082,7 @@ object DM: TDM
       end
       item
         IconName = 'stocks-growth-bw'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"'#13#10'     viewBox="0 0 48 48' +
           '"'#13#10'     width="48px"'#13#10'     height="48px">'#13#10'  <path fill="#444444' +
           '" d="M44,28v14h-8V27h7C43.552,27,44,27.448,44,28z"/>'#13#10'  <path fi' +
@@ -7129,7 +7117,7 @@ object DM: TDM
       end
       item
         IconName = 'shopping-bag'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 64 64" wid' +
           'th="32px" height="32px"><g data-name="Hand Bag"><rect width="32"' +
           ' height="32" x="23" y="14" fill="#4294ff"/><path fill="#ffddd4" ' +
@@ -7157,7 +7145,7 @@ object DM: TDM
       end
       item
         IconName = 'imagesgallery'
-        SVGText =
+        SVGText = 
           '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
           'th="48px" height="48px" baseProfile="basic"><linearGradient id="' +
           'y4DIm6YSkRVXQC2YLIiGPa" x1="-151.961" x2="-176.295" y1="-188" y2' +
@@ -7733,22 +7721,22 @@ object DM: TDM
     OnCalcFields = qryStoreCalcFields
     Connection = ConnFB
     SQL.Strings = (
-
+      
         'SELECT STORE_NO, STORE_NAME, STORE_ADDR, STORE_CITY_ST_ZIP, STOR' +
         'E_PHONE, STORE_POLICE_ID,'
-
+      
         '       STORE_ADJ_TOP_MARG, STORE_NUMBER, STORE_ADJ_DETAIL_HEIGHT' +
         ', STORE_ADJ_FOOTER_HEIGHT,'
-
+      
         '       INTEREST_CALC_METHOD, POLICE_REPORT_TO_PRINT, POLICE_REPO' +
         'RT_LASER_COPIES,'
-
+      
         '       DEFAULT_MATURITY_MONTHS, PAWN_DEFAULT_MONTHS, LEADS_STORE' +
         '_ID, LEADS_ONLINE_FTP_ADDRESS,'
-
+      
         '       LEADS_ONLINE_USER_NAME, LEADS_ONLINE_PASSWORD, FTP_PASSIV' +
         'E, PAWN_DATE_CALCULATION_BASE,'
-
+      
         '       DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC, DEFAULT_PAWN' +
         '_INTERESTRATE'
       'FROM STORE'
@@ -7917,7 +7905,7 @@ object DM: TDM
     SQL.Strings = (
       'SELECT *'
       'FROM CUSTOMER'
-
+      
         'WHERE CUST_LAST LIKE :CUST_LAST AND CUST_FIRST LIKE :CUST_FIRST ' +
         'AND CUST_NO > 0'
       '   --SearchByTicketNo'
@@ -8245,7 +8233,7 @@ object DM: TDM
   object qryCalcUnitCostFromWeight: TFDQuery
     Connection = ConnFB
     SQL.Strings = (
-
+      
         'EXECUTE PROCEDURE SPU_CALC_UNIT_COST_FROM_WEIGHT(:TRANSACTION_NO' +
         ')')
     Left = 1137

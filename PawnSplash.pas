@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, DBCtrls, DB,ADODB, Vcl.Imaging.jpeg, RzLabel;
+  StdCtrls, ExtCtrls, DBCtrls, DB, FireDAC.Comp.Client, Vcl.Imaging.jpeg, RzLabel;
 
 type
   TfrmSplash = class(TForm)
@@ -17,7 +17,7 @@ type
     lblStorePhone: TDBText;
     lblClientsCount: TDBText;
     lblCaptionClientsCount: TLabel;
-    qryCustomerCount: TADOQuery;
+    qryCustomerCount: TFDQuery;
     qryCustomerCountTCUSTOMER: TIntegerField;
     lblCustCount: TLabel;
     LblPhone: TRzLabel;

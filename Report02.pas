@@ -5,9 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RzButton, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.Mask, RzEdit, Vcl.ExtCtrls, Data.DB, Data.Win.ADODB, ppProd, ppClass,
+  Vcl.Mask, RzEdit, Vcl.ExtCtrls, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, ppProd, ppClass,
   ppReport, ppComm, ppRelatv, ppDB, ppDBPipe, ppVar, ppPrnabl, ppCtrls, ppBands,
-  ppCache, ppDesignLayer, ppParameter, RzLabel, RzPanel, RzRadChk;
+  ppCache, ppDesignLayer, ppParameter, RzLabel, RzPanel, RzRadChk,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 type
   TfrmReport02 = class(TForm)
@@ -19,18 +22,18 @@ type
     GroupBox3: TGroupBox;
     rbPawnList: TRadioButton;
     rbPawnWithPayments: TRadioButton;
-    qryPawnAndPurchases: TADOQuery;
-    qryPawnAndPurchasesCustFirst: TStringField;
-    qryPawnAndPurchasesCustMid: TStringField;
-    qryPawnAndPurchasesCustLast: TStringField;
-    qryPawnAndPurchasesCustPhCell: TStringField;
+    qryPawnAndPurchases: TFDQuery;
+    qryPawnAndPurchasesCustFirst: TWideStringField;
+    qryPawnAndPurchasesCustMid: TWideStringField;
+    qryPawnAndPurchasesCustLast: TWideStringField;
+    qryPawnAndPurchasesCustPhCell: TWideStringField;
     qryPawnAndPurchasesTranTicketNo: TStringField;
     qryPawnAndPurchasesTranType: TStringField;
     qryPawnAndPurchasesTranPawnAmount: TFloatField;
     qryPawnAndPurchasesTranInterest: TFloatField;
     qryPawnAndPurchasesPrincBalance: TFloatField;
     qryPawnAndPurchasesInsterestBalance: TFloatField;
-    qryPawnAndPurchasesTranDate: TDateTimeField;
+    qryPawnAndPurchasesTranDate: TDateField;
     qryPawnAndPurchasesTranTime: TTimeField;
     qryPawnAndPurchasesTranMaturity: TDateField;
     dsPawnAndPurchases: TDataSource;
@@ -70,7 +73,7 @@ type
     ppDBCalc2: TppDBCalc;
     ppDBCalc3: TppDBCalc;
     qryPawnAndPurchasesTranTypeDesc: TStringField;
-    qryTranPayments: TADOQuery;
+    qryTranPayments: TFDQuery;
     dsTranPayments: TDataSource;
     DBPTranPayments: TppDBPipeline;
     RepTranPayments: TppReport;
@@ -79,17 +82,17 @@ type
     qryTranPaymentsPayAmount: TFloatField;
     qryTranPaymentsPayPrincipal: TFloatField;
     qryTranPaymentsPayInterest: TFloatField;
-    qryTranPaymentsCustFirst: TStringField;
-    qryTranPaymentsCustMid: TStringField;
-    qryTranPaymentsCustLast: TStringField;
-    qryTranPaymentsCustPhCell: TStringField;
+    qryTranPaymentsCustFirst: TWideStringField;
+    qryTranPaymentsCustMid: TWideStringField;
+    qryTranPaymentsCustLast: TWideStringField;
+    qryTranPaymentsCustPhCell: TWideStringField;
     qryTranPaymentsTranTicketNo: TStringField;
     qryTranPaymentsTranType: TStringField;
     qryTranPaymentsTranPawnAmount: TFloatField;
     qryTranPaymentsTranInterest: TFloatField;
     qryTranPaymentsPrincBalance: TFloatField;
     qryTranPaymentsInsterestBalance: TFloatField;
-    qryTranPaymentsTranDate: TDateTimeField;
+    qryTranPaymentsTranDate: TDateField;
     qryTranPaymentsTranTime: TTimeField;
     qryTranPaymentsTranMaturity: TDateField;
     qryTranPaymentsTranTypeDesc: TStringField;
@@ -213,13 +216,13 @@ begin
       begin
         lblRep1PawnAndPurchaseTitle.Caption := 'Pawn and Purchases';
         lblFromToDates.Visible := true;
-        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TranDate between ''' + FormatDateTime('yyyy-mm-dd', edFrom.Date) + ''' and ''' + FormatDateTime('yyyy-mm-dd', edTo.Date) + '''';
+        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_DATE between ''' + FormatDateTime('yyyy-mm-dd', edFrom.Date) + ''' and ''' + FormatDateTime('yyyy-mm-dd', edTo.Date) + '''';
       end
     else
       begin
         lblFromToDates.Visible := false;
         lblRep1PawnAndPurchaseTitle.Caption := 'List of Active Pawns';
-        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TranType = ''P'' and T2.TranStatus = ''A'' ';
+        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_TYPE = ''P'' and T2.TRAN_STATUS = ''A'' ';
       end;
 
     qryPawnAndPurchases.Open;
@@ -239,13 +242,13 @@ begin
 
     if rbDateRange.Checked then
       begin
-        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := 'and T4.PayDate between :FromDate and :ToDate ';
-        qryTranPayments.Parameters.ParamByName('FromDate').Value := edFrom.Date;
-        qryTranPayments.Parameters.ParamByName('ToDate').Value := edTo.Date;
+        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := 'and T4.PAY_DATE between :FromDate and :ToDate ';
+        qryTranPayments.Params.ParamByName('FromDate').AsDate := edFrom.Date;
+        qryTranPayments.Params.ParamByName('ToDate').AsDate := edTo.Date;
       end
     else
       begin
-        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := 'and T2.TranType = ''P'' and T2.TranStatus = ''A'' ';
+        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := 'and T2.TRAN_TYPE = ''P'' and T2.TRAN_STATUS = ''A'' ';
       end;
 
     qryTranPayments.Open;

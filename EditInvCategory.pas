@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, Mask, DBCtrls;
+  Dialogs, StdCtrls, Buttons, Mask, DBCtrls, Vcl.ExtCtrls;
 
 type
   TfrmEditInvCat = class(TForm)

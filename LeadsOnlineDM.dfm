@@ -3,43 +3,66 @@ object DM_LeadsOnline: TDM_LeadsOnline
   OnCreate = DataModuleCreate
   Height = 389
   Width = 528
-  object qryGetDataToExp: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryGetDataToExp: TFDQuery
+    Connection = DM.ConnFB
     OnCalcFields = qryGetDataToExpCalcFields
-    Parameters = <>
     SQL.Strings = (
       'SELECT --<LIMIT_ROWS>'
       
-        '    ROW_NUMBER( ) OVER ( ORDER BY T1.TransactionNo ) AS RowNo, T' +
-        '3.InvItemNo,'
+        '    CAST(ROW_NUMBER() OVER (ORDER BY T1.TRANSACTION_NO) AS INTE' +
+        'GER) AS "RowNo",'
+      '    T3.INV_ITEM_NO AS "InvItemNo",'
       
-        '    (case TranType when '#39'P'#39' then 2 when '#39'U'#39' then 1 end) as ticke' +
-        't_type, TranTicketNo,'
-      
-        '    T1.TransactionNo, TranDate, CAST('#39'OPERATOR'#39' as varchar(50)) ' +
-        'as ClerkName,'
-      '    Cast('#39'N'#39' as char(1)) as TranVoided,'
-      
-        '    CustLast, CustFirst, CustMid, CustAddr, CustCity, CustState,' +
-        ' CustZip,'
-      '    CustPhHome, CustPhBussiness, CustPhBeep, CustPhCell,'
-      '    CustFlDrvLic, CustID, CustIDType, CustIDAgencyState,'
-      '    CustDOB, CustWeight, CustHeight, CustEyes,'
-      
-        '    CustHair, CustRace, CustGender, InvItemCount, CustPlaceEmply' +
-        ','
-      '    InvItemBrand, ModelNumber, SerialNumber,'
-      
-        '    Description, Note, UnitCost, T4.JStyleDesc, T5.JMetalDesc, K' +
-        'T, Weight, SizeLength, Gender'
-      'FROM Transactions T1'
-      '  join Customer T2 ON T1.CustNo = T2.Custno'
-      '  join InventoryItems T3 ON T3.TransactionNo = T1.TransactionNo'
-      '  left outer join JStyles T4 ON T4.JStyle = T3.JStyle'
-      '  left outer join JMetals T5 ON T5.JMetal = T3.JMetal'
-      'WHERE T1.TranType in ('#39'P'#39', '#39'U'#39') --<FILTER>'
-      'ORDER BY T1.TransactionNo, T1.TranType, T3.InvItemNo'
+        '    CAST(case T1.TRAN_TYPE when '#39'P'#39' then 2 when '#39'U'#39' then 1 end ' +
+        'AS SMALLINT) as "ticket_type",'
+      '    T1.TRAN_TICKET_NO AS "TranTicketNo",'
+      '    T1.TRANSACTION_NO AS "TransactionNo",'
+      '    T1.TRAN_DATE AS "TranDate",'
+      '    CAST('#39'OPERATOR'#39' as varchar(50)) as "ClerkName",'
+      '    Cast('#39'N'#39' as char(1)) as "TranVoided",'
+      '    T2.CUST_LAST AS "CustLast",'
+      '    T2.CUST_FIRST AS "CustFirst",'
+      '    T2.CUST_MID AS "CustMid",'
+      '    T2.CUST_ADDR AS "CustAddr",'
+      '    T2.CUST_CITY AS "CustCity",'
+      '    T2.CUST_STATE AS "CustState",'
+      '    T2.CUST_ZIP AS "CustZip",'
+      '    T2.CUST_PH_HOME AS "CustPhHome",'
+      '    T2.CUST_PH_BUSINESS AS "CustPhBussiness",'
+      '    T2.CUST_PH_BEEP AS "CustPhBeep",'
+      '    T2.CUST_PH_CELL AS "CustPhCell",'
+      '    T2.CUST_FL_DRV_LIC AS "CustFlDrvLic",'
+      '    T2.CUST_ID AS "CustID",'
+      '    T2.CUST_ID_TYPE AS "CustIDType",'
+      '    T2.CUST_ID_AGENCY_STATE AS "CustIDAgencyState",'
+      '    T2.CUST_DOB AS "CustDOB",'
+      '    T2.CUST_WEIGHT AS "CustWeight",'
+      '    T2.CUST_HEIGHT AS "CustHeight",'
+      '    T2.CUST_EYES AS "CustEyes",'
+      '    T2.CUST_HAIR AS "CustHair",'
+      '    T2.CUST_RACE AS "CustRace",'
+      '    T2.CUST_GENDER AS "CustGender",'
+      '    T3.INV_ITEM_COUNT AS "InvItemCount",'
+      '    T2.CUST_PLACE_EMPLY AS "CustPlaceEmply",'
+      '    T3.INV_ITEM_BRAND AS "InvItemBrand",'
+      '    T3.MODEL_NUMBER AS "ModelNumber",'
+      '    T3.SERIAL_NUMBER AS "SerialNumber",'
+      '    T3.DESCRIPTION AS "Description",'
+      '    T3.NOTE AS "Note",'
+      '    T3.UNIT_COST AS "UnitCost",'
+      '    T4.J_STYLE_DESC AS "JStyleDesc",'
+      '    T5.J_METAL_DESC AS "JMetalDesc",'
+      '    T3.KT AS "KT",'
+      '    T3.WEIGHT AS "Weight",'
+      '    T3.SIZE_LENGTH AS "SizeLength",'
+      '    T3.GENDER AS "Gender"'
+      'FROM TRANSACTIONS T1'
+      '  join CUSTOMER T2 ON T1.CUST_NO = T2.CUST_NO'
+      '  join INVENTORY_ITEMS T3 ON T3.TRANSACTION_NO = T1.TRANSACTION_NO'
+      '  left outer join J_STYLES T4 ON T4.J_STYLE = T3.J_STYLE'
+      '  left outer join J_METALS T5 ON T5.J_METAL = T3.J_METAL'
+      'WHERE T1.TRAN_TYPE in ('#39'P'#39', '#39'U'#39') --<FILTER>'
+      'ORDER BY T1.TRANSACTION_NO, T1.TRAN_TYPE, T3.INV_ITEM_NO'
       ''
       '')
     Left = 112
@@ -60,72 +83,72 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryGetDataToExpInvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end
-    object qryGetDataToExpTranDate: TDateTimeField
+    object qryGetDataToExpTranDate: TDateField
       FieldName = 'TranDate'
     end
-    object qryGetDataToExpClerkName: TStringField
+    object qryGetDataToExpClerkName: TWideStringField
       FieldName = 'ClerkName'
       Size = 50
     end
-    object qryGetDataToExpTranVoided: TStringField
+    object qryGetDataToExpTranVoided: TWideStringField
       FieldName = 'TranVoided'
       Size = 1
     end
-    object qryGetDataToExpCustLast: TStringField
+    object qryGetDataToExpCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryGetDataToExpCustFirst: TStringField
+    object qryGetDataToExpCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryGetDataToExpCustMid: TStringField
+    object qryGetDataToExpCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
-    object qryGetDataToExpCustAddr: TStringField
+    object qryGetDataToExpCustAddr: TWideStringField
       FieldName = 'CustAddr'
       Size = 55
     end
-    object qryGetDataToExpCustCity: TStringField
+    object qryGetDataToExpCustCity: TWideStringField
       FieldName = 'CustCity'
       Size = 40
     end
-    object qryGetDataToExpCustState: TStringField
+    object qryGetDataToExpCustState: TWideStringField
       FieldName = 'CustState'
       Size = 2
     end
-    object qryGetDataToExpCustZip: TStringField
+    object qryGetDataToExpCustZip: TWideStringField
       FieldName = 'CustZip'
       Size = 11
     end
-    object qryGetDataToExpCustPhHome: TStringField
+    object qryGetDataToExpCustPhHome: TWideStringField
       FieldName = 'CustPhHome'
       Size = 14
     end
-    object qryGetDataToExpCustPhBussiness: TStringField
+    object qryGetDataToExpCustPhBussiness: TWideStringField
       FieldName = 'CustPhBussiness'
       Size = 14
     end
-    object qryGetDataToExpCustPhBeep: TStringField
+    object qryGetDataToExpCustPhBeep: TWideStringField
       FieldName = 'CustPhBeep'
       Size = 14
     end
-    object qryGetDataToExpCustPhCell: TStringField
+    object qryGetDataToExpCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
       Size = 14
     end
-    object qryGetDataToExpCustFlDrvLic: TStringField
+    object qryGetDataToExpCustFlDrvLic: TWideStringField
       FieldName = 'CustFlDrvLic'
     end
-    object qryGetDataToExpCustID: TStringField
+    object qryGetDataToExpCustID: TWideStringField
       FieldName = 'CustID'
       Size = 25
     end
-    object qryGetDataToExpCustIDType: TStringField
+    object qryGetDataToExpCustIDType: TWideStringField
       FieldName = 'CustIDType'
     end
-    object qryGetDataToExpCustIDAgencyState: TStringField
+    object qryGetDataToExpCustIDAgencyState: TWideStringField
       FieldName = 'CustIDAgencyState'
       Size = 10
     end
@@ -135,27 +158,27 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryGetDataToExpCustWeight: TFloatField
       FieldName = 'CustWeight'
     end
-    object qryGetDataToExpCustHeight: TStringField
+    object qryGetDataToExpCustHeight: TWideStringField
       FieldName = 'CustHeight'
       Size = 8
     end
-    object qryGetDataToExpCustEyes: TStringField
+    object qryGetDataToExpCustEyes: TWideStringField
       FieldName = 'CustEyes'
       Size = 5
     end
-    object qryGetDataToExpCustHair: TStringField
+    object qryGetDataToExpCustHair: TWideStringField
       FieldName = 'CustHair'
       Size = 5
     end
-    object qryGetDataToExpCustRace: TStringField
+    object qryGetDataToExpCustRace: TWideStringField
       FieldName = 'CustRace'
       Size = 1
     end
-    object qryGetDataToExpCustGender: TStringField
+    object qryGetDataToExpCustGender: TWideStringField
       FieldName = 'CustGender'
       Size = 1
     end
-    object qryGetDataToExpCustPlaceEmply: TStringField
+    object qryGetDataToExpCustPlaceEmply: TWideStringField
       FieldName = 'CustPlaceEmply'
       Size = 30
     end
@@ -182,7 +205,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'Note'
       Size = 80
     end
-    object qryGetDataToExpUnitCost: TBCDField
+    object qryGetDataToExpUnitCost: TFMTBCDField
       FieldName = 'UnitCost'
       Precision = 19
     end
@@ -419,13 +442,17 @@ object DM_LeadsOnline: TDM_LeadsOnline
       Size = 1
     end
   end
-  object qryExportFileFormat: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryExportFileFormat: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select *'
-      'from ExportFormat'
+      'select'
+      '  ID as "ID",'
+      '  DATA_FIELD_NAME as "DataFieldName",'
+      '  DATA_FIELD_TYPE as "DataFieldType",'
+      '  DATA_FIELD_MAX_SIZE as "DataFieldMaxSize",'
+      '  DATA_FIELD_CAPTION as "DataFieldCaption",'
+      '  DATA_FIELD_DESC as "DataFieldDesc"'
+      'from EXPORT_FORMAT'
       'order by ID')
     Left = 112
     Top = 116
@@ -463,32 +490,33 @@ object DM_LeadsOnline: TDM_LeadsOnline
       Size = 200
     end
   end
-  object qryItemStones: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = 1
-      end>
+  object qryItemStones: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'SELECT ROW_NUMBER() OVER (ORDER BY InvItemNo, StoneNo) as No,'
-      '  InvItemNo, StoneNo,'
       
-        '  T1.StoneType, T2.JStoneDesc, T1.StoneNumber, T3.JShapeDesc, T1' +
-        '.CT'
-      'FROM Stones T1'
-      '  join JStoneColors T2 on T1.StoneColor = T2.JStoneColor'
-      '  join JStoneShapes T3 on T1.StoneShape = T3.JShape'
-      'where InvItemNo = :InvItemNo'
-      'order by InvItemNo, StoneNo'
+        'SELECT CAST(ROW_NUMBER() OVER (ORDER BY T1.INV_ITEM_NO, T1.STON' +
+        'E_NO) AS INTEGER) as "No",'
+      '  T1.INV_ITEM_NO as "InvItemNo",'
+      '  T1.STONE_NO as "StoneNo",'
+      '  T1.STONE_TYPE as "StoneType",'
+      '  T2.J_STONE_DESC as "JStoneDesc",'
+      '  T1.STONE_NUMBER as "StoneNumber",'
+      '  T3.J_SHAPE_DESC as "JShapeDesc",'
+      '  T1.CT as "CT"'
+      'FROM STONES T1'
+      '  join J_STONE_COLORS T2 on T1.STONE_COLOR = T2.J_STONE_COLOR'
+      '  join J_STONE_SHAPES T3 on T1.STONE_SHAPE = T3.J_SHAPE'
+      'where T1.INV_ITEM_NO = :InvItemNo'
+      'order by T1.INV_ITEM_NO, T1.STONE_NO'
       '')
     Left = 253
     Top = 29
+    ParamData = <
+      item
+        Name = 'INVITEMNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryItemStonesNo: TIntegerField
       FieldName = 'No'
     end
@@ -517,125 +545,98 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'CT'
     end
   end
-  object spCreateExpLog: TADOStoredProc
-    Connection = DM.ConnDB
-    ProcedureName = 'CreateExportLog'
-    Parameters = <
-      item
-        Name = '@FileName'
-        Attributes = [paNullable]
-        DataType = ftString
-        Size = 50
-        Value = Null
-      end
-      item
-        Name = '@ExportLogID'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Direction = pdInputOutput
-        Value = Null
-      end>
+  object spCreateExpLog: TFDQuery
+    Connection = DM.ConnFB
+    SQL.Strings = (
+      'select EXPORT_LOG_ID as "ExportLogID"'
+      'from SP_CREATE_EXPORT_LOG(:FileName)')
     Left = 253
     Top = 109
-  end
-  object qryInsExpLogLine: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <
+    ParamData = <
       item
-        Name = 'ExportLogID'
-        Attributes = [paNullable]
+        Name = 'FILENAME'
         DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'ExportLine'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'InvItemNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end
-      item
-        Name = 'ItemSeq'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
+        ParamType = ptInput
+        Size = 50
       end>
+  end
+  object qryInsExpLogLine: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
       
-        'insert into ExportLogFileDetail(ExportLogID, TransactionNo, Expo' +
-        'rtLine, InvItemNo, ItemSeq)'
+        'insert into EXPORT_LOG_FILE_DETAIL(EXPORT_LOG_ID, TRANSACTION_NO' +
+        ', EXPORT_LINE, INV_ITEM_NO, ITEM_SEQ)'
       
         'values(:ExportLogID, :TransactionNo, :ExportLine, :InvItemNo, :I' +
         'temSeq)')
     Left = 252
     Top = 157
-  end
-  object qryUpdItemCount: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <
+    ParamData = <
       item
-        Name = 'ItemCount'
-        Attributes = [paNullable]
+        Name = 'EXPORTLOGID'
         DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
+        ParamType = ptInput
       end
       item
-        Name = 'ExportLogID'
-        Attributes = [paNullable]
+        Name = 'TRANSACTIONNO'
         DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
+        ParamType = ptInput
+      end
+      item
+        Name = 'EXPORTLINE'
+        DataType = ftMemo
+        ParamType = ptInput
+      end
+      item
+        Name = 'INVITEMNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'ITEMSEQ'
+        DataType = ftInteger
+        ParamType = ptInput
       end>
+  end
+  object qryUpdItemCount: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'update ExportFileLog set ItemCount = :ItemCount'
-      'where ExportLogID = :ExportLogID'
+      'update EXPORT_FILE_LOG set ITEM_COUNT = :ItemCount'
+      'where EXPORT_LOG_ID = :ExportLogID'
       '')
     Left = 252
     Top = 213
-  end
-  object qryRegenExportFile: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+    ParamData = <
       item
-        Name = 'ExportLogID'
-        Attributes = [paNullable]
-        DataType = ftString
-        Precision = 255
-        Size = 32767
-        Value = Null
+        Name = 'ITEMCOUNT'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'EXPORTLOGID'
+        DataType = ftInteger
+        ParamType = ptInput
       end>
+  end
+  object qryRegenExportFile: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select *'
-      'from ExportLogFileDetail'
-      'where ExportLogID = :ExportLogID'
+      'select'
+      '  ID as "ID",'
+      '  EXPORT_LOG_ID as "ExportLogID",'
+      '  TRANSACTION_NO as "TransactionNo",'
+      '  EXPORT_LINE as "ExportLine"'
+      'from EXPORT_LOG_FILE_DETAIL'
+      'where EXPORT_LOG_ID = :ExportLogID'
       '')
     Left = 401
     Top = 103
+    ParamData = <
+      item
+        Name = 'EXPORTLOGID'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryRegenExportFileID: TIntegerField
       FieldName = 'ID'
     end
@@ -650,28 +651,27 @@ object DM_LeadsOnline: TDM_LeadsOnline
       BlobType = ftMemo
     end
   end
-  object qryExpImgMarkAsSent: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <
-      item
-        Name = 'UploadFileName'
-        DataType = ftString
-        Size = 50
-        Value = Null
-      end
-      item
-        Name = 'ImagesDataNo'
-        DataType = ftInteger
-        Size = -1
-        Value = Null
-      end>
+  object qryExpImgMarkAsSent: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
       
-        'update ImagesData set UploadTime = GETDATE(), UploadFileName = :' +
-        'UploadFileName'
-      'where ImagesDataNo = :ImagesDataNo'
+        'update IMAGES_DATA set UPLOAD_TIME = CURRENT_TIMESTAMP, UPLOAD_F' +
+        'ILE_NAME = :UploadFileName'
+      'where IMAGES_DATA_NO = :ImagesDataNo'
       '')
     Left = 115
     Top = 292
+    ParamData = <
+      item
+        Name = 'UPLOADFILENAME'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 50
+      end
+      item
+        Name = 'IMAGESDATANO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
   end
 end

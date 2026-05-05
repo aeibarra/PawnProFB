@@ -28,16 +28,16 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       993
       69)
     object btnExit: TBitBtn
-      Left = 879
-      Top = 9
+      Left = 881
+      Top = 11
       Width = 96
-      Height = 53
+      Height = 48
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = ' &Close'
       ImageIndex = 2
       ImageName = 'actExit'
-      Images = DM.vilMain
+      Images = DM.vilMain24
       ModalResult = 2
       TabOrder = 0
       OnClick = btnExitClick
@@ -59,10 +59,6 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     FixedDimension = 35
     object TabExportData: TRzTabSheet
       Caption = 'Export Transactions Data'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         AlignWithMargins = True
         Left = 3
@@ -309,10 +305,6 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     end
     object TabSendImages: TRzTabSheet
       Caption = '  Send Images to LeadsOnline'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         AlignWithMargins = True
         Left = 3
@@ -338,8 +330,8 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
           Width = 153
           Height = 48
           Flat = False
-          ImageIndex = 13
-          Images = DM.ImageListBtn
+          ImageIndex = 33
+          Images = DM.vilMain
           Layout = blGlyphRight
           ShowCaption = True
           Spacing = 15
@@ -402,10 +394,6 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
           FixedDimension = 23
           object TabSheet1: TRzTabSheet
             Caption = 'Item'#39's Pictures not Sent'
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object RzPanel1: TRzPanel
               Left = 0
               Top = 0
@@ -459,10 +447,6 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
           end
           object TabSheet2: TRzTabSheet
             Caption = 'Item'#39's Pictures Sent'
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object DBGrid3: TDBGrid
               AlignWithMargins = True
               Left = 3
@@ -526,10 +510,6 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     object TabSheet3: TRzTabSheet
       TabVisible = False
       Caption = 'Update for Images'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblItemSeq: TLabel
         Left = 27
         Top = 80
@@ -571,20 +551,22 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       end
     end
   end
-  object qryHistTranDays: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryHistTranDays: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select top 2000 *'
-      'from ExportFileLog '
-      'order by ExportLogID desc')
+      'select first 2000'
+      '  EXPORT_LOG_ID as "ExportLogID",'
+      '  EXPORT_DATE as "ExportDate",'
+      '  FILE_NAME as "FileName",'
+      '  ITEM_COUNT as "ItemCount"'
+      'from EXPORT_FILE_LOG'
+      'order by EXPORT_LOG_ID desc')
     Left = 1029
     Top = 34
     object qryHistTranDaysExportLogID: TIntegerField
       FieldName = 'ExportLogID'
     end
-    object qryHistTranDaysExportDate: TDateTimeField
+    object qryHistTranDaysExportDate: TSQLTimeStampField
       FieldName = 'ExportDate'
       DisplayFormat = 'mm/dd/yyyy hh:nn:ss AM/PM'
     end
@@ -600,7 +582,7 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     AutoEdit = False
     DataSet = qryHistTranDays
     Left = 1028
-    Top = 83
+    Top = 87
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.txt'
@@ -619,24 +601,27 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     Left = 1384
     Top = 210
   end
-  object qryImagesNotExp: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryImagesNotExp: TFDQuery
+    Connection = DM.ConnFB
     AfterOpen = qryImagesNotExpAfterOpen
-    Parameters = <>
     SQL.Strings = (
+      'select'
+      '  T1.TRANSACTION_NO as "TransactionNo",'
+      '  T1.INV_ITEM_NO as "InvItemNo",'
+      '  T1.ITEM_SEQ as "ItemSeq",'
+      '  T3.IMAGES_DATA_NO as "ImagesDataNo",'
+      '  T3.IMAGE_DESC as "ImageDesc",'
+      '  T4.TRAN_TICKET_NO as "TranTicketNo",'
+      '  T4.TRAN_TYPE as "TranType",'
+      '  T4.TRAN_DATE as "TranDate"'
+      'from EXPORT_LOG_FILE_DETAIL T1'
       
-        'select T1.TransactionNo, T1.InvItemNo, T1.ItemSeq, T3.ImagesData' +
-        'No, T3.ImageDesc,'
-      '       T4.TranTicketNo, T4.TranType, T4.TranDate'
-      'from ExportLogFileDetail T1'
-      
-        '  join InventoryItems T2 on T1.TransactionNo = T2.TransactionNo ' +
-        'AND  T1.InvItemNo = T2.InvItemNo'
-      '  join ImagesData T3 on T2.InvItemNo = T3.ImagRefToRowNo'
-      '  join Transactions T4 on T4.TransactionNo = T1.TransactionNo'
-      'where T3.ImageTypeNo = 2 AND  T3.UploadTime is NULL'
-      'order by T1.TransactionNo, T1.InvItemNo')
+        '  join INVENTORY_ITEMS T2 on T1.TRANSACTION_NO = T2.TRANSACTION' +
+        '_NO AND T1.INV_ITEM_NO = T2.INV_ITEM_NO'
+      '  join IMAGES_DATA T3 on T2.INV_ITEM_NO = T3.IMAG_REF_TO_ROW_NO'
+      '  join TRANSACTIONS T4 on T4.TRANSACTION_NO = T1.TRANSACTION_NO'
+      'where T3.IMAGE_TYPE_NO = 2 and T3.UPLOAD_TIME is null'
+      'order by T1.TRANSACTION_NO, T1.INV_ITEM_NO')
     Left = 1124
     Top = 34
     object qryImagesNotExpTransactionNo: TIntegerField
@@ -663,14 +648,14 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       FieldName = 'TranType'
       Size = 1
     end
-    object qryImagesNotExpTranDate: TDateTimeField
+    object qryImagesNotExpTranDate: TDateField
       FieldName = 'TranDate'
     end
   end
   object dsImagesNotExp: TDataSource
     DataSet = qryImagesNotExp
     Left = 1128
-    Top = 83
+    Top = 87
   end
   object popMnu: TPopupMenu
     Left = 80
@@ -694,15 +679,17 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     Left = 1163
     Top = 321
   end
-  object qrySentImg: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qrySentImg: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select ImagesDataNo, ImageDesc, UploadTime, UploadFileName'
-      'from ImagesData'
-      'where UploadTime is not NULL '
-      'order by UploadTime DESC ')
+      'select'
+      '  IMAGES_DATA_NO as "ImagesDataNo",'
+      '  IMAGE_DESC as "ImageDesc",'
+      '  UPLOAD_TIME as "UploadTime",'
+      '  UPLOAD_FILE_NAME as "UploadFileName"'
+      'from IMAGES_DATA'
+      'where UPLOAD_TIME is not null'
+      'order by UPLOAD_TIME desc')
     Left = 1028
     Top = 164
     object qrySentImgImagesDataNo: TIntegerField
@@ -712,7 +699,7 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       FieldName = 'ImageDesc'
       Size = 125
     end
-    object qrySentImgUploadTime: TDateTimeField
+    object qrySentImgUploadTime: TSQLTimeStampField
       FieldName = 'UploadTime'
     end
     object qrySentImgUploadFileName: TStringField
@@ -733,13 +720,17 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       OnClick = MenuItem1Click
     end
   end
-  object qryExpLogDetail: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryExpLogDetail: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select *'
-      'from ExportLogFileDetail'
+      'select'
+      '  ID as "ID",'
+      '  EXPORT_LOG_ID as "ExportLogID",'
+      '  TRANSACTION_NO as "TransactionNo",'
+      '  EXPORT_LINE as "ExportLine",'
+      '  INV_ITEM_NO as "InvItemNo",'
+      '  ITEM_SEQ as "ItemSeq"'
+      'from EXPORT_LOG_FILE_DETAIL'
       'order by ID')
     Left = 1260
     Top = 34
@@ -766,27 +757,23 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
   object dsExpLogDetail: TDataSource
     DataSet = qryExpLogDetail
     Left = 1264
-    Top = 83
+    Top = 87
   end
-  object qryGetItemNo: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
-      item
-        Name = 'TransactionNo'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 255
-        Size = 32767
-        Value = Null
-      end>
+  object qryGetItemNo: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select InvItemNo'
-      'from InventoryItems'
-      'where TransactionNo = :TransactionNo'
-      'order by InvItemNo')
+      'select INV_ITEM_NO as "InvItemNo"'
+      'from INVENTORY_ITEMS'
+      'where TRANSACTION_NO = :TransactionNo'
+      'order by INV_ITEM_NO')
     Left = 1128
     Top = 164
+    ParamData = <
+      item
+        Name = 'TRANSACTIONNO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
     object qryGetItemNoInvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end

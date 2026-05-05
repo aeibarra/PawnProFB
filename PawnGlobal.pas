@@ -6,7 +6,7 @@ interface
 Uses Windows, SysUtils, System.Classes, Forms, Controls, IniFiles, Dialogs, ActiveX, ComObj,
      Winapi.WinSpool, Vcl.Printers, Math,
      Db, dbctrls, Graphics, buttons, stdctrls, extctrls, DBGrids, System.Generics.Collections,
-     Grids, Types, ADODB, Variants, Vcl.FileCtrl, Nvv.IO.CSV.Delphi.NvvCSVClasses;
+     Grids, Types, Variants, Vcl.FileCtrl, Nvv.IO.CSV.Delphi.NvvCSVClasses;
 
 type
   TDBInfo = record
@@ -168,8 +168,6 @@ function GetSaveSettingsName(FormName: string): string;
 
 function ConvertTo2Dec(F: extended): extended;
 function GetTransactionStr(TranType: string): string;
-procedure SortBySelectedCol(Column: TColumn; Qry: TADOQuery);
-
 function GetFullName(FName, MName, LName: string): string;
 function GetFullNameLastFirst(FName, MName, LName: string): string;
 
@@ -742,33 +740,6 @@ begin
     Result := 'Purchase'
   else
     Result := '';
-end;
-
-procedure SortBySelectedCol(Column: TColumn; Qry: TADOQuery);
-var
-  ColName, CurrSorting, CurrSortingField, CurrSortingDirection, SortSufix: string;
-  p: integer;
-begin
-  if not Qry.Active then
-    exit;
-
-  ColName := Column.FieldName;
-  CurrSorting := Qry.Sort;
-  SortSufix := ' ASC';
-  if CurrSorting <> '' then
-    begin
-      p := pos(' ', CurrSorting);
-      CurrSortingField := Copy(CurrSorting, 1, p - 1);
-      CurrSortingDirection := Copy(CurrSorting, p + 1, length(CurrSorting));
-
-      if CurrSortingField = ColName then
-        begin
-          if CurrSortingDirection = 'ASC' then
-            SortSufix := ' DESC';
-        end;
-    end;
-
-  Qry.Sort := ColName + SortSufix;
 end;
 
 function GetFullNameLastFirst(FName, MName, LName: string): string;

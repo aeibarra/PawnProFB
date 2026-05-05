@@ -38,7 +38,7 @@ var
 
 implementation
 
-uses PawnDM;
+uses PawnDM, PawnGlobal;
 
 {$R *.dfm}
 
@@ -49,7 +49,11 @@ end;
 
 procedure TfrmPoliceRptAdj.btnSaveClick(Sender: TObject);
 begin
-  DM.ConnDB.Execute('UPDATE Store SET StoreAdjTopMarg = ' + trim(edAdjTopMargin.text) + ', StoreAdjDetailHeight = ' + trim(edDetail.text) + ', StoreAdjFooterHeight = ' + trim(edFooter.text) + ' WHERE StoreNo = 0');
+  ExecSQLStatementFB(Format(
+    'UPDATE STORE SET STORE_ADJ_TOP_MARG = %d, STORE_ADJ_DETAIL_HEIGHT = %d, STORE_ADJ_FOOTER_HEIGHT = %d WHERE STORE_NO = ''0''',
+    [StrToIntDef(Trim(edAdjTopMargin.Text), 0),
+     StrToIntDef(Trim(edDetail.Text), 0),
+     StrToIntDef(Trim(edFooter.Text), 0)]));
   ModalResult := mrOk;
 end;
 

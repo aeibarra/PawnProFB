@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Controls, Forms, Vcl.Graphics, Vcl.Dialogs,
-  ExtCtrls, Grids, DBGrids, StdCtrls, Buttons, ComCtrls, DBCtrls, Mask, ActnList, DB, ADODB, ppComm,
+  ExtCtrls, Grids, DBGrids, StdCtrls, Buttons, ComCtrls, DBCtrls, Mask, ActnList, DB, ppComm,
   ppRelatv, ppDB, ppDBPipe, ppProd, ppClass, ppReport, ppPrnabl, ppCtrls, StrUtils,
   ppBands, ppCache, ppVar, IniFiles, Menus, System.UITypes, Variants,
   myChkBox, ppParameter, ppDesignLayer, RzForms, RzCommon, System.Actions, PawnGlobal,
@@ -51,36 +51,36 @@ type
     dsPawnItems: TDataSource;
     ActionAddPurchase: TAction;
     ActionEditPurchase: TAction;
-    qryPoliceRepCust: TADOQuery;
-    qryPawnItems: TADOQuery;
-    qryPawnStones: TADOQuery;
-    qryPoliceRepCustCustno: TAutoIncField;
-    qryPoliceRepCustCustTicketNo: TStringField;
-    qryPoliceRepCustCustLast: TStringField;
-    qryPoliceRepCustCustFirst: TStringField;
-    qryPoliceRepCustCustMid: TStringField;
+    qryPoliceRepCust: TFDQuery;
+    qryPawnItems: TFDQuery;
+    qryPawnStones: TFDQuery;
+    qryPoliceRepCustCustno: TIntegerField;
+    qryPoliceRepCustCustTicketNo: TWideStringField;
+    qryPoliceRepCustCustLast: TWideStringField;
+    qryPoliceRepCustCustFirst: TWideStringField;
+    qryPoliceRepCustCustMid: TWideStringField;
     qryPoliceRepCustCustDOB: TDateField;
-    qryPoliceRepCustCustGender: TStringField;
-    qryPoliceRepCustCustRace: TStringField;
-    qryPoliceRepCustCustHair: TStringField;
-    qryPoliceRepCustCustEyes: TStringField;
-    qryPoliceRepCustCustMark: TStringField;
+    qryPoliceRepCustCustGender: TWideStringField;
+    qryPoliceRepCustCustRace: TWideStringField;
+    qryPoliceRepCustCustHair: TWideStringField;
+    qryPoliceRepCustCustEyes: TWideStringField;
+    qryPoliceRepCustCustMark: TWideStringField;
     qryPoliceRepCustCustWeight: TFloatField;
-    qryPoliceRepCustCustHeight: TStringField;
-    qryPoliceRepCustCustAddr: TStringField;
-    qryPoliceRepCustCustApt: TStringField;
-    qryPoliceRepCustCustCity: TStringField;
-    qryPoliceRepCustCustState: TStringField;
-    qryPoliceRepCustCustZip: TStringField;
-    qryPoliceRepCustCustPlaceEmply: TStringField;
-    qryPoliceRepCustCustFlDrvLic: TStringField;
-    qryPoliceRepCustCustID: TStringField;
-    qryPoliceRepCustCustIDType: TStringField;
-    qryPoliceRepCustCustIDAgencyState: TStringField;
-    qryPoliceRepCustCustPhHome: TStringField;
-    qryPoliceRepCustCustPhBussiness: TStringField;
-    qryPoliceRepCustCustPhBeep: TStringField;
-    qryPoliceRepCustCustPhCell: TStringField;
+    qryPoliceRepCustCustHeight: TWideStringField;
+    qryPoliceRepCustCustAddr: TWideStringField;
+    qryPoliceRepCustCustApt: TWideStringField;
+    qryPoliceRepCustCustCity: TWideStringField;
+    qryPoliceRepCustCustState: TWideStringField;
+    qryPoliceRepCustCustZip: TWideStringField;
+    qryPoliceRepCustCustPlaceEmply: TWideStringField;
+    qryPoliceRepCustCustFlDrvLic: TWideStringField;
+    qryPoliceRepCustCustID: TWideStringField;
+    qryPoliceRepCustCustIDType: TWideStringField;
+    qryPoliceRepCustCustIDAgencyState: TWideStringField;
+    qryPoliceRepCustCustPhHome: TWideStringField;
+    qryPoliceRepCustCustPhBussiness: TWideStringField;
+    qryPoliceRepCustCustPhBeep: TWideStringField;
+    qryPoliceRepCustCustPhCell: TWideStringField;
     qryPoliceRepCustCustComment: TMemoField;
     qryPawnItemsInvItemNo: TIntegerField;
     qryPawnItemsInvItemBarcode: TStringField;
@@ -93,9 +93,9 @@ type
     qryPawnItemsSizeLength: TFloatField;
     qryPawnItemsWeight: TFloatField;
     qryPawnItemsKT: TFloatField;
-    qryPawnItemsCreated: TDateTimeField;
-    qryPawnItemsUnitCost: TBCDField;
-    qryPawnItemsUnitPrice: TBCDField;
+    qryPawnItemsCreated: TSQLTimeStampField;
+    qryPawnItemsUnitCost: TFMTBCDField;
+    qryPawnItemsUnitPrice: TFMTBCDField;
     qryPawnItemsInvItemStatus: TStringField;
     qryPawnItemsTransactionNo: TIntegerField;
     qryPawnItemsInvOriginalItemNo: TIntegerField;
@@ -104,7 +104,7 @@ type
     qryPawnItemsModelNumber: TStringField;
     qryPawnItemsSerialNumber: TStringField;
     qryPawnItemsGender: TStringField;
-    qryPawnStonesStoneNo: TAutoIncField;
+    qryPawnStonesStoneNo: TIntegerField;
     qryPawnStonesInvItemNo: TIntegerField;
     qryPawnStonesStoneNumber: TIntegerField;
     qryPawnStonesStoneShape: TStringField;
@@ -450,9 +450,9 @@ type
     clnPawnItemsSizeLength: TFloatField;
     clnPawnItemsWeight: TFloatField;
     clnPawnItemsKT: TFloatField;
-    clnPawnItemsCreated: TDateTimeField;
-    clnPawnItemsUnitCost: TBCDField;
-    clnPawnItemsUnitPrice: TBCDField;
+    clnPawnItemsCreated: TSQLTimeStampField;
+    clnPawnItemsUnitCost: TFMTBCDField;
+    clnPawnItemsUnitPrice: TFMTBCDField;
     clnPawnItemsInvItemStatus: TStringField;
     clnPawnItemsTransactionNo: TIntegerField;
     clnPawnItemsInvOriginalItemNo: TIntegerField;
@@ -1421,7 +1421,7 @@ begin
   if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4] then
     begin
       qryPawnItems.Close;
-      qryPawnItems.Parameters.ParamByName('TransactionNo').Value := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+      qryPawnItems.Params.ParamByName('TransactionNo').AsInteger := DM.qryTransactionsTRANSACTION_NO.AsInteger;
       qryPawnItems.Open;
     end
   else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 2 then
@@ -1445,7 +1445,7 @@ begin
     end;
 
   qryPoliceRepCust.Close;
-  qryPoliceRepCust.Parameters.ParamByName('Custno').Value := DM.qryCustomersCUST_NO.AsInteger;
+  qryPoliceRepCust.Params.ParamByName('Custno').AsInteger := DM.qryCustomersCUST_NO.AsInteger;
   qryPoliceRepCust.Open;
 
   lblStoreName2.Visible := false;
@@ -1857,10 +1857,6 @@ end;
 
 procedure TfrmClients.SaveTopMarginPolRep;
 begin
-//  DM.ConnDB.Execute('UPDATE Store SET StoreAdjTopMarg = ' + trim(txtAdjTopMargin.text) + ' WHERE StoreNo = 0');
-//  DM.qryStore.Edit;
-//  DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger := StrToInt(trim(txtAdjTopMargin.text));
-//  DM.qryStore.Post;
 end;
 
 procedure TfrmClients.btnAdjPoliceReportClick(Sender: TObject);
@@ -2016,7 +2012,7 @@ begin
   qryPawnItemscWeightToPrint.AsString := FloatToStr(qryPawnItemsWeight.AsFloat) + DM.GetWeightUnitAbbr(qryPawnItemsWeightUnit.AsString);
 
   qryPawnStones.Close;
-  qryPawnStones.Parameters.ParamByName('InvItemNo').Value := qryPawnItemsInvItemNo.AsInteger;
+  qryPawnStones.Params.ParamByName('InvItemNo').AsInteger := qryPawnItemsInvItemNo.AsInteger;
   qryPawnStones.Open;
 
   StonesCount := qryPawnStones.RecordCount;

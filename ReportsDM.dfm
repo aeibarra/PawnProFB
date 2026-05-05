@@ -2,13 +2,17 @@ object DMReports: TDMReports
   Height = 411
   Width = 1064
   object qryPrnPayReceipt: TFDQuery
-    Connection = DM.ConnFB
     OnCalcFields = qryPrnPayReceiptCalcFields
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select T1.TRANSACTION_NO, T1.PAY_DATE, T1.PAY_AMOUNT, T1.PAY_INTEREST,'
+      
+        'select T1.TRANSACTION_NO, T1.PAY_DATE, T1.PAY_AMOUNT, T1.PAY_INT' +
+        'EREST,'
       '       T1.PAY_PRINCIPAL, T2.TRAN_DATE, T2.TRAN_PAWN_AMOUNT,'
       '       T2.TRAN_TICKET_NO, T1.PRINC_BALANCE,'
-      '       T3.CUST_FIRST, T3.CUST_MID, T3.CUST_LAST, T3.CUST_PH_CELL,'
+      
+        '       T3.CUST_FIRST, T3.CUST_MID, T3.CUST_LAST, T3.CUST_PH_CELL' +
+        ','
       '       T3.CUST_PH_HOME, T3.CUST_PH_BUSINESS,'
       '       T3.CUST_FL_DRV_LIC, T3.CUST_ID_TYPE, T3.CUST_ID,'
       '       T3.CUST_ID_AGENCY_STATE'
@@ -16,14 +20,14 @@ object DMReports: TDMReports
       '  join TRANSACTIONS T2 on T1.TRANSACTION_NO = T2.TRANSACTION_NO'
       '  join CUSTOMER T3 on T3.CUST_NO = T2.CUST_NO'
       'where T1.PAYMENT_NO = :PAYMENT_NO')
+    Left = 38
+    Top = 16
     ParamData = <
       item
         Name = 'PAYMENT_NO'
         DataType = ftInteger
         ParamType = ptInput
       end>
-    Left = 38
-    Top = 16
     object qryPrnPayReceiptcFullName: TStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -923,7 +927,7 @@ object DMReports: TDMReports
         Font.Size = 10
         Font.Style = []
         Lines.Strings = (
-
+          
             'Pawner hereby certifies that he or she is legally empowered to s' +
             'ell or dispose of the above property and that said property is f' +
             'ree and clear of all liens and encumbrances. Pawner will be resp' +
@@ -957,7 +961,7 @@ object DMReports: TDMReports
         Font.Size = 10
         Font.Style = []
         Lines.Strings = (
-
+          
             'PLEASE READ: 1, the undersigned pawner, have carefully read the ' +
             'terms and conditions of this pawn and agree to them.')
         RemoveEmptyLines = False
@@ -1467,22 +1471,24 @@ object DMReports: TDMReports
     SQL.Strings = (
       'select T4.INV_ITEM_COUNT, T4.DESCRIPTION, T4.KT, T4.WEIGHT,'
       '       cast(case'
-      '              when T4.WEIGHT_UNIT is null then ''dwt'''
-      '              when T4.WEIGHT_UNIT = ''P'' then ''dwt'''
-      '              when T4.WEIGHT_UNIT = ''G'' then ''g'''
+      '              when T4.WEIGHT_UNIT is null then '#39'dwt'#39
+      '              when T4.WEIGHT_UNIT = '#39'P'#39' then '#39'dwt'#39
+      '              when T4.WEIGHT_UNIT = '#39'G'#39' then '#39'g'#39
       '            end as varchar(10)) as W_UNIT'
       'from PAYMENTS T1'
       '  join TRANSACTIONS T2 on T1.TRANSACTION_NO = T2.TRANSACTION_NO'
-      '  join INVENTORY_ITEMS T4 on T4.TRANSACTION_NO = T2.TRANSACTION_NO'
+      
+        '  join INVENTORY_ITEMS T4 on T4.TRANSACTION_NO = T2.TRANSACTION_' +
+        'NO'
       'where T1.PAYMENT_NO = :PAYMENT_NO')
+    Left = 38
+    Top = 136
     ParamData = <
       item
         Name = 'PAYMENT_NO'
         DataType = ftInteger
         ParamType = ptInput
       end>
-    Left = 38
-    Top = 136
     object qryTranItemsInvItemCount: TIntegerField
       FieldName = 'INV_ITEM_COUNT'
     end
@@ -2054,24 +2060,26 @@ object DMReports: TDMReports
     end
   end
   object qryInvItem: TFDQuery
-    Connection = DM.ConnFB
     OnCalcFields = qryInvItemCalcFields
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select I.DESCRIPTION, I.WEIGHT, I.KT, I.SIZE_LENGTH, T.TRAN_DATE,'
+      
+        'select I.DESCRIPTION, I.WEIGHT, I.KT, I.SIZE_LENGTH, T.TRAN_DATE' +
+        ','
       '       T.TRAN_TICKET_NO, C.CUST_FIRST, C.CUST_MID, C.CUST_LAST,'
       '       T.TRAN_TYPE, I.INV_ITEM_COUNT as QTY'
       'from INVENTORY_ITEMS I'
       '  join TRANSACTIONS T on T.TRANSACTION_NO = I.TRANSACTION_NO'
       '  join CUSTOMER C on C.CUST_NO = T.CUST_NO'
       'where I.INV_ITEM_NO = :INV_ITEM_NO')
+    Left = 38
+    Top = 248
     ParamData = <
       item
         Name = 'INV_ITEM_NO'
         DataType = ftInteger
         ParamType = ptInput
       end>
-    Left = 38
-    Top = 248
     object qryInvItemcFullName: TStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -3766,24 +3774,24 @@ object DMReports: TDMReports
     OnCalcFields = qryLayawayRcptCalcFields
     Connection = DM.ConnFB
     SQL.Strings = (
-
+      
         'select t.TRAN_DATE, t.TRAN_MATURITY, t.TRAN_PAWN_AMOUNT, t.TRAN_' +
         'SALES_TAX,'
-
+      
         '       (coalesce(t.TRAN_PAWN_AMOUNT, 0) + coalesce(t.TRAN_SALES_' +
         'TAX, 0)) as TOTAL_AMOUNT,'
       '       t.TRAN_TICKET_NO, t.TRAN_STATUS,'
-
+      
         '       t.CUST_NO, c.CUST_LAST, c.CUST_FIRST, c.CUST_MID, c.CUST_' +
         'ADDR,'
       '       c.CUST_APT, c.CUST_CITY, c.CUST_STATE, c.CUST_ZIP,'
-
+      
         '       coalesce(c.CUST_PH_CELL, c.CUST_PH_HOME, c.CUST_PH_BUSINE' +
         'SS, c.CUST_PH_BEEP) as CUST_PHONE_NUMBER,'
-
+      
         '       i.DESCRIPTION as ITEM_DESCRIPTION, i.WEIGHT, i.WEIGHT_UNI' +
         'T, i.UNIT_PRICE,'
-
+      
         '       (select max(p.PAY_DATE) from PAYMENTS p where p.TRANSACTI' +
         'ON_NO = t.TRANSACTION_NO) as D_DATE'
       'from CUSTOMER c'

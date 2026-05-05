@@ -3,38 +3,42 @@ unit LeadsOnlineDM;
 interface
 
 uses
-  System.SysUtils, System.Classes, Data.DB, Data.Win.ADODB, Datasnap.DBClient,
-  Datasnap.Provider, Vcl.StdCtrls, Forms, StrUtils;
+  System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient,
+  Datasnap.Provider, Vcl.StdCtrls, Forms, StrUtils,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TDM_LeadsOnline = class(TDataModule)
-    qryGetDataToExp: TADOQuery;
+    qryGetDataToExp: TFDQuery;
     qryGetDataToExpticket_type: TSmallintField;
     qryGetDataToExpTransactionNo: TIntegerField;
-    qryGetDataToExpTranDate: TDateTimeField;
-    qryGetDataToExpClerkName: TStringField;
-    qryGetDataToExpTranVoided: TStringField;
-    qryGetDataToExpCustLast: TStringField;
-    qryGetDataToExpCustFirst: TStringField;
-    qryGetDataToExpCustMid: TStringField;
-    qryGetDataToExpCustAddr: TStringField;
-    qryGetDataToExpCustCity: TStringField;
-    qryGetDataToExpCustState: TStringField;
-    qryGetDataToExpCustZip: TStringField;
+    qryGetDataToExpTranDate: TDateField;
+    qryGetDataToExpClerkName: TWideStringField;
+    qryGetDataToExpTranVoided: TWideStringField;
+    qryGetDataToExpCustLast: TWideStringField;
+    qryGetDataToExpCustFirst: TWideStringField;
+    qryGetDataToExpCustMid: TWideStringField;
+    qryGetDataToExpCustAddr: TWideStringField;
+    qryGetDataToExpCustCity: TWideStringField;
+    qryGetDataToExpCustState: TWideStringField;
+    qryGetDataToExpCustZip: TWideStringField;
     qryGetDataToExpCustDOB: TDateField;
     qryGetDataToExpCustWeight: TFloatField;
-    qryGetDataToExpCustHeight: TStringField;
-    qryGetDataToExpCustEyes: TStringField;
-    qryGetDataToExpCustHair: TStringField;
-    qryGetDataToExpCustRace: TStringField;
-    qryGetDataToExpCustGender: TStringField;
+    qryGetDataToExpCustHeight: TWideStringField;
+    qryGetDataToExpCustEyes: TWideStringField;
+    qryGetDataToExpCustHair: TWideStringField;
+    qryGetDataToExpCustRace: TWideStringField;
+    qryGetDataToExpCustGender: TWideStringField;
     qryGetDataToExpInvItemCount: TIntegerField;
     qryGetDataToExpInvItemBrand: TStringField;
     qryGetDataToExpModelNumber: TStringField;
     qryGetDataToExpSerialNumber: TStringField;
     qryGetDataToExpDescription: TStringField;
     qryGetDataToExpNote: TStringField;
-    qryGetDataToExpUnitCost: TBCDField;
+    qryGetDataToExpUnitCost: TFMTBCDField;
     qryGetDataToExpJStyleDesc: TStringField;
     qryGetDataToExpJMetalDesc: TStringField;
     qryGetDataToExpKT: TFloatField;
@@ -73,7 +77,7 @@ type
     clnExpData_SizeLength: TFloatField;
     clnExpData_Gender: TStringField;
     qryGetDataToExpRowNo: TIntegerField;
-    qryExportFileFormat: TADOQuery;
+    qryExportFileFormat: TFDQuery;
     prvExportFileFormat: TDataSetProvider;
     clnExportFileFormat: TClientDataSet;
     clnExportFileFormatID: TIntegerField;
@@ -99,15 +103,15 @@ type
     qryGetDataToExpStoneNumber2: TIntegerField;
     qryGetDataToExpJShapeDesc2: TStringField;
     qryGetDataToExpCT2: TFloatField;
-    qryGetDataToExpCustPhHome: TStringField;
-    qryGetDataToExpCustPhBussiness: TStringField;
-    qryGetDataToExpCustPhBeep: TStringField;
-    qryGetDataToExpCustPhCell: TStringField;
-    qryGetDataToExpCustFlDrvLic: TStringField;
-    qryGetDataToExpCustID: TStringField;
-    qryGetDataToExpCustIDType: TStringField;
-    qryGetDataToExpCustIDAgencyState: TStringField;
-    qryItemStones: TADOQuery;
+    qryGetDataToExpCustPhHome: TWideStringField;
+    qryGetDataToExpCustPhBussiness: TWideStringField;
+    qryGetDataToExpCustPhBeep: TWideStringField;
+    qryGetDataToExpCustPhCell: TWideStringField;
+    qryGetDataToExpCustFlDrvLic: TWideStringField;
+    qryGetDataToExpCustID: TWideStringField;
+    qryGetDataToExpCustIDType: TWideStringField;
+    qryGetDataToExpCustIDAgencyState: TWideStringField;
+    qryItemStones: TFDQuery;
     qryItemStonesNo: TIntegerField;
     qryItemStonesInvItemNo: TIntegerField;
     qryItemStonesStoneNo: TIntegerField;
@@ -118,16 +122,16 @@ type
     qryItemStonesCT: TFloatField;
     qryGetDataToExpInvItemNo: TIntegerField;
     qryGetDataToExpTranTicketNo: TStringField;
-    spCreateExpLog: TADOStoredProc;
-    qryInsExpLogLine: TADOQuery;
-    qryUpdItemCount: TADOQuery;
-    qryRegenExportFile: TADOQuery;
+    spCreateExpLog: TFDQuery;
+    qryInsExpLogLine: TFDQuery;
+    qryUpdItemCount: TFDQuery;
+    qryRegenExportFile: TFDQuery;
     qryRegenExportFileID: TIntegerField;
     qryRegenExportFileExportLogID: TIntegerField;
     qryRegenExportFileTransactionNo: TIntegerField;
     qryRegenExportFileExportLine: TMemoField;
-    qryExpImgMarkAsSent: TADOQuery;
-    qryGetDataToExpCustPlaceEmply: TStringField;
+    qryExpImgMarkAsSent: TFDQuery;
+    qryGetDataToExpCustPlaceEmply: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryGetDataToExpCalcFields(DataSet: TDataSet);
   private
@@ -267,7 +271,7 @@ begin
   qryGetDataToExpAmountRedeemDefaultDate.AsDateTime := DM.CalcPawnDefaultDate(qryGetDataToExpTranDate.AsDateTime, DM.qryStorePAWN_DEFAULT_MONTHS.AsInteger);
 
   qryItemStones.Close;
-  qryItemStones.Parameters.ParamByName('InvItemNo').Value := qryGetDataToExpInvItemNo.AsInteger;
+  qryItemStones.Params.ParamByName('InvItemNo').AsInteger := qryGetDataToExpInvItemNo.AsInteger;
   qryItemStones.Open;
 
   while not qryItemStones.Eof do
@@ -310,11 +314,11 @@ end;
 
 procedure TDM_LeadsOnline.InstExpLogLine(ExportLogID, TransactionNo, InvItemNo, ItemSeq: integer; const ExportLine: string);
 begin
-  qryInsExpLogLine.Parameters.ParamByName('ExportLogID').Value := ExportLogID;
-  qryInsExpLogLine.Parameters.ParamByName('TransactionNo').Value := TransactionNo;
-  qryInsExpLogLine.Parameters.ParamByName('InvItemNo').Value := InvItemNo;
-  qryInsExpLogLine.Parameters.ParamByName('ItemSeq').Value := ItemSeq;
-  qryInsExpLogLine.Parameters.ParamByName('ExportLine').Value := ExportLine;
+  qryInsExpLogLine.Params.ParamByName('ExportLogID').AsInteger := ExportLogID;
+  qryInsExpLogLine.Params.ParamByName('TransactionNo').AsInteger := TransactionNo;
+  qryInsExpLogLine.Params.ParamByName('InvItemNo').AsInteger := InvItemNo;
+  qryInsExpLogLine.Params.ParamByName('ItemSeq').AsInteger := ItemSeq;
+  qryInsExpLogLine.Params.ParamByName('ExportLine').AsString := ExportLine;
   qryInsExpLogLine.ExecSQL;
 end;
 
@@ -344,15 +348,15 @@ begin
 
   if ExportProcType = 1 then //Export not exported Transactions
     begin
-      CurrSQLText := ReplaceStr(SaveExportQry, '--<FILTER>', 'and not Exists(select * from ExportLogFileDetail T01 where T01.TransactionNo = T1.TransactionNo)');
+      CurrSQLText := ReplaceStr(SaveExportQry, '--<FILTER>', 'and not exists(select 1 from EXPORT_LOG_FILE_DETAIL T01 where T01.TRANSACTION_NO = T1.TRANSACTION_NO)');
 
       if LimitRows then
-        CurrSQLText := ReplaceStr(CurrSQLText, '--<LIMIT_ROWS>', 'TOP ' + LimitToRowsNo.ToString());
+        CurrSQLText := ReplaceStr(CurrSQLText, '--<LIMIT_ROWS>', 'FIRST ' + LimitToRowsNo.ToString());
 
     end
   else if ExportProcType = 2 then //Date Range
     begin
-      CurrSQLText := ReplaceStr(SaveExportQry, '--<FILTER>', ' AND T1.TranDate BETWEEN ' + AsaDateToStr(FromDate) + ' AND ' + AsaDateToStr(ToDate) + ' ');
+      CurrSQLText := ReplaceStr(SaveExportQry, '--<FILTER>', ' AND T1.TRAN_DATE BETWEEN DATE ''' + FormatDateTime('yyyy-mm-dd', FromDate) + ''' AND DATE ''' + FormatDateTime('yyyy-mm-dd', ToDate) + ''' ');
     end
   else
     begin
@@ -372,9 +376,10 @@ begin
   Application.ProcessMessages;
 
   ExportFileName := GetExportFileName(ExportFolder);
-  spCreateExpLog.Parameters.ParamByName('@FileName').Value := ExportFileName;
-  spCreateExpLog.ExecProc;
-  ExportLogID := spCreateExpLog.Parameters.ParamByName('@ExportLogID').Value;
+  spCreateExpLog.Close;
+  spCreateExpLog.Params.ParamByName('FileName').AsString := ExportFileName;
+  spCreateExpLog.Open;
+  ExportLogID := spCreateExpLog.FieldByName('ExportLogID').AsInteger;
 
   LastTransactionNo := -1;
   i := 0;
@@ -395,8 +400,8 @@ begin
       qryGetDataToExp.Next;
     end;
 
-  qryUpdItemCount.Parameters.ParamByName('ItemCount').Value := i;
-  qryUpdItemCount.Parameters.ParamByName('ExportLogID').Value := ExportLogID;
+  qryUpdItemCount.Params.ParamByName('ItemCount').AsInteger := i;
+  qryUpdItemCount.Params.ParamByName('ExportLogID').AsInteger := ExportLogID;
   qryUpdItemCount.ExecSQL;
 
   WriteTextFile(ExportFolder + ExportFileName, FileTextData);
@@ -408,7 +413,7 @@ var
   RecCountStr, HeaderStr: string;
 begin
   qryRegenExportFile.Close;
-  qryRegenExportFile.Parameters.ParamByName('ExportLogID').Value := ExportLogID;
+  qryRegenExportFile.Params.ParamByName('ExportLogID').AsInteger := ExportLogID;
   qryRegenExportFile.Open;
 
   if qryRegenExportFile.RecordCount = 0 then
@@ -462,8 +467,8 @@ end;
 
 procedure TDM_LeadsOnline.MarImageAsSent(ImagesDataNo: integer; const UploadFileName: string);
 begin
-  qryExpImgMarkAsSent.Parameters.ParamByName('UploadFileName').Value := UploadFileName;
-  qryExpImgMarkAsSent.Parameters.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  qryExpImgMarkAsSent.Params.ParamByName('UploadFileName').AsString := UploadFileName;
+  qryExpImgMarkAsSent.Params.ParamByName('ImagesDataNo').AsInteger := ImagesDataNo;
   qryExpImgMarkAsSent.ExecSQL;
 end;
 

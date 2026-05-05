@@ -1,37 +1,35 @@
 object frmEditInvCat: TfrmEditInvCat
   Left = 327
   Top = 114
-  Width = 258
-  Height = 136
+  BorderStyle = bsDialog
   Caption = 'Category'
+  ClientHeight = 142
+  ClientWidth = 302
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Height = -15
+  Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 20
   object GroupBox1: TGroupBox
-    Left = 0
-    Top = 70
-    Width = 250
-    Height = 39
+    AlignWithMargins = True
+    Left = 3
+    Top = 92
+    Width = 296
+    Height = 47
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 83
     object btnCancel: TBitBtn
       Left = 161
-      Top = 10
+      Top = 8
       Width = 75
-      Height = 25
+      Height = 32
       Cancel = True
       Caption = '&Cancel'
-      ModalResult = 2
-      TabOrder = 1
-      OnClick = btnCancelClick
       Glyph.Data = {
         DE010000424DDE01000000000000760000002800000024000000120000000100
         0400000000006801000000000000000000001000000000000000000000000000
@@ -49,17 +47,18 @@ object frmEditInvCat: TfrmEditInvCat
         38F338F300003333333333333919333333388333338FFF830000333333333333
         3333333333333333333888330000333333333333333333333333333333333333
         0000}
+      ModalResult = 2
       NumGlyphs = 2
+      TabOrder = 1
+      OnClick = btnCancelClick
     end
     object btnSave: TBitBtn
       Left = 78
-      Top = 10
+      Top = 8
       Width = 75
-      Height = 25
+      Height = 32
       Caption = '&Save'
       Default = True
-      TabOrder = 0
-      OnClick = btnSaveClick
       Glyph.Data = {
         B6010000424DB60100000000000076000000280000001E000000140000000100
         0400000000004001000000000000000000001000000000000000000000000000
@@ -75,27 +74,34 @@ object frmEditInvCat: TfrmEditInvCat
         F44408991077777777007C44FFFFFFFFF44408799077777777007C44F00F0000
         F44408779977777777007CCC888888888CCCC777777777777700777777777777
         7777777777777777770077777777777777777777777777777700}
+      TabOrder = 0
+      OnClick = btnSaveClick
     end
   end
   object GroupBox2: TGroupBox
-    Left = 0
-    Top = 0
-    Width = 250
-    Height = 70
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 296
+    Height = 83
     Align = alClient
     TabOrder = 0
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 242
+    ExplicitHeight = 58
     object Label1: TLabel
-      Left = 24
-      Top = 16
-      Width = 42
-      Height = 13
+      Left = 16
+      Top = 6
+      Width = 60
+      Height = 20
       Caption = 'Category'
     end
     object DBEdit1: TDBEdit
       Left = 16
       Top = 32
-      Width = 217
-      Height = 21
+      Width = 260
+      Height = 28
       DataField = 'InvCategory'
       DataSource = frmInventory.dsCategories
       TabOrder = 0

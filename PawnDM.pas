@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, IniFiles,
-  Db, ADODB, DBClient, Provider, Variants, Vcl.ImgList, DateUtils, System.UITypes, Vcl.StdCtrls,
+  Db, DBClient, Provider, Variants, Vcl.ImgList, DateUtils, System.UITypes, Vcl.StdCtrls,
   RzCommon, System.ImageList, RzCmboBx, Vcl.VirtualImageList, Vcl.ExtCtrls,
   Vcl.BaseImageCollection, Vcl.ImageCollection, SVGIconImageCollection,
   SVGIconVirtualImageList, FireDAC.Stan.Intf, FireDAC.Stan.Option,
@@ -28,7 +28,6 @@ type
   end;
 
   TDM = class(TDataModule)
-    ConnDB: TADOConnection;
     DSCustomers: TDataSource;
     DSStates: TDataSource;
     DSTransactions: TDataSource;
@@ -216,10 +215,9 @@ type
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
   public
-    SaveCustQry, SaveConnectionStr: string;
+    SaveCustQry: string;
     ReCalcMaturity: boolean;
     function RoutineExists(const Conn: TFDConnection; const Name, RoutineType: string): Boolean;
-    function GetConnectionStr: string;
     procedure ConfigureFBConnection;
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
     function TestFBConnection(out ErrorMsg: string): Boolean;
@@ -521,32 +519,6 @@ begin
   LoadLookupMemTables;
 end;
 
-
-
-function TDM.GetConnectionStr: string;
-var
-  IniFile: TIniFile;
-  PWD, UID, DBN, ENG, HOST: string;
-begin
-
-  RegIniFile.Path := LocalIniFile;
-
-  IniFile := TIniFile.Create(GlobalIniFile);
-  try
-    PWD := 'KAKITA';
-    UID := 'dba';
-    DBN := IniFile.ReadString(IniSecConn, 'dbn', '');
-    ENG := IniFile.ReadString(IniSecConn, 'eng', '');
-    HOST := IniFile.ReadString(IniSecConn, 'host', '');
-//    Driver := IniFile.ReadString(IniSecConn, 'driver', '');
-  finally
-   IniFile.Free;
-  end;
-
-  Result := Format('Provider=SAOLEDB.12;Password=%s;Persist Security Info=True;User ID=%s;Initial Catalog=%s;Extended Properties="CommLinks=SharedMemory,TCPIP{HOST=%s};ServerName=%s"',
-                    [PWD, UID, DBN, HOST, ENG]);
-end;
-
 // Reads [CONNECTION_FB] from the global PawnPro.ini and configures the given
 // TFDConnection with the same params used for ConnFB. Lets background tasks
 // build a thread-local connection without duplicating the INI-read logic.
@@ -627,10 +599,8 @@ end;
 procedure TDM.DataModuleCreate(Sender: TObject);
 var
   FlagValue: string;
-  fbErr: string;
 begin
   SaveCustQry := DM.qryCustomers.SQL.Text;
-  SaveConnectionStr := GetConnectionStr;
 
   RegIniFile.Path := LocalIniFile;
 
@@ -643,16 +613,7 @@ begin
   end;
   IsLocalDatabase := FlagValue <> 'N';
 
-//  WriteTextFile(AppPath + 'ConnStr2.txt', ConnStr);
-
-//  ShowMessage(ConnStr);
-
-  ConnDB.Connected := false;
-  ConnDB.ConnectionString := SaveConnectionStr;
-  ConnDB.Connected := true;
-
-  // Phase 1.2 — open ConnFB persistently in parallel with ADO ConnDB. Both
-  // connections live for the lifetime of the data module.
+  // Open ConnFB persistently for the lifetime of the data module.
   ConfigureFBConnection;
   try
     ConnFB.Connected := True;
@@ -666,15 +627,6 @@ begin
                   'Error: [' + E.ClassName + '] ' + E.Message);
       raise;
     end;
-  end;
-
-  // Phase 1.2 probe — exercise the new helper. Removed before Phase 2.
-  try
-    fbErr := IntToStr(Integer(OpenSQLStatementFB('SELECT COUNT(*) FROM CUSTOMER')));
-    ShowMessage('FB OK. CUSTOMER count via OpenSQLStatementFB = ' + fbErr);
-  except
-    on E: Exception do
-      ShowMessage('FB helper test FAILED: [' + E.ClassName + '] ' + E.Message);
   end;
 
   CheckForMissingDBChanges;

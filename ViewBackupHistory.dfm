@@ -91,20 +91,22 @@ object frmViewBackupHist: TfrmViewBackupHist
         end>
     end
   end
-  object qryBckHist: TADOQuery
-    Connection = DM.ConnDB
-    Parameters = <>
+  object qryBckHist: TFDQuery
+    Connection = DM.ConnFB
     SQL.Strings = (
-      'select top 100 *'
-      'from BackupHistory'
-      'order by BckId desc')
+      'select first 100'
+      '  BCK_ID as "BckId",'
+      '  BCK_DATE as "BckDate",'
+      '  BCK_PATH as "BckPath"'
+      'from BACKUP_HISTORY'
+      'order by BCK_ID desc')
     Left = 40
     Top = 80
-    object qryBckHistBckId: TAutoIncField
+    object qryBckHistBckId: TIntegerField
       FieldName = 'BckId'
       ReadOnly = True
     end
-    object qryBckHistBckDate: TDateTimeField
+    object qryBckHistBckDate: TSQLTimeStampField
       FieldName = 'BckDate'
       DisplayFormat = 'mm/dd/yyyy hh:nn am/pm'
     end

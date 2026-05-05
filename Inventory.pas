@@ -59,7 +59,6 @@ type
     qryInvItemsTransactionNo: TIntegerField;
     qryInvItemsInvOriginalItemNo: TIntegerField;
     qryInvItemsInvItemBrand: TStringField;
-    qryCategoriesC: TSmallintField;
     qryCategoriesInvCatNo: TIntegerField;
     qryCategoriesInvCategory: TWideStringField;
     FormState: TRzFormState;
@@ -127,31 +126,27 @@ uses PawnMain, PawnDM, EditInvCategory, EditInvItem, PawnGlobal,
 procedure TfrmInventory.LoadCategoryTree;
 var
   Iidx: integer;
-  TreeNode{, MyTreeNode2}: TTreeNode;
+  TreeNode: TTreeNode;
 begin
-  TreeNode := nil;
+  // Synthesize the "Categories" root node. Used to come from a UNION-SELECT
+  // sentinel row (InvCatNo = 0) on qryCategories; that prevented FireDAC
+  // from inserting/editing the table, so the root is now app-side.
+  TreeNode := chkTree.Items.Add(nil, 'Categories');
+  TreeNode.ImageIndex := 0;
+  TreeNode.SelectedIndex := 0;
+  TreeNode.StateIndex := STATE_CHECKED;
+  TreeNode.Data := Pointer(0);
+
   qryCategories.First;
   Iidx := 0;
   while not qryCategories.Eof do
   begin
-    if qryCategoriesInvCatNo.AsInteger = 0 then
-      begin
-        TreeNode := chkTree.Items.Add(nil, qryCategoriesInvCategory.AsString);
-        TreeNode.ImageIndex := 0;
-        TreeNode.SelectedIndex := 0;
-        TreeNode.StateIndex := STATE_CHECKED;
-        TreeNode.Data := Pointer(qryCategoriesInvCatNo.AsInteger);
-      end
-    else
-      begin
-        chkTree.Items.AddChild(TreeNode, qryCategoriesInvCategory.AsString);
-        TreeNode.Item[Iidx].ImageIndex := 1;
-        TreeNode.Item[Iidx].SelectedIndex := 1;
-        TreeNode.Item[Iidx].Data := Pointer(qryCategoriesInvCatNo.AsInteger);
-        TreeNode.Item[Iidx].StateIndex := STATE_CHECKED;
-        inc(Iidx);
-      end;
-
+    chkTree.Items.AddChild(TreeNode, qryCategoriesInvCategory.AsString);
+    TreeNode.Item[Iidx].ImageIndex := 1;
+    TreeNode.Item[Iidx].SelectedIndex := 1;
+    TreeNode.Item[Iidx].Data := Pointer(qryCategoriesInvCatNo.AsInteger);
+    TreeNode.Item[Iidx].StateIndex := STATE_CHECKED;
+    inc(Iidx);
 
     qryCategories.Next;
   end;

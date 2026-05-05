@@ -2546,18 +2546,83 @@ object frmPawnMain: TfrmPawnMain
     Left = 1193
     Top = 45
   end
-  object qryAllData: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <>
+  object qryAllData: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     SQL.Strings = (
-      'select *'
-      'from Customer T1'
-      '  JOIN Transactions T2 on T1.Custno = T2.CustNo'
+      'select'
+      '  T1.CUST_NO AS "Custno",'
+      '  T2.TRAN_TICKET_NO AS "CustTicketNo",'
+      '  T1.CUST_LAST AS "CustLast",'
+      '  T1.CUST_FIRST AS "CustFirst",'
+      '  T1.CUST_MID AS "CustMid",'
+      '  T1.CUST_DOB AS "CustDOB",'
+      '  T1.CUST_GENDER AS "CustGender",'
+      '  T1.CUST_RACE AS "CustRace",'
+      '  T1.CUST_HAIR AS "CustHair",'
+      '  T1.CUST_EYES AS "CustEyes",'
+      '  T1.CUST_MARK AS "CustMark",'
+      '  T1.CUST_WEIGHT AS "CustWeight",'
+      '  T1.CUST_HEIGHT AS "CustHeight",'
+      '  T1.CUST_ADDR AS "CustAddr",'
+      '  T1.CUST_APT AS "CustApt",'
+      '  T1.CUST_CITY AS "CustCity",'
+      '  T1.CUST_STATE AS "CustState",'
+      '  T1.CUST_ZIP AS "CustZip",'
+      '  T1.CUST_PLACE_EMPLY AS "CustPlaceEmply",'
+      '  T1.CUST_FL_DRV_LIC AS "CustFlDrvLic",'
+      '  T1.CUST_ID AS "CustID",'
+      '  T1.CUST_ID_TYPE AS "CustIDType",'
+      '  T1.CUST_ID_AGENCY_STATE AS "CustIDAgencyState",'
+      '  T1.CUST_PH_HOME AS "CustPhHome",'
+      '  T1.CUST_PH_BUSINESS AS "CustPhBussiness",'
+      '  T1.CUST_PH_BEEP AS "CustPhBeep",'
+      '  T1.CUST_PH_CELL AS "CustPhCell",'
+      '  T1.CUST_COMMENT AS "CustComment",'
+      '  T2.TRANSACTION_NO AS "TransactionNo",'
+      '  T2.CUST_NO AS "CustNo_1",'
+      '  T2.TRAN_DATE AS "TranDate",'
+      '  T2.TRAN_TICKET_NO AS "TranTicketNo",'
+      '  T2.TRAN_COMMENT AS "TranComment",'
+      '  T2.TRAN_MATURITY AS "TranMaturity",'
+      '  T2.TRAN_TYPE AS "TranType",'
+      '  T2.TRAN_STATUS AS "TranStatus",'
+      '  T2.TRAN_VOID_DATE AS "TranVoidDate",'
+      '  T2.TRAN_PAWN_AMOUNT AS "TranPawnAmount",'
+      '  T2.TRAN_INTEREST AS "TranInterest",'
+      '  T2.PRINC_BALANCE AS "PrincBalance",'
+      '  T2.INTEREST_BALANCE AS "InsterestBalance",'
+      '  T2.TRAN_TIME AS "TranTime",'
+      '  T3.INV_ITEM_NO AS "InvItemNo",'
+      '  T3.INV_ITEM_BARCODE AS "InvItemBarcode",'
+      '  T3.INV_CAT_NO AS "InvCatNo",'
+      '  T3.J_TYPE AS "JType",'
+      '  T3.J_STYLE AS "JStyle",'
+      '  T3.J_METAL AS "JMetal",'
+      '  T3.INV_ITEM_COUNT AS "InvItemCount",'
+      '  T3.NOTE AS "Note",'
+      '  T3.SIZE_LENGTH AS "SizeLength",'
+      '  T3.WEIGHT AS "Weight",'
+      '  T3.KT AS "KT",'
+      '  T3.CREATED AS "Created",'
+      '  T3.UNIT_COST AS "UnitCost",'
+      '  T3.UNIT_PRICE AS "UnitPrice",'
+      '  T3.INV_ITEM_STATUS AS "InvItemStatus",'
+      '  T3.TRANSACTION_NO AS "TransactionNo_1",'
+      '  T3.INV_ORIGINAL_ITEM_NO AS "InvOriginalItemNo",'
+      '  T3.INV_ITEM_BRAND AS "InvItemBrand",'
+      '  T3.SERIAL_NUMBER AS "SerialNumber",'
+      '  T3.OWNER_APP_NUMBER AS "OwnerAppNumber",'
+      '  T3.MODEL_NUMBER AS "ModelNumber",'
+      '  T3.GENDER AS "Gender",'
+      '  T3.DESCRIPTION AS "Description"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
       
-        '  left OUTER JOIN InventoryItems T3 on T2.TransactionNo = T3.Tra' +
-        'nsactionNo'
-      'order by T2.TranDate, T2.TranTime')
+        '  left outer join INVENTORY_ITEMS T3 on T2.TRANSACTION_NO = T3.T' +
+        'RANSACTION_NO'
+      'order by T2.TRAN_DATE, T2.TRAN_TIME')
     Left = 925
     Top = 152
     object qryAllDataCustno: TIntegerField
@@ -2569,17 +2634,17 @@ object frmPawnMain: TfrmPawnMain
       FieldName = 'CustTicketNo'
       Size = 15
     end
-    object qryAllDataCustLast: TStringField
+    object qryAllDataCustLast: TWideStringField
       Tag = 1
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryAllDataCustFirst: TStringField
+    object qryAllDataCustFirst: TWideStringField
       Tag = 1
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryAllDataCustMid: TStringField
+    object qryAllDataCustMid: TWideStringField
       Tag = 1
       FieldName = 'CustMid'
       Size = 1
@@ -2588,27 +2653,27 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'CustDOB'
     end
-    object qryAllDataCustGender: TStringField
+    object qryAllDataCustGender: TWideStringField
       Tag = 1
       FieldName = 'CustGender'
       Size = 1
     end
-    object qryAllDataCustRace: TStringField
+    object qryAllDataCustRace: TWideStringField
       Tag = 1
       FieldName = 'CustRace'
       Size = 1
     end
-    object qryAllDataCustHair: TStringField
+    object qryAllDataCustHair: TWideStringField
       Tag = 1
       FieldName = 'CustHair'
       Size = 5
     end
-    object qryAllDataCustEyes: TStringField
+    object qryAllDataCustEyes: TWideStringField
       Tag = 1
       FieldName = 'CustEyes'
       Size = 5
     end
-    object qryAllDataCustMark: TStringField
+    object qryAllDataCustMark: TWideStringField
       Tag = 1
       FieldName = 'CustMark'
       Size = 10
@@ -2617,75 +2682,75 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'CustWeight'
     end
-    object qryAllDataCustHeight: TStringField
+    object qryAllDataCustHeight: TWideStringField
       Tag = 1
       FieldName = 'CustHeight'
       Size = 8
     end
-    object qryAllDataCustAddr: TStringField
+    object qryAllDataCustAddr: TWideStringField
       Tag = 1
       FieldName = 'CustAddr'
       Size = 55
     end
-    object qryAllDataCustApt: TStringField
+    object qryAllDataCustApt: TWideStringField
       Tag = 1
       FieldName = 'CustApt'
       Size = 5
     end
-    object qryAllDataCustCity: TStringField
+    object qryAllDataCustCity: TWideStringField
       Tag = 1
       FieldName = 'CustCity'
       Size = 40
     end
-    object qryAllDataCustState: TStringField
+    object qryAllDataCustState: TWideStringField
       Tag = 1
       FieldName = 'CustState'
       Size = 2
     end
-    object qryAllDataCustZip: TStringField
+    object qryAllDataCustZip: TWideStringField
       Tag = 1
       FieldName = 'CustZip'
       Size = 11
     end
-    object qryAllDataCustPlaceEmply: TStringField
+    object qryAllDataCustPlaceEmply: TWideStringField
       Tag = 1
       FieldName = 'CustPlaceEmply'
       Size = 30
     end
-    object qryAllDataCustFlDrvLic: TStringField
+    object qryAllDataCustFlDrvLic: TWideStringField
       Tag = 1
       FieldName = 'CustFlDrvLic'
     end
-    object qryAllDataCustID: TStringField
+    object qryAllDataCustID: TWideStringField
       Tag = 1
       FieldName = 'CustID'
       Size = 25
     end
-    object qryAllDataCustIDType: TStringField
+    object qryAllDataCustIDType: TWideStringField
       Tag = 1
       FieldName = 'CustIDType'
     end
-    object qryAllDataCustIDAgencyState: TStringField
+    object qryAllDataCustIDAgencyState: TWideStringField
       Tag = 1
       FieldName = 'CustIDAgencyState'
       Size = 10
     end
-    object qryAllDataCustPhHome: TStringField
+    object qryAllDataCustPhHome: TWideStringField
       Tag = 1
       FieldName = 'CustPhHome'
       Size = 14
     end
-    object qryAllDataCustPhBussiness: TStringField
+    object qryAllDataCustPhBussiness: TWideStringField
       Tag = 1
       FieldName = 'CustPhBussiness'
       Size = 14
     end
-    object qryAllDataCustPhBeep: TStringField
+    object qryAllDataCustPhBeep: TWideStringField
       Tag = 1
       FieldName = 'CustPhBeep'
       Size = 14
     end
-    object qryAllDataCustPhCell: TStringField
+    object qryAllDataCustPhCell: TWideStringField
       Tag = 1
       FieldName = 'CustPhCell'
       Size = 14
@@ -2703,7 +2768,7 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'CustNo_1'
     end
-    object qryAllDataTranDate: TDateTimeField
+    object qryAllDataTranDate: TDateField
       Tag = 1
       FieldName = 'TranDate'
     end
@@ -2731,7 +2796,7 @@ object frmPawnMain: TfrmPawnMain
       FieldName = 'TranStatus'
       Size = 1
     end
-    object qryAllDataTranVoidDate: TDateTimeField
+    object qryAllDataTranVoidDate: TSQLTimeStampField
       Tag = 1
       FieldName = 'TranVoidDate'
     end
@@ -2804,16 +2869,16 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'KT'
     end
-    object qryAllDataCreated: TDateTimeField
+    object qryAllDataCreated: TSQLTimeStampField
       Tag = 1
       FieldName = 'Created'
     end
-    object qryAllDataUnitCost: TBCDField
+    object qryAllDataUnitCost: TFMTBCDField
       Tag = 1
       FieldName = 'UnitCost'
       Precision = 19
     end
-    object qryAllDataUnitPrice: TBCDField
+    object qryAllDataUnitPrice: TFMTBCDField
       Tag = 1
       FieldName = 'UnitPrice'
       Precision = 19

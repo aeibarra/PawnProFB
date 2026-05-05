@@ -8,7 +8,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Vcl.Menus,
   Buttons, ExtCtrls, ImgList, ComCtrls, ToolWin, Data.DB, System.Threading,
-  Data.Win.ADODB, System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls,
+  System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls,
   System.Actions, RzButton, RzPanel, Vcl.StdCtrls,
   // FireDAC (gold-price background task uses thread-local FB connection + proc)
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
@@ -21,7 +21,7 @@ uses
   System.Net.URLClient,
 
   // JSON Parsing
-  System.JSON, RzLabel
+  System.JSON, RzLabel, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.Comp.DataSet
 ;
 
 const
@@ -32,44 +32,44 @@ type
   TfrmPawnMain = class(TForm)
     ImagesNew: TImageList;
     SaveDialog: TSaveDialog;
-    qryAllData: TADOQuery;
+    qryAllData: TFDQuery;
     qryAllDataCustno: TIntegerField;
     qryAllDataCustTicketNo: TStringField;
-    qryAllDataCustLast: TStringField;
-    qryAllDataCustFirst: TStringField;
-    qryAllDataCustMid: TStringField;
+    qryAllDataCustLast: TWideStringField;
+    qryAllDataCustFirst: TWideStringField;
+    qryAllDataCustMid: TWideStringField;
     qryAllDataCustDOB: TDateField;
-    qryAllDataCustGender: TStringField;
-    qryAllDataCustRace: TStringField;
-    qryAllDataCustHair: TStringField;
-    qryAllDataCustEyes: TStringField;
-    qryAllDataCustMark: TStringField;
+    qryAllDataCustGender: TWideStringField;
+    qryAllDataCustRace: TWideStringField;
+    qryAllDataCustHair: TWideStringField;
+    qryAllDataCustEyes: TWideStringField;
+    qryAllDataCustMark: TWideStringField;
     qryAllDataCustWeight: TFloatField;
-    qryAllDataCustHeight: TStringField;
-    qryAllDataCustAddr: TStringField;
-    qryAllDataCustApt: TStringField;
-    qryAllDataCustCity: TStringField;
-    qryAllDataCustState: TStringField;
-    qryAllDataCustZip: TStringField;
-    qryAllDataCustPlaceEmply: TStringField;
-    qryAllDataCustFlDrvLic: TStringField;
-    qryAllDataCustID: TStringField;
-    qryAllDataCustIDType: TStringField;
-    qryAllDataCustIDAgencyState: TStringField;
-    qryAllDataCustPhHome: TStringField;
-    qryAllDataCustPhBussiness: TStringField;
-    qryAllDataCustPhBeep: TStringField;
-    qryAllDataCustPhCell: TStringField;
+    qryAllDataCustHeight: TWideStringField;
+    qryAllDataCustAddr: TWideStringField;
+    qryAllDataCustApt: TWideStringField;
+    qryAllDataCustCity: TWideStringField;
+    qryAllDataCustState: TWideStringField;
+    qryAllDataCustZip: TWideStringField;
+    qryAllDataCustPlaceEmply: TWideStringField;
+    qryAllDataCustFlDrvLic: TWideStringField;
+    qryAllDataCustID: TWideStringField;
+    qryAllDataCustIDType: TWideStringField;
+    qryAllDataCustIDAgencyState: TWideStringField;
+    qryAllDataCustPhHome: TWideStringField;
+    qryAllDataCustPhBussiness: TWideStringField;
+    qryAllDataCustPhBeep: TWideStringField;
+    qryAllDataCustPhCell: TWideStringField;
     qryAllDataCustComment: TMemoField;
     qryAllDataTransactionNo: TIntegerField;
     qryAllDataCustNo_1: TIntegerField;
-    qryAllDataTranDate: TDateTimeField;
+    qryAllDataTranDate: TDateField;
     qryAllDataTranTicketNo: TStringField;
     qryAllDataTranComment: TMemoField;
     qryAllDataTranMaturity: TDateField;
     qryAllDataTranType: TStringField;
     qryAllDataTranStatus: TStringField;
-    qryAllDataTranVoidDate: TDateTimeField;
+    qryAllDataTranVoidDate: TSQLTimeStampField;
     qryAllDataTranPawnAmount: TFloatField;
     qryAllDataTranInterest: TFloatField;
     qryAllDataPrincBalance: TFloatField;
@@ -86,9 +86,9 @@ type
     qryAllDataSizeLength: TFloatField;
     qryAllDataWeight: TFloatField;
     qryAllDataKT: TFloatField;
-    qryAllDataCreated: TDateTimeField;
-    qryAllDataUnitCost: TBCDField;
-    qryAllDataUnitPrice: TBCDField;
+    qryAllDataCreated: TSQLTimeStampField;
+    qryAllDataUnitCost: TFMTBCDField;
+    qryAllDataUnitPrice: TFMTBCDField;
     qryAllDataInvItemStatus: TStringField;
     qryAllDataTransactionNo_1: TIntegerField;
     qryAllDataInvOriginalItemNo: TIntegerField;

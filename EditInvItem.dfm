@@ -3,29 +3,31 @@ object frmEditInvItem: TfrmEditInvItem
   Top = 120
   BorderStyle = bsDialog
   Caption = 'Inventory Item'
-  ClientHeight = 329
+  ClientHeight = 372
   ClientWidth = 553
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
   OnShow = FormShow
-  TextHeight = 15
+  TextHeight = 17
   object GroupBox1: TGroupBox
-    Left = 0
-    Top = 291
-    Width = 553
-    Height = 38
+    AlignWithMargins = True
+    Left = 3
+    Top = 320
+    Width = 547
+    Height = 49
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 321
     object btnCancel: TBitBtn
       Left = 281
-      Top = 9
-      Width = 75
-      Height = 25
+      Top = 8
+      Width = 81
+      Height = 31
       Cancel = True
       Caption = '&Cancel'
       Glyph.Data = {
@@ -51,10 +53,10 @@ object frmEditInvItem: TfrmEditInvItem
       OnClick = btnCancelClick
     end
     object btnSave: TBitBtn
-      Left = 198
-      Top = 9
-      Width = 75
-      Height = 25
+      Left = 171
+      Top = 8
+      Width = 81
+      Height = 31
       Caption = '&Save'
       Default = True
       Glyph.Data = {
@@ -77,112 +79,117 @@ object frmEditInvItem: TfrmEditInvItem
     end
   end
   object GroupBox2: TGroupBox
-    Left = 0
-    Top = 0
-    Width = 553
-    Height = 291
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 547
+    Height = 311
     Align = alClient
     TabOrder = 0
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 553
+    ExplicitHeight = 291
     object Label1: TLabel
       Left = 16
       Top = 56
-      Width = 73
-      Height = 15
+      Width = 80
+      Height = 17
       Caption = 'Item Barcode:'
     end
     object Label2: TLabel
       Left = 16
       Top = 99
-      Width = 28
-      Height = 15
+      Width = 30
+      Height = 17
       Caption = 'Type:'
     end
     object Label3: TLabel
       Left = 136
       Top = 98
-      Width = 28
-      Height = 15
+      Width = 30
+      Height = 17
       Caption = 'Style:'
     end
     object Label4: TLabel
       Left = 256
       Top = 99
-      Width = 33
-      Height = 15
+      Width = 36
+      Height = 17
       Caption = 'Metal:'
     end
     object Label7: TLabel
       Left = 16
       Top = 227
-      Width = 34
-      Height = 15
+      Width = 38
+      Height = 17
       Caption = 'Notes:'
     end
     object Label5: TLabel
       Left = 168
       Top = 56
-      Width = 38
-      Height = 15
+      Width = 40
+      Height = 17
       Caption = 'Weight'
       FocusControl = DBEdit4
     end
     object Label6: TLabel
       Left = 232
       Top = 56
-      Width = 14
-      Height = 15
+      Width = 15
+      Height = 17
       Caption = 'KT'
       FocusControl = DBEdit5
     end
     object Label8: TLabel
       Left = 296
       Top = 56
-      Width = 60
-      Height = 15
+      Width = 66
+      Height = 17
       Caption = 'Size Length'
       FocusControl = DBEdit6
     end
     object Label9: TLabel
       Left = 96
       Top = 56
-      Width = 49
-      Height = 15
+      Width = 51
+      Height = 17
       Caption = 'Quantity:'
       FocusControl = edItemCount
     end
     object Label10: TLabel
       Left = 16
       Top = 184
-      Width = 52
-      Height = 15
+      Width = 56
+      Height = 17
       Caption = 'Unit Cost:'
     end
     object Label11: TLabel
       Left = 96
       Top = 184
-      Width = 54
-      Height = 15
+      Width = 58
+      Height = 17
       Caption = 'Unit Price:'
     end
     object Label12: TLabel
       Left = 16
       Top = 16
-      Width = 51
-      Height = 15
+      Width = 56
+      Height = 17
       Caption = 'Category:'
     end
     object Label13: TLabel
       Left = 16
       Top = 140
-      Width = 31
-      Height = 15
+      Width = 34
+      Height = 17
       Caption = 'Brand'
     end
     object DBEdit1: TDBEdit
       Left = 16
       Top = 72
       Width = 73
-      Height = 23
+      Height = 25
       DataField = 'InvItemBarcode'
       DataSource = dsInvItems
       TabOrder = 1
@@ -191,7 +198,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 113
       Width = 112
-      Height = 23
+      Height = 25
       DataField = 'JType'
       DataSource = dsInvItems
       KeyField = 'J_TYPE'
@@ -203,7 +210,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 132
       Top = 113
       Width = 112
-      Height = 23
+      Height = 25
       DataField = 'JStyle'
       DataSource = dsInvItems
       KeyField = 'J_STYLE'
@@ -215,7 +222,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 249
       Top = 113
       Width = 112
-      Height = 23
+      Height = 25
       DataField = 'JMetal'
       DataSource = dsInvItems
       KeyField = 'J_METAL'
@@ -225,7 +232,7 @@ object frmEditInvItem: TfrmEditInvItem
     end
     object DBMemo1: TDBMemo
       Left = 16
-      Top = 241
+      Top = 246
       Width = 345
       Height = 47
       DataField = 'Note'
@@ -236,7 +243,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 168
       Top = 72
       Width = 57
-      Height = 23
+      Height = 25
       DataField = 'Weight'
       DataSource = dsInvItems
       TabOrder = 3
@@ -245,7 +252,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 232
       Top = 72
       Width = 57
-      Height = 23
+      Height = 25
       DataField = 'KT'
       DataSource = dsInvItems
       TabOrder = 4
@@ -254,7 +261,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 296
       Top = 72
       Width = 65
-      Height = 23
+      Height = 25
       DataField = 'SizeLength'
       DataSource = dsInvItems
       TabOrder = 5
@@ -263,7 +270,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 96
       Top = 72
       Width = 65
-      Height = 23
+      Height = 25
       DataField = 'InvItemCount'
       DataSource = dsInvItems
       TabOrder = 2
@@ -272,7 +279,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 200
       Width = 73
-      Height = 23
+      Height = 25
       DataField = 'UnitCost'
       DataSource = dsInvItems
       TabOrder = 9
@@ -281,7 +288,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 96
       Top = 200
       Width = 73
-      Height = 23
+      Height = 25
       DataField = 'UnitPrice'
       DataSource = dsInvItems
       TabOrder = 10
@@ -310,7 +317,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 32
       Width = 145
-      Height = 23
+      Height = 25
       DataField = 'InvCatNo'
       DataSource = dsInvItems
       KeyField = 'INV_CAT_NO'
@@ -322,7 +329,7 @@ object frmEditInvItem: TfrmEditInvItem
       Left = 16
       Top = 154
       Width = 154
-      Height = 23
+      Height = 25
       DataField = 'InvItemBrand'
       DataSource = dsInvItems
       TabOrder = 13

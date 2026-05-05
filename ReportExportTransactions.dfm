@@ -167,53 +167,51 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       Spacing = 0
     end
   end
-  object qryTransactionsOnly: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryTransactionsOnly: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      'select T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '       T2.TRAN_DATE as "TranDate",'
+      '       (case T2.TRAN_TYPE '
+      '           when '#39'P'#39' then '#39'Pawn'#39' '
+      '           when '#39'U'#39' then '#39'Purchase'#39' '
+      '           else '#39#39
+      '        end) as "TransactionDesc",'
+      '       T2.TRAN_MATURITY as "TranMaturity",'
+      '       T2.TRAN_PAWN_AMOUNT as "TranAmount"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
+      'where T2.TRAN_DATE between :FDate and :TDate'
+      'order by T2.TRAN_DATE, T2.TRANSACTION_NO')
+    Left = 517
+    Top = 27
+    ParamData = <
       item
         Name = 'FDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end
       item
         Name = 'TDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end>
-    SQL.Strings = (
-      'select T2.TranTicketNo, T2.TranDate,'
-      '       (case T2.TranType '
-      '           when '#39'P'#39' then '#39'Pawn'#39' '
-      '           when '#39'U'#39' then '#39'Purchase'#39' '
-      '           else '#39#39
-      '        end) as TransactionDesc,'
-      '       T2.TranMaturity,'
-      '       T2.TranPawnAmount as TranAmount'
-      'from Customer T1'
-      '  join Transactions T2 on T1.Custno = T2.CustNo'
-      'where T2.TranDate BETWEEN :FDate and :TDate'
-      'order by T2.TranDate, TransactionNo')
-    Left = 517
-    Top = 27
     object qryTransactionsOnlyTranTicketNo: TStringField
       Tag = 1
       DisplayLabel = 'Ticket No'
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryTransactionsOnlyTranDate: TDateTimeField
+    object qryTransactionsOnlyTranDate: TDateField
       Tag = 1
       DisplayLabel = 'Date'
       FieldName = 'TranDate'
     end
-    object qryTransactionsOnlyTransactionDesc: TStringField
+    object qryTransactionsOnlyTransactionDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'Transaction Type'
       FieldName = 'TransactionDesc'
@@ -230,62 +228,63 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       FieldName = 'TranAmount'
     end
   end
-  object qryTransactionsAndItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryTransactionsAndItems: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      'select T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '       T2.TRAN_DATE as "TranDate",'
+      '       (case T2.TRAN_TYPE'
+      '           when '#39'P'#39' then '#39'Pawn'#39
+      '           when '#39'U'#39' then '#39'Purchase'#39
+      '           else '#39#39
+      '        end) as "TransactionDesc",'
+      '       T2.TRAN_MATURITY as "TranMaturity",'
+      '       T2.TRAN_PAWN_AMOUNT as "TranAmount",'
+      '       T3.DESCRIPTION as "Description",'
+      '       T3.WEIGHT as "Weight",'
+      '       T3.SIZE_LENGTH as "SizeLength",'
+      '       T4.J_TYPE_DESC as "JTypeDesc",'
+      '       T5.J_STYLE_DESC as "JStyleDesc",'
+      '       T6.J_METAL_DESC as "JMetalDesc"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
+      
+        '  left outer join INVENTORY_ITEMS T3 on T3.TRANSACTION_NO = T2.T' +
+        'RANSACTION_NO'
+      '  left outer join J_TYPES T4 on T4.J_TYPE = T3.J_TYPE'
+      '  left outer join J_STYLES T5 on T5.J_STYLE = T3.J_STYLE'
+      '  left outer join J_METALS T6 on T6.J_METAL = T3.J_METAL'
+      'where T2.TRAN_DATE between :FDate and :TDate'
+      'order by T2.TRAN_DATE, T2.TRANSACTION_NO')
+    Left = 519
+    Top = 80
+    ParamData = <
       item
         Name = 'FDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end
       item
         Name = 'TDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end>
-    SQL.Strings = (
-      'select T2.TranTicketNo, T2.TranDate,'
-      '       (case T2.TranType'
-      '           when '#39'P'#39' then '#39'Pawn'#39
-      '           when '#39'U'#39' then '#39'Purchase'#39
-      '           else '#39#39
-      '        end) as TransactionDesc,'
-      '       T2.TranMaturity,'
-      '       T2.TranPawnAmount as TranAmount,'
-      
-        '       T3.Description, T3.Weight, T3.SizeLength,T4.JTypeDesc, T5' +
-        '.JStyleDesc, T6.JMetalDesc'
-      'from Customer T1'
-      '  join Transactions T2 on T1.Custno = T2.CustNo'
-      
-        '  left outer join InventoryItems T3 on T3.TransactionNo = T2.Tra' +
-        'nsactionNo'
-      '  left outer join JTypes T4 on T4.JType = T3.JType'
-      '  left outer join JStyles T5 on T5.JStyle = T3.JStyle'
-      '  left outer join JMetals T6 on T6.JMetal = T3.JMetal'
-      'where T2.TranDate BETWEEN :FDate and :TDate'
-      'order by T2.TranDate, T2.TransactionNo')
-    Left = 519
-    Top = 80
     object qryTransactionsAndItemsTranTicketNo: TStringField
       Tag = 1
       DisplayLabel = 'Ticket No'
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryTransactionsAndItemsTranDate: TDateTimeField
+    object qryTransactionsAndItemsTranDate: TDateField
       Tag = 1
       DisplayLabel = 'Date'
       FieldName = 'TranDate'
     end
-    object qryTransactionsAndItemsTransactionDesc: TStringField
+    object qryTransactionsAndItemsTransactionDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'Transaction Type'
       FieldName = 'TransactionDesc'
@@ -341,71 +340,86 @@ object frmReportExportTransactions: TfrmReportExportTransactions
     Left = 414
     Top = 14
   end
-  object qryClientTranscItems: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryClientTranscItems: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      'select DISTINCT '
+      '       T1.CUST_LAST as "CustLast",'
+      '       T1.CUST_FIRST as "CustFirst",'
+      '       T1.CUST_MID as "CustMid",'
+      '       T1.CUST_DOB as "CustDOB",'
+      '       T1.CUST_GENDER as "CustGender",'
+      '       T1.CUST_RACE as "CustRace",'
+      '       T1.CUST_HAIR as "CustHair",'
+      '       T1.CUST_EYES as "CustEyes",'
+      '       T1.CUST_MARK as "CustMark",'
+      '       T1.CUST_WEIGHT as "CustWeight",'
+      '       T1.CUST_HEIGHT as "CustHeight",'
+      '       T1.CUST_ADDR as "CustAddr",'
+      '       T1.CUST_APT as "CustApt",'
+      '       T1.CUST_CITY as "CustCity",'
+      '       T1.CUST_STATE as "CustState",'
+      '       T1.CUST_ZIP as "CustZip",'
+      '       T1.CUST_PLACE_EMPLY as "CustPlaceEmply",'
+      '       T1.CUST_PH_HOME as "CustPhHome",'
+      '       T1.CUST_PH_BUSINESS as "CustPhBussiness",'
+      '       T1.CUST_PH_CELL as "CustPhCell",'
+      '       T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '       T2.TRAN_DATE as "TranDate",'
+      '       T2.TRANSACTION_NO as "TransactionNo", '
+      '       (case T2.TRAN_TYPE'
+      '           when '#39'P'#39' then '#39'Pawn'#39
+      '           when '#39'U'#39' then '#39'Purchase'#39
+      '           else '#39#39
+      '        end) as "TransactionDesc",'
+      '       T2.TRAN_MATURITY as "TranMaturity",'
+      '       T2.TRAN_PAWN_AMOUNT as "TranAmount",'
+      '       T3.DESCRIPTION as "Description",'
+      '       T3.WEIGHT as "Weight",'
+      '       T3.SIZE_LENGTH as "SizeLength",'
+      '       T4.J_TYPE_DESC as "JTypeDesc",'
+      '       T5.J_STYLE_DESC as "JStyleDesc",'
+      '       T6.J_METAL_DESC as "JMetalDesc"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
+      
+        '  left outer join INVENTORY_ITEMS T3 on T3.TRANSACTION_NO = T2.T' +
+        'RANSACTION_NO'
+      '  left outer join J_TYPES T4 on T4.J_TYPE = T3.J_TYPE'
+      '  left outer join J_STYLES T5 on T5.J_STYLE = T3.J_STYLE'
+      '  left outer join J_METALS T6 on T6.J_METAL = T3.J_METAL'
+      'where T2.TRAN_DATE between :FDate and :TDate'
+      'order by "TranDate", "TransactionNo"')
+    Left = 520
+    Top = 128
+    ParamData = <
       item
         Name = 'FDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end
       item
         Name = 'TDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 47484d
       end>
-    SQL.Strings = (
-      'select DISTINCT '
-      
-        '       CustLast, CustFirst, CustMid, CustDOB, CustGender, CustRa' +
-        'ce, CustHair, CustEyes, CustMark, CustWeight, CustHeight, CustAd' +
-        'dr, '
-      
-        '       CustApt, CustCity, CustState, CustZip, CustPlaceEmply, Cu' +
-        'stPhHome, CustPhBussiness, CustPhCell,'
-      '       T2.TranTicketNo, T2.TranDate, T2.TransactionNo, '
-      '       (case T2.TranType'
-      '           when '#39'P'#39' then '#39'Pawn'#39
-      '           when '#39'U'#39' then '#39'Purchase'#39
-      '           else '#39#39
-      '        end) as TransactionDesc,'
-      '       T2.TranMaturity,'
-      '       T2.TranPawnAmount as TranAmount,'
-      
-        '       T3.Description, T3.Weight, T3.SizeLength,T4.JTypeDesc, T5' +
-        '.JStyleDesc, T6.JMetalDesc'
-      'from Customer T1'
-      '  join Transactions T2 on T1.Custno = T2.CustNo'
-      
-        '  left outer join InventoryItems T3 on T3.TransactionNo = T2.Tra' +
-        'nsactionNo'
-      '  left outer join JTypes T4 on T4.JType = T3.JType'
-      '  left outer join JStyles T5 on T5.JStyle = T3.JStyle'
-      '  left outer join JMetals T6 on T6.JMetal = T3.JMetal'
-      'where T2.TranDate BETWEEN :FDate and :TDate'
-      'order by T2.TranDate, T2.TransactionNo')
-    Left = 520
-    Top = 128
-    object qryClientTranscItemsCustLast: TStringField
+    object qryClientTranscItemsCustLast: TWideStringField
       Tag = 1
       DisplayLabel = 'LastName'
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryClientTranscItemsCustFirst: TStringField
+    object qryClientTranscItemsCustFirst: TWideStringField
       Tag = 1
       DisplayLabel = 'FirstName'
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryClientTranscItemsCustMid: TStringField
+    object qryClientTranscItemsCustMid: TWideStringField
       Tag = 1
       DisplayLabel = 'MiddleName'
       FieldName = 'CustMid'
@@ -416,31 +430,31 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'ClientDOB'
       FieldName = 'CustDOB'
     end
-    object qryClientTranscItemsCustGender: TStringField
+    object qryClientTranscItemsCustGender: TWideStringField
       Tag = 1
       DisplayLabel = 'Gender'
       FieldName = 'CustGender'
       Size = 1
     end
-    object qryClientTranscItemsCustRace: TStringField
+    object qryClientTranscItemsCustRace: TWideStringField
       Tag = 1
       DisplayLabel = 'Race'
       FieldName = 'CustRace'
       Size = 1
     end
-    object qryClientTranscItemsCustHair: TStringField
+    object qryClientTranscItemsCustHair: TWideStringField
       Tag = 1
       DisplayLabel = 'Hair'
       FieldName = 'CustHair'
       Size = 5
     end
-    object qryClientTranscItemsCustEyes: TStringField
+    object qryClientTranscItemsCustEyes: TWideStringField
       Tag = 1
       DisplayLabel = 'Eyes'
       FieldName = 'CustEyes'
       Size = 5
     end
-    object qryClientTranscItemsCustMark: TStringField
+    object qryClientTranscItemsCustMark: TWideStringField
       Tag = 1
       DisplayLabel = 'Mark'
       FieldName = 'CustMark'
@@ -451,61 +465,61 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'Weight'
       FieldName = 'CustWeight'
     end
-    object qryClientTranscItemsCustHeight: TStringField
+    object qryClientTranscItemsCustHeight: TWideStringField
       Tag = 1
       DisplayLabel = 'Height'
       FieldName = 'CustHeight'
       Size = 8
     end
-    object qryClientTranscItemsCustAddr: TStringField
+    object qryClientTranscItemsCustAddr: TWideStringField
       Tag = 1
       DisplayLabel = 'Client Address'
       FieldName = 'CustAddr'
       Size = 55
     end
-    object qryClientTranscItemsCustApt: TStringField
+    object qryClientTranscItemsCustApt: TWideStringField
       Tag = 1
       DisplayLabel = 'Client Apt'
       FieldName = 'CustApt'
       Size = 5
     end
-    object qryClientTranscItemsCustCity: TStringField
+    object qryClientTranscItemsCustCity: TWideStringField
       Tag = 1
       DisplayLabel = 'City'
       FieldName = 'CustCity'
       Size = 40
     end
-    object qryClientTranscItemsCustState: TStringField
+    object qryClientTranscItemsCustState: TWideStringField
       Tag = 1
       DisplayLabel = 'State'
       FieldName = 'CustState'
       Size = 2
     end
-    object qryClientTranscItemsCustZip: TStringField
+    object qryClientTranscItemsCustZip: TWideStringField
       Tag = 1
       DisplayLabel = 'Zip'
       FieldName = 'CustZip'
       Size = 11
     end
-    object qryClientTranscItemsCustPlaceEmply: TStringField
+    object qryClientTranscItemsCustPlaceEmply: TWideStringField
       Tag = 1
       DisplayLabel = 'Place of Employment'
       FieldName = 'CustPlaceEmply'
       Size = 30
     end
-    object qryClientTranscItemsCustPhHome: TStringField
+    object qryClientTranscItemsCustPhHome: TWideStringField
       Tag = 1
       DisplayLabel = 'Client Phone Home'
       FieldName = 'CustPhHome'
       Size = 14
     end
-    object qryClientTranscItemsCustPhBussiness: TStringField
+    object qryClientTranscItemsCustPhBussiness: TWideStringField
       Tag = 1
       DisplayLabel = 'Client Phone Bussiness'
       FieldName = 'CustPhBussiness'
       Size = 14
     end
-    object qryClientTranscItemsCustPhCell: TStringField
+    object qryClientTranscItemsCustPhCell: TWideStringField
       Tag = 1
       DisplayLabel = 'Client Phone Cell'
       FieldName = 'CustPhCell'
@@ -521,12 +535,12 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryClientTranscItemsTranDate: TDateTimeField
+    object qryClientTranscItemsTranDate: TDateField
       Tag = 1
       DisplayLabel = 'Date'
       FieldName = 'TranDate'
     end
-    object qryClientTranscItemsTransactionDesc: TStringField
+    object qryClientTranscItemsTransactionDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'Transaction Type'
       FieldName = 'TransactionDesc'

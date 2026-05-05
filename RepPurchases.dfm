@@ -8,12 +8,12 @@ object frmRepPurchases: TfrmRepPurchases
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -15
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
   OnShow = FormShow
-  TextHeight = 17
+  TextHeight = 20
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
@@ -22,32 +22,32 @@ object frmRepPurchases: TfrmRepPurchases
     Height = 90
     TabOrder = 0
     object Label1: TLabel
-      Left = 57
+      Left = 50
       Top = 21
-      Width = 30
-      Height = 17
-      Caption = 'From'
+      Width = 37
+      Height = 20
+      Caption = 'From:'
     end
     object Label2: TLabel
-      Left = 185
+      Left = 193
       Top = 21
-      Width = 14
-      Height = 17
-      Caption = 'To'
+      Width = 19
+      Height = 20
+      Caption = 'To:'
     end
     object edFrom: TRzDateTimeEdit
-      Left = 57
+      Left = 50
       Top = 40
-      Width = 97
-      Height = 25
+      Width = 114
+      Height = 28
       EditType = etDate
       TabOrder = 0
     end
     object edTo: TRzDateTimeEdit
-      Left = 177
+      Left = 193
       Top = 40
-      Width = 97
-      Height = 25
+      Width = 114
+      Height = 28
       EditType = etDate
       TabOrder = 1
     end
@@ -64,76 +64,76 @@ object frmRepPurchases: TfrmRepPurchases
       74)
     object btnExit: TBitBtn
       Left = 268
-      Top = 10
+      Top = 14
       Width = 91
-      Height = 54
+      Height = 45
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'E&xit'
-      ImageIndex = 12
-      ImageName = 'acrExit01'
-      Images = DM.vilMain
+      ImageIndex = 2
+      ImageName = 'actExit'
+      Images = DM.vilMain24
       ModalResult = 2
       TabOrder = 2
       OnClick = btnExitClick
     end
     object btnPreview: TRzBitBtn
       Left = 15
-      Top = 9
+      Top = 13
       Width = 105
-      Height = 54
+      Height = 45
       Caption = 'Preview'
       TabOrder = 0
       OnClick = btnPreviewClick
       ImageIndex = 30
-      Images = DM.vilMain
+      Images = DM.vilMain24
       Spacing = 0
     end
     object btnPrint: TRzBitBtn
       Left = 144
-      Top = 10
+      Top = 14
       Width = 105
-      Height = 54
+      Height = 45
       Caption = 'Print'
       ParentColor = True
       TabOrder = 1
       OnClick = btnPrintClick
       ImageIndex = 0
-      Images = DM.vilMain
+      Images = DM.vilMain24
       Margin = 10
     end
   end
-  object qryPruchases: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
-    Parameters = <
+  object qryPruchases: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      'select'
+      '  TRAN_DATE as "TranDate",'
+      '  TRAN_TICKET_NO as "TranTicketNo",'
+      '  TRAN_PAWN_AMOUNT as "PurchaseAmount",'
+      
+        '  (select SUM(WEIGHT) from INVENTORY_ITEMS T01 where T01.TRANSAC' +
+        'TION_NO = T.TRANSACTION_NO) as "TotalPNWt"'
+      'from TRANSACTIONS T'
+      'where TRAN_TYPE = '#39'U'#39' and TRAN_DATE between :FDate and :TDate'
+      'order by TRAN_DATE, TRANSACTION_NO')
+    Left = 398
+    Top = 15
+    ParamData = <
       item
         Name = 'FDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end
       item
         Name = 'TDate'
-        Attributes = [paNullable]
-        DataType = ftDateTime
-        Precision = 255
-        Size = 32767
+        DataType = ftDate
+        ParamType = ptInput
         Value = 42005d
       end>
-    SQL.Strings = (
-      'select TranDate, TranTicketNo, TranPawnAmount as PurchaseAmount,'
-      
-        '     (select SUM(Weight) from InventoryItems T01 where T01.Trans' +
-        'actionNo = Transactions.TransactionNo) as TotalPNWt'
-      'from Transactions'
-      'where TranType = '#39'U'#39' and TranDate BETWEEN :FDate and :TDate'
-      'order by TranDate, TransactionNo')
-    Left = 398
-    Top = 15
-    object qryPruchasesTranDate: TDateTimeField
+    object qryPruchasesTranDate: TDateField
       FieldName = 'TranDate'
     end
     object qryPruchasesTranTicketNo: TStringField

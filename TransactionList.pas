@@ -7,34 +7,35 @@ uses
   Dialogs, StdCtrls, Buttons, Grids, DBGrids, ppDesignLayer, ppParameter, Vcl.Mask,
   RzEdit, Data.DB, ppBands, ppClass, ppCtrls, ppStrtch,
   ppMemo, ppPrnabl, ppVar, ppCache, ppProd, ppReport, ppComm, ppRelatv, ppDB,
-  ppDBPipe, Data.Win.ADODB, Vcl.ExtCtrls, RzCommon, RzForms, RzButton, RzTabs;
+  ppDBPipe, Vcl.ExtCtrls, RzCommon, RzForms, RzButton, RzTabs,
+  FireDAC.Comp.Client, FireDAC.Stan.Param;
 
 type
   TfrmTransactionList = class(TForm)
     GroupBox2: TGroupBox;
     lblFDate: TLabel;
     lblTDate: TLabel;
-    qryTranList: TADOQuery;
+    qryTranList: TFDQuery;
     dsTranList: TDataSource;
     qryTranListTransactionNo: TIntegerField;
     qryTranListCustNo: TIntegerField;
-    qryTranListTranDate: TDateTimeField;
+    qryTranListTranDate: TDateField;
     qryTranListTranTicketNo: TStringField;
     qryTranListTranComment: TMemoField;
     qryTranListTranMaturity: TDateField;
     qryTranListTranType: TStringField;
     qryTranListTranStatus: TStringField;
-    qryTranListTranVoidDate: TDateTimeField;
+    qryTranListTranVoidDate: TSQLTimeStampField;
     qryTranListTranPawnAmount: TFloatField;
     qryTranListTranInterest: TFloatField;
     qryTranListPrincBalance: TFloatField;
     qryTranListInsterestBalance: TFloatField;
-    qryTranListCustLast: TStringField;
-    qryTranListCustFirst: TStringField;
-    qryTranListCustMid: TStringField;
+    qryTranListCustLast: TWideStringField;
+    qryTranListCustFirst: TWideStringField;
+    qryTranListCustMid: TWideStringField;
     qryTranListcCustFullName: TStringField;
     qryTranListcTransaction: TStringField;
-    qryTranTotals: TADOQuery;
+    qryTranTotals: TFDQuery;
     qryTranTotalsTranType: TStringField;
     qryTranTotalsTranTypeDesc: TStringField;
     qryTranTotalsTotalAmount: TFloatField;
@@ -70,7 +71,7 @@ type
     ppDBCalc3: TppDBCalc;
     ppLabel7: TppLabel;
     ppDBCalc4: TppDBCalc;
-    qryInvItems: TADOQuery;
+    qryInvItems: TFDQuery;
     qryInvItemscTotalWeight: TFloatField;
     qryInvItemscStatus: TStringField;
     qryInvItemsInvItemNo: TIntegerField;
@@ -84,9 +85,9 @@ type
     qryInvItemsSizeLength: TFloatField;
     qryInvItemsWeight: TFloatField;
     qryInvItemsKT: TFloatField;
-    qryInvItemsCreated: TDateTimeField;
-    qryInvItemsUnitCost: TBCDField;
-    qryInvItemsUnitPrice: TBCDField;
+    qryInvItemsCreated: TSQLTimeStampField;
+    qryInvItemsUnitCost: TFMTBCDField;
+    qryInvItemsUnitPrice: TFMTBCDField;
     qryInvItemsInvItemStatus: TStringField;
     qryInvItemsTransactionNo: TIntegerField;
     qryInvItemsInvOriginalItemNo: TIntegerField;
@@ -104,12 +105,12 @@ type
     btnSearch: TRzBitBtn;
     GroupBox3: TGroupBox;
     btnExit: TBitBtn;
-    qryTotals: TADOQuery;
+    qryTotals: TFDQuery;
     dsTotals: TDataSource;
     qryTotalsPawnedCount: TIntegerField;
     qryTotalsRedeemedCount: TIntegerField;
     qryTotalsDefaultedCount: TIntegerField;
-    qryDefaultTotals: TADOQuery;
+    qryDefaultTotals: TFDQuery;
     qryDefaultTotalsDefaultedMeltedCount: TIntegerField;
     qryDefaultTotalsDefaultedForSaleCount: TIntegerField;
     dsDefaultTotals: TDataSource;
@@ -189,11 +190,11 @@ function TfrmTransactionList.PawnStatusTotals: string;
 var
  SQLStr, FromDate, ToDate: string;
 begin
-  SQLStr := 'SELECT SUM(CASE WHEN PawnedDate BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS PawnedCount, ' + sLineBreak +
-                   'SUM(CASE WHEN RedeemedDate  BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS RedeemedCount, ' + sLineBreak +
-                   'SUM(CASE WHEN DefaultedDate BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS DefaultedCount ' + sLineBreak +
-            'FROM InventoryItems ' + sLineBreak +
-            'WHERE PawnedDate IS NOT NULL;  ' + sLineBreak;
+  SQLStr := 'SELECT CAST(SUM(CASE WHEN PAWNED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "PawnedCount", ' + sLineBreak +
+                   'CAST(SUM(CASE WHEN REDEEMED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "RedeemedCount", ' + sLineBreak +
+                   'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedCount" ' + sLineBreak +
+            'FROM INVENTORY_ITEMS ' + sLineBreak +
+            'WHERE PAWNED_DATE IS NOT NULL;  ' + sLineBreak;
 
   FromDate := AsaDateToStr(edFDate.Date);
   ToDate := AsaDateToStr(edToDate.Date);
@@ -211,9 +212,9 @@ function TfrmTransactionList.PawnDefaultedStatusTotals: string;
 var
  SQLStr, FromDate, ToDate: string;
 begin
-  SQLStr := 'SELECT SUM(CASE WHEN DefaultedDate BETWEEN :FD AND :TD AND MeltedDate IS NOT NULL THEN 1 ELSE 0 END) AS DefaultedMeltedCount, ' + sLineBreak +
-                   'SUM(CASE WHEN DefaultedDate BETWEEN :FD AND :TD AND ForSaleDate IS NOT NULL THEN 1 ELSE 0 END) AS DefaultedForSaleCount ' + sLineBreak +
-            'FROM InventoryItems WHERE PawnedDate IS NOT NULL ';
+  SQLStr := 'SELECT CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD AND MELTED_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedMeltedCount", ' + sLineBreak +
+                   'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD AND FORSALE_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedForSaleCount" ' + sLineBreak +
+            'FROM INVENTORY_ITEMS WHERE PAWNED_DATE IS NOT NULL ';
 
   FromDate := AsaDateToStr(edFDate.Date);
   ToDate := AsaDateToStr(edToDate.Date);
@@ -230,10 +231,10 @@ begin
   SavePos := qryTranList.RecNo;
   qryTranList.DisableControls;
   try
-    qryTranList.Sort := 'TranType ASC, TranDate ASC, TranTicketNo ASC';
+    qryTranList.IndexFieldNames := 'TranType;TranDate;TranTicketNo';
     RepTranList.Print;
   finally
-    qryTranList.Sort := 'TranDate ASC, TranTicketNo ASC';
+    qryTranList.IndexFieldNames := 'TranDate;TranTicketNo';
     qryTranList.RecNo := SavePos;
     qryTranList.EnableControls;
   end;
@@ -275,10 +276,10 @@ begin
   end;
 
   if TranTypeStr <> '' then
-    TranTypeStr := 'AND TranType= ' + QuotedStr(TranTypeStr);
+    TranTypeStr := ' AND T1.TRAN_TYPE = ' + QuotedStr(TranTypeStr);
 
   qryTranList.Close;
-  qryTranList.SQL[Param_LineNo_qryTranList] := Format('WHERE TranStatus in (%s, :%s) and TranDate between %s and %s ' + TranTypeStr,
+  qryTranList.SQL[Param_LineNo_qryTranList] := Format('WHERE T1.TRAN_STATUS in (%s, %s) and T1.TRAN_DATE between %s and %s' + TranTypeStr,
                                                       [St1, St2, AsaDateToStr(edFDate.Date), AsaDateToStr(edToDate.Date)]);
 
   Screen.Cursor := crHourGlass;
@@ -296,8 +297,8 @@ begin
     TransactionListOpen;
 
     qryTranTotals.Close;
-    qryTranTotals.Parameters.ParamByName('FDate').Value := edFDate.Date;
-    qryTranTotals.Parameters.ParamByName('ToDate').Value := edToDate.Date;
+    qryTranTotals.Params.ParamByName('FDate').AsDate := edFDate.Date;
+    qryTranTotals.Params.ParamByName('ToDate').AsDate := edToDate.Date;
     qryTranTotals.Open;
 
     if qryTranTotals.Locate('TranType', TranPawn, []) then
@@ -362,7 +363,7 @@ end;
 procedure TfrmTransactionList.qryTranListAfterScroll(DataSet: TDataSet);
 begin
     qryInvItems.Close;
-    qryInvItems.Parameters.ParamByName('TransactionNo').Value := qryTranListTransactionNo.AsInteger;
+    qryInvItems.Params.ParamByName('TransactionNo').AsInteger := qryTranListTransactionNo.AsInteger;
     qryInvItems.Open;
 end;
 

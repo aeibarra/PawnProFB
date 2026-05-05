@@ -5,7 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RzButton, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.Mask, RzEdit, Data.DB, Data.Win.ADODB;
+  Vcl.Mask, RzEdit, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 type
   TfrmReportExportTransactions = class(TForm)
@@ -20,11 +23,11 @@ type
     GroupBox1: TGroupBox;
     btnExit: TBitBtn;
     btnExport: TRzBitBtn;
-    qryTransactionsOnly: TADOQuery;
-    qryTransactionsAndItems: TADOQuery;
+    qryTransactionsOnly: TFDQuery;
+    qryTransactionsAndItems: TFDQuery;
     qryTransactionsOnlyTranTicketNo: TStringField;
-    qryTransactionsOnlyTranDate: TDateTimeField;
-    qryTransactionsOnlyTransactionDesc: TStringField;
+    qryTransactionsOnlyTranDate: TDateField;
+    qryTransactionsOnlyTransactionDesc: TWideStringField;
     qryTransactionsOnlyTranMaturity: TDateField;
     qryTransactionsOnlyTranAmount: TFloatField;
     SaveDialog: TSaveDialog;
@@ -35,15 +38,15 @@ type
     qryTransactionsAndItemsJStyleDesc: TStringField;
     qryTransactionsAndItemsJMetalDesc: TStringField;
     qryTransactionsAndItemsTranTicketNo: TStringField;
-    qryTransactionsAndItemsTranDate: TDateTimeField;
-    qryTransactionsAndItemsTransactionDesc: TStringField;
+    qryTransactionsAndItemsTranDate: TDateField;
+    qryTransactionsAndItemsTransactionDesc: TWideStringField;
     qryTransactionsAndItemsTranMaturity: TDateField;
     qryTransactionsAndItemsTranAmount: TFloatField;
     rbClientInfoAndItems: TRadioButton;
-    qryClientTranscItems: TADOQuery;
+    qryClientTranscItems: TFDQuery;
     qryClientTranscItemsTranTicketNo: TStringField;
-    qryClientTranscItemsTranDate: TDateTimeField;
-    qryClientTranscItemsTransactionDesc: TStringField;
+    qryClientTranscItemsTranDate: TDateField;
+    qryClientTranscItemsTransactionDesc: TWideStringField;
     qryClientTranscItemsTranMaturity: TDateField;
     qryClientTranscItemsTranAmount: TFloatField;
     qryClientTranscItemsDescription: TStringField;
@@ -52,35 +55,33 @@ type
     qryClientTranscItemsJTypeDesc: TStringField;
     qryClientTranscItemsJStyleDesc: TStringField;
     qryClientTranscItemsJMetalDesc: TStringField;
-    qryClientTranscItemsCustLast: TStringField;
-    qryClientTranscItemsCustFirst: TStringField;
-    qryClientTranscItemsCustMid: TStringField;
+    qryClientTranscItemsCustLast: TWideStringField;
+    qryClientTranscItemsCustFirst: TWideStringField;
+    qryClientTranscItemsCustMid: TWideStringField;
     qryClientTranscItemsCustDOB: TDateField;
-    qryClientTranscItemsCustGender: TStringField;
-    qryClientTranscItemsCustRace: TStringField;
-    qryClientTranscItemsCustHair: TStringField;
-    qryClientTranscItemsCustEyes: TStringField;
-    qryClientTranscItemsCustMark: TStringField;
+    qryClientTranscItemsCustGender: TWideStringField;
+    qryClientTranscItemsCustRace: TWideStringField;
+    qryClientTranscItemsCustHair: TWideStringField;
+    qryClientTranscItemsCustEyes: TWideStringField;
+    qryClientTranscItemsCustMark: TWideStringField;
     qryClientTranscItemsCustWeight: TFloatField;
-    qryClientTranscItemsCustHeight: TStringField;
-    qryClientTranscItemsCustAddr: TStringField;
-    qryClientTranscItemsCustApt: TStringField;
-    qryClientTranscItemsCustCity: TStringField;
-    qryClientTranscItemsCustState: TStringField;
-    qryClientTranscItemsCustZip: TStringField;
-    qryClientTranscItemsCustPlaceEmply: TStringField;
-    qryClientTranscItemsCustPhHome: TStringField;
-    qryClientTranscItemsCustPhBussiness: TStringField;
-    qryClientTranscItemsCustPhCell: TStringField;
+    qryClientTranscItemsCustHeight: TWideStringField;
+    qryClientTranscItemsCustAddr: TWideStringField;
+    qryClientTranscItemsCustApt: TWideStringField;
+    qryClientTranscItemsCustCity: TWideStringField;
+    qryClientTranscItemsCustState: TWideStringField;
+    qryClientTranscItemsCustZip: TWideStringField;
+    qryClientTranscItemsCustPlaceEmply: TWideStringField;
+    qryClientTranscItemsCustPhHome: TWideStringField;
+    qryClientTranscItemsCustPhBussiness: TWideStringField;
+    qryClientTranscItemsCustPhCell: TWideStringField;
     qryClientTranscItemsTransactionNo: TIntegerField;
     procedure FormCreate(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    procedure ExportClientsTransactionsAndItems(qry: TADOQuery);
-//    procedure ExportTransactionOnly;
-//    procedure ExportTransactionsAndItems;
+    procedure ExportClientsTransactionsAndItems(qry: TFDQuery);
     { Private declarations }
   public
     { Public declarations }
@@ -100,55 +101,15 @@ begin
   Close;
 end;
 
-//procedure TfrmReportExportTransactions.ExportTransactionOnly;
-//begin
-//  if SaveDialog.Execute then
-//    begin
-//      Screen.Cursor := crHourGlass;
-//      try
-//        qryTransactionsOnly.Close;
-//        qryTransactionsOnly.Parameters.ParamByName('FDate').Value := edFrom.Date;
-//        qryTransactionsOnly.Parameters.ParamByName('TDate').Value := edTo.Date;
-//        qryTransactionsOnly.Open;
-//
-//        CreateCSV(SaveDialog.FileName, qryTransactionsOnly, false);
-//      finally
-//        Screen.Cursor := crDefault;
-//      end;
-//
-//      MsgInfo(Format('%d Rows exported', [qryTransactionsOnly.RecordCount]));
-//    end;
-//end;
-//
-//procedure TfrmReportExportTransactions.ExportTransactionsAndItems;
-//begin
-//  if SaveDialog.Execute then
-//    begin
-//      Screen.Cursor := crHourGlass;
-//      try
-//        qryTransactionsAndItems.Close;
-//        qryTransactionsAndItems.Parameters.ParamByName('FDate').Value := edFrom.Date;
-//        qryTransactionsAndItems.Parameters.ParamByName('TDate').Value := edTo.Date;
-//        qryTransactionsAndItems.Open;
-//
-//        CreateCSV(SaveDialog.FileName, qryTransactionsAndItems, false);
-//      finally
-//        Screen.Cursor := crDefault;
-//      end;
-//
-//      MsgInfo(Format('%d Rows exported', [qryTransactionsAndItems.RecordCount]));
-//    end;
-//end;
-
-procedure TfrmReportExportTransactions.ExportClientsTransactionsAndItems(qry: TADOQuery);
+procedure TfrmReportExportTransactions.ExportClientsTransactionsAndItems(qry: TFDQuery);
 begin
   if SaveDialog.Execute then
     begin
       Screen.Cursor := crHourGlass;
       try
         Qry.Close;
-        Qry.Parameters.ParamByName('FDate').Value := edFrom.Date;
-        Qry.Parameters.ParamByName('TDate').Value := edTo.Date;
+        Qry.Params.ParamByName('FDate').AsDate := edFrom.Date;
+        Qry.Params.ParamByName('TDate').AsDate := edTo.Date;
         Qry.Open;
 
         CreateCSV(SaveDialog.FileName, Qry, false);

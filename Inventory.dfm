@@ -605,30 +605,27 @@ object frmInventory: TfrmInventory
   end
   object qryCategories: TFDQuery
     Connection = DM.ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
+    UpdateOptions.UpdateTableName = 'INV_CATEGORIES'
+    UpdateOptions.KeyFields = 'InvCatNo'
+    UpdateOptions.AutoIncFields = 'InvCatNo'
     SQL.Strings = (
-      'SELECT CAST(NULL AS SMALLINT) AS "C",'
-      '       0 AS "InvCatNo",'
-      '       CAST('#39'Categories'#39' AS VARCHAR(40)) AS "InvCategory"'
-      'FROM RDB$DATABASE'
-      'UNION ALL'
-      'SELECT 0 AS "C",'
-      '       INV_CAT_NO AS "InvCatNo",'
+      'SELECT INV_CAT_NO AS "InvCatNo",'
       '       INV_CATEGORY AS "InvCategory"'
       'FROM INV_CATEGORIES'
-      'ORDER BY 1, 2')
+      'ORDER BY INV_CATEGORY')
     Left = 48
     Top = 95
-    object qryCategoriesC: TSmallintField
-      FieldName = 'C'
-      ReadOnly = True
-    end
     object qryCategoriesInvCatNo: TIntegerField
+      AutoGenerateValue = arAutoInc
       FieldName = 'InvCatNo'
-      ReadOnly = True
+      Origin = 'INV_CAT_NO'
+      Required = True
     end
-    object qryCategoriesInvCategory: TWideStringField
+    object qryCategoriesInvCategory: TStringField
       FieldName = 'InvCategory'
-      ReadOnly = True
+      Origin = 'INV_CATEGORY'
       Size = 40
     end
   end
@@ -638,8 +635,11 @@ object frmInventory: TfrmInventory
     Filtered = True
     OnFilterRecord = qryInvItemsFilterRecord
     Connection = DM.ConnFB
+    UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
+    UpdateOptions.FetchGeneratorsPoint = gpImmediate
     UpdateOptions.UpdateTableName = 'INVENTORY_ITEMS'
     UpdateOptions.KeyFields = 'InvItemNo'
+    UpdateOptions.AutoIncFields = 'InvItemNo'
     SQL.Strings = (
       'SELECT'
       '    ii.INV_ITEM_NO AS "InvItemNo",'
@@ -665,7 +665,7 @@ object frmInventory: TfrmInventory
       '    ii.SERIAL_NUMBER AS "SerialNumber",'
       '    ii.GENDER AS "Gender",'
       '    ii.DESCRIPTION AS "Description",'
-
+      
         '    (ii.INV_ITEM_COUNT * COALESCE(ii.WEIGHT, 0)) AS "TotalWeight' +
         '",'
       '    jt.J_TYPE_DESC AS "JTypeDesc",'

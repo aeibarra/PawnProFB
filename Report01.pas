@@ -5,10 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton,
-  Data.DB, Data.Win.ADODB, ppProd, ppClass, ppReport, ppComm, ppRelatv, ppDB,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, ppProd, ppClass, ppReport, ppComm, ppRelatv, ppDB,
   ppDBPipe, ppBands, ppCache, ppDesignLayer, ppParameter, ppVar, ppPrnabl,
   ppCtrls, ppStrtch, ppSubRpt, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient,
-  Datasnap.Provider, Vcl.Mask, RzEdit, RzSpnEdt;
+  Datasnap.Provider, Vcl.Mask, RzEdit, RzSpnEdt, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmReport01 = class(TForm)
@@ -36,7 +38,7 @@ type
     ppDBText1: TppDBText;
     ppLabel3: TppLabel;
     ppDBText4: TppDBText;
-    qryPayments: TADOQuery;
+    qryPayments: TFDQuery;
     dsPayments: TDataSource;
     ppDBText2: TppDBText;
     prvLatePawn: TDataSetProvider;
@@ -71,8 +73,8 @@ type
     Label2: TLabel;
     edMonths: TRzSpinEdit;
     btnExit: TBitBtn;
-    spLatePawn: TADOStoredProc;
-    clnLatePawnTranDate: TDateTimeField;
+    spLatePawn: TFDQuery;
+    clnLatePawnTranDate: TDateField;
     clnLatePawncPhones: TStringField;
     clnLatePawnCustPhCell: TStringField;
     clnLatePawnCustPhHome: TStringField;
@@ -111,7 +113,7 @@ end;
 procedure TfrmReport01.clnLatePawnAfterScroll(DataSet: TDataSet);
 begin
   qryPayments.Close;
-  qryPayments.Parameters.ParamByName('TransactionNo').Value := clnLatePawnTransactionNo.AsInteger;
+  qryPayments.Params.ParamByName('TransactionNo').AsInteger := clnLatePawnTransactionNo.AsInteger;
   qryPayments.Open;
 end;
 
@@ -142,7 +144,7 @@ begin
     qryPayments.Open;
 
     clnLatePawn.Close;
-    clnLatePawn.Params.ParamByName('@Mons').AsInteger := LateMonths;
+    clnLatePawn.Params.ParamByName('Mons').AsInteger := LateMonths;
     clnLatePawn.Open;
 
   finally

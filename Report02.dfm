@@ -136,8 +136,8 @@ object frmReport02: TfrmReport02
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = '&Close'
-      ImageIndex = 12
-      ImageName = 'acrExit01'
+      ImageIndex = 2
+      ImageName = 'actExit'
       Images = DM.vilMain24
       ModalResult = 8
       TabOrder = 0
@@ -169,28 +169,34 @@ object frmReport02: TfrmReport02
       Spacing = 0
     end
   end
-  object qryPawnAndPurchases: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryPawnAndPurchases: TFDQuery
     OnCalcFields = qryPawnAndPurchasesCalcFields
-    Parameters = <>
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     SQL.Strings = (
-      'select T2.TranStatus,'
-      '  T1.CustFirst, T1.CustMid, T1.CustLast, T1.CustPhCell,'
-      
-        '  T2.TranTicketNo, T2.TranType, T2.TranPawnAmount, T2.TranIntere' +
-        'st,'
-      
-        '  T2.PrincBalance, T2.InsterestBalance, T2.TranDate, T2.TranTime' +
-        ','
-      '  T2.TranMaturity, T3.TranTypeDesc'
-      'from Customer T1'
-      'join Transactions     T2 on T1.CustNo = T2.CustNo'
-      'join TransactionTypes T3 on T2.TranType = T3.TranType'
+      'select T2.TRAN_STATUS as "TranStatus",'
+      '  T1.CUST_FIRST as "CustFirst",'
+      '  T1.CUST_MID as "CustMid",'
+      '  T1.CUST_LAST as "CustLast",'
+      '  T1.CUST_PH_CELL as "CustPhCell",'
+      '  T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '  T2.TRAN_TYPE as "TranType",'
+      '  T2.TRAN_PAWN_AMOUNT as "TranPawnAmount",'
+      '  T2.TRAN_INTEREST as "TranInterest",'
+      '  T2.PRINC_BALANCE as "PrincBalance",'
+      '  T2.INTEREST_BALANCE as "InsterestBalance",'
+      '  T2.TRAN_DATE as "TranDate",'
+      '  T2.TRAN_TIME as "TranTime",'
+      '  T2.TRAN_MATURITY as "TranMaturity",'
+      '  T3.TRAN_TYPE_DESC as "TranTypeDesc"'
+      'from CUSTOMER T1'
+      'join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
+      'join TRANSACTION_TYPES T3 on T2.TRAN_TYPE = T3.TRAN_TYPE'
       'where'
-      '  T2.TranType in ('#39'P'#39','#39'U'#39')'
+      '  T2.TRAN_TYPE in ('#39'P'#39','#39'U'#39')'
       ' --<PARAMS>'
-      'order by T2.TranType, T2.TranDate, T2.TranTime;'
+      'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME'
       ''
       '')
     Left = 503
@@ -201,19 +207,19 @@ object frmReport02: TfrmReport02
       Size = 120
       Calculated = True
     end
-    object qryPawnAndPurchasesCustFirst: TStringField
+    object qryPawnAndPurchasesCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryPawnAndPurchasesCustMid: TStringField
+    object qryPawnAndPurchasesCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
-    object qryPawnAndPurchasesCustLast: TStringField
+    object qryPawnAndPurchasesCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryPawnAndPurchasesCustPhCell: TStringField
+    object qryPawnAndPurchasesCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
       Size = 14
     end
@@ -241,7 +247,7 @@ object frmReport02: TfrmReport02
       FieldName = 'InsterestBalance'
       currency = True
     end
-    object qryPawnAndPurchasesTranDate: TDateTimeField
+    object qryPawnAndPurchasesTranDate: TDateField
       FieldName = 'TranDate'
     end
     object qryPawnAndPurchasesTranTime: TTimeField
@@ -1110,31 +1116,37 @@ object frmReport02: TfrmReport02
     object ppParameterList1: TppParameterList
     end
   end
-  object qryTranPayments: TADOQuery
-    Connection = DM.ConnDB
-    CursorType = ctStatic
+  object qryTranPayments: TFDQuery
     OnCalcFields = qryTranPaymentsCalcFields
-    Parameters = <>
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     SQL.Strings = (
-      
-        'select T4.PayDate, T4.PayAmount, T4.PayPrincipal, T4.PayInterest' +
-        ','
-      
-        '       T1.CustFirst, T1.CustMid, T1.CustLast, T1.CustPhCell, T2.' +
-        'TranTicketNo, T2.TranType,'
-      
-        '       T2.TranPawnAmount, T2.TranInterest, T2.PrincBalance, T2.I' +
-        'nsterestBalance,'
-      
-        '       T2.TranDate, T2.TranTime, T2.TranMaturity, T3.TranTypeDes' +
-        'c'
-      'from Customer T1'
-      '  join Transactions T2 On T1.Custno = T2.CustNo'
-      '  join TransactionTypes T3 ON T2.TranType = T3.TranType'
-      '  join Payments T4 ON T4.TransactionNo = T2.TransactionNo'
-      'where T2.TranType in ('#39'P'#39', '#39'U'#39')'
+      'select T4.PAY_DATE as "PayDate",'
+      '       T4.PAY_AMOUNT as "PayAmount",'
+      '       T4.PAY_PRINCIPAL as "PayPrincipal",'
+      '       T4.PAY_INTEREST as "PayInterest",'
+      '       T1.CUST_FIRST as "CustFirst",'
+      '       T1.CUST_MID as "CustMid",'
+      '       T1.CUST_LAST as "CustLast",'
+      '       T1.CUST_PH_CELL as "CustPhCell",'
+      '       T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '       T2.TRAN_TYPE as "TranType",'
+      '       T2.TRAN_PAWN_AMOUNT as "TranPawnAmount",'
+      '       T2.TRAN_INTEREST as "TranInterest",'
+      '       T2.PRINC_BALANCE as "PrincBalance",'
+      '       T2.INTEREST_BALANCE as "InsterestBalance",'
+      '       T2.TRAN_DATE as "TranDate",'
+      '       T2.TRAN_TIME as "TranTime",'
+      '       T2.TRAN_MATURITY as "TranMaturity",'
+      '       T3.TRAN_TYPE_DESC as "TranTypeDesc"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 On T1.CUST_NO = T2.CUST_NO'
+      '  join TRANSACTION_TYPES T3 ON T2.TRAN_TYPE = T3.TRAN_TYPE'
+      '  join PAYMENTS T4 ON T4.TRANSACTION_NO = T2.TRANSACTION_NO'
+      'where T2.TRAN_TYPE in ('#39'P'#39', '#39'U'#39')'
       ' --<PARAMS>'
-      'order by T2.TranType, T2.TranDate, T2.TranTime')
+      'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME')
     Left = 504
     Top = 131
     object qryTranPaymentscFullName: TStringField
@@ -1155,19 +1167,19 @@ object frmReport02: TfrmReport02
     object qryTranPaymentsPayInterest: TFloatField
       FieldName = 'PayInterest'
     end
-    object qryTranPaymentsCustFirst: TStringField
+    object qryTranPaymentsCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object qryTranPaymentsCustMid: TStringField
+    object qryTranPaymentsCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
-    object qryTranPaymentsCustLast: TStringField
+    object qryTranPaymentsCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object qryTranPaymentsCustPhCell: TStringField
+    object qryTranPaymentsCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
       Size = 14
     end
@@ -1191,7 +1203,7 @@ object frmReport02: TfrmReport02
     object qryTranPaymentsInsterestBalance: TFloatField
       FieldName = 'InsterestBalance'
     end
-    object qryTranPaymentsTranDate: TDateTimeField
+    object qryTranPaymentsTranDate: TDateField
       FieldName = 'TranDate'
     end
     object qryTranPaymentsTranTime: TTimeField

@@ -339,7 +339,7 @@ begin
     end;
 
   // Configure ReportBuilder for direct printing
-  AReport.DeviceType := 'Screen'; //'Printer';
+  AReport.DeviceType := 'Printer';
   AReport.ShowPrintDialog := False;
   AReport.PrinterSetup.PrinterName := APrinterName;
 
