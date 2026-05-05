@@ -189,56 +189,48 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
-            Width = 64
             Visible = True
           end
           item
@@ -530,13 +522,13 @@ object frmClients: TfrmClients
       Width = 681
       Height = 349
       Hint = ''
-      ActivePage = TabLayawayTran
+      ActivePage = TabPawnTran
       Align = alLeft
       BoldCurrentTab = True
       HotTrackStyle = htsTabBar
       Images = DM.ImageListBtn
       TabHeight = 35
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       OnChange = pgTransactionsChange
       FixedDimension = 35
@@ -1237,7 +1229,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end
             item
@@ -1285,7 +1276,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end>
         end
@@ -1468,25 +1458,33 @@ object frmClients: TfrmClients
               Expanded = False
               FieldName = 'UNIT_COST'
               Title.Caption = 'Cost'
-              Width = 80
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'UNIT_PRICE'
+              Title.Caption = 'Price'
+              Width = 58
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'WEIGHT'
+              Title.Caption = 'Weight'
               Width = 58
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'cTotalWeight'
-              Title.Caption = 'Total weight'
+              Title.Caption = 'Total Weight'
               Width = 86
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DESCRIPTION'
+              Title.Caption = 'Description'
               Width = 191
               Visible = True
             end
@@ -1556,7 +1554,7 @@ object frmClients: TfrmClients
             Top = 2
             Width = 173
             Height = 50
-            Hint =
+            Hint = 
               'Divide total amount of the Pawn by total weight of all items in ' +
               'the Pawn and '
             Flat = False
@@ -7416,7 +7414,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label147'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           'Description of Item (Inscription, color, size,marks, design, sch' +
           'ool year, Initials, Barrel length'
         Font.Charset = DEFAULT_CHARSET
@@ -9347,7 +9345,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label82'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           'The Pledgor/Seller represents and warrants that the pledge/sold ' +
           'property is not stolen, rented or leased and that they have'
         Font.Charset = DEFAULT_CHARSET
@@ -9369,7 +9367,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label163'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           ' to liens or emcumbraces against them. Pledgor/Seller also attes' +
           't to be the rightful owner  of the pledge/sold property,'
         Font.Charset = DEFAULT_CHARSET
@@ -9391,7 +9389,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label164'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           ' voluntary or involuntary bankrupcy of any type and  is at least' +
           ' 18 year of age.'
         Font.Charset = DEFAULT_CHARSET
@@ -9413,7 +9411,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label165'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           ' that Pledgor/Seller has the right to pledge/sell the property. ' +
           'Pledgor/Seller, attest that the Pledgor/Seller is not in a'
         Font.Charset = DEFAULT_CHARSET
@@ -9435,7 +9433,7 @@ object frmClients: TfrmClients
         DesignLayer = ppDesignLayer2
         UserName = 'Label167'
         Border.mmPadding = 0
-        Caption =
+        Caption = 
           'I, the Pledgor/Seller, agree to all terms and conditions on the ' +
           'front and the back and acknowledge'
         Font.Charset = DEFAULT_CHARSET
@@ -14724,7 +14722,7 @@ object frmClients: TfrmClients
     SQL.Strings = (
       'SELECT'
       '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
-
+      
         '           WHERE T01.IMAG_REF_TO_ROW_NO = INVENTORY_ITEMS.INV_IT' +
         'EM_NO)) AS HAS_PICS,'
       '  INVENTORY_ITEMS.*'
@@ -14841,12 +14839,14 @@ object frmClients: TfrmClients
     object qryInvItemsUNIT_COST: TFMTBCDField
       FieldName = 'UNIT_COST'
       Origin = 'UNIT_COST'
+      currency = True
       Precision = 18
       Size = 2
     end
     object qryInvItemsUNIT_PRICE: TFMTBCDField
       FieldName = 'UNIT_PRICE'
       Origin = 'UNIT_PRICE'
+      currency = True
       Precision = 18
       Size = 2
     end

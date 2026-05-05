@@ -757,41 +757,41 @@ object frmEnterItems: TfrmEnterItems
       'INSERT INTO STONES'
       '(INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, '
       '  CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT)'
-
+      
         'VALUES (:NEW_INV_ITEM_NO, :NEW_STONE_NUMBER, :NEW_STONE_SHAPE, :' +
         'NEW_STONE_COLOR, '
       '  :NEW_CT, :NEW_WT, :NEW_STONE_TYPE, :NEW_STONE_WEIGHT_UNIT)'
       'RETURNING STONE_NO')
     ModifySQL.Strings = (
       'UPDATE STONES'
-
+      
         'SET INV_ITEM_NO = :NEW_INV_ITEM_NO, STONE_NUMBER = :NEW_STONE_NU' +
         'MBER, '
-
+      
         '  STONE_SHAPE = :NEW_STONE_SHAPE, STONE_COLOR = :NEW_STONE_COLOR' +
         ', '
       '  CT = :NEW_CT, WT = :NEW_WT, STONE_TYPE = :NEW_STONE_TYPE, '
       '  STONE_WEIGHT_UNIT = :NEW_STONE_WEIGHT_UNIT'
-
+      
         'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
         'NE_NUMBER AND '
-
+      
         '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
         'LOR AND '
-
+      
         '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
         ' AND '
       '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT'
       'RETURNING STONE_NO')
     DeleteSQL.Strings = (
       'DELETE FROM STONES'
-
+      
         'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
         'NE_NUMBER AND '
-
+      
         '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
         'LOR AND '
-
+      
         '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
         ' AND '
       '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT')
@@ -800,18 +800,18 @@ object frmEnterItems: TfrmEnterItems
       'FROM STONES'
       'WHERE INV_ITEM_NO = :INV_ITEM_NO')
     FetchRowSQL.Strings = (
-
+      
         'SELECT STONE_NO, INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_C' +
         'OLOR, '
       '  CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT'
       'FROM STONES'
-
+      
         'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO AND STONE_NUMBER = :OLD_STO' +
         'NE_NUMBER AND '
-
+      
         '  STONE_SHAPE = :OLD_STONE_SHAPE AND STONE_COLOR = :OLD_STONE_CO' +
         'LOR AND '
-
+      
         '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
         ' AND '
       '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT')
