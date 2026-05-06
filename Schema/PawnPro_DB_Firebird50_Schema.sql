@@ -9,13 +9,25 @@
 /*******************************************************************************
  * Selected metadata objects
  * -------------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
+
+/*******************************************************************************
+ * Roles
+ * -----
+ * Extracted at 5/5/2026 11:58:56 AM
+ ******************************************************************************/
+
+/* "PUBLIC" is a system role, no CREATE ROLE statement. */
+
+/* "RDB$ADMIN" is a system role, no CREATE ROLE statement. */
+
+GRANT RDB$ADMIN TO SYSDBA WITH ADMIN OPTION;
 
 /*******************************************************************************
  * Tables
  * ------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE TABLE BACKUP_HISTORY 
@@ -388,7 +400,7 @@ SET TERM ^^ ;
 /*******************************************************************************
  * Stored Procedure Headers
  * ------------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE PROCEDURE REP_CUSTOMER_WITH_LATE_PAYMENTS (
@@ -433,18 +445,10 @@ BEGIN
   EXIT;
 END ^^
 
-CREATE PROCEDURE SP_GET_NEXT_KEY (
-  TABLENAME Char(15))
- returns (
-  NEXTTABLEKEY Integer) AS
-BEGIN
-  EXIT;
-END ^^
-
 /*******************************************************************************
  * Stored Function Headers
  * -----------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE FUNCTION FN_TRAN_WITH_LATE_PAYMENT (
@@ -460,13 +464,13 @@ SET TERM ; ^^
 /*******************************************************************************
  * Table Computed Columns
  * ----------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 /*******************************************************************************
  * Indices
  * -------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE ASC INDEX CUSTOMER_IDX1 ON CUSTOMER (CUST_FIRST, CUST_LAST);
@@ -490,7 +494,7 @@ CREATE ASC INDEX TRANSACTIONS_IDX1 ON TRANSACTIONS (CUST_NO, TRAN_DATE, TRAN_TIC
 /*******************************************************************************
  * Foreign Key Constraints
  * -----------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 ALTER TABLE INVENTORY_ITEMS ADD CONSTRAINT FK_INVENTORY_ITEMS_TRANSACTIONS 
@@ -521,7 +525,7 @@ SET TERM ^^ ;
 /*******************************************************************************
  * Stored Procedure Bodies
  * -----------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE OR ALTER PROCEDURE REP_CUSTOMER_WITH_LATE_PAYMENTS (
@@ -634,32 +638,10 @@ BEGIN
   SUSPEND;
 END ^^
 
-CREATE OR ALTER PROCEDURE SP_GET_NEXT_KEY (
-  TABLENAME Char(15))
- returns (
-  NEXTTABLEKEY Integer)
-SQL SECURITY INVOKER
-AS
-BEGIN  
-    -- Update the last key by incrementing it
-    UPDATE table_keys 
-    SET last_key = last_key + 1 
-    WHERE table_name = :TableName;  
-
-    -- Select the new last key
-    SELECT last_key 
-    FROM table_keys 
-    WHERE table_name = :TableName
-    INTO :NextTableKey;  
-
-    -- Return the updated value
-    SUSPEND;  
-END ^^
-
 /*******************************************************************************
  * Stored Function Bodies
  * ----------------------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 CREATE OR ALTER FUNCTION FN_TRAN_WITH_LATE_PAYMENT  (
@@ -690,7 +672,7 @@ SET TERM ^^ ;
 /*******************************************************************************
  * Triggers
  * --------
- * Extracted at 5/1/2026 1:47:35 PM
+ * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
 /*******************************************************************************
