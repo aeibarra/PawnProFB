@@ -208,6 +208,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoResize = False
       AutoStyle = False
@@ -357,6 +358,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -520,6 +522,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -668,6 +671,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
