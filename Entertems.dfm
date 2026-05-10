@@ -683,7 +683,7 @@ object frmEnterItems: TfrmEnterItems
       Origin = 'INV_CAT_NO'
       Required = True
     end
-    object qryCategoriesINV_CATEGORY: TStringField
+    object qryCategoriesINV_CATEGORY: TWideStringField
       FieldName = 'INV_CATEGORY'
       Origin = 'INV_CATEGORY'
       Size = 40
@@ -708,7 +708,7 @@ object frmEnterItems: TfrmEnterItems
       'ORDER BY INV_ITEM_BRAND')
     Left = 716
     Top = 249
-    object qryBrandsINV_ITEM_BRAND: TStringField
+    object qryBrandsINV_ITEM_BRAND: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
       Origin = 'INV_ITEM_BRAND'
       Size = 30
@@ -724,12 +724,12 @@ object frmEnterItems: TfrmEnterItems
     FieldDefs = <
       item
         Name = 'WeigthUnitValue'
-        DataType = ftString
+        DataType = ftWideString
         Size = 1
       end
       item
         Name = 'WeightUnit'
-        DataType = ftString
+        DataType = ftWideString
         Size = 50
       end>
     IndexDefs = <>
@@ -737,11 +737,11 @@ object frmEnterItems: TfrmEnterItems
     StoreDefs = True
     Left = 716
     Top = 320
-    object clnWeigthUnitsWeigthUnitValue: TStringField
+    object clnWeigthUnitsWeigthUnitValue: TWideStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
     end
-    object clnWeigthUnitsWeightUnit: TStringField
+    object clnWeigthUnitsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 50
     end
@@ -836,13 +836,13 @@ object frmEnterItems: TfrmEnterItems
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryStonescShape: TStringField
+    object qryStonescShape: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cShape'
       Size = 30
       Calculated = True
     end
-    object qryStonescColor: TStringField
+    object qryStonescColor: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cColor'
       Size = 30
@@ -863,14 +863,14 @@ object frmEnterItems: TfrmEnterItems
       Origin = 'STONE_NUMBER'
       Required = True
     end
-    object qryStonesSTONE_SHAPE: TStringField
+    object qryStonesSTONE_SHAPE: TWideStringField
       FieldName = 'STONE_SHAPE'
       Origin = 'STONE_SHAPE'
       Required = True
       FixedChar = True
       Size = 1
     end
-    object qryStonesSTONE_COLOR: TStringField
+    object qryStonesSTONE_COLOR: TWideStringField
       FieldName = 'STONE_COLOR'
       Origin = 'STONE_COLOR'
       Required = True
@@ -885,12 +885,12 @@ object frmEnterItems: TfrmEnterItems
       FieldName = 'WT'
       Origin = 'WT'
     end
-    object qryStonesSTONE_TYPE: TStringField
+    object qryStonesSTONE_TYPE: TWideStringField
       FieldName = 'STONE_TYPE'
       Origin = 'STONE_TYPE'
       Size = 30
     end
-    object qryStonesSTONE_WEIGHT_UNIT: TStringField
+    object qryStonesSTONE_WEIGHT_UNIT: TWideStringField
       FieldName = 'STONE_WEIGHT_UNIT'
       Origin = 'STONE_WEIGHT_UNIT'
       FixedChar = True

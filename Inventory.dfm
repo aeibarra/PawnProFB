@@ -623,7 +623,7 @@ object frmInventory: TfrmInventory
       Origin = 'INV_CAT_NO'
       Required = True
     end
-    object qryCategoriesInvCategory: TStringField
+    object qryCategoriesInvCategory: TWideStringField
       FieldName = 'InvCategory'
       Origin = 'INV_CATEGORY'
       Size = 40
@@ -652,6 +652,7 @@ object frmInventory: TfrmInventory
       '    ii.NOTE AS "Note",'
       '    ii.SIZE_LENGTH AS "SizeLength",'
       '    ii.WEIGHT AS "Weight",'
+      '    ii.WEIGHT_UNIT AS "WeightUnit",'
       '    ii.KT AS "KT",'
       '    ii.CREATED AS "Created",'
       '    ii.UNIT_COST AS "UnitCost",'
@@ -686,7 +687,7 @@ object frmInventory: TfrmInventory
       FieldName = 'InvItemNo'
       Origin = 'INV_ITEM_NO'
     end
-    object qryInvItemsInvItemBarcode: TStringField
+    object qryInvItemsInvItemBarcode: TWideStringField
       FieldName = 'InvItemBarcode'
       Origin = 'INV_ITEM_BARCODE'
       Size = 30
@@ -695,17 +696,17 @@ object frmInventory: TfrmInventory
       FieldName = 'InvCatNo'
       Origin = 'INV_CAT_NO'
     end
-    object qryInvItemsJType: TStringField
+    object qryInvItemsJType: TWideStringField
       FieldName = 'JType'
       Origin = 'J_TYPE'
       Size = 1
     end
-    object qryInvItemsJStyle: TStringField
+    object qryInvItemsJStyle: TWideStringField
       FieldName = 'JStyle'
       Origin = 'J_STYLE'
       Size = 1
     end
-    object qryInvItemsJMetal: TStringField
+    object qryInvItemsJMetal: TWideStringField
       FieldName = 'JMetal'
       Origin = 'J_METAL'
       Size = 1
@@ -714,7 +715,7 @@ object frmInventory: TfrmInventory
       FieldName = 'InvItemCount'
       Origin = 'INV_ITEM_COUNT'
     end
-    object qryInvItemsNote: TStringField
+    object qryInvItemsNote: TWideStringField
       FieldName = 'Note'
       Origin = 'NOTE'
       Size = 80
@@ -726,6 +727,11 @@ object frmInventory: TfrmInventory
     object qryInvItemsWeight: TFloatField
       FieldName = 'Weight'
       Origin = 'WEIGHT'
+    end
+    object qryInvItemsWeightUnit: TWideStringField
+      FieldName = 'WeightUnit'
+      Origin = 'WEIGHT_UNIT'
+      Size = 1
     end
     object qryInvItemsKT: TFloatField
       FieldName = 'KT'
@@ -750,7 +756,7 @@ object frmInventory: TfrmInventory
       Precision = 18
       Size = 2
     end
-    object qryInvItemsInvItemStatus: TStringField
+    object qryInvItemsInvItemStatus: TWideStringField
       FieldName = 'InvItemStatus'
       Origin = 'INV_ITEM_STATUS'
       Size = 1
@@ -763,55 +769,55 @@ object frmInventory: TfrmInventory
       FieldName = 'InvOriginalItemNo'
       Origin = 'INV_ORIGINAL_ITEM_NO'
     end
-    object qryInvItemsInvItemBrand: TStringField
+    object qryInvItemsInvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
-    object qryInvItemsOwnerAppNumber: TStringField
+    object qryInvItemsOwnerAppNumber: TWideStringField
       FieldName = 'OwnerAppNumber'
       Origin = 'OWNER_APP_NUMBER'
       Size = 40
     end
-    object qryInvItemsModelNumber: TStringField
+    object qryInvItemsModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Origin = 'MODEL_NUMBER'
       Size = 40
     end
-    object qryInvItemsSerialNumber: TStringField
+    object qryInvItemsSerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Origin = 'SERIAL_NUMBER'
       Size = 40
     end
-    object qryInvItemsGender: TStringField
+    object qryInvItemsGender: TWideStringField
       FieldName = 'Gender'
       Origin = 'GENDER'
       Size = 1
     end
-    object qryInvItemsDescription: TStringField
+    object qryInvItemsDescription: TWideStringField
       FieldName = 'Description'
       Origin = 'DESCRIPTION'
       Size = 120
     end
-    object qryInvItemsJTypeDesc: TStringField
+    object qryInvItemsJTypeDesc: TWideStringField
       FieldName = 'JTypeDesc'
       ProviderFlags = []
       ReadOnly = True
       Size = 30
     end
-    object qryInvItemsJStyleDesc: TStringField
+    object qryInvItemsJStyleDesc: TWideStringField
       FieldName = 'JStyleDesc'
       ProviderFlags = []
       ReadOnly = True
       Size = 30
     end
-    object qryInvItemsJMetalDesc: TStringField
+    object qryInvItemsJMetalDesc: TWideStringField
       FieldName = 'JMetalDesc'
       ProviderFlags = []
       ReadOnly = True
       Size = 30
     end
-    object qryInvItemsStatusDesc: TStringField
+    object qryInvItemsStatusDesc: TWideStringField
       FieldName = 'StatusDesc'
       ProviderFlags = []
       ReadOnly = True

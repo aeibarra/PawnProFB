@@ -83,44 +83,44 @@ type
     qryPoliceRepCustCustPhCell: TWideStringField;
     qryPoliceRepCustCustComment: TMemoField;
     qryPawnItemsInvItemNo: TIntegerField;
-    qryPawnItemsInvItemBarcode: TStringField;
+    qryPawnItemsInvItemBarcode: TWideStringField;
     qryPawnItemsInvCatNo: TIntegerField;
-    qryPawnItemsJType: TStringField;
-    qryPawnItemsJStyle: TStringField;
-    qryPawnItemsJMetal: TStringField;
+    qryPawnItemsJType: TWideStringField;
+    qryPawnItemsJStyle: TWideStringField;
+    qryPawnItemsJMetal: TWideStringField;
     qryPawnItemsInvItemCount: TIntegerField;
-    qryPawnItemsNote: TStringField;
+    qryPawnItemsNote: TWideStringField;
     qryPawnItemsSizeLength: TFloatField;
     qryPawnItemsWeight: TFloatField;
     qryPawnItemsKT: TFloatField;
     qryPawnItemsCreated: TSQLTimeStampField;
     qryPawnItemsUnitCost: TFMTBCDField;
     qryPawnItemsUnitPrice: TFMTBCDField;
-    qryPawnItemsInvItemStatus: TStringField;
+    qryPawnItemsInvItemStatus: TWideStringField;
     qryPawnItemsTransactionNo: TIntegerField;
     qryPawnItemsInvOriginalItemNo: TIntegerField;
-    qryPawnItemsInvItemBrand: TStringField;
-    qryPawnItemsOwnerAppNumber: TStringField;
-    qryPawnItemsModelNumber: TStringField;
-    qryPawnItemsSerialNumber: TStringField;
-    qryPawnItemsGender: TStringField;
+    qryPawnItemsInvItemBrand: TWideStringField;
+    qryPawnItemsOwnerAppNumber: TWideStringField;
+    qryPawnItemsModelNumber: TWideStringField;
+    qryPawnItemsSerialNumber: TWideStringField;
+    qryPawnItemsGender: TWideStringField;
     qryPawnStonesStoneNo: TIntegerField;
     qryPawnStonesInvItemNo: TIntegerField;
     qryPawnStonesStoneNumber: TIntegerField;
-    qryPawnStonesStoneShape: TStringField;
-    qryPawnStonesStoneColor: TStringField;
+    qryPawnStonesStoneShape: TWideStringField;
+    qryPawnStonesStoneColor: TWideStringField;
     qryPawnStonesCT: TFloatField;
     qryPawnStonesWT: TFloatField;
-    qryPawnStonesStoneType: TStringField;
-    qryPawnItemscStone1Shape: TStringField;
-    qryPawnItemscStone1Color: TStringField;
+    qryPawnStonesStoneType: TWideStringField;
+    qryPawnItemscStone1Shape: TWideStringField;
+    qryPawnItemscStone1Color: TWideStringField;
     qryPawnItemscStone1CT: TFloatField;
     qryPawnItemscStone1Qty: TIntegerField;
-    qryPawnItemscStone2Shape: TStringField;
-    qryPawnItemscStone2Color: TStringField;
+    qryPawnItemscStone2Shape: TWideStringField;
+    qryPawnItemscStone2Color: TWideStringField;
     qryPawnItemscStone2CT: TFloatField;
     qryPawnItemscStone2Qty: TIntegerField;
-    qryPawnItemsDescription: TStringField;
+    qryPawnItemsDescription: TWideStringField;
     mnuPawnStatusActive: TMenuItem;
     mnuPawnStatusInactive: TMenuItem;
     FormState: TRzFormState;
@@ -437,35 +437,35 @@ type
     dsPawnItemsLaser: TDataSource;
     prvPawnItems: TDataSetProvider;
     DBPPawnItemsLaser: TppDBPipeline;
-    clnPawnItemscStone1Shape: TStringField;
-    clnPawnItemscStone1Color: TStringField;
+    clnPawnItemscStone1Shape: TWideStringField;
+    clnPawnItemscStone1Color: TWideStringField;
     clnPawnItemsInvItemNo: TIntegerField;
-    clnPawnItemsInvItemBarcode: TStringField;
+    clnPawnItemsInvItemBarcode: TWideStringField;
     clnPawnItemsInvCatNo: TIntegerField;
-    clnPawnItemsJType: TStringField;
-    clnPawnItemsJStyle: TStringField;
-    clnPawnItemsJMetal: TStringField;
+    clnPawnItemsJType: TWideStringField;
+    clnPawnItemsJStyle: TWideStringField;
+    clnPawnItemsJMetal: TWideStringField;
     clnPawnItemsInvItemCount: TIntegerField;
-    clnPawnItemsNote: TStringField;
+    clnPawnItemsNote: TWideStringField;
     clnPawnItemsSizeLength: TFloatField;
     clnPawnItemsWeight: TFloatField;
     clnPawnItemsKT: TFloatField;
     clnPawnItemsCreated: TSQLTimeStampField;
     clnPawnItemsUnitCost: TFMTBCDField;
     clnPawnItemsUnitPrice: TFMTBCDField;
-    clnPawnItemsInvItemStatus: TStringField;
+    clnPawnItemsInvItemStatus: TWideStringField;
     clnPawnItemsTransactionNo: TIntegerField;
     clnPawnItemsInvOriginalItemNo: TIntegerField;
-    clnPawnItemsInvItemBrand: TStringField;
-    clnPawnItemsOwnerAppNumber: TStringField;
-    clnPawnItemsModelNumber: TStringField;
-    clnPawnItemsSerialNumber: TStringField;
-    clnPawnItemsGender: TStringField;
-    clnPawnItemsDescription: TStringField;
+    clnPawnItemsInvItemBrand: TWideStringField;
+    clnPawnItemsOwnerAppNumber: TWideStringField;
+    clnPawnItemsModelNumber: TWideStringField;
+    clnPawnItemsSerialNumber: TWideStringField;
+    clnPawnItemsGender: TWideStringField;
+    clnPawnItemsDescription: TWideStringField;
     clnPawnItemscStone1CT: TFloatField;
     clnPawnItemscStone1Qty: TIntegerField;
-    clnPawnItemscStone2Shape: TStringField;
-    clnPawnItemscStone2Color: TStringField;
+    clnPawnItemscStone2Shape: TWideStringField;
+    clnPawnItemscStone2Color: TWideStringField;
     clnPawnItemscStone2CT: TFloatField;
     clnPawnItemscStone2Qty: TIntegerField;
     ppLine13: TppLine;
@@ -497,11 +497,11 @@ type
     ActionClearSearchFields: TAction;
     Action1: TAction;
     btnSearch: TRzBitBtn;
-    qryPoliceRepCustCCustPhHome: TStringField;
-    qryPoliceRepCustCCustPhBussiness: TStringField;
-    qryPoliceRepCustCCustPhBeep: TStringField;
-    qryPoliceRepCustcCustPhCell: TStringField;
-    qryPoliceRepCustcCustFlDrvLic: TStringField;
+    qryPoliceRepCustCCustPhHome: TWideStringField;
+    qryPoliceRepCustCCustPhBussiness: TWideStringField;
+    qryPoliceRepCustCCustPhBeep: TWideStringField;
+    qryPoliceRepCustcCustPhCell: TWideStringField;
+    qryPoliceRepCustcCustFlDrvLic: TWideStringField;
     Label5: TLabel;
     RptPoliceLaserPrePrinted: TppReport;
     ppHeaderBand3: TppHeaderBand;
@@ -719,16 +719,16 @@ type
     ppRegion2: TppRegion;
     lblStoreName2: TppLabel;
     TimerForScan: TTimer;
-    qryPoliceRepCustcPrnHPhone: TStringField;
-    qryPawnItemsWeightUnit: TStringField;
-    clnPawnItemsWeightUnit: TStringField;
-    qryPawnItemscWeightToPrint: TStringField;
-    clnPawnItemscWeightToPrint: TStringField;
-    qryPawnItemscStone1WT: TStringField;
-    qryPawnItemscStone2WT: TStringField;
-    clnPawnItemscStone1WT: TStringField;
-    clnPawnItemscStone2WT: TStringField;
-    qryPawnStonesStoneWeightUnit: TStringField;
+    qryPoliceRepCustcPrnHPhone: TWideStringField;
+    qryPawnItemsWeightUnit: TWideStringField;
+    clnPawnItemsWeightUnit: TWideStringField;
+    qryPawnItemscWeightToPrint: TWideStringField;
+    clnPawnItemscWeightToPrint: TWideStringField;
+    qryPawnItemscStone1WT: TWideStringField;
+    qryPawnItemscStone2WT: TWideStringField;
+    clnPawnItemscStone1WT: TWideStringField;
+    clnPawnItemscStone2WT: TWideStringField;
+    qryPawnStonesStoneWeightUnit: TWideStringField;
     pgTransactions: TRzPageControl;
     TabPawnTran: TRzTabSheet;
     TabPurchaseTran: TRzTabSheet;
@@ -789,29 +789,29 @@ type
     qryInvItems: TFDQuery;
     qryInvItemsHAS_PICS: TBooleanField;
     qryInvItemsINV_ITEM_NO: TIntegerField;
-    qryInvItemsINV_ITEM_BARCODE: TStringField;
+    qryInvItemsINV_ITEM_BARCODE: TWideStringField;
     qryInvItemsINV_CAT_NO: TIntegerField;
-    qryInvItemsJ_TYPE: TStringField;
-    qryInvItemsJ_STYLE: TStringField;
-    qryInvItemsJ_METAL: TStringField;
+    qryInvItemsJ_TYPE: TWideStringField;
+    qryInvItemsJ_STYLE: TWideStringField;
+    qryInvItemsJ_METAL: TWideStringField;
     qryInvItemsINV_ITEM_COUNT: TIntegerField;
-    qryInvItemsNOTE: TStringField;
+    qryInvItemsNOTE: TWideStringField;
     qryInvItemsSIZE_LENGTH: TFloatField;
     qryInvItemsWEIGHT: TFloatField;
     qryInvItemsKT: TFloatField;
     qryInvItemsCREATED: TSQLTimeStampField;
     qryInvItemsUNIT_COST: TFMTBCDField;
     qryInvItemsUNIT_PRICE: TFMTBCDField;
-    qryInvItemsINV_ITEM_STATUS: TStringField;
+    qryInvItemsINV_ITEM_STATUS: TWideStringField;
     qryInvItemsTRANSACTION_NO: TIntegerField;
     qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField;
-    qryInvItemsINV_ITEM_BRAND: TStringField;
-    qryInvItemsSERIAL_NUMBER: TStringField;
-    qryInvItemsOWNER_APP_NUMBER: TStringField;
-    qryInvItemsMODEL_NUMBER: TStringField;
-    qryInvItemsGENDER: TStringField;
-    qryInvItemsDESCRIPTION: TStringField;
-    qryInvItemsWEIGHT_UNIT: TStringField;
+    qryInvItemsINV_ITEM_BRAND: TWideStringField;
+    qryInvItemsSERIAL_NUMBER: TWideStringField;
+    qryInvItemsOWNER_APP_NUMBER: TWideStringField;
+    qryInvItemsMODEL_NUMBER: TWideStringField;
+    qryInvItemsGENDER: TWideStringField;
+    qryInvItemsDESCRIPTION: TWideStringField;
+    qryInvItemsWEIGHT_UNIT: TWideStringField;
     qryInvItemsPAWNED_DATE: TDateField;
     qryInvItemsPURCHASE_DATE: TDateField;
     qryInvItemsREDEEMED_DATE: TDateField;
@@ -820,21 +820,21 @@ type
     qryInvItemsFORSALE_DATE: TDateField;
     qryInvItemsSOLD_DATE: TDateField;
     qryInvItemsLAYAWAY_DATE: TDateField;
-    qryInvItemscType: TStringField;
-    qryInvItemscStyle: TStringField;
-    qryInvItemscMetal: TStringField;
+    qryInvItemscType: TWideStringField;
+    qryInvItemscStyle: TWideStringField;
+    qryInvItemscMetal: TWideStringField;
     qryInvItemscTotalWeight: TFloatField;
-    qryInvItemscStatus: TStringField;
-    qryInvItemscHasPics: TStringField;
+    qryInvItemscStatus: TWideStringField;
+    qryInvItemscHasPics: TWideStringField;
     qryStyles: TFDMemTable;
     qryTypes: TFDMemTable;
     qryMetal: TFDMemTable;
-    qryStylesJ_STYLE: TStringField;
-    qryStylesJ_STYLE_DESC: TStringField;
-    qryTypesJ_TYPE: TStringField;
-    qryTypesJ_TYPE_DESC: TStringField;
-    qryMetalJ_METAL: TStringField;
-    qryMetalJ_METAL_DESC: TStringField;
+    qryStylesJ_STYLE: TWideStringField;
+    qryStylesJ_STYLE_DESC: TWideStringField;
+    qryTypesJ_TYPE: TWideStringField;
+    qryTypesJ_TYPE_DESC: TWideStringField;
+    qryMetalJ_METAL: TWideStringField;
+    qryMetalJ_METAL_DESC: TWideStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -947,6 +947,7 @@ type
     procedure ProcessNewPaymentDueDateMessage(var Msg: TMessage); Message sx_RefreshPaymentDueDateMesg;
     procedure AddEditPayments(NewRow: boolean);
     procedure AddEditLayaway(NewRow: boolean);
+    function IsInactiveLayawaySelected: boolean;
   public
 //    PoliceRptPrinter, PoliceRptPrinterBin, PayReceiptPrinterName, PayReceiptPrinterNameBin: string;
     procedure OpenClientsQuery(FName, LName: string);
@@ -1264,7 +1265,7 @@ begin
   frmEnterTransaction := TfrmEnterTransaction.Create(Self);
   try
     frmEnterTransaction.NewRow := NewTransaction;
-    frmEnterTransaction.CustNo := 0;
+    // Plain add/edit -- copy-items mode stays off (default).
     frmEnterTransaction.btnGetPawnAddingAllItemCost.Enabled := EnableCalcPawnAmountFromItemsCost;
     frmEnterTransaction.ShowModal;
     GetPaymentDueDateBalanceMessage;
@@ -1277,22 +1278,6 @@ end;
 procedure TfrmClients.btnTranAddClick(Sender: TObject);
 begin
   AddEditTransaction(true);
-//  pgTransactions.ActivePageIndex := 0;
-//  pgTransactionsChange(nil);
-//  if DM.qryCustomersCustNo.AsInteger <= 0 then
-//    begin
-//      MessageDlg('Please enter client information first', mtInformation, [mbOK], 0);
-//      exit;
-//    end;
-//
-//  frmEnterTransaction := TfrmEnterTransaction.Create(Self);
-//  try
-//    frmEnterTransaction.NewRow := true;
-//    frmEnterTransaction.CustNo := 0;
-//    frmEnterTransaction.ShowModal;
-//  finally
-//    frmEnterTransaction.Free;
-//  end;
 end;
 
 procedure TfrmClients.btnTranEditClick(Sender: TObject);
@@ -1313,6 +1298,12 @@ end;
 procedure TfrmClients.AddEditPayments(NewRow: boolean);
 begin
   pgTransDetail.ActivePageIndex := 0;
+
+  if IsInactiveLayawaySelected then
+    begin
+      MessageDlg('Payments cannot be added or modified on an inactive layaway. Re-open the layaway first.', mtInformation, [mbOK], 0);
+      exit;
+    end;
 
   if pgTransactions.ActivePageIndex <> 2 then
     begin
@@ -1338,6 +1329,7 @@ begin
           begin
             DM.qryPayments.Close;
             DM.qryPayments.Open;
+            DM.RefreshFBQry(qryInvItems);
           end;
       finally
         frmPaymentLayaway.Free;
@@ -1369,6 +1361,12 @@ end;
 
 procedure TfrmClients.btnPayDeleteClick(Sender: TObject);
 begin
+  if IsInactiveLayawaySelected then
+    begin
+      MessageDlg('Payments cannot be deleted on an inactive layaway. Re-open the layaway first.', mtInformation, [mbOK], 0);
+      exit;
+    end;
+
   if MessageDlg('Are you sure you wish to delete this Payment?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       DM.qryPayments.Delete;
@@ -1555,6 +1553,7 @@ begin
       DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
     end;
 
+   DM.RefreshFBQry(DM.qryTransactions);
    DM.RefreshFBQry(qryInvItems);
 end;
 
@@ -1632,7 +1631,11 @@ end;
 
 function TfrmClients.GetPawnItemStatus: string;
 begin
-  if not qryInvItemsPAWNED_DATE.IsNull then
+  if qryInvItemsINV_ITEM_STATUS.AsString = TranForSale then
+    begin
+      Result := PawnItemStatus_ForSale;
+    end
+  else if not qryInvItemsPAWNED_DATE.IsNull then
     begin
       if not qryInvItemsREDEEMED_DATE.IsNull then
         begin
@@ -1652,6 +1655,13 @@ begin
       Result := GetItemAction;
       if Result = '' then
         Result := 'Purchased';
+    end
+  else if not qryInvItemsLAYAWAY_DATE.IsNull then
+    begin
+      if not qryInvItemsSOLD_DATE.IsNull then
+        Result := PawnItemStatus_Sold
+      else
+        Result := PawnItemStatus_Layaway;
     end
   else if not qryInvItemsSOLD_DATE.IsNull then
     begin
@@ -1969,17 +1979,16 @@ begin
 }
   frmEnterTransaction := TfrmEnterTransaction.Create(Self);
   try
-    frmEnterTransaction.NewRow := true;
-    frmEnterTransaction.CustNo := DM.qryCustomersCUST_NO.AsInteger;
     if OpenSQLStatementFB('select count(*) from TRANSACTIONS T1 JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_NO where T1.CUST_NO = ' + DM.qryCustomersCUST_NO.AsString) <= 0 then
-//    frmEnterTransaction.qryInvItems.RecordCount <= 0 then
       begin
         MessageDlg('No Existing transaction to copy items from.', mtInformation, [mbOK], 0);
         exit;
       end;
 
     SavePos := DM.qryTransactions.RecNo;
-    frmEnterTransaction.FilterByTransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+    frmEnterTransaction.PrepareForCopyItems(
+      DM.qryCustomersCUST_NO.AsInteger,
+      DM.qryTransactionsTRANSACTION_NO.AsInteger);
     if frmEnterTransaction.ShowModal = mrOk then
       begin
        qryInvItems.Close;
@@ -2088,7 +2097,8 @@ end;
 
 procedure TfrmClients.PopMnuLayawayPopup(Sender: TObject);
 begin
-  mnuReOpenLayaway.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'A';
+  mnuReOpenLayaway.Enabled := (DM.qryTransactionsTRAN_STATUS.AsString <> TranStatus_Active) and
+                              (DM.qryTransactionsTRAN_CLOSE_REASON.AsInteger <> LayawayCloseReasonCanceledReturned);
   mnuCloseLayaway.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'I';
 
 end;
@@ -2352,11 +2362,7 @@ end;
 
 procedure TfrmClients.mnuCloseLayawayClick(Sender: TObject);
 begin
-  if DM.qryTransactionsPRINC_BALANCE.AsCurrency > 0 then
-    if MessageDlg('The Layaway balance is not zero. Close Layaway?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
-      exit;
-
-  DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
+  btnCloseLayawayClick(Sender);
 
   DM.RefreshFBQry(DM.qryTransactions);
 
@@ -2392,6 +2398,13 @@ begin
 
   DM.RefreshFBQry(DM.qryTransactions);
   DM.RefreshFBQry(qryInvItems);
+end;
+
+function TfrmClients.IsInactiveLayawaySelected: boolean;
+begin
+  Result := (DM.qryTransactionsTRANSACTION_NO.AsInteger > 0) and
+            (DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway) and
+            (DM.qryTransactionsTRAN_STATUS.AsString = TranStatus_Inactive);
 end;
 
 procedure TfrmClients.lblPawnDefaultDateGetText(Sender: TObject;

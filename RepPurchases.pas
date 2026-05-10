@@ -24,7 +24,7 @@ type
     btnPrint: TRzBitBtn;
     qryPruchases: TFDQuery;
     qryPruchasesTranDate: TDateField;
-    qryPruchasesTranTicketNo: TStringField;
+    qryPruchasesTranTicketNo: TWideStringField;
     qryPruchasesPurchaseAmount: TFloatField;
     dsPruchases: TDataSource;
     DBPPruchases: TppDBPipeline;

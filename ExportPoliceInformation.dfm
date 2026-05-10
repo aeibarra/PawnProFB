@@ -570,7 +570,7 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       FieldName = 'ExportDate'
       DisplayFormat = 'mm/dd/yyyy hh:nn:ss AM/PM'
     end
-    object qryHistTranDaysFileName: TStringField
+    object qryHistTranDaysFileName: TWideStringField
       FieldName = 'FileName'
       Size = 50
     end
@@ -636,15 +636,15 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     object qryImagesNotExpImagesDataNo: TIntegerField
       FieldName = 'ImagesDataNo'
     end
-    object qryImagesNotExpImageDesc: TStringField
+    object qryImagesNotExpImageDesc: TWideStringField
       FieldName = 'ImageDesc'
       Size = 125
     end
-    object qryImagesNotExpTranTicketNo: TStringField
+    object qryImagesNotExpTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryImagesNotExpTranType: TStringField
+    object qryImagesNotExpTranType: TWideStringField
       FieldName = 'TranType'
       Size = 1
     end
@@ -695,14 +695,14 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     object qrySentImgImagesDataNo: TIntegerField
       FieldName = 'ImagesDataNo'
     end
-    object qrySentImgImageDesc: TStringField
+    object qrySentImgImageDesc: TWideStringField
       FieldName = 'ImageDesc'
       Size = 125
     end
     object qrySentImgUploadTime: TSQLTimeStampField
       FieldName = 'UploadTime'
     end
-    object qrySentImgUploadFileName: TStringField
+    object qrySentImgUploadFileName: TWideStringField
       FieldName = 'UploadFileName'
       Size = 50
     end

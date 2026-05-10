@@ -8,7 +8,9 @@
  *   IMAGES_TYPES, ITEM_STATUS, J_GENDERS, J_METALS, J_STONE_COLORS,
  *   J_STONE_SHAPES, J_STYLES, J_TYPES, PAYMENT_TYPES, STATES,
  *   TRANSACTION_TYPES, INV_CATEGORIES, EXPORT_FORMAT,
- *   TABLE_KEYS (PawnTicketNo and LayawayTicketNo counters at 0)
+ *   TABLE_KEYS (PawnTicketNo and LayawayTicketNo counters at 0),
+ *   STORE (single row: STORE_NO='0', STORE_NAME='TEST STORE', LEADS_ONLINE_FTP_ADDRESS=ftp.leadsonline.com,
+ *                      DEFAULT_WEIGHT_MEASURE_UNIT='P', SALES_TAX_PERC=7)
  ******************************************************************************/
 
 SET NAMES UTF8;
@@ -266,5 +268,9 @@ INSERT INTO EXPORT_FORMAT (DATA_FIELD_NAME, DATA_FIELD_TYPE, DATA_FIELD_MAX_SIZE
 
 INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) VALUES ('PawnTicketNo', 0);
 INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) VALUES ('LayawayTicketNo', 0);
+
+-- STORE (single row -- store admin fills the remaining fields through the app)
+
+INSERT INTO STORE (STORE_NO, STORE_NAME, LEADS_ONLINE_FTP_ADDRESS, DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC) VALUES ('0', 'TEST STORE', 'ftp.leadsonline.com', 'P', 7);
 
 COMMIT;

@@ -17,7 +17,7 @@ type
     btnExit: TBitBtn;
     gbImageList: TGroupBox;
     qryItemImages: TFDQuery;
-    qryItemImagesIMAGE_DESC: TStringField;
+    qryItemImagesIMAGE_DESC: TWideStringField;
     qryItemImagesCREATED: TSQLTimeStampField;
     dsItemImages: TDataSource;
     DBGrid1: TDBGrid;

@@ -23,7 +23,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
   private
-    { Private declarations }
+    OriginalPayAmount: Currency;
   public
     NewRow: boolean;
   end;
@@ -95,9 +95,7 @@ begin
     exit;
   end;
 
-  TotalPaid := DM.GetTotalPaid;
-  if NewRow then
-    TotalPaid := TotalPaid + DM.qryPaymentsPAY_AMOUNT.AsCurrency;
+  TotalPaid := DM.GetTotalPaid - OriginalPayAmount + DM.qryPaymentsPAY_AMOUNT.AsCurrency;
   PricBalance := DM.qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid;
 
   if PricBalance = 0  then
@@ -147,10 +145,12 @@ procedure TfrmPaymentLayaway.FormShow(Sender: TObject);
 begin
   if NewRow then
   begin
+    OriginalPayAmount := 0;
     DM.qryPayments.Append;
   end
   else
   begin
+    OriginalPayAmount := DM.qryPaymentsPAY_AMOUNT.AsCurrency;
     DM.qryPayments.Edit;
   end;
 

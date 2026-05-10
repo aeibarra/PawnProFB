@@ -178,7 +178,7 @@ object frmItemPictures: TfrmItemPictures
       FieldName = 'IMAG_REF_TO_ROW_NO'
       Origin = 'IMAG_REF_TO_ROW_NO'
     end
-    object qryItemImagesIMAGE_DESC: TStringField
+    object qryItemImagesIMAGE_DESC: TWideStringField
       FieldName = 'IMAGE_DESC'
       Origin = 'IMAGE_DESC'
       Size = 125

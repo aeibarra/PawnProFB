@@ -370,7 +370,7 @@ object frmEditInvItem: TfrmEditInvItem
       Origin = 'INV_CAT_NO'
       Required = True
     end
-    object qryCategoriesINV_CATEGORY: TStringField
+    object qryCategoriesINV_CATEGORY: TWideStringField
       FieldName = 'INV_CATEGORY'
       Origin = 'INV_CATEGORY'
       Size = 40
@@ -385,7 +385,7 @@ object frmEditInvItem: TfrmEditInvItem
       'ORDER BY INV_ITEM_BRAND')
     Left = 400
     Top = 240
-    object qryBrandsINV_ITEM_BRAND: TStringField
+    object qryBrandsINV_ITEM_BRAND: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
       Origin = 'INV_ITEM_BRAND'
       Size = 30

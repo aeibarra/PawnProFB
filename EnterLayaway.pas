@@ -58,6 +58,8 @@ begin
 end;
 
 procedure TfrmEnterLayaway.btnSaveClick(Sender: TObject);
+var
+  TotalPaid: Currency;
 begin
   if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
@@ -69,9 +71,10 @@ begin
   CalculateSalesTaxAndTotalAmount;
 
   if NewRow then
-  begin
-    DM.qryTransactionsPRINC_BALANCE.AsCurrency := DM.qryTransactionscTotalSalesAmount.AsCurrency;
-  end;
+    TotalPaid := 0
+  else
+    TotalPaid := DM.GetTotalPaid;
+  DM.qryTransactionsPRINC_BALANCE.AsCurrency := DM.qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid;
 
   if NewRow then
     DM.UpdateLastTicketNo(LayawayTicketNo, DM.qryTransactionsTRAN_TICKET_NO.AsInteger);

@@ -2633,7 +2633,7 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'Custno'
     end
-    object qryAllDataCustTicketNo: TStringField
+    object qryAllDataCustTicketNo: TWideStringField
       Tag = 1
       FieldName = 'CustTicketNo'
       Size = 15
@@ -2776,7 +2776,7 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'TranDate'
     end
-    object qryAllDataTranTicketNo: TStringField
+    object qryAllDataTranTicketNo: TWideStringField
       Tag = 1
       FieldName = 'TranTicketNo'
       Size = 30
@@ -2790,12 +2790,12 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'TranMaturity'
     end
-    object qryAllDataTranType: TStringField
+    object qryAllDataTranType: TWideStringField
       Tag = 1
       FieldName = 'TranType'
       Size = 1
     end
-    object qryAllDataTranStatus: TStringField
+    object qryAllDataTranStatus: TWideStringField
       Tag = 1
       FieldName = 'TranStatus'
       Size = 1
@@ -2828,7 +2828,7 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'InvItemNo'
     end
-    object qryAllDataInvItemBarcode: TStringField
+    object qryAllDataInvItemBarcode: TWideStringField
       Tag = 1
       FieldName = 'InvItemBarcode'
       Size = 30
@@ -2837,17 +2837,17 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'InvCatNo'
     end
-    object qryAllDataJType: TStringField
+    object qryAllDataJType: TWideStringField
       Tag = 1
       FieldName = 'JType'
       Size = 1
     end
-    object qryAllDataJStyle: TStringField
+    object qryAllDataJStyle: TWideStringField
       Tag = 1
       FieldName = 'JStyle'
       Size = 1
     end
-    object qryAllDataJMetal: TStringField
+    object qryAllDataJMetal: TWideStringField
       Tag = 1
       FieldName = 'JMetal'
       Size = 1
@@ -2856,7 +2856,7 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'InvItemCount'
     end
-    object qryAllDataNote: TStringField
+    object qryAllDataNote: TWideStringField
       Tag = 1
       FieldName = 'Note'
       Size = 80
@@ -2887,7 +2887,7 @@ object frmPawnMain: TfrmPawnMain
       FieldName = 'UnitPrice'
       Precision = 19
     end
-    object qryAllDataInvItemStatus: TStringField
+    object qryAllDataInvItemStatus: TWideStringField
       Tag = 1
       FieldName = 'InvItemStatus'
       Size = 1
@@ -2900,32 +2900,32 @@ object frmPawnMain: TfrmPawnMain
       Tag = 1
       FieldName = 'InvOriginalItemNo'
     end
-    object qryAllDataInvItemBrand: TStringField
+    object qryAllDataInvItemBrand: TWideStringField
       Tag = 1
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object qryAllDataSerialNumber: TStringField
+    object qryAllDataSerialNumber: TWideStringField
       Tag = 1
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object qryAllDataOwnerAppNumber: TStringField
+    object qryAllDataOwnerAppNumber: TWideStringField
       Tag = 1
       FieldName = 'OwnerAppNumber'
       Size = 40
     end
-    object qryAllDataModelNumber: TStringField
+    object qryAllDataModelNumber: TWideStringField
       Tag = 1
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object qryAllDataGender: TStringField
+    object qryAllDataGender: TWideStringField
       Tag = 1
       FieldName = 'Gender'
       Size = 1
     end
-    object qryAllDataDescription: TStringField
+    object qryAllDataDescription: TWideStringField
       Tag = 1
       FieldName = 'Description'
       Size = 120

@@ -50,11 +50,11 @@ type
     btnGetPawnAddingAllItemCost: TRzToolButton;
     lblItemsWithNoCost: TRzLabel;
     clnItemsToSelect: TClientDataSet;
-    clnItemsToSelectInvItemBarcode: TStringField;
+    clnItemsToSelectInvItemBarcode: TWideStringField;
     clnItemsToSelectInvCatNo: TIntegerField;
-    clnItemsToSelectJType: TStringField;
-    clnItemsToSelectJStyle: TStringField;
-    clnItemsToSelectJMetal: TStringField;
+    clnItemsToSelectJType: TWideStringField;
+    clnItemsToSelectJStyle: TWideStringField;
+    clnItemsToSelectJMetal: TWideStringField;
     clnItemsToSelectInvItemCount: TIntegerField;
     clnItemsToSelectSizeLength: TFloatField;
     clnItemsToSelectWeight: TFloatField;
@@ -62,47 +62,47 @@ type
     clnItemsToSelectCreated: TDateTimeField;
     clnItemsToSelectUnitCost: TBCDField;
     clnItemsToSelectUnitPrice: TBCDField;
-    clnItemsToSelectInvItemStatus: TStringField;
+    clnItemsToSelectInvItemStatus: TWideStringField;
     clnItemsToSelectTransactionNo: TIntegerField;
     clnItemsToSelectInvOriginalItemNo: TIntegerField;
-    clnItemsToSelectInvItemBrand: TStringField;
-    clnItemsToSelectSerialNumber: TStringField;
-    clnItemsToSelectOwnerAppNumber: TStringField;
-    clnItemsToSelectModelNumber: TStringField;
-    clnItemsToSelectGender: TStringField;
-    clnItemsToSelectDescription: TStringField;
-    clnItemsToSelectJStyleDesc: TStringField;
-    clnItemsToSelectJTypeDesc: TStringField;
-    clnItemsToSelectJMetalDesc: TStringField;
+    clnItemsToSelectInvItemBrand: TWideStringField;
+    clnItemsToSelectSerialNumber: TWideStringField;
+    clnItemsToSelectOwnerAppNumber: TWideStringField;
+    clnItemsToSelectModelNumber: TWideStringField;
+    clnItemsToSelectGender: TWideStringField;
+    clnItemsToSelectDescription: TWideStringField;
+    clnItemsToSelectJStyleDesc: TWideStringField;
+    clnItemsToSelectJTypeDesc: TWideStringField;
+    clnItemsToSelectJMetalDesc: TWideStringField;
     clnItemsToSelectInvItemNo: TIntegerField;
-    clnItemsToSelectInvCategory: TStringField;
-    clnItemsToSelectNote: TStringField;
+    clnItemsToSelectInvCategory: TWideStringField;
+    clnItemsToSelectNote: TWideStringField;
     lblUnderAge: TLabel;
     qryInvItems: TFDQuery;
     qryInvItemsINV_ITEM_NO: TIntegerField;
-    qryInvItemsINV_ITEM_BARCODE: TStringField;
+    qryInvItemsINV_ITEM_BARCODE: TWideStringField;
     qryInvItemsINV_CAT_NO: TIntegerField;
-    qryInvItemsJ_TYPE: TStringField;
-    qryInvItemsJ_STYLE: TStringField;
-    qryInvItemsJ_METAL: TStringField;
+    qryInvItemsJ_TYPE: TWideStringField;
+    qryInvItemsJ_STYLE: TWideStringField;
+    qryInvItemsJ_METAL: TWideStringField;
     qryInvItemsINV_ITEM_COUNT: TIntegerField;
-    qryInvItemsNOTE: TStringField;
+    qryInvItemsNOTE: TWideStringField;
     qryInvItemsSIZE_LENGTH: TFloatField;
     qryInvItemsWEIGHT: TFloatField;
     qryInvItemsKT: TFloatField;
     qryInvItemsCREATED: TSQLTimeStampField;
     qryInvItemsUNIT_COST: TFMTBCDField;
     qryInvItemsUNIT_PRICE: TFMTBCDField;
-    qryInvItemsINV_ITEM_STATUS: TStringField;
+    qryInvItemsINV_ITEM_STATUS: TWideStringField;
     qryInvItemsTRANSACTION_NO: TIntegerField;
     qryInvItemsINV_ORIGINAL_ITEM_NO: TIntegerField;
-    qryInvItemsINV_ITEM_BRAND: TStringField;
-    qryInvItemsSERIAL_NUMBER: TStringField;
-    qryInvItemsOWNER_APP_NUMBER: TStringField;
-    qryInvItemsMODEL_NUMBER: TStringField;
-    qryInvItemsGENDER: TStringField;
-    qryInvItemsDESCRIPTION: TStringField;
-    qryInvItemsWEIGHT_UNIT: TStringField;
+    qryInvItemsINV_ITEM_BRAND: TWideStringField;
+    qryInvItemsSERIAL_NUMBER: TWideStringField;
+    qryInvItemsOWNER_APP_NUMBER: TWideStringField;
+    qryInvItemsMODEL_NUMBER: TWideStringField;
+    qryInvItemsGENDER: TWideStringField;
+    qryInvItemsDESCRIPTION: TWideStringField;
+    qryInvItemsWEIGHT_UNIT: TWideStringField;
     qryInvItemsPAWNED_DATE: TDateField;
     qryInvItemsPURCHASE_DATE: TDateField;
     qryInvItemsREDEEMED_DATE: TDateField;
@@ -111,12 +111,13 @@ type
     qryInvItemsFORSALE_DATE: TDateField;
     qryInvItemsSOLD_DATE: TDateField;
     qryInvItemsLAYAWAY_DATE: TDateField;
-    qryInvItemsINV_CATEGORY: TStringField;
-    qryInvItemsJ_STYLE_DESC: TStringField;
-    qryInvItemsJ_TYPE_DESC: TStringField;
-    qryInvItemsJ_METAL_DESC: TStringField;
+    qryInvItemsINV_CATEGORY: TWideStringField;
+    qryInvItemsJ_STYLE_DESC: TWideStringField;
+    qryInvItemsJ_TYPE_DESC: TWideStringField;
+    qryInvItemsJ_METAL_DESC: TWideStringField;
     qryInsItems: TFDQuery;
     btnViewInLargeGrid: TRzToolButton;
+    btnRecalcIntSameDayCreated: TRzToolButton;
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -137,23 +138,33 @@ type
     procedure edInterestExit(Sender: TObject);
     procedure edInterestChange(Sender: TObject);
     procedure btnViewInLargeGridClick(Sender: TObject);
+    procedure btnRecalcIntSameDayCreatedClick(Sender: TObject);
   private
     LastIndexUsed: string;
     IntChanged: boolean;
+    FCopySourceCustNo: integer;
+    FCopySourceTransactionNo: integer;
     procedure OpenLookupItemQry;
     function GetLastTicketNo: integer;
+    function CopyItemsMode: Boolean;
     { Private declarations }
   public
     { Public declarations }
     NewRow: boolean;
-    CustNo: integer;
     SelectedItemList: TStringList;
-    FilterByTransactionNo: integer;
+    // Call this only for the "copy items from previous pawn" entry. Plain
+    // add/edit doesn't need it -- copy mode stays off by default. Implies
+    // NewRow := True since copy-items only makes sense for new transactions.
+    procedure PrepareForCopyItems(SourceCustNo, SourceTransactionNo: integer);
     function InItemList(ItemNo: integer): boolean;
     procedure ClearAllItems;
     procedure CheckAllItems;
     procedure RemoveFromItemList(ItemNo: integer);
     procedure AddToItemList(ItemNo: integer);
+    // Exposed read-only so the items-to-copy large grid form can read the
+    // source customer/transaction without poking at private fields.
+    property CopySourceCustNo: integer read FCopySourceCustNo;
+    property CopySourceTransactionNo: integer read FCopySourceTransactionNo;
   end;
 
 var
@@ -168,6 +179,20 @@ uses PawnDM, PawnGlobal, ItemsToCopyLargeGrid, GLbUtils, SearchClient;
 function TfrmEnterTransaction.InItemList(ItemNo: integer): boolean;
 begin
   Result := SelectedItemList.IndexOf(IntToStr(ItemNo)) >= 0;
+end;
+
+function TfrmEnterTransaction.CopyItemsMode: Boolean;
+begin
+  // Source customer set -> we're in the "copy items from previous pawn" flow.
+  // Plain add/edit leaves FCopySourceCustNo at its default of 0.
+  Result := FCopySourceCustNo > 0;
+end;
+
+procedure TfrmEnterTransaction.PrepareForCopyItems(SourceCustNo, SourceTransactionNo: integer);
+begin
+  FCopySourceCustNo := SourceCustNo;
+  FCopySourceTransactionNo := SourceTransactionNo;
+  NewRow := True;
 end;
 
 procedure TfrmEnterTransaction.AddToItemList(ItemNo: integer);
@@ -188,10 +213,7 @@ var
   i: integer;
 begin
   if clnItemsToSelect.Active then
-    begin
-      clnItemsToSelect.EmptyDataSet;
-      clnItemsToSelect.Close;
-    end;
+    clnItemsToSelect.Close;
 
   clnItemsToSelect.DisableControls;
   try
@@ -202,14 +224,14 @@ begin
     clnItemsToSelect.CreateDataSet;
 
     //Open Items Previous Items Look up
-    if (FilterByTransactionNo <= 0) or (not chkShowOnlyInTran.Checked) then
+    if (FCopySourceTransactionNo <= 0) or (not chkShowOnlyInTran.Checked) then
       FilterByTransactionNoVar := null
     else
-      FilterByTransactionNoVar := FilterByTransactionNo;
+      FilterByTransactionNoVar := FCopySourceTransactionNo;
 
     qryInvItems.Close;
     qryInvItems.Params.ParamByName('TRANSACTION_NO').Value := FilterByTransactionNoVar;
-    qryInvItems.Params.ParamByName('CUST_NO').AsInteger := CustNo;
+    qryInvItems.Params.ParamByName('CUST_NO').AsInteger := FCopySourceCustNo;
     qryInvItems.Open;
 
     //Load ClientDataSet
@@ -257,25 +279,17 @@ end;
 
 procedure TfrmEnterTransaction.FormShow(Sender: TObject);
 begin
-  pnSelectItemsToCopy.Visible := CustNo > 0;
-  if CustNo > 0 then
+  pnSelectItemsToCopy.Visible := CopyItemsMode;
+  if CopyItemsMode then
     begin
-//      Height := 512;
-//      Width := 643;
-      pnSelectItemsToCopy.Visible := true;
-
       OpenLookupItemQry;
-
     end
   else
     begin
-//      Height := 242;
-//      Width := 371;
       gbTop.Width := edMaturityDate.Left + edMaturityDate.Width + 15;
       gbTop.Height := edMemoComment.Top + edMemoComment.Height + 15;
       gbBottom.Width := gbTop.Width;
       gbBottom.Top := gbTop.Top + gbTop.Height + 5;
-      pnSelectItemsToCopy.Visible := false;
     end;
 
   FrmSetViewSize(Self);
@@ -292,8 +306,18 @@ begin
       edPrincBalance.SetFocus;
     end;
 
+  // "Re-Calc Interest" only makes sense when editing a Pawn transaction on the
+  // same day it was created -- recalculating after that would change historical
+  // interest already reflected on the customer's ticket.
+  btnRecalcIntSameDayCreated.Visible :=
+    (not NewRow) and
+    (DM.qryTransactionsTRAN_TYPE.AsString = TranPawn) and
+    (DM.qryTransactionsTRAN_DATE.AsDateTime = Date);
 
-  CheckAllItems;
+  // Only meaningful when clnItemsToSelect is loaded; CheckAllItems is itself
+  // a no-op otherwise but calling it conditionally reads correctly.
+  if CopyItemsMode then
+    CheckAllItems;
 end;
 
 procedure TfrmEnterTransaction.btnCancelClick(Sender: TObject);
@@ -369,9 +393,12 @@ begin
         StoneQry := TFDQuery.Create(nil);
         try
           StoneQry.Connection := DM.ConnFB;
+          // Carry STONE_WEIGHT_UNIT from the source; fall back to the store
+          // default when the source row didn't set it (legacy data).
           StoneQry.SQL.Text :=
-            'INSERT INTO STONES (INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE) ' +
-            'SELECT :NEW_INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE ' +
+            'INSERT INTO STONES (INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT) ' +
+            'SELECT :NEW_INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE, ' +
+            '       COALESCE(STONE_WEIGHT_UNIT, :DEFAULT_WEIGHT_UNIT) ' +
             'FROM STONES ' +
             'WHERE INV_ITEM_NO = :OLD_INV_ITEM_NO';
 
@@ -401,6 +428,7 @@ begin
                   qryInsItems.Params.ParamByName('MODEL_NUMBER').Value := clnItemsToSelectModelNumber.Value;
                   qryInsItems.Params.ParamByName('DESCRIPTION').Value := clnItemsToSelectDescription.Value;
                   qryInsItems.Params.ParamByName('GENDER').Value := clnItemsToSelectGender.Value;
+                  qryInsItems.Params.ParamByName('WEIGHT_UNIT').AsString := DefaultWeightMeasureUnit;
 
                   qryInsItems.Open;
                   NewInvItemNo := qryInsItems.FieldByName('INV_ITEM_NO').AsInteger;
@@ -412,6 +440,7 @@ begin
 
                   StoneQry.Params.ParamByName('NEW_INV_ITEM_NO').AsInteger := NewInvItemNo;
                   StoneQry.Params.ParamByName('OLD_INV_ITEM_NO').AsInteger := clnItemsToSelectInvItemNo.AsInteger;
+                  StoneQry.Params.ParamByName('DEFAULT_WEIGHT_UNIT').AsString := DefaultWeightMeasureUnit;
                   StoneQry.ExecSQL;
                 end;
 
@@ -427,8 +456,9 @@ begin
 
     if StartedFBTrans and DM.ConnFB.InTransaction then
       DM.ConnFB.Commit;
-    Application.ProcessMessages;
-    DM.qryTransactions.Refresh;
+
+//    Application.ProcessMessages;
+//    DM.qryTransactions.Refresh;
   except
     if StartedFBTrans and DM.ConnFB.InTransaction then
       DM.ConnFB.Rollback;
@@ -452,6 +482,9 @@ end;
 
 procedure TfrmEnterTransaction.dbGridItemsCellClick(Column: TColumn);
 begin
+  // Defensively check Active; the panel is hidden in add/edit mode but events
+  // can still fire from programmatic invalidation, focus changes, etc.
+  if not clnItemsToSelect.Active then exit;
   if clnItemsToSelectInvItemNo.IsNull or (Column.Index <> 0) then
     exit;
 
@@ -460,7 +493,7 @@ begin
    else
      AddToItemList(clnItemsToSelectInvItemNo.AsInteger);
 
-   dbGridItems.Invalidate;  
+   dbGridItems.Invalidate;
 end;
 
 procedure TfrmEnterTransaction.FormCreate(Sender: TObject);
@@ -498,6 +531,7 @@ procedure TfrmEnterTransaction.dbGridItemsDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn;
   State: TGridDrawState);
 begin
+  if not clnItemsToSelect.Active then exit;
   if clnItemsToSelectInvItemNo.IsNull then
     exit;
 
@@ -506,6 +540,7 @@ end;
 
 procedure TfrmEnterTransaction.dbGridItemsTitleClick(Column: TColumn);
 begin
+  if not clnItemsToSelect.Active then exit;
   DoGridSorting(dbGridItems, Column, clnItemsToSelect, LastIndexUsed, WriteLogFile);
 end;
 
@@ -611,6 +646,11 @@ begin
       begin
         lblItemsWithNoCost.Visible := false;
       end;
+end;
+
+procedure TfrmEnterTransaction.btnRecalcIntSameDayCreatedClick(Sender: TObject);
+begin
+  edPawnAmountExit(nil);
 end;
 
 procedure TfrmEnterTransaction.Second1Click(Sender: TObject);

@@ -31,7 +31,7 @@ type
     cbStoneType: TDBComboBox;
     Label4: TLabel;
     qryStoneTypes: TFDQuery;
-    qryStoneTypesSTONE_TYPE: TStringField;
+    qryStoneTypesSTONE_TYPE: TWideStringField;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -69,20 +69,10 @@ begin
    end;
   qryStoneTypes.Close;
 
-//  if NewRow then
-//    begin
-//      frmInventory.qryStones.Append;
-//    end
-//  else
-//    begin
-//      frmInventory.qryStones.Edit;
-//    end;
 end;
 
 procedure TfrmEnterStoneInfo.btnSaveClick(Sender: TObject);
 begin
-//  frmInventory.qryStones.Post;
-//  frmInventory.qryStones.ApplyUpdates;
   ModalResult := mrOK;
 end;
 

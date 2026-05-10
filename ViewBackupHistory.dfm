@@ -110,7 +110,7 @@ object frmViewBackupHist: TfrmViewBackupHist
       FieldName = 'BckDate'
       DisplayFormat = 'mm/dd/yyyy hh:nn am/pm'
     end
-    object qryBckHistBckPath: TStringField
+    object qryBckHistBckPath: TWideStringField
       FieldName = 'BckPath'
       Size = 120
     end

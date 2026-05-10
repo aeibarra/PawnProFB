@@ -1,4 +1,4 @@
-﻿unit PawnMain;
+unit PawnMain;
 
 {$WARN SYMBOL_PLATFORM OFF}
 {$WARN UNIT_PLATFORM OFF}
@@ -34,7 +34,7 @@ type
     SaveDialog: TSaveDialog;
     qryAllData: TFDQuery;
     qryAllDataCustno: TIntegerField;
-    qryAllDataCustTicketNo: TStringField;
+    qryAllDataCustTicketNo: TWideStringField;
     qryAllDataCustLast: TWideStringField;
     qryAllDataCustFirst: TWideStringField;
     qryAllDataCustMid: TWideStringField;
@@ -64,11 +64,11 @@ type
     qryAllDataTransactionNo: TIntegerField;
     qryAllDataCustNo_1: TIntegerField;
     qryAllDataTranDate: TDateField;
-    qryAllDataTranTicketNo: TStringField;
+    qryAllDataTranTicketNo: TWideStringField;
     qryAllDataTranComment: TMemoField;
     qryAllDataTranMaturity: TDateField;
-    qryAllDataTranType: TStringField;
-    qryAllDataTranStatus: TStringField;
+    qryAllDataTranType: TWideStringField;
+    qryAllDataTranStatus: TWideStringField;
     qryAllDataTranVoidDate: TSQLTimeStampField;
     qryAllDataTranPawnAmount: TFloatField;
     qryAllDataTranInterest: TFloatField;
@@ -76,28 +76,28 @@ type
     qryAllDataInsterestBalance: TFloatField;
     qryAllDataTranTime: TTimeField;
     qryAllDataInvItemNo: TIntegerField;
-    qryAllDataInvItemBarcode: TStringField;
+    qryAllDataInvItemBarcode: TWideStringField;
     qryAllDataInvCatNo: TIntegerField;
-    qryAllDataJType: TStringField;
-    qryAllDataJStyle: TStringField;
-    qryAllDataJMetal: TStringField;
+    qryAllDataJType: TWideStringField;
+    qryAllDataJStyle: TWideStringField;
+    qryAllDataJMetal: TWideStringField;
     qryAllDataInvItemCount: TIntegerField;
-    qryAllDataNote: TStringField;
+    qryAllDataNote: TWideStringField;
     qryAllDataSizeLength: TFloatField;
     qryAllDataWeight: TFloatField;
     qryAllDataKT: TFloatField;
     qryAllDataCreated: TSQLTimeStampField;
     qryAllDataUnitCost: TFMTBCDField;
     qryAllDataUnitPrice: TFMTBCDField;
-    qryAllDataInvItemStatus: TStringField;
+    qryAllDataInvItemStatus: TWideStringField;
     qryAllDataTransactionNo_1: TIntegerField;
     qryAllDataInvOriginalItemNo: TIntegerField;
-    qryAllDataInvItemBrand: TStringField;
-    qryAllDataSerialNumber: TStringField;
-    qryAllDataOwnerAppNumber: TStringField;
-    qryAllDataModelNumber: TStringField;
-    qryAllDataGender: TStringField;
-    qryAllDataDescription: TStringField;
+    qryAllDataInvItemBrand: TWideStringField;
+    qryAllDataSerialNumber: TWideStringField;
+    qryAllDataOwnerAppNumber: TWideStringField;
+    qryAllDataModelNumber: TWideStringField;
+    qryAllDataGender: TWideStringField;
+    qryAllDataDescription: TWideStringField;
     ActionListMainForm: TActionList;
     actClientPawnAndPurchase: TAction;
     actInventory: TAction;

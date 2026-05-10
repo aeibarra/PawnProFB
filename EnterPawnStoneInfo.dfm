@@ -258,7 +258,7 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       'ORDER BY STONE_TYPE')
     Left = 522
     Top = 100
-    object qryStoneTypesSTONE_TYPE: TStringField
+    object qryStoneTypesSTONE_TYPE: TWideStringField
       FieldName = 'STONE_TYPE'
       Origin = 'STONE_TYPE'
       Size = 30
@@ -273,12 +273,12 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
     FieldDefs = <
       item
         Name = 'WeigthUnitValue'
-        DataType = ftString
+        DataType = ftWideString
         Size = 1
       end
       item
         Name = 'WeightUnit'
-        DataType = ftString
+        DataType = ftWideString
         Size = 50
       end>
     IndexDefs = <>
@@ -286,11 +286,11 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
     StoreDefs = True
     Left = 631
     Top = 33
-    object clnWeigthUnitsWeigthUnitValue: TStringField
+    object clnWeigthUnitsWeigthUnitValue: TWideStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
     end
-    object clnWeigthUnitsWeightUnit: TStringField
+    object clnWeigthUnitsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 50
     end

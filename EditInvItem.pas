@@ -48,10 +48,10 @@ type
     dsCategories: TDataSource;
     qryCategories: TFDQuery;
     qryCategoriesINV_CAT_NO: TIntegerField;
-    qryCategoriesINV_CATEGORY: TStringField;
+    qryCategoriesINV_CATEGORY: TWideStringField;
     Label13: TLabel;
     qryBrands: TFDQuery;
-    qryBrandsINV_ITEM_BRAND: TStringField;
+    qryBrandsINV_ITEM_BRAND: TWideStringField;
     cbBrand: TDBComboBox;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);

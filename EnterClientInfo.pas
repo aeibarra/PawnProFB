@@ -75,11 +75,11 @@ type
     cbEyes: TComboBox;
     cbHair: TComboBox;
     lblCustAge: TRzLabel;
-    edFLDriverLicense: TPawnFLDLEdit;
-    edCellNumber: TPawnPhoneEdit;
-    edHomePhoneNumber: TPawnPhoneEdit;
-    edBussinessPhoneNumber: TPawnPhoneEdit;
-    edOtherPhoneNumber: TPawnPhoneEdit;
+    edCellNumber: TDBPawnPhoneEdit;
+    edHomePhoneNumber: TDBPawnPhoneEdit;
+    edBussinessPhoneNumber: TDBPawnPhoneEdit;
+    edOtherPhoneNumber: TDBPawnPhoneEdit;
+    edFLDriverLicense: TDBPawnFLDLEdit;
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -111,26 +111,10 @@ type
     function GetHairColor: string;
     procedure SetHairColor(const Value: string);
     procedure PopulateID(const IdNumber: string; State: string);
-    function GetCellNumber: string;
-    function GetDriverLicense: string;
-    function GetHomePhoneNumber: string;
-    function GetOtherPhoneNumber: string;
-    procedure SetCellNumber(const Value: string);
-    procedure SetDriverLicense(const Value: string);
-    procedure SetHomePhoneNumber(const Value: string);
-    procedure SetOtherPhoneNumber(const Value: string);
-    function GetBussinessPhoneNumber: string;
-    procedure SetBussinessPhoneNumber(const Value: string);
     property CustomerGender: string read GetGender write SetGender;
     property CustomerRace: string read GetRace write SetRace;
     property CustomerEyesColor: string read GetEyesColor write SetEyesColor;
     property CustomerHairColor: string read GetHairColor write SetHairColor;
-
-    property CustomerDriverLicense: string read GetDriverLicense write SetDriverLicense;
-    property CustomerCellNumber: string read GetCellNumber write SetCellNumber;
-    property CustomerHomePhoneNumber: string read GetHomePhoneNumber write SetHomePhoneNumber;
-    property CustomerBussinessPhoneNumber: string read GetBussinessPhoneNumber write SetBussinessPhoneNumber;
-    property CustomerOtherPhoneNumber: string read GetOtherPhoneNumber write SetOtherPhoneNumber;
 
     procedure AddToKeyQueue(Key: Word);
     function MatchLastKeys(KeyPattern: TKeyQueue): boolean;
@@ -332,21 +316,6 @@ begin
   end; //case
 end;
 
-procedure TfrmEnterClientInfo.SetBussinessPhoneNumber(const Value: string);
-begin
-  edBussinessPhoneNumber.Digits := Value;
-end;
-
-procedure TfrmEnterClientInfo.SetCellNumber(const Value: string);
-begin
-  edCellNumber.Digits := Value;
-end;
-
-procedure TfrmEnterClientInfo.SetDriverLicense(const Value: string);
-begin
-  edFLDriverLicense.Code := Value;
-end;
-
 procedure TfrmEnterClientInfo.SetEyesColor(const Value: string);
 var
  ItmIdx: integer;
@@ -369,21 +338,6 @@ begin
     ItmIdx := 5;
 
   cbEyes.ItemIndex := ItmIdx;
-end;
-
-function TfrmEnterClientInfo.GetBussinessPhoneNumber: string;
-begin
-  Result := edBussinessPhoneNumber.Digits;
-end;
-
-function TfrmEnterClientInfo.GetCellNumber: string;
-begin
-  Result := edCellNumber.Digits;
-end;
-
-function TfrmEnterClientInfo.GetDriverLicense: string;
-begin
-  Result := edFLDriverLicense.Code;
 end;
 
 function TfrmEnterClientInfo.GetEyesColor: string;
@@ -427,16 +381,6 @@ begin
   cbHair.ItemIndex := ItmIdx;
 end;
 
-procedure TfrmEnterClientInfo.SetHomePhoneNumber(const Value: string);
-begin
-  edHomePhoneNumber.Digits := Value;
-end;
-
-procedure TfrmEnterClientInfo.SetOtherPhoneNumber(const Value: string);
-begin
-  edOtherPhoneNumber.Digits := Value;
-end;
-
 function TfrmEnterClientInfo.GetHairColor: string;
 var
  ItmIdx: integer;
@@ -455,16 +399,6 @@ begin
 
 end;
 
-function TfrmEnterClientInfo.GetHomePhoneNumber: string;
-begin
-  Result := edHomePhoneNumber.Digits;
-end;
-
-function TfrmEnterClientInfo.GetOtherPhoneNumber: string;
-begin
-  Result := edOtherPhoneNumber.Digits;
-end;
-
 procedure TfrmEnterClientInfo.FormShow(Sender: TObject);
 begin
   FrmSetViewSize(Self);
@@ -481,12 +415,7 @@ begin
       CustomerRace := DM.qryCustomersCUST_RACE.AsString;
       CustomerEyesColor := DM.qryCustomersCUST_EYES.AsString;
       CustomerHairColor := DM.qryCustomersCUST_HAIR.AsString;
-
-      CustomerDriverLicense := DM.qryCustomersCUST_FL_DRV_LIC.AsString;
-      CustomerCellNumber := DM.qryCustomersCUST_PH_CELL.AsString;
-      CustomerHomePhoneNumber := DM.qryCustomerscCustPhHome.AsString;
-      CustomerBussinessPhoneNumber := DM.qryCustomersCCustPhBussiness.AsString;
-      CustomerOtherPhoneNumber := DM.qryCustomersCCustPhBeep.AsString;
+      // Phone numbers are now data-bound via TDBPawnPhoneEdit (DataSource/DataField).
     end;
 
   edFirst.SetFocus;
@@ -531,11 +460,8 @@ begin
   DM.qryCustomersCUST_EYES.AsString := CustomerEyesColor;
   DM.qryCustomersCUST_HAIR.AsString := CustomerHairColor;
 
-  DM.qryCustomersCUST_FL_DRV_LIC.AsString := CustomerDriverLicense;
-  DM.qryCustomersCUST_PH_CELL.AsString := CustomerCellNumber;
-  DM.qryCustomerscCustPhHome.AsString := CustomerHomePhoneNumber;
-  DM.qryCustomersCCustPhBussiness.AsString := CustomerBussinessPhoneNumber;
-  DM.qryCustomersCCustPhBeep.AsString := CustomerOtherPhoneNumber;
+  // Phone numbers are pushed back to the dataset by TDBPawnPhoneEdit on focus
+  // change (btnSave.SetFocus above forces UpdateRecord), so no manual copy here.
 
   if NewRow then
     begin
@@ -568,16 +494,16 @@ end;
 
 procedure TfrmEnterClientInfo.btnCalcLicClick(Sender: TObject);
 begin
-//   DM.qryCustomersCUST_FL_DRV_LIC.AsString := FloridaLic(DM.qryCustomersCUST_LAST.AsString,
-//                                                     DM.qryCustomersCUST_FIRST.AsString,
-//                                                     DM.qryCustomersCUST_MID.AsString,
-//                                                     DM.qryCustomersCUST_DOB.AsDateTime,
-//                                                     GetGender);
+  DM.qryCustomersCUST_FL_DRV_LIC.AsString := FloridaLic(DM.qryCustomersCUST_LAST.AsString,
+                                                        DM.qryCustomersCUST_FIRST.AsString,
+                                                        DM.qryCustomersCUST_MID.AsString,
+                                                        DM.qryCustomersCUST_DOB.AsDateTime,
+                                                        GetGender);
 end;
 
 procedure TfrmEnterClientInfo.txtFlDrvLicAfterEnter(Sender: TObject);
 begin
-  if DM.qryCustomersCUST_FL_DRV_LIC.IsNull then
+  if trim(DM.qryCustomersCUST_FL_DRV_LIC.AsString) = '' then
     btnCalcLicClick(nil);
 end;
 

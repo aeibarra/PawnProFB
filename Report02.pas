@@ -27,8 +27,8 @@ type
     qryPawnAndPurchasesCustMid: TWideStringField;
     qryPawnAndPurchasesCustLast: TWideStringField;
     qryPawnAndPurchasesCustPhCell: TWideStringField;
-    qryPawnAndPurchasesTranTicketNo: TStringField;
-    qryPawnAndPurchasesTranType: TStringField;
+    qryPawnAndPurchasesTranTicketNo: TWideStringField;
+    qryPawnAndPurchasesTranType: TWideStringField;
     qryPawnAndPurchasesTranPawnAmount: TFloatField;
     qryPawnAndPurchasesTranInterest: TFloatField;
     qryPawnAndPurchasesPrincBalance: TFloatField;
@@ -47,7 +47,7 @@ type
     lblRep1PawnAndPurchaseTitle: TppLabel;
     ppSystemVariable1: TppSystemVariable;
     ppSystemVariable2: TppSystemVariable;
-    qryPawnAndPurchasescFullName: TStringField;
+    qryPawnAndPurchasescFullName: TWideStringField;
     ppDBText1: TppDBText;
     ppLine1: TppLine;
     ppLabel2: TppLabel;
@@ -72,12 +72,12 @@ type
     ppDBCalc1: TppDBCalc;
     ppDBCalc2: TppDBCalc;
     ppDBCalc3: TppDBCalc;
-    qryPawnAndPurchasesTranTypeDesc: TStringField;
+    qryPawnAndPurchasesTranTypeDesc: TWideStringField;
     qryTranPayments: TFDQuery;
     dsTranPayments: TDataSource;
     DBPTranPayments: TppDBPipeline;
     RepTranPayments: TppReport;
-    qryTranPaymentscFullName: TStringField;
+    qryTranPaymentscFullName: TWideStringField;
     qryTranPaymentsPayDate: TDateField;
     qryTranPaymentsPayAmount: TFloatField;
     qryTranPaymentsPayPrincipal: TFloatField;
@@ -86,8 +86,8 @@ type
     qryTranPaymentsCustMid: TWideStringField;
     qryTranPaymentsCustLast: TWideStringField;
     qryTranPaymentsCustPhCell: TWideStringField;
-    qryTranPaymentsTranTicketNo: TStringField;
-    qryTranPaymentsTranType: TStringField;
+    qryTranPaymentsTranTicketNo: TWideStringField;
+    qryTranPaymentsTranType: TWideStringField;
     qryTranPaymentsTranPawnAmount: TFloatField;
     qryTranPaymentsTranInterest: TFloatField;
     qryTranPaymentsPrincBalance: TFloatField;
@@ -95,7 +95,7 @@ type
     qryTranPaymentsTranDate: TDateField;
     qryTranPaymentsTranTime: TTimeField;
     qryTranPaymentsTranMaturity: TDateField;
-    qryTranPaymentsTranTypeDesc: TStringField;
+    qryTranPaymentsTranTypeDesc: TWideStringField;
     ppParameterList2: TppParameterList;
     ppDesignLayers2: TppDesignLayers;
     ppDesignLayer2: TppDesignLayer;

@@ -35,7 +35,7 @@ type
     qryPrnPayReceiptPayPrincipal: TFloatField;
     qryPrnPayReceiptTranDate: TDateField;
     qryPrnPayReceiptTranPawnAmount: TFloatField;
-    qryPrnPayReceiptTranTicketNo: TStringField;
+    qryPrnPayReceiptTranTicketNo: TWideStringField;
     qryPrnPayReceiptPrincBalance: TFloatField;
     qryPrnPayReceiptCustFirst: TWideStringField;
     qryPrnPayReceiptCustMid: TWideStringField;
@@ -43,12 +43,12 @@ type
     qryPrnPayReceiptCustPhCell: TWideStringField;
     qryPrnPayReceiptCustPhHome: TWideStringField;
     qryPrnPayReceiptCustPhBussiness: TWideStringField;
-    qryPrnPayReceiptcFullName: TStringField;
+    qryPrnPayReceiptcFullName: TWideStringField;
     ppDBText2: TppDBText;
     ppDBText3: TppDBText;
     ppLabel1: TppLabel;
-    qryPrnPayReceiptcCustomerPhones: TStringField;
-    qryPrnPayReceiptcCustId: TStringField;
+    qryPrnPayReceiptcCustomerPhones: TWideStringField;
+    qryPrnPayReceiptcCustId: TWideStringField;
     qryPrnPayReceiptCustFlDrvLic: TWideStringField;
     qryPrnPayReceiptCustIDType: TWideStringField;
     qryPrnPayReceiptCustID: TWideStringField;
@@ -56,7 +56,7 @@ type
     ppDBText4: TppDBText;
     qryTranItems: TFDQuery;
     dsTranItems: TDataSource;
-    qryTranItemsDescription: TStringField;
+    qryTranItemsDescription: TWideStringField;
     qryTranItemsKT: TFloatField;
     qryTranItemsWeight: TFloatField;
     qryTranItemsWUnit: TWideStringField;
@@ -93,16 +93,16 @@ type
     ppParameterList2: TppParameterList;
     ppDesignLayers2: TppDesignLayers;
     ppDesignLayer2: TppDesignLayer;
-    qryInvItemDescription: TStringField;
+    qryInvItemDescription: TWideStringField;
     qryInvItemWeight: TFloatField;
     qryInvItemKT: TFloatField;
     qryInvItemSizeLength: TFloatField;
     qryInvItemTranDate: TDateField;
-    qryInvItemTranTicketNo: TStringField;
+    qryInvItemTranTicketNo: TWideStringField;
     qryInvItemCustFirst: TWideStringField;
     qryInvItemCustMid: TWideStringField;
     qryInvItemCustLast: TWideStringField;
-    qryInvItemcFullName: TStringField;
+    qryInvItemcFullName: TWideStringField;
     ppDetailBand2: TppDetailBand;
     ppDBText13: TppDBText;
     ppDBText14: TppDBText;
@@ -112,8 +112,8 @@ type
     ppDBText18: TppDBText;
     ppDBText19: TppDBText;
     ppDBText20: TppDBText;
-    qryInvItemcKT: TStringField;
-    qryInvItemTranType: TStringField;
+    qryInvItemcKT: TWideStringField;
+    qryInvItemTranType: TWideStringField;
     qryInvItemQty: TIntegerField;
     ppDBText21: TppDBText;
     ppLabel10: TppLabel;
@@ -136,15 +136,15 @@ type
     qryLayawayRcptCustState: TWideStringField;
     qryLayawayRcptCustZip: TWideStringField;
     qryLayawayRcptCustPhoneNumber: TWideStringField;
-    qryLayawayRcptItemDescription: TStringField;
+    qryLayawayRcptItemDescription: TWideStringField;
     qryLayawayRcptWeight: TFloatField;
-    qryLayawayRcptWeightUnit: TStringField;
+    qryLayawayRcptWeightUnit: TWideStringField;
     qryLayawayRcptTranDate: TDateField;
     qryLayawayRcptTranMaturity: TDateField;
     qryLayawayRcptTranPawnAmount: TFloatField;
     qryLayawayRcptTranSalesTax: TFloatField;
     qryLayawayRcptTotalAmount: TFloatField;
-    qryLayawayRcptTranTicketNo: TStringField;
+    qryLayawayRcptTranTicketNo: TWideStringField;
     ppDBText22: TppDBText;
     ppDBText23: TppDBText;
     ppLine4: TppLine;
@@ -171,9 +171,9 @@ type
     ppLabel18: TppLabel;
     ppLabel19: TppLabel;
     ppLabel20: TppLabel;
-    qryLayawayRcptcCustName: TStringField;
-    qryLayawayRcptcFPhone: TStringField;
-    qryLayawayRcptcWeightUnit: TStringField;
+    qryLayawayRcptcCustName: TWideStringField;
+    qryLayawayRcptcFPhone: TWideStringField;
+    qryLayawayRcptcWeightUnit: TWideStringField;
     ppLabel21: TppLabel;
     ppLabel22: TppLabel;
     qryLayawayRcptcSalesTax: TCurrencyField;
@@ -226,7 +226,7 @@ type
     ppLabel36: TppLabel;
     ppDBText40: TppDBText;
     lbPrnRcvDate: TppLabel;
-    qryLayawayRcptTranStatus: TStringField;
+    qryLayawayRcptTranStatus: TWideStringField;
     qryLayawayRcptDDate: TDateField;
     procedure qryPrnPayReceiptCalcFields(DataSet: TDataSet);
     procedure qryInvItemCalcFields(DataSet: TDataSet);
@@ -365,10 +365,10 @@ begin
   // Step 1: one month after last payment
   Result := IncMonth(LastPaymentDate, 1);
 
-  // Step 2: force day-of-month to match PawnDate’s day
+  // Step 2: force day-of-month to match PawnDateï¿½s day
   DecodeDate(Result, Y, M, D);
   if not TryEncodeDate(Y, M, TargetDay, Result) then
-    // If that day doesn’t exist (e.g. pawned 31st ? April)
+    // If that day doesnï¿½t exist (e.g. pawned 31st ? April)
     Result := EndOfAMonth(Y, M);
 end;
 

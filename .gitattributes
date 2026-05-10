@@ -1,0 +1,29 @@
+* text=auto
+
+# Delphi source/forms/projects should stay CRLF in the working tree.
+*.pas text eol=crlf
+*.dfm text eol=crlf
+*.dpr text eol=crlf
+*.dproj text eol=crlf
+*.groupproj text eol=crlf
+*.inc text eol=crlf
+*.rc text eol=crlf
+
+# SQL/scripts/docs are text, but do not force a platform-specific checkout.
+*.sql text
+*.txt text
+*.md text
+*.bat text eol=crlf
+
+# Binary files.
+*.bmp binary
+*.db binary
+*.docx binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.log binary
+*.otares binary
+*.pdf binary
+*.png binary
+*.res binary

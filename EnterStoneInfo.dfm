@@ -197,7 +197,7 @@ object frmEnterStoneInfo: TfrmEnterStoneInfo
       'ORDER BY STONE_TYPE')
     Left = 272
     Top = 120
-    object qryStoneTypesSTONE_TYPE: TStringField
+    object qryStoneTypesSTONE_TYPE: TWideStringField
       FieldName = 'STONE_TYPE'
       Origin = 'STONE_TYPE'
       Size = 30

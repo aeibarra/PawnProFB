@@ -24,7 +24,7 @@ type
     PropertyStore: TRzPropertyStore;
     qryHistTranDaysExportLogID: TIntegerField;
     qryHistTranDaysExportDate: TSQLTimeStampField;
-    qryHistTranDaysFileName: TStringField;
+    qryHistTranDaysFileName: TWideStringField;
     qryHistTranDaysItemCount: TIntegerField;
     PageControlExport: TRzPageControl;
     TabExportData: TRzTabSheet;
@@ -54,14 +54,14 @@ type
     qryImagesNotExpInvItemNo: TIntegerField;
     qryImagesNotExpItemSeq: TIntegerField;
     qryImagesNotExpImagesDataNo: TIntegerField;
-    qryImagesNotExpImageDesc: TStringField;
+    qryImagesNotExpImageDesc: TWideStringField;
     lblNotSendPics: TLabel;
     dsImagesNotExp: TDataSource;
-    qryImagesNotExpTranTicketNo: TStringField;
+    qryImagesNotExpTranTicketNo: TWideStringField;
     popMnu: TPopupMenu;
     ViewImages1: TMenuItem;
     btnSendImages: TRzToolButton;
-    qryImagesNotExpTranType: TStringField;
+    qryImagesNotExpTranType: TWideStringField;
     qryImagesNotExpTranDate: TDateField;
     MemoTxResult: TMemo;
     FTP: TIdFTP;
@@ -77,9 +77,9 @@ type
     DBGrid3: TDBGrid;
     qrySentImg: TFDQuery;
     qrySentImgImagesDataNo: TIntegerField;
-    qrySentImgImageDesc: TStringField;
+    qrySentImgImageDesc: TWideStringField;
     qrySentImgUploadTime: TSQLTimeStampField;
-    qrySentImgUploadFileName: TStringField;
+    qrySentImgUploadFileName: TWideStringField;
     dsSentImg: TDataSource;
     popMnu2: TPopupMenu;
     MenuItem1: TMenuItem;

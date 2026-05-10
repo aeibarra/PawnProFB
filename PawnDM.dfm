@@ -4295,14 +4295,14 @@ object DM: TDM
     object qryImageImagesDataNo: TIntegerField
       FieldName = 'ImagesDataNo'
     end
-    object qryImageImageDesc: TStringField
+    object qryImageImageDesc: TWideStringField
       FieldName = 'ImageDesc'
       Size = 125
     end
     object qryImageImageData: TBlobField
       FieldName = 'ImageData'
     end
-    object qryImageUploadFileName: TStringField
+    object qryImageUploadFileName: TWideStringField
       FieldName = 'UploadFileName'
       Size = 50
     end
@@ -4312,12 +4312,12 @@ object DM: TDM
     FieldDefs = <
       item
         Name = 'WeigthUnitValue'
-        DataType = ftString
+        DataType = ftWideString
         Size = 1
       end
       item
         Name = 'WeightUnit'
-        DataType = ftString
+        DataType = ftWideString
         Size = 50
       end>
     IndexDefs = <>
@@ -4325,11 +4325,11 @@ object DM: TDM
     StoreDefs = True
     Left = 276
     Top = 236
-    object clnWeigthUnitsWeigthUnitValue: TStringField
+    object clnWeigthUnitsWeigthUnitValue: TWideStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
     end
-    object clnWeigthUnitsWeightUnit: TStringField
+    object clnWeigthUnitsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 50
     end
@@ -7542,7 +7542,7 @@ object DM: TDM
       'FROM BACKUP_SETTINGS;')
     Left = 139
     Top = 303
-    object qryBackupSetingsBACKUP_PATH: TStringField
+    object qryBackupSetingsBACKUP_PATH: TWideStringField
       FieldName = 'BACKUP_PATH'
       Origin = 'BACKUP_PATH'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
@@ -7554,7 +7554,7 @@ object DM: TDM
       Origin = 'AUTO_BACKUP_WHEN_CLOSE_APP'
       Required = True
     end
-    object qryBackupSetingsBACKUP_IMAGES_PATH: TStringField
+    object qryBackupSetingsBACKUP_IMAGES_PATH: TWideStringField
       FieldName = 'BACKUP_IMAGES_PATH'
       Origin = 'BACKUP_IMAGES_PATH'
       Size = 255
@@ -7586,7 +7586,7 @@ object DM: TDM
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryTransactionscComment: TStringField
+    object qryTransactionscComment: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cComment'
       Size = 40
@@ -7617,7 +7617,7 @@ object DM: TDM
       FieldName = 'cAnnualPercRate'
       Calculated = True
     end
-    object qryTransactionscPawnNextMinPayment: TStringField
+    object qryTransactionscPawnNextMinPayment: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cPawnNextMinPayment'
       Size = 126
@@ -7653,7 +7653,7 @@ object DM: TDM
       OnChange = qryTransactionsTranDateChange
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryTransactionsTRAN_TICKET_NO: TStringField
+    object qryTransactionsTRAN_TICKET_NO: TWideStringField
       FieldName = 'TRAN_TICKET_NO'
       Origin = 'TRAN_TICKET_NO'
       Size = 30
@@ -7668,13 +7668,13 @@ object DM: TDM
       Origin = 'TRAN_MATURITY'
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryTransactionsTRAN_TYPE: TStringField
+    object qryTransactionsTRAN_TYPE: TWideStringField
       FieldName = 'TRAN_TYPE'
       Origin = 'TRAN_TYPE'
       FixedChar = True
       Size = 1
     end
-    object qryTransactionsTRAN_STATUS: TStringField
+    object qryTransactionsTRAN_STATUS: TWideStringField
       FieldName = 'TRAN_STATUS'
       Origin = 'TRAN_STATUS'
       FixedChar = True
@@ -7743,50 +7743,50 @@ object DM: TDM
       'WHERE STORE_NO = '#39'0'#39)
     Left = 239
     Top = 74
-    object qryStorecCity: TStringField
+    object qryStorecCity: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCity'
       Size = 40
       Calculated = True
     end
-    object qryStorecState: TStringField
+    object qryStorecState: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cState'
       Size = 2
       Calculated = True
     end
-    object qryStorecZIp: TStringField
+    object qryStorecZIp: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cZIp'
       Size = 15
       Calculated = True
     end
-    object qryStoreSTORE_NO: TStringField
+    object qryStoreSTORE_NO: TWideStringField
       FieldName = 'STORE_NO'
       Origin = 'STORE_NO'
       Size = 10
     end
-    object qryStoreSTORE_NAME: TStringField
+    object qryStoreSTORE_NAME: TWideStringField
       FieldName = 'STORE_NAME'
       Origin = 'STORE_NAME'
       Size = 55
     end
-    object qryStoreSTORE_ADDR: TStringField
+    object qryStoreSTORE_ADDR: TWideStringField
       FieldName = 'STORE_ADDR'
       Origin = 'STORE_ADDR'
       Size = 55
     end
-    object qryStoreSTORE_CITY_ST_ZIP: TStringField
+    object qryStoreSTORE_CITY_ST_ZIP: TWideStringField
       FieldName = 'STORE_CITY_ST_ZIP'
       Origin = 'STORE_CITY_ST_ZIP'
       Size = 55
     end
-    object qryStoreSTORE_PHONE: TStringField
+    object qryStoreSTORE_PHONE: TWideStringField
       FieldName = 'STORE_PHONE'
       Origin = 'STORE_PHONE'
       Size = 14
     end
-    object qryStoreSTORE_POLICE_ID: TStringField
+    object qryStoreSTORE_POLICE_ID: TWideStringField
       FieldName = 'STORE_POLICE_ID'
       Origin = 'STORE_POLICE_ID'
       Size = 30
@@ -7795,7 +7795,7 @@ object DM: TDM
       FieldName = 'STORE_ADJ_TOP_MARG'
       Origin = 'STORE_ADJ_TOP_MARG'
     end
-    object qryStoreSTORE_NUMBER: TStringField
+    object qryStoreSTORE_NUMBER: TWideStringField
       FieldName = 'STORE_NUMBER'
       Origin = 'STORE_NUMBER'
       Size = 30
@@ -7829,21 +7829,21 @@ object DM: TDM
       FieldName = 'PAWN_DEFAULT_MONTHS'
       Origin = 'PAWN_DEFAULT_MONTHS'
     end
-    object qryStoreLEADS_STORE_ID: TStringField
+    object qryStoreLEADS_STORE_ID: TWideStringField
       FieldName = 'LEADS_STORE_ID'
       Origin = 'LEADS_STORE_ID'
     end
-    object qryStoreLEADS_ONLINE_FTP_ADDRESS: TStringField
+    object qryStoreLEADS_ONLINE_FTP_ADDRESS: TWideStringField
       FieldName = 'LEADS_ONLINE_FTP_ADDRESS'
       Origin = 'LEADS_ONLINE_FTP_ADDRESS'
       Size = 50
     end
-    object qryStoreLEADS_ONLINE_USER_NAME: TStringField
+    object qryStoreLEADS_ONLINE_USER_NAME: TWideStringField
       FieldName = 'LEADS_ONLINE_USER_NAME'
       Origin = 'LEADS_ONLINE_USER_NAME'
       Size = 50
     end
-    object qryStoreLEADS_ONLINE_PASSWORD: TStringField
+    object qryStoreLEADS_ONLINE_PASSWORD: TWideStringField
       FieldName = 'LEADS_ONLINE_PASSWORD'
       Origin = 'LEADS_ONLINE_PASSWORD'
       Size = 50
@@ -7853,13 +7853,13 @@ object DM: TDM
       Origin = 'FTP_PASSIVE'
       Required = True
     end
-    object qryStorePAWN_DATE_CALCULATION_BASE: TStringField
+    object qryStorePAWN_DATE_CALCULATION_BASE: TWideStringField
       FieldName = 'PAWN_DATE_CALCULATION_BASE'
       Origin = 'PAWN_DATE_CALCULATION_BASE'
       FixedChar = True
       Size = 1
     end
-    object qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TStringField
+    object qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TWideStringField
       FieldName = 'DEFAULT_WEIGHT_MEASURE_UNIT'
       Origin = 'DEFAULT_WEIGHT_MEASURE_UNIT'
       FixedChar = True
@@ -7881,12 +7881,12 @@ object DM: TDM
       'FROM STATES')
     Left = 144
     Top = 74
-    object qryStatesSTATE_ABBR: TStringField
+    object qryStatesSTATE_ABBR: TWideStringField
       FieldName = 'STATE_ABBR'
       Origin = 'STATE_ABBR'
       Size = 2
     end
-    object qryStatesSTATE_NAME: TStringField
+    object qryStatesSTATE_NAME: TWideStringField
       FieldName = 'STATE_NAME'
       Origin = 'STATE_NAME'
       Size = 30
@@ -7926,31 +7926,31 @@ object DM: TDM
         ParamType = ptInput
         Size = 35
       end>
-    object qryCustomersCCustPhHome: TStringField
+    object qryCustomersCCustPhHome: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhHome'
       Size = 14
       Calculated = True
     end
-    object qryCustomersCCustPhBussiness: TStringField
+    object qryCustomersCCustPhBussiness: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhBussiness'
       Size = 14
       Calculated = True
     end
-    object qryCustomersCCustPhBeep: TStringField
+    object qryCustomersCCustPhBeep: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhBeep'
       Size = 14
       Calculated = True
     end
-    object qryCustomerscCustPhCell: TStringField
+    object qryCustomerscCustPhCell: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustPhCell'
       Size = 14
       Calculated = True
     end
-    object qryCustomerscCustFlDrvLic: TStringField
+    object qryCustomerscCustFlDrvLic: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustFlDrvLic'
       Calculated = True
@@ -8122,7 +8122,7 @@ object DM: TDM
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryPaymentscComment: TStringField
+    object qryPaymentscComment: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cComment'
       Size = 50
@@ -8255,12 +8255,12 @@ object DM: TDM
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
     Top = 228
-    object clnJGendersJ_GENDER: TStringField
+    object clnJGendersJ_GENDER: TWideStringField
       FieldName = 'J_GENDER'
       Required = True
       Size = 1
     end
-    object clnJGendersJ_GENDER_DESC: TStringField
+    object clnJGendersJ_GENDER_DESC: TWideStringField
       FieldName = 'J_GENDER_DESC'
       Required = True
       Size = 30
@@ -8276,12 +8276,12 @@ object DM: TDM
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
     Top = 282
-    object clnJMetalsJ_METAL: TStringField
+    object clnJMetalsJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Required = True
       Size = 1
     end
-    object clnJMetalsJ_METAL_DESC: TStringField
+    object clnJMetalsJ_METAL_DESC: TWideStringField
       FieldName = 'J_METAL_DESC'
       Required = True
       Size = 30
@@ -8297,12 +8297,12 @@ object DM: TDM
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
     Top = 335
-    object clnJStoneColorsJ_STONE_COLOR: TStringField
+    object clnJStoneColorsJ_STONE_COLOR: TWideStringField
       FieldName = 'J_STONE_COLOR'
       Required = True
       Size = 1
     end
-    object clnJStoneColorsJ_STONE_DESC: TStringField
+    object clnJStoneColorsJ_STONE_DESC: TWideStringField
       FieldName = 'J_STONE_DESC'
       Required = True
       Size = 30
@@ -8316,14 +8316,14 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 447
-    Top = 228
-    object clnJStoneShapesJ_SHAPE: TStringField
+    Left = 468
+    Top = 230
+    object clnJStoneShapesJ_SHAPE: TWideStringField
       FieldName = 'J_SHAPE'
       Required = True
       Size = 1
     end
-    object clnJStoneShapesJ_SHAPE_DESC: TStringField
+    object clnJStoneShapesJ_SHAPE_DESC: TWideStringField
       FieldName = 'J_SHAPE_DESC'
       Required = True
       Size = 30
@@ -8337,14 +8337,14 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 447
-    Top = 282
-    object clnJStylesJ_STYLE: TStringField
+    Left = 468
+    Top = 284
+    object clnJStylesJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Required = True
       Size = 1
     end
-    object clnJStylesJ_STYLE_DESC: TStringField
+    object clnJStylesJ_STYLE_DESC: TWideStringField
       FieldName = 'J_STYLE_DESC'
       Required = True
       Size = 30
@@ -8358,14 +8358,14 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 447
-    Top = 335
-    object clnJTypesJ_TYPE: TStringField
+    Left = 468
+    Top = 337
+    object clnJTypesJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Required = True
       Size = 1
     end
-    object clnJTypesJ_TYPE_DESC: TStringField
+    object clnJTypesJ_TYPE_DESC: TWideStringField
       FieldName = 'J_TYPE_DESC'
       Required = True
       Size = 30

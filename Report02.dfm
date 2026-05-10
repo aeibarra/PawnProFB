@@ -201,7 +201,7 @@ object frmReport02: TfrmReport02
       '')
     Left = 503
     Top = 23
-    object qryPawnAndPurchasescFullName: TStringField
+    object qryPawnAndPurchasescFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
       Size = 120
@@ -223,11 +223,11 @@ object frmReport02: TfrmReport02
       FieldName = 'CustPhCell'
       Size = 14
     end
-    object qryPawnAndPurchasesTranTicketNo: TStringField
+    object qryPawnAndPurchasesTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryPawnAndPurchasesTranType: TStringField
+    object qryPawnAndPurchasesTranType: TWideStringField
       FieldName = 'TranType'
       Size = 1
     end
@@ -256,7 +256,7 @@ object frmReport02: TfrmReport02
     object qryPawnAndPurchasesTranMaturity: TDateField
       FieldName = 'TranMaturity'
     end
-    object qryPawnAndPurchasesTranTypeDesc: TStringField
+    object qryPawnAndPurchasesTranTypeDesc: TWideStringField
       FieldName = 'TranTypeDesc'
     end
   end
@@ -1149,7 +1149,7 @@ object frmReport02: TfrmReport02
       'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME')
     Left = 504
     Top = 131
-    object qryTranPaymentscFullName: TStringField
+    object qryTranPaymentscFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
       Size = 120
@@ -1183,11 +1183,11 @@ object frmReport02: TfrmReport02
       FieldName = 'CustPhCell'
       Size = 14
     end
-    object qryTranPaymentsTranTicketNo: TStringField
+    object qryTranPaymentsTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
-    object qryTranPaymentsTranType: TStringField
+    object qryTranPaymentsTranType: TWideStringField
       FieldName = 'TranType'
       Size = 1
     end
@@ -1212,7 +1212,7 @@ object frmReport02: TfrmReport02
     object qryTranPaymentsTranMaturity: TDateField
       FieldName = 'TranMaturity'
     end
-    object qryTranPaymentsTranTypeDesc: TStringField
+    object qryTranPaymentsTranTypeDesc: TWideStringField
       FieldName = 'TranTypeDesc'
     end
   end

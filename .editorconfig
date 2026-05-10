@@ -1,0 +1,11 @@
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+[*.{pas,dfm,dpr,dproj,groupproj,inc,rc,bat}]
+end_of_line = crlf
+
+[*.{md,txt,sql}]
+end_of_line = unset

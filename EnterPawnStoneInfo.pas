@@ -14,7 +14,7 @@ type
   TfrmEnterPawnStoneInfo = class(TForm)
     dsStoneShapes: TDataSource;
     qryStoneTypes: TFDQuery;
-    qryStoneTypesSTONE_TYPE: TStringField;
+    qryStoneTypesSTONE_TYPE: TWideStringField;
     dsStoneColors: TDataSource;
     GroupBox2: TGroupBox;
     Label5: TLabel;
@@ -33,8 +33,8 @@ type
     btnCancel: TBitBtn;
     btnSave: TRzBitBtn;
     clnWeigthUnits: TClientDataSet;
-    clnWeigthUnitsWeigthUnitValue: TStringField;
-    clnWeigthUnitsWeightUnit: TStringField;
+    clnWeigthUnitsWeigthUnitValue: TWideStringField;
+    clnWeigthUnitsWeightUnit: TWideStringField;
     dsWeigthUnits: TDataSource;
     Label18: TLabel;
     cbWeightUnit: TDBLookupComboBox;

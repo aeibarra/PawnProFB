@@ -73,7 +73,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryGetDataToExpticket_type: TSmallintField
       FieldName = 'ticket_type'
     end
-    object qryGetDataToExpTranTicketNo: TStringField
+    object qryGetDataToExpTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
@@ -185,23 +185,23 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryGetDataToExpInvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object qryGetDataToExpInvItemBrand: TStringField
+    object qryGetDataToExpInvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object qryGetDataToExpModelNumber: TStringField
+    object qryGetDataToExpModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object qryGetDataToExpSerialNumber: TStringField
+    object qryGetDataToExpSerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object qryGetDataToExpDescription: TStringField
+    object qryGetDataToExpDescription: TWideStringField
       FieldName = 'Description'
       Size = 120
     end
-    object qryGetDataToExpNote: TStringField
+    object qryGetDataToExpNote: TWideStringField
       FieldName = 'Note'
       Size = 80
     end
@@ -209,11 +209,11 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'UnitCost'
       Precision = 19
     end
-    object qryGetDataToExpJStyleDesc: TStringField
+    object qryGetDataToExpJStyleDesc: TWideStringField
       FieldName = 'JStyleDesc'
       Size = 30
     end
-    object qryGetDataToExpJMetalDesc: TStringField
+    object qryGetDataToExpJMetalDesc: TWideStringField
       FieldName = 'JMetalDesc'
       Size = 30
     end
@@ -226,7 +226,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryGetDataToExpSizeLength: TFloatField
       FieldName = 'SizeLength'
     end
-    object qryGetDataToExpGender: TStringField
+    object qryGetDataToExpGender: TWideStringField
       FieldName = 'Gender'
       Size = 1
     end
@@ -235,36 +235,36 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'AmountRedeemDefaultDate'
       Calculated = True
     end
-    object qryGetDataToExpClientPhone: TStringField
+    object qryGetDataToExpClientPhone: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'ClientPhone'
       Calculated = True
     end
-    object qryGetDataToExpClientIdType: TStringField
+    object qryGetDataToExpClientIdType: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'ClientIdType'
       Size = 25
       Calculated = True
     end
-    object qryGetDataToExpClientIdState: TStringField
+    object qryGetDataToExpClientIdState: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'ClientIdState'
       Size = 2
       Calculated = True
     end
-    object qryGetDataToExpClientIdNumber: TStringField
+    object qryGetDataToExpClientIdNumber: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'ClientIdNumber'
       Size = 50
       Calculated = True
     end
-    object qryGetDataToExpStoneType1: TStringField
+    object qryGetDataToExpStoneType1: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'StoneType1'
       Size = 30
       Calculated = True
     end
-    object qryGetDataToExpJStoneDesc1: TStringField
+    object qryGetDataToExpJStoneDesc1: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'JStoneDesc1'
       Size = 30
@@ -275,7 +275,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'StoneNumber1'
       Calculated = True
     end
-    object qryGetDataToExpJShapeDesc1: TStringField
+    object qryGetDataToExpJShapeDesc1: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'JShapeDesc1'
       Size = 30
@@ -287,13 +287,13 @@ object DM_LeadsOnline: TDM_LeadsOnline
       DisplayFormat = '##0.00'
       Calculated = True
     end
-    object qryGetDataToExpStoneType2: TStringField
+    object qryGetDataToExpStoneType2: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'StoneType2'
       Size = 30
       Calculated = True
     end
-    object qryGetDataToExpJStoneDesc2: TStringField
+    object qryGetDataToExpJStoneDesc2: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'JStoneDesc2'
       Size = 30
@@ -304,7 +304,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'StoneNumber2'
       Calculated = True
     end
-    object qryGetDataToExpJShapeDesc2: TStringField
+    object qryGetDataToExpJShapeDesc2: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'JShapeDesc2'
       Size = 30
@@ -328,91 +328,91 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object clnExpData_TransactionNo: TIntegerField
       FieldName = 'TransactionNo'
     end
-    object clnExpData_ClerkName: TStringField
+    object clnExpData_ClerkName: TWideStringField
       FieldName = 'ClerkName'
       Size = 50
     end
-    object clnExpData_TranDate: TStringField
+    object clnExpData_TranDate: TWideStringField
       FieldName = 'TranDate'
     end
-    object clnExpData_TranVoided: TStringField
+    object clnExpData_TranVoided: TWideStringField
       FieldName = 'TranVoided'
       Size = 1
     end
-    object clnExpData_CustLast: TStringField
+    object clnExpData_CustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object clnExpData_CustFirst: TStringField
+    object clnExpData_CustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object clnExpData_CustMid: TStringField
+    object clnExpData_CustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
-    object clnExpData_CustAddr: TStringField
+    object clnExpData_CustAddr: TWideStringField
       FieldName = 'CustAddr'
       Size = 55
     end
-    object clnExpData_CustCity: TStringField
+    object clnExpData_CustCity: TWideStringField
       FieldName = 'CustCity'
       Size = 40
     end
-    object clnExpData_CustState: TStringField
+    object clnExpData_CustState: TWideStringField
       FieldName = 'CustState'
       Size = 2
     end
-    object clnExpData_CustZip: TStringField
+    object clnExpData_CustZip: TWideStringField
       FieldName = 'CustZip'
       Size = 11
     end
-    object clnExpData_CustDOB: TStringField
+    object clnExpData_CustDOB: TWideStringField
       FieldName = 'CustDOB'
     end
     object clnExpData_CustWeight: TFloatField
       FieldName = 'CustWeight'
     end
-    object clnExpData_CustHeight: TStringField
+    object clnExpData_CustHeight: TWideStringField
       FieldName = 'CustHeight'
       Size = 8
     end
-    object clnExpData_CustEyes: TStringField
+    object clnExpData_CustEyes: TWideStringField
       FieldName = 'CustEyes'
       Size = 5
     end
-    object clnExpData_CustHair: TStringField
+    object clnExpData_CustHair: TWideStringField
       FieldName = 'CustHair'
       Size = 5
     end
-    object clnExpData_CustRace: TStringField
+    object clnExpData_CustRace: TWideStringField
       FieldName = 'CustRace'
       Size = 1
     end
-    object clnExpData_CustGender: TStringField
+    object clnExpData_CustGender: TWideStringField
       FieldName = 'CustGender'
       Size = 1
     end
     object clnExpData_InvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object clnExpData_InvItemBrand: TStringField
+    object clnExpData_InvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object clnExpData_ModelNumber: TStringField
+    object clnExpData_ModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object clnExpData_SerialNumber: TStringField
+    object clnExpData_SerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object clnExpData_Description: TStringField
+    object clnExpData_Description: TWideStringField
       FieldName = 'Description'
       Size = 120
     end
-    object clnExpData_Note: TStringField
+    object clnExpData_Note: TWideStringField
       FieldName = 'Note'
       Size = 80
     end
@@ -420,11 +420,11 @@ object DM_LeadsOnline: TDM_LeadsOnline
       FieldName = 'UnitCost'
       Precision = 19
     end
-    object clnExpData_JStyleDesc: TStringField
+    object clnExpData_JStyleDesc: TWideStringField
       FieldName = 'JStyleDesc'
       Size = 30
     end
-    object clnExpData_JMetalDesc: TStringField
+    object clnExpData_JMetalDesc: TWideStringField
       FieldName = 'JMetalDesc'
       Size = 30
     end
@@ -437,7 +437,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object clnExpData_SizeLength: TFloatField
       FieldName = 'SizeLength'
     end
-    object clnExpData_Gender: TStringField
+    object clnExpData_Gender: TWideStringField
       FieldName = 'Gender'
       Size = 1
     end
@@ -471,7 +471,7 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object clnExportFileFormatID: TIntegerField
       FieldName = 'ID'
     end
-    object clnExportFileFormatDataFieldName: TStringField
+    object clnExportFileFormatDataFieldName: TWideStringField
       FieldName = 'DataFieldName'
       Size = 50
     end
@@ -481,11 +481,11 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object clnExportFileFormatDataFieldMaxSize: TIntegerField
       FieldName = 'DataFieldMaxSize'
     end
-    object clnExportFileFormatDataFieldCaption: TStringField
+    object clnExportFileFormatDataFieldCaption: TWideStringField
       FieldName = 'DataFieldCaption'
       Size = 50
     end
-    object clnExportFileFormatDataFieldDesc: TStringField
+    object clnExportFileFormatDataFieldDesc: TWideStringField
       FieldName = 'DataFieldDesc'
       Size = 200
     end
@@ -526,18 +526,18 @@ object DM_LeadsOnline: TDM_LeadsOnline
     object qryItemStonesStoneNo: TIntegerField
       FieldName = 'StoneNo'
     end
-    object qryItemStonesStoneType: TStringField
+    object qryItemStonesStoneType: TWideStringField
       FieldName = 'StoneType'
       Size = 30
     end
-    object qryItemStonesJStoneDesc: TStringField
+    object qryItemStonesJStoneDesc: TWideStringField
       FieldName = 'JStoneDesc'
       Size = 30
     end
     object qryItemStonesStoneNumber: TIntegerField
       FieldName = 'StoneNumber'
     end
-    object qryItemStonesJShapeDesc: TStringField
+    object qryItemStonesJShapeDesc: TWideStringField
       FieldName = 'JShapeDesc'
       Size = 30
     end

@@ -189,48 +189,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -493,6 +501,7 @@ object frmClients: TfrmClients
         Top = 32
         Width = 110
         Height = 25
+        MaxLength = 14
         TabOrder = 3
         Text = '(   )   -    '
       end
@@ -1229,6 +1238,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1276,6 +1286,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -3208,36 +3219,36 @@ object frmClients: TfrmClients
       FieldName = 'CustComment'
       BlobType = ftMemo
     end
-    object qryPoliceRepCustCCustPhHome: TStringField
+    object qryPoliceRepCustCCustPhHome: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhHome'
       Size = 14
       Calculated = True
     end
-    object qryPoliceRepCustCCustPhBussiness: TStringField
+    object qryPoliceRepCustCCustPhBussiness: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhBussiness'
       Size = 14
       Calculated = True
     end
-    object qryPoliceRepCustCCustPhBeep: TStringField
+    object qryPoliceRepCustCCustPhBeep: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'CCustPhBeep'
       Size = 14
       Calculated = True
     end
-    object qryPoliceRepCustcCustPhCell: TStringField
+    object qryPoliceRepCustcCustPhCell: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustPhCell'
       Size = 14
       Calculated = True
     end
-    object qryPoliceRepCustcCustFlDrvLic: TStringField
+    object qryPoliceRepCustcCustFlDrvLic: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustFlDrvLic'
       Calculated = True
     end
-    object qryPoliceRepCustcPrnHPhone: TStringField
+    object qryPoliceRepCustcPrnHPhone: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cPrnHPhone'
       Calculated = True
@@ -3283,13 +3294,13 @@ object frmClients: TfrmClients
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryPawnItemscStone1Shape: TStringField
+    object qryPawnItemscStone1Shape: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone1Shape'
       Size = 1
       Calculated = True
     end
-    object qryPawnItemscStone1Color: TStringField
+    object qryPawnItemscStone1Color: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone1Color'
       Size = 1
@@ -3298,29 +3309,29 @@ object frmClients: TfrmClients
     object qryPawnItemsInvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end
-    object qryPawnItemsInvItemBarcode: TStringField
+    object qryPawnItemsInvItemBarcode: TWideStringField
       FieldName = 'InvItemBarcode'
       Size = 30
     end
     object qryPawnItemsInvCatNo: TIntegerField
       FieldName = 'InvCatNo'
     end
-    object qryPawnItemsJType: TStringField
+    object qryPawnItemsJType: TWideStringField
       FieldName = 'JType'
       Size = 1
     end
-    object qryPawnItemsJStyle: TStringField
+    object qryPawnItemsJStyle: TWideStringField
       FieldName = 'JStyle'
       Size = 1
     end
-    object qryPawnItemsJMetal: TStringField
+    object qryPawnItemsJMetal: TWideStringField
       FieldName = 'JMetal'
       Size = 1
     end
     object qryPawnItemsInvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object qryPawnItemsNote: TStringField
+    object qryPawnItemsNote: TWideStringField
       FieldName = 'Note'
       Size = 80
     end
@@ -3330,7 +3341,7 @@ object frmClients: TfrmClients
     object qryPawnItemsWeight: TFloatField
       FieldName = 'Weight'
     end
-    object qryPawnItemsWeightUnit: TStringField
+    object qryPawnItemsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 1
     end
@@ -3348,7 +3359,7 @@ object frmClients: TfrmClients
       FieldName = 'UnitPrice'
       Precision = 19
     end
-    object qryPawnItemsInvItemStatus: TStringField
+    object qryPawnItemsInvItemStatus: TWideStringField
       FieldName = 'InvItemStatus'
       Size = 1
     end
@@ -3358,27 +3369,27 @@ object frmClients: TfrmClients
     object qryPawnItemsInvOriginalItemNo: TIntegerField
       FieldName = 'InvOriginalItemNo'
     end
-    object qryPawnItemsInvItemBrand: TStringField
+    object qryPawnItemsInvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object qryPawnItemsOwnerAppNumber: TStringField
+    object qryPawnItemsOwnerAppNumber: TWideStringField
       FieldName = 'OwnerAppNumber'
       Size = 40
     end
-    object qryPawnItemsModelNumber: TStringField
+    object qryPawnItemsModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object qryPawnItemsSerialNumber: TStringField
+    object qryPawnItemsSerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object qryPawnItemsGender: TStringField
+    object qryPawnItemsGender: TWideStringField
       FieldName = 'Gender'
       Size = 1
     end
-    object qryPawnItemsDescription: TStringField
+    object qryPawnItemsDescription: TWideStringField
       FieldName = 'Description'
       Size = 120
     end
@@ -3387,7 +3398,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone1CT'
       Calculated = True
     end
-    object qryPawnItemscStone1WT: TStringField
+    object qryPawnItemscStone1WT: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone1WT'
       Calculated = True
@@ -3397,13 +3408,13 @@ object frmClients: TfrmClients
       FieldName = 'cStone1Qty'
       Calculated = True
     end
-    object qryPawnItemscStone2Shape: TStringField
+    object qryPawnItemscStone2Shape: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone2Shape'
       Size = 1
       Calculated = True
     end
-    object qryPawnItemscStone2Color: TStringField
+    object qryPawnItemscStone2Color: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone2Color'
       Size = 1
@@ -3414,7 +3425,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone2CT'
       Calculated = True
     end
-    object qryPawnItemscStone2WT: TStringField
+    object qryPawnItemscStone2WT: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStone2WT'
       Calculated = True
@@ -3424,7 +3435,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone2Qty'
       Calculated = True
     end
-    object qryPawnItemscWeightToPrint: TStringField
+    object qryPawnItemscWeightToPrint: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cWeightToPrint'
       Calculated = True
@@ -3464,11 +3475,11 @@ object frmClients: TfrmClients
     object qryPawnStonesStoneNumber: TIntegerField
       FieldName = 'StoneNumber'
     end
-    object qryPawnStonesStoneShape: TStringField
+    object qryPawnStonesStoneShape: TWideStringField
       FieldName = 'StoneShape'
       Size = 1
     end
-    object qryPawnStonesStoneColor: TStringField
+    object qryPawnStonesStoneColor: TWideStringField
       FieldName = 'StoneColor'
       Size = 1
     end
@@ -3478,11 +3489,11 @@ object frmClients: TfrmClients
     object qryPawnStonesWT: TFloatField
       FieldName = 'WT'
     end
-    object qryPawnStonesStoneWeightUnit: TStringField
+    object qryPawnStonesStoneWeightUnit: TWideStringField
       FieldName = 'StoneWeightUnit'
       Size = 1
     end
-    object qryPawnStonesStoneType: TStringField
+    object qryPawnStonesStoneType: TWideStringField
       FieldName = 'StoneType'
       Size = 30
     end
@@ -9736,12 +9747,12 @@ object frmClients: TfrmClients
     ProviderName = 'prvPawnItems'
     Left = 451
     Top = 151
-    object clnPawnItemscStone1Shape: TStringField
+    object clnPawnItemscStone1Shape: TWideStringField
       FieldName = 'cStone1Shape'
       ReadOnly = True
       Size = 1
     end
-    object clnPawnItemscStone1Color: TStringField
+    object clnPawnItemscStone1Color: TWideStringField
       FieldName = 'cStone1Color'
       ReadOnly = True
       Size = 1
@@ -9749,29 +9760,29 @@ object frmClients: TfrmClients
     object clnPawnItemsInvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end
-    object clnPawnItemsInvItemBarcode: TStringField
+    object clnPawnItemsInvItemBarcode: TWideStringField
       FieldName = 'InvItemBarcode'
       Size = 30
     end
     object clnPawnItemsInvCatNo: TIntegerField
       FieldName = 'InvCatNo'
     end
-    object clnPawnItemsJType: TStringField
+    object clnPawnItemsJType: TWideStringField
       FieldName = 'JType'
       Size = 1
     end
-    object clnPawnItemsJStyle: TStringField
+    object clnPawnItemsJStyle: TWideStringField
       FieldName = 'JStyle'
       Size = 1
     end
-    object clnPawnItemsJMetal: TStringField
+    object clnPawnItemsJMetal: TWideStringField
       FieldName = 'JMetal'
       Size = 1
     end
     object clnPawnItemsInvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object clnPawnItemsNote: TStringField
+    object clnPawnItemsNote: TWideStringField
       FieldName = 'Note'
       Size = 80
     end
@@ -9781,7 +9792,7 @@ object frmClients: TfrmClients
     object clnPawnItemsWeight: TFloatField
       FieldName = 'Weight'
     end
-    object clnPawnItemsWeightUnit: TStringField
+    object clnPawnItemsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 1
     end
@@ -9799,7 +9810,7 @@ object frmClients: TfrmClients
       FieldName = 'UnitPrice'
       Precision = 19
     end
-    object clnPawnItemsInvItemStatus: TStringField
+    object clnPawnItemsInvItemStatus: TWideStringField
       FieldName = 'InvItemStatus'
       Size = 1
     end
@@ -9809,27 +9820,27 @@ object frmClients: TfrmClients
     object clnPawnItemsInvOriginalItemNo: TIntegerField
       FieldName = 'InvOriginalItemNo'
     end
-    object clnPawnItemsInvItemBrand: TStringField
+    object clnPawnItemsInvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object clnPawnItemsOwnerAppNumber: TStringField
+    object clnPawnItemsOwnerAppNumber: TWideStringField
       FieldName = 'OwnerAppNumber'
       Size = 40
     end
-    object clnPawnItemsModelNumber: TStringField
+    object clnPawnItemsModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object clnPawnItemsSerialNumber: TStringField
+    object clnPawnItemsSerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object clnPawnItemsGender: TStringField
+    object clnPawnItemsGender: TWideStringField
       FieldName = 'Gender'
       Size = 1
     end
-    object clnPawnItemsDescription: TStringField
+    object clnPawnItemsDescription: TWideStringField
       FieldName = 'Description'
       Size = 120
     end
@@ -9837,7 +9848,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone1CT'
       ReadOnly = True
     end
-    object clnPawnItemscStone1WT: TStringField
+    object clnPawnItemscStone1WT: TWideStringField
       FieldName = 'cStone1WT'
       ReadOnly = True
     end
@@ -9845,12 +9856,12 @@ object frmClients: TfrmClients
       FieldName = 'cStone1Qty'
       ReadOnly = True
     end
-    object clnPawnItemscStone2Shape: TStringField
+    object clnPawnItemscStone2Shape: TWideStringField
       FieldName = 'cStone2Shape'
       ReadOnly = True
       Size = 1
     end
-    object clnPawnItemscStone2Color: TStringField
+    object clnPawnItemscStone2Color: TWideStringField
       FieldName = 'cStone2Color'
       ReadOnly = True
       Size = 1
@@ -9859,7 +9870,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone2CT'
       ReadOnly = True
     end
-    object clnPawnItemscStone2WT: TStringField
+    object clnPawnItemscStone2WT: TWideStringField
       FieldName = 'cStone2WT'
       ReadOnly = True
     end
@@ -9867,7 +9878,7 @@ object frmClients: TfrmClients
       FieldName = 'cStone2Qty'
       ReadOnly = True
     end
-    object clnPawnItemscWeightToPrint: TStringField
+    object clnPawnItemscWeightToPrint: TWideStringField
       FieldName = 'cWeightToPrint'
       ReadOnly = True
     end
@@ -14849,19 +14860,19 @@ object frmClients: TfrmClients
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryInvItemscType: TStringField
+    object qryInvItemscType: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cType'
       Size = 40
       Calculated = True
     end
-    object qryInvItemscStyle: TStringField
+    object qryInvItemscStyle: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStyle'
       Size = 30
       Calculated = True
     end
-    object qryInvItemscMetal: TStringField
+    object qryInvItemscMetal: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cMetal'
       Size = 30
@@ -14872,13 +14883,13 @@ object frmClients: TfrmClients
       FieldName = 'cTotalWeight'
       Calculated = True
     end
-    object qryInvItemscStatus: TStringField
+    object qryInvItemscStatus: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStatus'
       Size = 50
       Calculated = True
     end
-    object qryInvItemscHasPics: TStringField
+    object qryInvItemscHasPics: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cHasPics'
       Size = 1
@@ -14896,7 +14907,7 @@ object frmClients: TfrmClients
       FieldName = 'INV_ITEM_NO'
       Origin = 'INV_ITEM_NO'
     end
-    object qryInvItemsINV_ITEM_BARCODE: TStringField
+    object qryInvItemsINV_ITEM_BARCODE: TWideStringField
       FieldName = 'INV_ITEM_BARCODE'
       Origin = 'INV_ITEM_BARCODE'
       Size = 30
@@ -14906,19 +14917,19 @@ object frmClients: TfrmClients
       Origin = 'INV_CAT_NO'
       Required = True
     end
-    object qryInvItemsJ_TYPE: TStringField
+    object qryInvItemsJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Origin = 'J_TYPE'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsJ_STYLE: TStringField
+    object qryInvItemsJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Origin = 'J_STYLE'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsJ_METAL: TStringField
+    object qryInvItemsJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Origin = 'J_METAL'
       FixedChar = True
@@ -14928,7 +14939,7 @@ object frmClients: TfrmClients
       FieldName = 'INV_ITEM_COUNT'
       Origin = 'INV_ITEM_COUNT'
     end
-    object qryInvItemsNOTE: TStringField
+    object qryInvItemsNOTE: TWideStringField
       FieldName = 'NOTE'
       Origin = 'NOTE'
       Size = 80
@@ -14963,7 +14974,7 @@ object frmClients: TfrmClients
       Precision = 18
       Size = 2
     end
-    object qryInvItemsINV_ITEM_STATUS: TStringField
+    object qryInvItemsINV_ITEM_STATUS: TWideStringField
       FieldName = 'INV_ITEM_STATUS'
       Origin = 'INV_ITEM_STATUS'
       FixedChar = True
@@ -14977,38 +14988,38 @@ object frmClients: TfrmClients
       FieldName = 'INV_ORIGINAL_ITEM_NO'
       Origin = 'INV_ORIGINAL_ITEM_NO'
     end
-    object qryInvItemsINV_ITEM_BRAND: TStringField
+    object qryInvItemsINV_ITEM_BRAND: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
       Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
-    object qryInvItemsSERIAL_NUMBER: TStringField
+    object qryInvItemsSERIAL_NUMBER: TWideStringField
       FieldName = 'SERIAL_NUMBER'
       Origin = 'SERIAL_NUMBER'
       Size = 40
     end
-    object qryInvItemsOWNER_APP_NUMBER: TStringField
+    object qryInvItemsOWNER_APP_NUMBER: TWideStringField
       FieldName = 'OWNER_APP_NUMBER'
       Origin = 'OWNER_APP_NUMBER'
       Size = 40
     end
-    object qryInvItemsMODEL_NUMBER: TStringField
+    object qryInvItemsMODEL_NUMBER: TWideStringField
       FieldName = 'MODEL_NUMBER'
       Origin = 'MODEL_NUMBER'
       Size = 40
     end
-    object qryInvItemsGENDER: TStringField
+    object qryInvItemsGENDER: TWideStringField
       FieldName = 'GENDER'
       Origin = 'GENDER'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsDESCRIPTION: TStringField
+    object qryInvItemsDESCRIPTION: TWideStringField
       FieldName = 'DESCRIPTION'
       Origin = 'DESCRIPTION'
       Size = 120
     end
-    object qryInvItemsWEIGHT_UNIT: TStringField
+    object qryInvItemsWEIGHT_UNIT: TWideStringField
       FieldName = 'WEIGHT_UNIT'
       Origin = 'WEIGHT_UNIT'
       FixedChar = True
@@ -15057,12 +15068,12 @@ object frmClients: TfrmClients
     UpdateOptions.AutoCommitUpdates = True
     Left = 1170
     Top = 465
-    object qryStylesJ_STYLE: TStringField
+    object qryStylesJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Required = True
       Size = 1
     end
-    object qryStylesJ_STYLE_DESC: TStringField
+    object qryStylesJ_STYLE_DESC: TWideStringField
       FieldName = 'J_STYLE_DESC'
       Required = True
       Size = 30
@@ -15078,12 +15089,12 @@ object frmClients: TfrmClients
     UpdateOptions.AutoCommitUpdates = True
     Left = 1170
     Top = 521
-    object qryTypesJ_TYPE: TStringField
+    object qryTypesJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Required = True
       Size = 1
     end
-    object qryTypesJ_TYPE_DESC: TStringField
+    object qryTypesJ_TYPE_DESC: TWideStringField
       FieldName = 'J_TYPE_DESC'
       Required = True
       Size = 30
@@ -15099,12 +15110,12 @@ object frmClients: TfrmClients
     UpdateOptions.AutoCommitUpdates = True
     Left = 1170
     Top = 578
-    object qryMetalJ_METAL: TStringField
+    object qryMetalJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Required = True
       Size = 1
     end
-    object qryMetalJ_METAL_DESC: TStringField
+    object qryMetalJ_METAL_DESC: TWideStringField
       FieldName = 'J_METAL_DESC'
       Required = True
       Size = 30

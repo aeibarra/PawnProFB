@@ -120,6 +120,8 @@ const
   PawnCloseReasonRedeemed                 = 2;
   PawnCloseReasonDefaulted                = 3;
   PawnCloseReasonItemsMixRedeemDefaulted  = 4;
+  LayawayCloseReasonClosedReleased        = 5;
+  LayawayCloseReasonCanceledReturned      = 6;
 
   PawnDefaultedItemMelted = 1;
   PawnDefaultedItemForSale = 2;

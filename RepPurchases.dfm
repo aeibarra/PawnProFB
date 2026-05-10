@@ -136,7 +136,7 @@ object frmRepPurchases: TfrmRepPurchases
     object qryPruchasesTranDate: TDateField
       FieldName = 'TranDate'
     end
-    object qryPruchasesTranTicketNo: TStringField
+    object qryPruchasesTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end

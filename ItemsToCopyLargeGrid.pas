@@ -73,6 +73,7 @@ end;
 
 procedure TfrmItemsToCopyLargeGrid.dbGridItemsCellClick(Column: TColumn);
 begin
+  if not frmEnterTransaction.clnItemsToSelect.Active then exit;
   if frmEnterTransaction.clnItemsToSelectInvItemNo.IsNull or (Column.Index <> 0) then
     exit;
 
@@ -80,27 +81,29 @@ begin
       frmEnterTransaction.RemoveFromItemList(frmEnterTransaction.clnItemsToSelectInvItemNo.AsInteger)
    else
      frmEnterTransaction.AddToItemList(frmEnterTransaction.clnItemsToSelectInvItemNo.AsInteger);
-     
+
    dbGridItems.Invalidate;
 end;
 
 procedure TfrmItemsToCopyLargeGrid.dbGridItemsDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
+  if not frmEnterTransaction.clnItemsToSelect.Active then exit;
   if frmEnterTransaction.clnItemsToSelectInvItemNo.IsNull then
     exit;
 
   GridCheckBox((Sender as TDBGrid), Rect, Column, DataCol, State, frmEnterTransaction.InItemList(frmEnterTransaction.clnItemsToSelectInvItemNo.AsInteger));
-
 end;
 
 procedure TfrmItemsToCopyLargeGrid.dbGridItemsTitleClick(Column: TColumn);
 begin
+  if not frmEnterTransaction.clnItemsToSelect.Active then exit;
   DoGridSorting(dbGridItems, Column, frmEnterTransaction.clnItemsToSelect, LastIndexUsed, WriteLogFile);
 end;
 
 procedure TfrmItemsToCopyLargeGrid.FormShow(Sender: TObject);
 begin
+  if not frmEnterTransaction.clnItemsToSelect.Active then exit;
   DoGridSorting(dbGridItems, dbGridItems.Columns[2], frmEnterTransaction.clnItemsToSelect, LastIndexUsed, WriteLogFile); // Sort Asc by Description
 end;
 

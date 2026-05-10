@@ -37,12 +37,12 @@ type
     ImageListBtn: TImageList;
     qryImage: TFDQuery;
     qryImageImagesDataNo: TIntegerField;
-    qryImageImageDesc: TStringField;
+    qryImageImageDesc: TWideStringField;
     qryImageImageData: TBlobField;
-    qryImageUploadFileName: TStringField;
+    qryImageUploadFileName: TWideStringField;
     clnWeigthUnits: TClientDataSet;
-    clnWeigthUnitsWeigthUnitValue: TStringField;
-    clnWeigthUnitsWeightUnit: TStringField;
+    clnWeigthUnitsWeigthUnitValue: TWideStringField;
+    clnWeigthUnitsWeightUnit: TWideStringField;
     qryUpdPawnStatus: TFDQuery;
     qryGetPawnStatusFromItems: TFDQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
@@ -60,18 +60,18 @@ type
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     qryDummyFB: TFDQuery;
     qryBackupSetings: TFDQuery;
-    qryBackupSetingsBACKUP_PATH: TStringField;
+    qryBackupSetingsBACKUP_PATH: TWideStringField;
     qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP: TBooleanField;
-    qryBackupSetingsBACKUP_IMAGES_PATH: TStringField;
+    qryBackupSetingsBACKUP_IMAGES_PATH: TWideStringField;
     qryTransactions: TFDQuery;
     qryTransactionsTRANSACTION_NO: TIntegerField;
     qryTransactionsCUST_NO: TIntegerField;
     qryTransactionsTRAN_DATE: TDateField;
-    qryTransactionsTRAN_TICKET_NO: TStringField;
+    qryTransactionsTRAN_TICKET_NO: TWideStringField;
     qryTransactionsTRAN_COMMENT: TMemoField;
     qryTransactionsTRAN_MATURITY: TDateField;
-    qryTransactionsTRAN_TYPE: TStringField;
-    qryTransactionsTRAN_STATUS: TStringField;
+    qryTransactionsTRAN_TYPE: TWideStringField;
+    qryTransactionsTRAN_STATUS: TWideStringField;
     qryTransactionsTRAN_VOID_DATE: TSQLTimeStampField;
     qryTransactionsTRAN_PAWN_AMOUNT: TFloatField;
     qryTransactionsTRAN_INTEREST: TFloatField;
@@ -80,25 +80,25 @@ type
     qryTransactionsTRAN_TIME: TTimeField;
     qryTransactionsTRAN_CLOSE_REASON: TSmallintField;
     qryTransactionsTRAN_SALES_TAX: TFloatField;
-    qryTransactionscComment: TStringField;
+    qryTransactionscComment: TWideStringField;
     qryTransactionscTranInsAmount1Month: TCurrencyField;
     qryTransactionscTotalPay1Month: TCurrencyField;
     qryTransactionscPawnDefaultDate: TDateTimeField;
     qryTransactionscTAmountRedeemDefaultDate: TCurrencyField;
     qryTransactionscAnnualPercRate: TFloatField;
-    qryTransactionscPawnNextMinPayment: TStringField;
+    qryTransactionscPawnNextMinPayment: TWideStringField;
     qryTransactionscTranTotalInterestAtMaturity: TCurrencyField;
     qryTransactionscTranTotalAmountAtMaturity: TCurrencyField;
     qryTransactionscTotalSalesAmount: TCurrencyField;
     qryStore: TFDQuery;
-    qryStoreSTORE_NO: TStringField;
-    qryStoreSTORE_NAME: TStringField;
-    qryStoreSTORE_ADDR: TStringField;
-    qryStoreSTORE_CITY_ST_ZIP: TStringField;
-    qryStoreSTORE_PHONE: TStringField;
-    qryStoreSTORE_POLICE_ID: TStringField;
+    qryStoreSTORE_NO: TWideStringField;
+    qryStoreSTORE_NAME: TWideStringField;
+    qryStoreSTORE_ADDR: TWideStringField;
+    qryStoreSTORE_CITY_ST_ZIP: TWideStringField;
+    qryStoreSTORE_PHONE: TWideStringField;
+    qryStoreSTORE_POLICE_ID: TWideStringField;
     qryStoreSTORE_ADJ_TOP_MARG: TIntegerField;
-    qryStoreSTORE_NUMBER: TStringField;
+    qryStoreSTORE_NUMBER: TWideStringField;
     qryStoreSTORE_ADJ_DETAIL_HEIGHT: TIntegerField;
     qryStoreSTORE_ADJ_FOOTER_HEIGHT: TIntegerField;
     qryStoreINTEREST_CALC_METHOD: TIntegerField;
@@ -106,21 +106,21 @@ type
     qryStorePOLICE_REPORT_LASER_COPIES: TIntegerField;
     qryStoreDEFAULT_MATURITY_MONTHS: TIntegerField;
     qryStorePAWN_DEFAULT_MONTHS: TIntegerField;
-    qryStoreLEADS_STORE_ID: TStringField;
-    qryStoreLEADS_ONLINE_FTP_ADDRESS: TStringField;
-    qryStoreLEADS_ONLINE_USER_NAME: TStringField;
-    qryStoreLEADS_ONLINE_PASSWORD: TStringField;
+    qryStoreLEADS_STORE_ID: TWideStringField;
+    qryStoreLEADS_ONLINE_FTP_ADDRESS: TWideStringField;
+    qryStoreLEADS_ONLINE_USER_NAME: TWideStringField;
+    qryStoreLEADS_ONLINE_PASSWORD: TWideStringField;
     qryStoreFTP_PASSIVE: TBooleanField;
-    qryStorePAWN_DATE_CALCULATION_BASE: TStringField;
-    qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TStringField;
+    qryStorePAWN_DATE_CALCULATION_BASE: TWideStringField;
+    qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TWideStringField;
     qryStoreSALES_TAX_PERC: TFloatField;
     qryStoreDEFAULT_PAWN_INTERESTRATE: TFloatField;
-    qryStorecCity: TStringField;
-    qryStorecState: TStringField;
-    qryStorecZIp: TStringField;
+    qryStorecCity: TWideStringField;
+    qryStorecState: TWideStringField;
+    qryStorecZIp: TWideStringField;
     qryStates: TFDQuery;
-    qryStatesSTATE_ABBR: TStringField;
-    qryStatesSTATE_NAME: TStringField;
+    qryStatesSTATE_ABBR: TWideStringField;
+    qryStatesSTATE_NAME: TWideStringField;
     qryCustomers: TFDQuery;
     qryCustomersCUST_NO: TIntegerField;
     qryCustomersCUST_FIRST: TWideStringField;
@@ -149,16 +149,16 @@ type
     qryCustomersCUST_PH_BEEP: TWideStringField;
     qryCustomersCUST_PH_CELL: TWideStringField;
     qryCustomersCUST_COMMENT: TMemoField;
-    qryCustomersCCustPhHome: TStringField;
-    qryCustomersCCustPhBussiness: TStringField;
-    qryCustomersCCustPhBeep: TStringField;
-    qryCustomerscCustPhCell: TStringField;
-    qryCustomerscCustFlDrvLic: TStringField;
+    qryCustomersCCustPhHome: TWideStringField;
+    qryCustomersCCustPhBussiness: TWideStringField;
+    qryCustomersCCustPhBeep: TWideStringField;
+    qryCustomerscCustPhCell: TWideStringField;
+    qryCustomerscCustFlDrvLic: TWideStringField;
     qryCustomerscCustAge: TIntegerField;
     qryPayments: TFDQuery;
     qryLastPayment: TFDQuery;
     qryLastPaymentLASTPAYMENTDATE: TDateField;
-    qryPaymentscComment: TStringField;
+    qryPaymentscComment: TWideStringField;
     qryPaymentscPeriodNo: TIntegerField;
     qryPaymentsPAYMENT_NO: TIntegerField;
     qryPaymentsTRANSACTION_NO: TIntegerField;
@@ -178,18 +178,18 @@ type
     clnJStoneShapes: TFDMemTable;
     clnJStyles: TFDMemTable;
     clnJTypes: TFDMemTable;
-    clnJGendersJ_GENDER: TStringField;
-    clnJGendersJ_GENDER_DESC: TStringField;
-    clnJMetalsJ_METAL: TStringField;
-    clnJMetalsJ_METAL_DESC: TStringField;
-    clnJStoneColorsJ_STONE_COLOR: TStringField;
-    clnJStoneColorsJ_STONE_DESC: TStringField;
-    clnJStoneShapesJ_SHAPE: TStringField;
-    clnJStoneShapesJ_SHAPE_DESC: TStringField;
-    clnJStylesJ_STYLE: TStringField;
-    clnJStylesJ_STYLE_DESC: TStringField;
-    clnJTypesJ_TYPE: TStringField;
-    clnJTypesJ_TYPE_DESC: TStringField;
+    clnJGendersJ_GENDER: TWideStringField;
+    clnJGendersJ_GENDER_DESC: TWideStringField;
+    clnJMetalsJ_METAL: TWideStringField;
+    clnJMetalsJ_METAL_DESC: TWideStringField;
+    clnJStoneColorsJ_STONE_COLOR: TWideStringField;
+    clnJStoneColorsJ_STONE_DESC: TWideStringField;
+    clnJStoneShapesJ_SHAPE: TWideStringField;
+    clnJStoneShapesJ_SHAPE_DESC: TWideStringField;
+    clnJStylesJ_STYLE: TWideStringField;
+    clnJStylesJ_STYLE_DESC: TWideStringField;
+    clnJTypesJ_TYPE: TWideStringField;
+    clnJTypesJ_TYPE_DESC: TWideStringField;
     qryCalcUnitCostFromWeight: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
@@ -272,6 +272,7 @@ type
     function GetTotalPaid: Currency;
     procedure RecalcLayawayPBalance;
     procedure ReactivateLayway(TransactionNo: integer);
+    procedure CancelLayaway(TransactionNo: integer);
     procedure LaywayClosePayoffBalance(TransactionNo: integer; AddBalancePayment: boolean);
     procedure UpdateLastTicketNo(TicketKey: string; TicketNo: integer);
     procedure CalcUnitCostFromWeight(TransactionNo: integer);
@@ -650,7 +651,14 @@ begin
   if (PawnDatesCalcMethod <> PawnDateCalcByDays) and (PawnDatesCalcMethod <> PawnDateCalcByMonth) then
     PawnDatesCalcMethod := PawnDateCalcByDays;
 
-  DefaultWeightMeasureUnit := qryStoreDEFAULT_WEIGHT_MEASURE_UNIT.AsString;
+  // Fall back to Pennyweight when the STORE row is missing the value (legacy
+  // databases pre-dating the column, or a fresh store that hasn't filled it
+  // through the app's settings screen yet).
+  if qryStoreDEFAULT_WEIGHT_MEASURE_UNIT.IsNull or
+     (Trim(qryStoreDEFAULT_WEIGHT_MEASURE_UNIT.AsString) = '') then
+    DefaultWeightMeasureUnit := WeightUnitPennyweight
+  else
+    DefaultWeightMeasureUnit := qryStoreDEFAULT_WEIGHT_MEASURE_UNIT.AsString;
 
   PopulateWeightUnits;
 
@@ -1598,12 +1606,18 @@ end;
 
 procedure TDM.ReactivateLayway(TransactionNo: integer);
 var
+  PricBalance, TotalPaid: Currency;
   sSQLItemsStatus: string;
   sTransactionNo: string;
   StartedFBTrans: Boolean;
 begin
   StartedFBTrans := False;
   sTransactionNo := IntToStr(TransactionNo);
+  TotalPaid := GetTotalPaid;
+  PricBalance := qryTransactionscTotalSalesAmount.AsCurrency - TotalPaid;
+
+  if qryTransactionsTRAN_CLOSE_REASON.AsInteger = LayawayCloseReasonCanceledReturned then
+    raise Exception.Create('Canceled layaways cannot be re-opened. Create a new layaway instead.');
 
   try
     if not ConnFB.InTransaction then
@@ -1614,7 +1628,8 @@ begin
 
     qryTransactions.Edit;
     qryTransactionsTRAN_STATUS.AsString := TranStatus_Active;
-    qryTransactionsPRINC_BALANCE.AsCurrency := 0;
+    qryTransactionsTRAN_CLOSE_REASON.AsInteger := 0;
+    qryTransactionsPRINC_BALANCE.AsCurrency := PricBalance;
     qryTransactions.Post;
 
     sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET SOLD_DATE=null ' + sLineBreak +
@@ -1634,6 +1649,46 @@ begin
     end;
   end;
 
+end;
+
+procedure TDM.CancelLayaway(TransactionNo: integer);
+var
+  sSQLItemsStatus: string;
+  sTransactionNo: string;
+  StartedFBTrans: Boolean;
+begin
+  StartedFBTrans := False;
+  sTransactionNo := IntToStr(TransactionNo);
+
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    qryTransactions.Edit;
+    qryTransactionsTRAN_STATUS.AsString := TranStatus_Inactive;
+    qryTransactionsTRAN_CLOSE_REASON.AsInteger := LayawayCloseReasonCanceledReturned;
+    qryTransactionsPRINC_BALANCE.AsCurrency := 0;
+    qryTransactions.Post;
+
+    sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', LAYAWAY_DATE = null, SOLD_DATE = null, FORSALE_DATE = current_date ' + sLineBreak +
+                       'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS = ''L'' ';
+
+    ConnFB.ExecSQL(sSQLItemsStatus);
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    on E: Exception do
+    begin
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
+
+      raise Exception.Create('Error canceling Layaway: ' + E.Message);
+    end;
+  end;
 end;
 
 procedure TDM.LaywayClosePayoffBalance(TransactionNo: integer; AddBalancePayment: boolean);
@@ -1676,6 +1731,7 @@ begin
 
     qryTransactions.Edit;
     qryTransactionsTRAN_STATUS.AsString := TranStatus_Inactive;
+    qryTransactionsTRAN_CLOSE_REASON.AsInteger := LayawayCloseReasonClosedReleased;
     qryTransactionsPRINC_BALANCE.AsCurrency := 0;
     qryTransactions.Post;
 

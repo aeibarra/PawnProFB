@@ -21,7 +21,7 @@ object frmEnterTransaction: TfrmEnterTransaction
   object gbBottom: TGroupBox
     AlignWithMargins = True
     Left = 8
-    Top = 541
+    Top = 554
     Width = 745
     Height = 63
     TabOrder = 1
@@ -82,7 +82,7 @@ object frmEnterTransaction: TfrmEnterTransaction
     Left = 8
     Top = 0
     Width = 745
-    Height = 535
+    Height = 551
     TabOrder = 0
     object Label1: TLabel
       Left = 16
@@ -100,7 +100,7 @@ object frmEnterTransaction: TfrmEnterTransaction
     end
     object Label3: TLabel
       Left = 19
-      Top = 139
+      Top = 151
       Width = 65
       Height = 20
       Caption = 'Comment'
@@ -181,9 +181,27 @@ object frmEnterTransaction: TfrmEnterTransaction
       ParentFont = False
       Visible = False
     end
+    object btnRecalcIntSameDayCreated: TRzToolButton
+      Left = 16
+      Top = 127
+      Width = 104
+      Height = 21
+      Flat = False
+      ShowCaption = True
+      UseToolbarShowCaption = False
+      Caption = 'Re-Calc Interest'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+      OnClick = btnRecalcIntSameDayCreatedClick
+    end
     object edMemoComment: TDBMemo
       Left = 15
-      Top = 163
+      Top = 175
       Width = 443
       Height = 75
       DataField = 'TRAN_COMMENT'
@@ -241,7 +259,7 @@ object frmEnterTransaction: TfrmEnterTransaction
     end
     object pnSelectItemsToCopy: TPanel
       Left = 2
-      Top = 244
+      Top = 260
       Width = 741
       Height = 289
       Align = alBottom
@@ -368,6 +386,7 @@ object frmEnterTransaction: TfrmEnterTransaction
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            Title.Caption = 'Description'
             Width = 178
             Visible = True
           end
@@ -379,6 +398,7 @@ object frmEnterTransaction: TfrmEnterTransaction
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            Title.Caption = 'Weight'
             Width = 62
             Visible = True
           end
@@ -497,26 +517,26 @@ object frmEnterTransaction: TfrmEnterTransaction
     object clnItemsToSelectInvItemNo: TIntegerField
       FieldName = 'INV_ITEM_NO'
     end
-    object clnItemsToSelectInvItemBarcode: TStringField
+    object clnItemsToSelectInvItemBarcode: TWideStringField
       FieldName = 'INV_ITEM_BARCODE'
       Size = 30
     end
     object clnItemsToSelectInvCatNo: TIntegerField
       FieldName = 'INV_CAT_NO'
     end
-    object clnItemsToSelectInvCategory: TStringField
+    object clnItemsToSelectInvCategory: TWideStringField
       FieldName = 'INV_CATEGORY'
       Size = 40
     end
-    object clnItemsToSelectJType: TStringField
+    object clnItemsToSelectJType: TWideStringField
       FieldName = 'J_TYPE'
       Size = 1
     end
-    object clnItemsToSelectJStyle: TStringField
+    object clnItemsToSelectJStyle: TWideStringField
       FieldName = 'J_STYLE'
       Size = 1
     end
-    object clnItemsToSelectJMetal: TStringField
+    object clnItemsToSelectJMetal: TWideStringField
       FieldName = 'J_METAL'
       Size = 1
     end
@@ -526,7 +546,7 @@ object frmEnterTransaction: TfrmEnterTransaction
     object clnItemsToSelectSizeLength: TFloatField
       FieldName = 'SIZE_LENGTH'
     end
-    object clnItemsToSelectNote: TStringField
+    object clnItemsToSelectNote: TWideStringField
       FieldName = 'NOTE'
       Size = 80
     end
@@ -547,7 +567,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       FieldName = 'UNIT_PRICE'
       Precision = 19
     end
-    object clnItemsToSelectInvItemStatus: TStringField
+    object clnItemsToSelectInvItemStatus: TWideStringField
       FieldName = 'INV_ITEM_STATUS'
       Size = 1
     end
@@ -557,39 +577,39 @@ object frmEnterTransaction: TfrmEnterTransaction
     object clnItemsToSelectInvOriginalItemNo: TIntegerField
       FieldName = 'INV_ORIGINAL_ITEM_NO'
     end
-    object clnItemsToSelectInvItemBrand: TStringField
+    object clnItemsToSelectInvItemBrand: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
       Size = 30
     end
-    object clnItemsToSelectSerialNumber: TStringField
+    object clnItemsToSelectSerialNumber: TWideStringField
       FieldName = 'SERIAL_NUMBER'
       Size = 40
     end
-    object clnItemsToSelectOwnerAppNumber: TStringField
+    object clnItemsToSelectOwnerAppNumber: TWideStringField
       FieldName = 'OWNER_APP_NUMBER'
       Size = 40
     end
-    object clnItemsToSelectModelNumber: TStringField
+    object clnItemsToSelectModelNumber: TWideStringField
       FieldName = 'MODEL_NUMBER'
       Size = 40
     end
-    object clnItemsToSelectGender: TStringField
+    object clnItemsToSelectGender: TWideStringField
       FieldName = 'GENDER'
       Size = 1
     end
-    object clnItemsToSelectDescription: TStringField
+    object clnItemsToSelectDescription: TWideStringField
       FieldName = 'DESCRIPTION'
       Size = 40
     end
-    object clnItemsToSelectJStyleDesc: TStringField
+    object clnItemsToSelectJStyleDesc: TWideStringField
       FieldName = 'J_STYLE_DESC'
       Size = 30
     end
-    object clnItemsToSelectJTypeDesc: TStringField
+    object clnItemsToSelectJTypeDesc: TWideStringField
       FieldName = 'J_TYPE_DESC'
       Size = 30
     end
-    object clnItemsToSelectJMetalDesc: TStringField
+    object clnItemsToSelectJMetalDesc: TWideStringField
       FieldName = 'J_METAL_DESC'
       Size = 30
     end
@@ -597,14 +617,14 @@ object frmEnterTransaction: TfrmEnterTransaction
   object qryInvItems: TFDQuery
     Connection = DM.ConnFB
     SQL.Strings = (
-
+      
         'SELECT DISTINCT T2.*, T3.INV_CATEGORY, T4.J_STYLE_DESC, T5.J_TYP' +
         'E_DESC, T6.J_METAL_DESC'
       'FROM TRANSACTIONS T1'
-
+      
         '  JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_' +
         'NO'
-
+      
         '  LEFT OUTER JOIN INV_CATEGORIES T3 ON T3.INV_CAT_NO = T2.INV_CA' +
         'T_NO'
       '  LEFT OUTER JOIN J_STYLES T4 ON T4.J_STYLE = T2.J_STYLE'
@@ -613,7 +633,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       'WHERE T1.CUST_NO = :CUST_NO'
       '  AND T1.TRAN_STATUS = '#39'A'#39
       '  AND T1.TRAN_TYPE = '#39'P'#39
-
+      
         '  AND T2.TRANSACTION_NO = COALESCE(:TRANSACTION_NO, T2.TRANSACTI' +
         'ON_NO)'
       'ORDER BY T2.DESCRIPTION, T2.WEIGHT, T2.SIZE_LENGTH,'
@@ -637,7 +657,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Origin = 'INV_ITEM_NO'
       Required = True
     end
-    object qryInvItemsINV_ITEM_BARCODE: TStringField
+    object qryInvItemsINV_ITEM_BARCODE: TWideStringField
       FieldName = 'INV_ITEM_BARCODE'
       Origin = 'INV_ITEM_BARCODE'
       Size = 30
@@ -647,19 +667,19 @@ object frmEnterTransaction: TfrmEnterTransaction
       Origin = 'INV_CAT_NO'
       Required = True
     end
-    object qryInvItemsJ_TYPE: TStringField
+    object qryInvItemsJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Origin = 'J_TYPE'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsJ_STYLE: TStringField
+    object qryInvItemsJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Origin = 'J_STYLE'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsJ_METAL: TStringField
+    object qryInvItemsJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Origin = 'J_METAL'
       FixedChar = True
@@ -669,7 +689,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       FieldName = 'INV_ITEM_COUNT'
       Origin = 'INV_ITEM_COUNT'
     end
-    object qryInvItemsNOTE: TStringField
+    object qryInvItemsNOTE: TWideStringField
       FieldName = 'NOTE'
       Origin = 'NOTE'
       Size = 80
@@ -702,7 +722,7 @@ object frmEnterTransaction: TfrmEnterTransaction
       Precision = 18
       Size = 2
     end
-    object qryInvItemsINV_ITEM_STATUS: TStringField
+    object qryInvItemsINV_ITEM_STATUS: TWideStringField
       FieldName = 'INV_ITEM_STATUS'
       Origin = 'INV_ITEM_STATUS'
       FixedChar = True
@@ -717,38 +737,38 @@ object frmEnterTransaction: TfrmEnterTransaction
       FieldName = 'INV_ORIGINAL_ITEM_NO'
       Origin = 'INV_ORIGINAL_ITEM_NO'
     end
-    object qryInvItemsINV_ITEM_BRAND: TStringField
+    object qryInvItemsINV_ITEM_BRAND: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
       Origin = 'INV_ITEM_BRAND'
       Size = 30
     end
-    object qryInvItemsSERIAL_NUMBER: TStringField
+    object qryInvItemsSERIAL_NUMBER: TWideStringField
       FieldName = 'SERIAL_NUMBER'
       Origin = 'SERIAL_NUMBER'
       Size = 40
     end
-    object qryInvItemsOWNER_APP_NUMBER: TStringField
+    object qryInvItemsOWNER_APP_NUMBER: TWideStringField
       FieldName = 'OWNER_APP_NUMBER'
       Origin = 'OWNER_APP_NUMBER'
       Size = 40
     end
-    object qryInvItemsMODEL_NUMBER: TStringField
+    object qryInvItemsMODEL_NUMBER: TWideStringField
       FieldName = 'MODEL_NUMBER'
       Origin = 'MODEL_NUMBER'
       Size = 40
     end
-    object qryInvItemsGENDER: TStringField
+    object qryInvItemsGENDER: TWideStringField
       FieldName = 'GENDER'
       Origin = 'GENDER'
       FixedChar = True
       Size = 1
     end
-    object qryInvItemsDESCRIPTION: TStringField
+    object qryInvItemsDESCRIPTION: TWideStringField
       FieldName = 'DESCRIPTION'
       Origin = 'DESCRIPTION'
       Size = 120
     end
-    object qryInvItemsWEIGHT_UNIT: TStringField
+    object qryInvItemsWEIGHT_UNIT: TWideStringField
       FieldName = 'WEIGHT_UNIT'
       Origin = 'WEIGHT_UNIT'
       FixedChar = True
@@ -786,22 +806,22 @@ object frmEnterTransaction: TfrmEnterTransaction
       FieldName = 'LAYAWAY_DATE'
       Origin = 'LAYAWAY_DATE'
     end
-    object qryInvItemsINV_CATEGORY: TStringField
+    object qryInvItemsINV_CATEGORY: TWideStringField
       FieldName = 'INV_CATEGORY'
       Origin = 'INV_CATEGORY'
       Size = 40
     end
-    object qryInvItemsJ_STYLE_DESC: TStringField
+    object qryInvItemsJ_STYLE_DESC: TWideStringField
       FieldName = 'J_STYLE_DESC'
       Origin = 'J_STYLE_DESC'
       Size = 30
     end
-    object qryInvItemsJ_TYPE_DESC: TStringField
+    object qryInvItemsJ_TYPE_DESC: TWideStringField
       FieldName = 'J_TYPE_DESC'
       Origin = 'J_TYPE_DESC'
       Size = 30
     end
-    object qryInvItemsJ_METAL_DESC: TStringField
+    object qryInvItemsJ_METAL_DESC: TWideStringField
       FieldName = 'J_METAL_DESC'
       Origin = 'J_METAL_DESC'
       Size = 30
@@ -810,29 +830,27 @@ object frmEnterTransaction: TfrmEnterTransaction
   object qryInsItems: TFDQuery
     Connection = DM.ConnFB
     SQL.Strings = (
-
-        'INSERT INTO INVENTORY_ITEMS (TRANSACTION_NO, INV_CAT_NO,'
-
+      'INSERT INTO INVENTORY_ITEMS (TRANSACTION_NO, INV_CAT_NO,'
+      
         '                             J_TYPE, J_STYLE, J_METAL, INV_ITEM_' +
         'COUNT,'
-
+      
         '                             NOTE, SIZE_LENGTH, WEIGHT, KT, INV_' +
         'ITEM_STATUS, INV_ITEM_BRAND, SERIAL_NUMBER,'
-
+      
         '                             OWNER_APP_NUMBER, MODEL_NUMBER, DES' +
-        'CRIPTION, GENDER)'
-
-        '                     VALUES (:TRANSACTION_NO, :INV_CAT_NO,'
-
+        'CRIPTION, GENDER, WEIGHT_UNIT)'
+      '                     VALUES (:TRANSACTION_NO, :INV_CAT_NO,'
+      
         '                             :J_TYPE, :J_STYLE, :J_METAL, :INV_I' +
         'TEM_COUNT,'
-
+      
         '                             :NOTE, :SIZE_LENGTH, :WEIGHT, :KT, ' +
         ':INV_ITEM_STATUS, :INV_ITEM_BRAND, :SERIAL_NUMBER,'
-
+      
         '                             :OWNER_APP_NUMBER, :MODEL_NUMBER, :' +
-        'DESCRIPTION, :GENDER)'
-        '                     RETURNING INV_ITEM_NO')
+        'DESCRIPTION, :GENDER, :WEIGHT_UNIT)'
+      '                     RETURNING INV_ITEM_NO')
     Left = 813
     Top = 381
     ParamData = <
@@ -928,6 +946,12 @@ object frmEnterTransaction: TfrmEnterTransaction
       end
       item
         Name = 'GENDER'
+        DataType = ftFixedChar
+        ParamType = ptInput
+        Size = 1
+      end
+      item
+        Name = 'WEIGHT_UNIT'
         DataType = ftFixedChar
         ParamType = ptInput
         Size = 1

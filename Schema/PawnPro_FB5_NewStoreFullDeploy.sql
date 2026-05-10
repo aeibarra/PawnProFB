@@ -11,7 +11,7 @@
  *
  * Concatenation of:
  *   1. PawnPro_DB_Firebird50_Schema.sql  -- tables, FKs, procs, triggers
- *   2. PawnPro_FB5_SeedReferenceData.sql -- lookups + statuses + ticket counters
+ *   2. PawnPro_FB5_SeedReferenceData.sql -- lookups + statuses + ticket counters + STORE row
  ******************************************************************************/
 /* ===== SCHEMA ===== */
 
@@ -385,7 +385,7 @@ CREATE TABLE TRANSACTIONS
 COMMENT ON COLUMN TRANSACTIONS.TRAN_STATUS IS 'A-Active
 V-Void';
 
-COMMENT ON COLUMN TRANSACTIONS.TRAN_CLOSE_REASON IS '0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix 0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Default/Redeem';
+COMMENT ON COLUMN TRANSACTIONS.TRAN_CLOSE_REASON IS '0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Default/Redeem 5-Layaway Closed/Released 6-Layaway Canceled/Returned';
 
 CREATE TABLE TRANSACTION_TYPES 
 (
@@ -977,5 +977,9 @@ INSERT INTO EXPORT_FORMAT (DATA_FIELD_NAME, DATA_FIELD_TYPE, DATA_FIELD_MAX_SIZE
 
 INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) VALUES ('PawnTicketNo', 0);
 INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) VALUES ('LayawayTicketNo', 0);
+
+-- STORE (single row -- store admin fills the remaining fields through the app)
+
+INSERT INTO STORE (STORE_NO, STORE_NAME, LEADS_ONLINE_FTP_ADDRESS, DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC) VALUES ('0', 'TEST STORE', 'ftp.leadsonline.com', 'P', 7);
 
 COMMIT;

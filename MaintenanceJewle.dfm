@@ -137,12 +137,12 @@ object frmMaintenanceJ: TfrmMaintenanceJ
       'ORDER BY J_TYPE_DESC')
     Left = 44
     Top = 52
-    object qryTypesJ_TYPE: TStringField
+    object qryTypesJ_TYPE: TWideStringField
       DisplayLabel = 'Type'
       FieldName = 'J_TYPE'
       Size = 1
     end
-    object qryTypesJ_TYPE_DESC: TStringField
+    object qryTypesJ_TYPE_DESC: TWideStringField
       DisplayLabel = 'Description'
       FieldName = 'J_TYPE_DESC'
       Size = 30
@@ -164,12 +164,12 @@ object frmMaintenanceJ: TfrmMaintenanceJ
       'ORDER BY J_STYLE_DESC')
     Left = 118
     Top = 52
-    object qryStylesJ_STYLE: TStringField
+    object qryStylesJ_STYLE: TWideStringField
       DisplayLabel = 'Style'
       FieldName = 'J_STYLE'
       Size = 1
     end
-    object qryStylesJ_STYLE_DESC: TStringField
+    object qryStylesJ_STYLE_DESC: TWideStringField
       DisplayLabel = 'Description'
       FieldName = 'J_STYLE_DESC'
       Size = 30
@@ -191,12 +191,12 @@ object frmMaintenanceJ: TfrmMaintenanceJ
       'ORDER BY J_METAL_DESC')
     Left = 189
     Top = 52
-    object qryMetalJ_METAL: TStringField
+    object qryMetalJ_METAL: TWideStringField
       DisplayLabel = 'Metal'
       FieldName = 'J_METAL'
       Size = 1
     end
-    object qryMetalJ_METAL_DESC: TStringField
+    object qryMetalJ_METAL_DESC: TWideStringField
       DisplayLabel = 'Description'
       FieldName = 'J_METAL_DESC'
       Size = 30
@@ -218,12 +218,12 @@ object frmMaintenanceJ: TfrmMaintenanceJ
       'ORDER BY J_SHAPE_DESC')
     Left = 274
     Top = 52
-    object qryStoneShapesJ_SHAPE: TStringField
+    object qryStoneShapesJ_SHAPE: TWideStringField
       DisplayLabel = 'Shape'
       FieldName = 'J_SHAPE'
       Size = 1
     end
-    object qryStoneShapesJ_SHAPE_DESC: TStringField
+    object qryStoneShapesJ_SHAPE_DESC: TWideStringField
       DisplayLabel = 'Description'
       FieldName = 'J_SHAPE_DESC'
       Size = 30
@@ -245,12 +245,12 @@ object frmMaintenanceJ: TfrmMaintenanceJ
       'ORDER BY J_STONE_DESC')
     Left = 376
     Top = 53
-    object qryStoneColorsJ_STONE_COLOR: TStringField
+    object qryStoneColorsJ_STONE_COLOR: TWideStringField
       DisplayLabel = 'Stone Color'
       FieldName = 'J_STONE_COLOR'
       Size = 1
     end
-    object qryStoneColorsJ_STONE_DESC: TStringField
+    object qryStoneColorsJ_STONE_DESC: TWideStringField
       DisplayLabel = 'Description'
       FieldName = 'J_STONE_DESC'
       Size = 30

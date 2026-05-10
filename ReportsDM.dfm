@@ -28,19 +28,19 @@ object DMReports: TDMReports
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryPrnPayReceiptcFullName: TStringField
+    object qryPrnPayReceiptcFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
       Size = 128
       Calculated = True
     end
-    object qryPrnPayReceiptcCustomerPhones: TStringField
+    object qryPrnPayReceiptcCustomerPhones: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustomerPhones'
       Size = 50
       Calculated = True
     end
-    object qryPrnPayReceiptcCustId: TStringField
+    object qryPrnPayReceiptcCustId: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustId'
       Size = 128
@@ -72,7 +72,7 @@ object DMReports: TDMReports
     object qryPrnPayReceiptTranPawnAmount: TFloatField
       FieldName = 'TRAN_PAWN_AMOUNT'
     end
-    object qryPrnPayReceiptTranTicketNo: TStringField
+    object qryPrnPayReceiptTranTicketNo: TWideStringField
       FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
@@ -1492,7 +1492,7 @@ object DMReports: TDMReports
     object qryTranItemsInvItemCount: TIntegerField
       FieldName = 'INV_ITEM_COUNT'
     end
-    object qryTranItemsDescription: TStringField
+    object qryTranItemsDescription: TWideStringField
       FieldName = 'DESCRIPTION'
       Size = 120
     end
@@ -2080,18 +2080,18 @@ object DMReports: TDMReports
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryInvItemcFullName: TStringField
+    object qryInvItemcFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
       Size = 120
       Calculated = True
     end
-    object qryInvItemcKT: TStringField
+    object qryInvItemcKT: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cKT'
       Calculated = True
     end
-    object qryInvItemDescription: TStringField
+    object qryInvItemDescription: TWideStringField
       FieldName = 'DESCRIPTION'
       Size = 120
     end
@@ -2107,7 +2107,7 @@ object DMReports: TDMReports
     object qryInvItemTranDate: TDateField
       FieldName = 'TRAN_DATE'
     end
-    object qryInvItemTranTicketNo: TStringField
+    object qryInvItemTranTicketNo: TWideStringField
       FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
@@ -2123,7 +2123,7 @@ object DMReports: TDMReports
       FieldName = 'CUST_LAST'
       Size = 35
     end
-    object qryInvItemTranType: TStringField
+    object qryInvItemTranType: TWideStringField
       FieldName = 'TRAN_TYPE'
       Size = 1
     end
@@ -3806,18 +3806,18 @@ object DMReports: TDMReports
         DataType = ftInteger
         ParamType = ptInput
       end>
-    object qryLayawayRcptcCustName: TStringField
+    object qryLayawayRcptcCustName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustName'
       Size = 50
       Calculated = True
     end
-    object qryLayawayRcptcFPhone: TStringField
+    object qryLayawayRcptcFPhone: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFPhone'
       Calculated = True
     end
-    object qryLayawayRcptcWeightUnit: TStringField
+    object qryLayawayRcptcWeightUnit: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cWeightUnit'
       Size = 10
@@ -3851,11 +3851,11 @@ object DMReports: TDMReports
       FieldName = 'TOTAL_AMOUNT'
       currency = True
     end
-    object qryLayawayRcptTranTicketNo: TStringField
+    object qryLayawayRcptTranTicketNo: TWideStringField
       FieldName = 'TRAN_TICKET_NO'
       Size = 30
     end
-    object qryLayawayRcptTranStatus: TStringField
+    object qryLayawayRcptTranStatus: TWideStringField
       FieldName = 'TRAN_STATUS'
       Size = 1
     end
@@ -3898,14 +3898,14 @@ object DMReports: TDMReports
       FieldName = 'CUST_PHONE_NUMBER'
       Size = 14
     end
-    object qryLayawayRcptItemDescription: TStringField
+    object qryLayawayRcptItemDescription: TWideStringField
       FieldName = 'ITEM_DESCRIPTION'
       Size = 120
     end
     object qryLayawayRcptWeight: TFloatField
       FieldName = 'WEIGHT'
     end
-    object qryLayawayRcptWeightUnit: TStringField
+    object qryLayawayRcptWeightUnit: TWideStringField
       FieldName = 'WEIGHT_UNIT'
       Size = 1
     end

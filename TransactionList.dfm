@@ -767,13 +767,13 @@ object frmTransactionList: TfrmTransactionList
       '')
     Left = 104
     Top = 231
-    object qryTranListcCustFullName: TStringField
+    object qryTranListcCustFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCustFullName'
       Size = 120
       Calculated = True
     end
-    object qryTranListcTransaction: TStringField
+    object qryTranListcTransaction: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cTransaction'
       Size = 40
@@ -789,7 +789,7 @@ object frmTransactionList: TfrmTransactionList
       FieldName = 'TranDate'
       DisplayFormat = 'mm/dd/yyyy'
     end
-    object qryTranListTranTicketNo: TStringField
+    object qryTranListTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
@@ -800,11 +800,11 @@ object frmTransactionList: TfrmTransactionList
     object qryTranListTranMaturity: TDateField
       FieldName = 'TranMaturity'
     end
-    object qryTranListTranType: TStringField
+    object qryTranListTranType: TWideStringField
       FieldName = 'TranType'
       Size = 1
     end
-    object qryTranListTranStatus: TStringField
+    object qryTranListTranStatus: TWideStringField
       FieldName = 'TranStatus'
       Size = 1
     end
@@ -879,12 +879,12 @@ object frmTransactionList: TfrmTransactionList
         ParamType = ptInput
         Value = Null
       end>
-    object qryTranTotalsTranType: TStringField
+    object qryTranTotalsTranType: TWideStringField
       FieldName = 'TranType'
       ReadOnly = True
       Size = 1
     end
-    object qryTranTotalsTranTypeDesc: TStringField
+    object qryTranTotalsTranTypeDesc: TWideStringField
       FieldName = 'TranTypeDesc'
       ReadOnly = True
     end
@@ -1795,7 +1795,7 @@ object frmTransactionList: TfrmTransactionList
       FieldName = 'cTotalWeight'
       Calculated = True
     end
-    object qryInvItemscStatus: TStringField
+    object qryInvItemscStatus: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cStatus'
       Calculated = True
@@ -1803,29 +1803,29 @@ object frmTransactionList: TfrmTransactionList
     object qryInvItemsInvItemNo: TIntegerField
       FieldName = 'InvItemNo'
     end
-    object qryInvItemsInvItemBarcode: TStringField
+    object qryInvItemsInvItemBarcode: TWideStringField
       FieldName = 'InvItemBarcode'
       Size = 30
     end
     object qryInvItemsInvCatNo: TIntegerField
       FieldName = 'InvCatNo'
     end
-    object qryInvItemsJType: TStringField
+    object qryInvItemsJType: TWideStringField
       FieldName = 'JType'
       Size = 1
     end
-    object qryInvItemsJStyle: TStringField
+    object qryInvItemsJStyle: TWideStringField
       FieldName = 'JStyle'
       Size = 1
     end
-    object qryInvItemsJMetal: TStringField
+    object qryInvItemsJMetal: TWideStringField
       FieldName = 'JMetal'
       Size = 1
     end
     object qryInvItemsInvItemCount: TIntegerField
       FieldName = 'InvItemCount'
     end
-    object qryInvItemsNote: TStringField
+    object qryInvItemsNote: TWideStringField
       FieldName = 'Note'
       Size = 80
     end
@@ -1852,7 +1852,7 @@ object frmTransactionList: TfrmTransactionList
       currency = True
       Precision = 19
     end
-    object qryInvItemsInvItemStatus: TStringField
+    object qryInvItemsInvItemStatus: TWideStringField
       FieldName = 'InvItemStatus'
       Size = 1
     end
@@ -1862,43 +1862,43 @@ object frmTransactionList: TfrmTransactionList
     object qryInvItemsInvOriginalItemNo: TIntegerField
       FieldName = 'InvOriginalItemNo'
     end
-    object qryInvItemsInvItemBrand: TStringField
+    object qryInvItemsInvItemBrand: TWideStringField
       FieldName = 'InvItemBrand'
       Size = 30
     end
-    object qryInvItemsOwnerAppNumber: TStringField
+    object qryInvItemsOwnerAppNumber: TWideStringField
       FieldName = 'OwnerAppNumber'
       Size = 40
     end
-    object qryInvItemsModelNumber: TStringField
+    object qryInvItemsModelNumber: TWideStringField
       FieldName = 'ModelNumber'
       Size = 40
     end
-    object qryInvItemsSerialNumber: TStringField
+    object qryInvItemsSerialNumber: TWideStringField
       FieldName = 'SerialNumber'
       Size = 40
     end
-    object qryInvItemsGender: TStringField
+    object qryInvItemsGender: TWideStringField
       FieldName = 'Gender'
       Size = 1
     end
-    object qryInvItemsDescription: TStringField
+    object qryInvItemsDescription: TWideStringField
       FieldName = 'Description'
       Size = 120
     end
-    object qryInvItemsJTypeDesc: TStringField
+    object qryInvItemsJTypeDesc: TWideStringField
       FieldName = 'JTypeDesc'
       Size = 30
     end
-    object qryInvItemsJStyleDesc: TStringField
+    object qryInvItemsJStyleDesc: TWideStringField
       FieldName = 'JStyleDesc'
       Size = 30
     end
-    object qryInvItemsJMetalDesc: TStringField
+    object qryInvItemsJMetalDesc: TWideStringField
       FieldName = 'JMetalDesc'
       Size = 30
     end
-    object qryInvItemsWeightUnit: TStringField
+    object qryInvItemsWeightUnit: TWideStringField
       FieldName = 'WeightUnit'
       Size = 1
     end

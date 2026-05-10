@@ -200,7 +200,7 @@ object frmReportExportTransactions: TfrmReportExportTransactions
         ParamType = ptInput
         Value = 42005d
       end>
-    object qryTransactionsOnlyTranTicketNo: TStringField
+    object qryTransactionsOnlyTranTicketNo: TWideStringField
       Tag = 1
       DisplayLabel = 'Ticket No'
       FieldName = 'TranTicketNo'
@@ -273,7 +273,7 @@ object frmReportExportTransactions: TfrmReportExportTransactions
         ParamType = ptInput
         Value = 42005d
       end>
-    object qryTransactionsAndItemsTranTicketNo: TStringField
+    object qryTransactionsAndItemsTranTicketNo: TWideStringField
       Tag = 1
       DisplayLabel = 'Ticket No'
       FieldName = 'TranTicketNo'
@@ -300,7 +300,7 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'Amount'
       FieldName = 'TranAmount'
     end
-    object qryTransactionsAndItemsDescription: TStringField
+    object qryTransactionsAndItemsDescription: TWideStringField
       Tag = 1
       FieldName = 'Description'
       Size = 120
@@ -314,19 +314,19 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'Length'
       FieldName = 'SizeLength'
     end
-    object qryTransactionsAndItemsJTypeDesc: TStringField
+    object qryTransactionsAndItemsJTypeDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Type'
       FieldName = 'JTypeDesc'
       Size = 30
     end
-    object qryTransactionsAndItemsJStyleDesc: TStringField
+    object qryTransactionsAndItemsJStyleDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Style'
       FieldName = 'JStyleDesc'
       Size = 30
     end
-    object qryTransactionsAndItemsJMetalDesc: TStringField
+    object qryTransactionsAndItemsJMetalDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Metal'
       FieldName = 'JMetalDesc'
@@ -529,7 +529,7 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       Tag = 1
       FieldName = 'TransactionNo'
     end
-    object qryClientTranscItemsTranTicketNo: TStringField
+    object qryClientTranscItemsTranTicketNo: TWideStringField
       Tag = 1
       DisplayLabel = 'Ticket No'
       FieldName = 'TranTicketNo'
@@ -556,7 +556,7 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'Amount'
       FieldName = 'TranAmount'
     end
-    object qryClientTranscItemsDescription: TStringField
+    object qryClientTranscItemsDescription: TWideStringField
       Tag = 1
       FieldName = 'Description'
       Size = 120
@@ -570,19 +570,19 @@ object frmReportExportTransactions: TfrmReportExportTransactions
       DisplayLabel = 'Length'
       FieldName = 'SizeLength'
     end
-    object qryClientTranscItemsJTypeDesc: TStringField
+    object qryClientTranscItemsJTypeDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Type'
       FieldName = 'JTypeDesc'
       Size = 30
     end
-    object qryClientTranscItemsJStyleDesc: TStringField
+    object qryClientTranscItemsJStyleDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Style'
       FieldName = 'JStyleDesc'
       Size = 30
     end
-    object qryClientTranscItemsJMetalDesc: TStringField
+    object qryClientTranscItemsJMetalDesc: TWideStringField
       Tag = 1
       DisplayLabel = 'J. Metal'
       FieldName = 'JMetalDesc'

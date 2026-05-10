@@ -16,7 +16,7 @@ type
     DBGrid1: TDBGrid;
     qryBckHistBckId: TIntegerField;
     qryBckHistBckDate: TSQLTimeStampField;
-    qryBckHistBckPath: TStringField;
+    qryBckHistBckPath: TWideStringField;
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private

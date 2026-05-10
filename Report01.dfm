@@ -911,13 +911,13 @@ object frmReport01: TfrmReport01
     OnCalcFields = clnLatePawnCalcFields
     Left = 683
     Top = 11
-    object clnLatePawncFullName: TStringField
+    object clnLatePawncFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
       Size = 120
       Calculated = True
     end
-    object clnLatePawncPhones: TStringField
+    object clnLatePawncPhones: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cPhones'
       Size = 128
@@ -926,7 +926,7 @@ object frmReport01: TfrmReport01
     object clnLatePawnTransactionNo: TIntegerField
       FieldName = 'TransactionNo'
     end
-    object clnLatePawnTranTicketNo: TStringField
+    object clnLatePawnTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
       Size = 30
     end
@@ -940,30 +940,30 @@ object frmReport01: TfrmReport01
     object clnLatePawnLatePayment: TIntegerField
       FieldName = 'LatePayment'
     end
-    object clnLatePawnCustLast: TStringField
+    object clnLatePawnCustLast: TWideStringField
       FieldName = 'CustLast'
       Size = 35
     end
-    object clnLatePawnCustFirst: TStringField
+    object clnLatePawnCustFirst: TWideStringField
       FieldName = 'CustFirst'
       Size = 35
     end
-    object clnLatePawnCustMid: TStringField
+    object clnLatePawnCustMid: TWideStringField
       FieldName = 'CustMid'
       Size = 1
     end
     object clnLatePawnTranPawnAmount: TFloatField
       FieldName = 'TranPawnAmount'
     end
-    object clnLatePawnCustPhCell: TStringField
+    object clnLatePawnCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
       Size = 14
     end
-    object clnLatePawnCustPhHome: TStringField
+    object clnLatePawnCustPhHome: TWideStringField
       FieldName = 'CustPhHome'
       Size = 14
     end
-    object clnLatePawnCustPhBussiness: TStringField
+    object clnLatePawnCustPhBussiness: TWideStringField
       FieldName = 'CustPhBussiness'
       Size = 14
     end

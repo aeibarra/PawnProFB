@@ -392,7 +392,7 @@ CREATE TABLE TRANSACTIONS
 COMMENT ON COLUMN TRANSACTIONS.TRAN_STATUS IS 'A-Active
 V-Void';
 
-COMMENT ON COLUMN TRANSACTIONS.TRAN_CLOSE_REASON IS '0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix 0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Default/Redeem';
+COMMENT ON COLUMN TRANSACTIONS.TRAN_CLOSE_REASON IS '0-Open 1-Void 2-Redeemed 3-Defaulted 4-Mix Default/Redeem 5-Layaway Closed/Released 6-Layaway Canceled/Returned';
 
 CREATE TABLE TRANSACTION_TYPES 
 (

@@ -33,10 +33,7 @@ uses PawnDM, PawnGlobal;
 
 procedure TfrmConfirmCloseLayaway.btnCancelLayawayClick(Sender: TObject);
 begin
-  DM.qryTransactions.Edit;
-  DM.qryTransactionsTRAN_STATUS.AsString := TranStatus_Inactive;
-  DM.qryTransactionsPRINC_BALANCE.AsCurrency := 0;
-  DM.qryTransactions.Post;
+  DM.CancelLayaway(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
   ModalResult := mrOk;
 end;
