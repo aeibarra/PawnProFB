@@ -207,10 +207,15 @@ type
     procedure qryPaymentsAfterPost(DataSet: TDataSet);
     procedure qryTransactionsAfterScroll(DataSet: TDataSet);
   private
+    FPendingFBPasswordForIni: string;
+    FDeleteLegacyFBPasswordFromIni: Boolean;
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
     procedure LoadLookupMemTables;
     procedure LoadLookupMemTable(AMemTable: TFDMemTable; const ASQL: string);
+    function GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string;
+      AllowPrompt: Boolean): string;
+    procedure SavePendingFBPasswordToIni;
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
@@ -230,6 +235,7 @@ type
     function BackupDatabaseToFileWithConnection(AConn: TFDConnection; BackupPath: string): string;
     function ShouldBackupImages: Boolean;
     procedure BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
+    procedure StartImageBackupAuditIfDue;
     procedure RunBackup(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean; out AResult: TBackupResult; AOnPhase: TBackupPhaseProc = nil);
     procedure SaveImageToFile(ImagesDataNo: integer; FileName: string);
     procedure ExportImageToPath(ImagesDataNo: integer; DestPath: string);
@@ -284,9 +290,22 @@ var
 
 implementation
 
-Uses PawnGlobal, uPawnProIniPrinters, SearchClient, Nvv.FB5.DBA;
+Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA, IdHashSHA;
 
 {$R *.DFM}
+
+function SHA256OfStream(AStream: TStream): string;
+var
+  Hasher: TIdHashSHA256;
+begin
+  Hasher := TIdHashSHA256.Create;
+  try
+    AStream.Position := 0;
+    Result := Hasher.HashStreamAsHex(AStream);
+  finally
+    Hasher.Free;
+  end;
+end;
 
 procedure TDM.RefreshStoreQry;
 begin
@@ -520,6 +539,148 @@ begin
   LoadLookupMemTables;
 end;
 
+function PromptForDatabasePassword(out Password: string): Boolean;
+var
+  Frm: TForm;
+  Lbl: TLabel;
+  Edt: TEdit;
+  BtnOK, BtnCancel: TButton;
+begin
+  Password := '';
+
+  Frm := TForm.Create(nil);
+  try
+    Frm.BorderStyle := bsDialog;
+    Frm.Caption := 'PawnPro Database Password';
+    Frm.ClientWidth := 420;
+    Frm.ClientHeight := 135;
+    Frm.Position := poScreenCenter;
+    Frm.Font.Name := 'Segoe UI';
+    Frm.Font.Size := 9;
+
+    Lbl := TLabel.Create(Frm);
+    Lbl.Parent := Frm;
+    Lbl.AutoSize := False;
+    Lbl.WordWrap := True;
+    Lbl.Caption :=
+      'Enter the Firebird database password. PawnPro will encrypt it in ' +
+      'PawnPro.ini for this workstation.';
+    Lbl.SetBounds(16, 16, Frm.ClientWidth - 32, 34);
+
+    Edt := TEdit.Create(Frm);
+    Edt.Parent := Frm;
+    Edt.Left := 16;
+    Edt.Top := 58;
+    Edt.Width := Frm.ClientWidth - 32;
+    Edt.PasswordChar := '*';
+
+    BtnOK := TButton.Create(Frm);
+    BtnOK.Parent := Frm;
+    BtnOK.Caption := 'OK';
+    BtnOK.ModalResult := mrOk;
+    BtnOK.Default := True;
+    BtnOK.Left := Frm.ClientWidth - 176;
+    BtnOK.Top := 96;
+    BtnOK.Width := 75;
+
+    BtnCancel := TButton.Create(Frm);
+    BtnCancel.Parent := Frm;
+    BtnCancel.Caption := 'Cancel';
+    BtnCancel.ModalResult := mrCancel;
+    BtnCancel.Cancel := True;
+    BtnCancel.Left := Frm.ClientWidth - 91;
+    BtnCancel.Top := 96;
+    BtnCancel.Width := 75;
+
+    Frm.ActiveControl := Edt;
+    Result := Frm.ShowModal = mrOk;
+    if Result then
+      Password := Edt.Text;
+  finally
+    Frm.Free;
+  end;
+end;
+
+function TDM.GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string;
+  AllowPrompt: Boolean): string;
+begin
+  Result := '';
+
+  if PasswordEnc <> '' then
+  begin
+    try
+      Result := DPAPIUnprotect(PasswordEnc);
+      FDeleteLegacyFBPasswordFromIni := LegacyPassword <> '';
+      Exit;
+    except
+      on E: Exception do
+      begin
+        if not AllowPrompt then
+          raise;
+
+        MessageDlg(
+          'PawnPro could not decrypt the database password saved in PawnPro.ini.' +
+          sLineBreak + sLineBreak +
+          'This usually happens when the INI file was copied from another workstation.' +
+          sLineBreak +
+          'Please enter the Firebird database password so it can be encrypted for this workstation.',
+          mtInformation, [mbOK], 0);
+      end;
+    end;
+  end
+  else if LegacyPassword <> '' then
+  begin
+    Result := LegacyPassword;
+    FDeleteLegacyFBPasswordFromIni := True;
+  end
+  else if AllowPrompt then
+  begin
+    if not PromptForDatabasePassword(Result) then
+    begin
+      Application.Terminate;
+      Halt(0);
+      Abort;
+    end;
+  end
+  else
+    raise Exception.Create('PawnPro.ini is missing [CONNECTION_FB] password_enc.');
+
+  if Result = '' then
+  begin
+    if not AllowPrompt then
+      raise Exception.Create('Database password is required to start PawnPro.');
+
+    if not PromptForDatabasePassword(Result) then
+    begin
+      Application.Terminate;
+      Halt(0);
+      Abort;
+    end;
+  end;
+
+  FPendingFBPasswordForIni := Result;
+end;
+
+procedure TDM.SavePendingFBPasswordToIni;
+var
+  IniFile: TIniFile;
+begin
+  if (FPendingFBPasswordForIni = '') and not FDeleteLegacyFBPasswordFromIni then
+    Exit;
+
+  IniFile := TIniFile.Create(GlobalIniFile);
+  try
+    if FPendingFBPasswordForIni <> '' then
+      IniFile.WriteString(IniSecConnFB, IniKeyPasswordEnc, DPAPIProtect(FPendingFBPasswordForIni));
+    if IniFile.ValueExists(IniSecConnFB, IniKeyPassword) then
+      IniFile.DeleteKey(IniSecConnFB, IniKeyPassword);
+  finally
+    IniFile.Free;
+    FPendingFBPasswordForIni := '';
+    FDeleteLegacyFBPasswordFromIni := False;
+  end;
+end;
+
 // Reads [CONNECTION_FB] from the global PawnPro.ini and configures the given
 // TFDConnection with the same params used for ConnFB. Lets background tasks
 // build a thread-local connection without duplicating the INI-read logic.
@@ -527,22 +688,23 @@ end;
 procedure TDM.ConfigureFBConnectionFor(AConn: TFDConnection);
 var
   IniFile: TIniFile;
-  Server, Database, User, Password, CharSet: string;
+  Server, Database, User, Password, PasswordEnc, CharSet: string;
   Port: Integer;
-const
-  IniSecConnFB = 'CONNECTION_FB';
 begin
   IniFile := TIniFile.Create(GlobalIniFile);
   try
-    Server   := IniFile.ReadString (IniSecConnFB, 'host',     'localhost');
-    Database := IniFile.ReadString (IniSecConnFB, 'database', '');
-    User     := IniFile.ReadString (IniSecConnFB, 'user',     'sysdba');
-    Password := IniFile.ReadString (IniSecConnFB, 'password', 'masterkey');
-    Port     := IniFile.ReadInteger(IniSecConnFB, 'port',     3050);
-    CharSet  := IniFile.ReadString (IniSecConnFB, 'charset',  'UTF8');
+    Server      := IniFile.ReadString (IniSecConnFB, IniKeyConnFBHost,     'localhost');
+    Database    := IniFile.ReadString (IniSecConnFB, IniKeyConnFBDatabase, '');
+    User        := IniFile.ReadString (IniSecConnFB, IniKeyConnFBUser,     'sysdba');
+    PasswordEnc := IniFile.ReadString (IniSecConnFB, IniKeyPasswordEnc,    '');
+    Password    := IniFile.ReadString (IniSecConnFB, IniKeyPassword,       '');
+    Port        := IniFile.ReadInteger(IniSecConnFB, IniKeyConnFBPort,     3050);
+    CharSet     := IniFile.ReadString (IniSecConnFB, IniKeyConnFBCharset,  'UTF8');
   finally
     IniFile.Free;
   end;
+
+  Password := GetFBPasswordFromIni(PasswordEnc, Password, AConn = ConnFB);
 
   AConn.Connected := False;
   AConn.Params.Clear;
@@ -582,6 +744,8 @@ begin
         q.SQL.Text := 'SELECT 1 AS X FROM RDB$DATABASE';
         q.Open;
         Result := q.Fields[0].AsInteger = 1;
+        if Result then
+          SavePendingFBPasswordToIni;
       finally
         q.Free;
       end;
@@ -589,6 +753,11 @@ begin
       ConnFB.Connected := False;
     end;
   except
+    on E: EAbort do
+    begin
+      Application.Terminate;
+      raise;
+    end;
     on E: Exception do
     begin
       ErrorMsg := Format('[%s] %s', [E.ClassName, E.Message]);
@@ -598,27 +767,29 @@ begin
 end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
-var
-  FlagValue: string;
 begin
   SaveCustQry := DM.qryCustomers.SQL.Text;
 
   RegIniFile.Path := LocalIniFile;
 
-  { Read IsLocalDatabase flag from INI file, create with default 'Y' if not exists }
-  FlagValue := ReadIniFile(IniSecDatabase, IniKeyIsLocalDatabase);
-  if FlagValue = '' then
-  begin
-    WriteIniFile(IniSecDatabase, IniKeyIsLocalDatabase, 'Y');
-    FlagValue := 'Y';
-  end;
-  IsLocalDatabase := FlagValue <> 'N';
+  // Make sure every INI key the app expects exists with a safe default. Must
+  // run before any other INI read so first-run installs don't fall back to
+  // per-call defaults that never get written to disk.
+  EnsureIniDefaults(GlobalIniFile);
+
+  IsLocalDatabase := ReadIniFile(IniSecDatabase, IniKeyIsLocalDatabase) <> 'N';
 
   // Open ConnFB persistently for the lifetime of the data module.
   ConfigureFBConnection;
   try
     ConnFB.Connected := True;
+    SavePendingFBPasswordToIni;
   except
+    on E: EAbort do
+    begin
+      Application.Terminate;
+      raise;
+    end;
     on E: Exception do
     begin
       ShowMessage('FB5 connection: FAILED' + sLineBreak + sLineBreak +
@@ -2143,6 +2314,181 @@ begin
     Result := True;
     Exit;
   end;
+end;
+
+procedure TDM.StartImageBackupAuditIfDue;
+const
+  AuditDelayMs = 15000;
+  AuditThrottleMs = 100;
+var
+  AuditWeekStr, CurrentAuditWeek: string;
+  BackupImagesPath, SourceRoot, TargetRoot: string;
+  DayNo, WeekYear, WeekNo: Word;
+  SettingsQuery: TFDQuery;
+  AuditThread: TThread;
+
+  function ReadBackupImagesPath: string;
+  begin
+    Result := '';
+    SettingsQuery := TFDQuery.Create(nil);
+    try
+      SettingsQuery.Connection := ConnFB;
+      SettingsQuery.SQL.Text := 'SELECT BACKUP_IMAGES_PATH FROM BACKUP_SETTINGS';
+      SettingsQuery.Open;
+      if not SettingsQuery.Eof then
+        Result := Trim(SettingsQuery.FieldByName('BACKUP_IMAGES_PATH').AsString);
+    finally
+      SettingsQuery.Free;
+    end;
+  end;
+
+begin
+  if ImageStorageMode <> ImageStorageMode_File then
+    Exit;
+
+  if (Trim(ImagesStoragePath) = '') or not DirectoryExists(ImagesStoragePath) then
+    Exit;
+
+  DayNo := DayOfWeek(Date);
+  if (DayNo <> 3) and (DayNo <> 4) then
+    Exit;
+
+  WeekNo := WeekOfTheYear(Date, WeekYear);
+  CurrentAuditWeek := Format('%.4d-%.2d', [WeekYear, WeekNo]);
+  AuditWeekStr := ReadIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek);
+  if SameText(Trim(AuditWeekStr), CurrentAuditWeek) then
+    Exit;
+
+  BackupImagesPath := ReadBackupImagesPath;
+  if (BackupImagesPath = '') or not DirectoryExists(BackupImagesPath) then
+    Exit;
+
+  SourceRoot := IncludeTrailingPathDelimiter(ImagesStoragePath);
+  TargetRoot := IncludeTrailingPathDelimiter(BackupImagesPath);
+
+  AuditThread := TThread.CreateAnonymousThread(
+    procedure
+    var
+      Conn: TFDConnection;
+      ImageQuery, MarkQuery: TFDQuery;
+      ImagesDataNo: integer;
+      ImageDate: TDateTime;
+      SourcePath, BackupPath: string;
+      SourceStream, BackupStream: TFileStream;
+      SourceBytes, BackupBytes: Int64;
+      SourceHash, BackupHash: string;
+
+      function BuildImagePathForRoot(const RootPath: string; AImagesDataNo: integer; AImageDate: TDateTime): string;
+      begin
+        Result := IncludeTrailingPathDelimiter(RootPath) +
+                  FormatDateTime('yyyymm', AImageDate) + PathDelim +
+                  IntToStr(AImagesDataNo) + '.jpg';
+      end;
+
+      procedure MarkForBackup;
+      begin
+        try
+          MarkQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImagesDataNo;
+          MarkQuery.ExecSQL;
+        except
+          { Background audit is best-effort. Normal backup still handles new images. }
+        end;
+      end;
+
+      function FileSizeOf(const FileName: string): Int64;
+      var
+        FS: TFileStream;
+      begin
+        FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+        try
+          Result := FS.Size;
+        finally
+          FS.Free;
+        end;
+      end;
+
+    begin
+      Sleep(AuditDelayMs);
+      Conn := nil;
+      ImageQuery := nil;
+      MarkQuery := nil;
+      try
+        Conn := TFDConnection.Create(nil);
+        ConfigureFBConnectionFor(Conn);
+        Conn.Connected := True;
+
+        ImageQuery := TFDQuery.Create(nil);
+        MarkQuery := TFDQuery.Create(nil);
+        ImageQuery.Connection := Conn;
+        MarkQuery.Connection := Conn;
+
+        ImageQuery.SQL.Text :=
+          'SELECT IMAGES_DATA_NO, CREATED ' +
+          'FROM IMAGES_DATA ' +
+          'WHERE CREATED IS NOT NULL ' +
+          'ORDER BY IMAGES_DATA_NO';
+
+        MarkQuery.SQL.Text :=
+          'DELETE FROM IMAGES_DATA_BACKUP WHERE IMAGES_DATA_NO = :IMAGES_DATA_NO';
+
+        ImageQuery.Open;
+        while not ImageQuery.Eof do
+        begin
+          ImagesDataNo := ImageQuery.FieldByName('IMAGES_DATA_NO').AsInteger;
+          ImageDate := ImageQuery.FieldByName('CREATED').AsDateTime;
+          SourcePath := BuildImagePathForRoot(SourceRoot, ImagesDataNo, ImageDate);
+          BackupPath := BuildImagePathForRoot(TargetRoot, ImagesDataNo, ImageDate);
+
+          try
+            if FileExists(SourcePath) then
+            begin
+              if not FileExists(BackupPath) then
+                MarkForBackup
+              else
+              begin
+                SourceBytes := FileSizeOf(SourcePath);
+                BackupBytes := FileSizeOf(BackupPath);
+
+                if SourceBytes <> BackupBytes then
+                  MarkForBackup
+                else
+                begin
+                  SourceStream := TFileStream.Create(SourcePath, fmOpenRead or fmShareDenyNone);
+                  try
+                    BackupStream := TFileStream.Create(BackupPath, fmOpenRead or fmShareDenyNone);
+                    try
+                      SourceHash := SHA256OfStream(SourceStream);
+                      BackupHash := SHA256OfStream(BackupStream);
+                    finally
+                      BackupStream.Free;
+                    end;
+                  finally
+                    SourceStream.Free;
+                  end;
+
+                  if not SameText(SourceHash, BackupHash) then
+                    MarkForBackup;
+                end;
+              end;
+            end;
+          except
+            MarkForBackup;
+          end;
+
+          Sleep(AuditThrottleMs);
+          ImageQuery.Next;
+        end;
+
+        WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek, CurrentAuditWeek);
+      finally
+        MarkQuery.Free;
+        ImageQuery.Free;
+        Conn.Free;
+      end;
+    end);
+  AuditThread.FreeOnTerminate := True;
+  AuditThread.Priority := tpLowest;
+  AuditThread.Start;
 end;
 
 procedure TDM.BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
