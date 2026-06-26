@@ -219,6 +219,9 @@ type
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
     procedure SendMessageToRefreshPaymentDueDateText;
+    function OpenAppState(const StateKey: string): TFDQuery;
+    procedure SaveAppState(const StateKey: string; const TextValue: Variant;
+      const IntValue: Variant; const CurrencyValue: Variant; const DateValue: Variant);
   public
     SaveCustQry: string;
     ReCalcMaturity: boolean;
@@ -227,6 +230,14 @@ type
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
     function TestFBConnection(out ErrorMsg: string): Boolean;
     procedure RefreshStoreQry;
+    function GetAppStateText(const StateKey, DefaultValue: string): string;
+    function GetAppStateInt(const StateKey: string; DefaultValue: Integer): Integer;
+    function GetAppStateCurrency(const StateKey: string; DefaultValue: Currency): Currency;
+    function GetAppStateDate(const StateKey: string; DefaultValue: TDateTime): TDateTime;
+    procedure SetAppStateText(const StateKey, Value: string);
+    procedure SetAppStateInt(const StateKey: string; Value: Integer);
+    procedure SetAppStateCurrency(const StateKey: string; Value: Currency);
+    procedure SetAppStateDate(const StateKey: string; Value: TDateTime);
     function GetBarcode(Key: integer): string;
     procedure CalcInterest(Amount: currency; var IntRate, IntAmount: extended);
     function LastPaymentForTransaction(TransactionNo: integer): TDateTime;
@@ -311,6 +322,118 @@ procedure TDM.RefreshStoreQry;
 begin
   qryStore.Close;
   qryStore.Open;
+end;
+
+function TDM.OpenAppState(const StateKey: string): TFDQuery;
+begin
+  Result := TFDQuery.Create(nil);
+  try
+    Result.Connection := ConnFB;
+    Result.SQL.Text := 'SELECT * FROM SPS_APP_STATE(:P_STATE_KEY)';
+    Result.Params.ParamByName('P_STATE_KEY').AsString := StateKey;
+    Result.Open;
+  except
+    Result.Free;
+    raise;
+  end;
+end;
+
+procedure TDM.SaveAppState(const StateKey: string; const TextValue: Variant;
+  const IntValue: Variant; const CurrencyValue: Variant; const DateValue: Variant);
+var
+  Qry: TFDQuery;
+begin
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := ConnFB;
+    Qry.SQL.Text :=
+      'EXECUTE PROCEDURE SPU_APP_STATE(' +
+      ':P_STATE_KEY, :P_VALUE_TEXT, :P_VALUE_INT, :P_VALUE_CURRENCY, :P_VALUE_DATE)';
+    Qry.Params.ParamByName('P_STATE_KEY').AsString := StateKey;
+    Qry.Params.ParamByName('P_VALUE_TEXT').Value := TextValue;
+    Qry.Params.ParamByName('P_VALUE_INT').Value := IntValue;
+    Qry.Params.ParamByName('P_VALUE_CURRENCY').Value := CurrencyValue;
+    Qry.Params.ParamByName('P_VALUE_DATE').Value := DateValue;
+    Qry.ExecSQL;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function TDM.GetAppStateText(const StateKey, DefaultValue: string): string;
+var
+  Qry: TFDQuery;
+begin
+  Result := DefaultValue;
+  Qry := OpenAppState(StateKey);
+  try
+    if not Qry.Eof and not Qry.FieldByName('VALUE_TEXT').IsNull then
+      Result := Qry.FieldByName('VALUE_TEXT').AsString;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function TDM.GetAppStateInt(const StateKey: string; DefaultValue: Integer): Integer;
+var
+  Qry: TFDQuery;
+begin
+  Result := DefaultValue;
+  Qry := OpenAppState(StateKey);
+  try
+    if not Qry.Eof and not Qry.FieldByName('VALUE_INT').IsNull then
+      Result := Qry.FieldByName('VALUE_INT').AsInteger;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function TDM.GetAppStateCurrency(const StateKey: string; DefaultValue: Currency): Currency;
+var
+  Qry: TFDQuery;
+begin
+  Result := DefaultValue;
+  Qry := OpenAppState(StateKey);
+  try
+    if not Qry.Eof and not Qry.FieldByName('VALUE_CURRENCY').IsNull then
+      Result := Qry.FieldByName('VALUE_CURRENCY').AsCurrency;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function TDM.GetAppStateDate(const StateKey: string; DefaultValue: TDateTime): TDateTime;
+var
+  Qry: TFDQuery;
+begin
+  Result := DefaultValue;
+  Qry := OpenAppState(StateKey);
+  try
+    if not Qry.Eof and not Qry.FieldByName('VALUE_DATE').IsNull then
+      Result := Qry.FieldByName('VALUE_DATE').AsDateTime;
+  finally
+    Qry.Free;
+  end;
+end;
+
+procedure TDM.SetAppStateText(const StateKey, Value: string);
+begin
+  SaveAppState(StateKey, Value, Null, Null, Null);
+end;
+
+procedure TDM.SetAppStateInt(const StateKey: string; Value: Integer);
+begin
+  SaveAppState(StateKey, Null, Value, Null, Null);
+end;
+
+procedure TDM.SetAppStateCurrency(const StateKey: string; Value: Currency);
+begin
+  SaveAppState(StateKey, Null, Null, Value, Null);
+end;
+
+procedure TDM.SetAppStateDate(const StateKey: string; Value: TDateTime);
+begin
+  SaveAppState(StateKey, Null, Null, Null, Value);
 end;
 
 function TDM.GetBarcode(Key: integer): string;

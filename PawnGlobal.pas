@@ -100,6 +100,8 @@ const
   ImageStorageMode_Database = 'DATABASE';
   ImageStorageMode_File = 'FILE';
 
+  AppStateKeyImageSharedPath = 'IMAGE_SHARED_PATH';
+
   IniSecDatabase = 'DATABASE';
   IniKeyIsLocalDatabase = 'IsLocalDatabase';
 

@@ -925,12 +925,27 @@ begin
 end;
 
 procedure TfrmPawnMain.InitializeImageStorage;
+var
+  SharedImagePath: string;
 begin
   ImageStorageMode := ReadIniFile(IniSecImageStorage, IniKeyStorageMode);
   if ImageStorageMode = '' then
     ImageStorageMode := ImageStorageMode_File;
 
   ImagesStoragePath := ReadIniFile(IniSecImageStorage, IniKeyImageDirectory);
+  if not IsLocalDatabase then
+  begin
+    try
+      SharedImagePath := Trim(DM.GetAppStateText(AppStateKeyImageSharedPath, ''));
+      if (SharedImagePath <> '') and not SameText(SharedImagePath, ImagesStoragePath) then
+      begin
+        ImagesStoragePath := SharedImagePath;
+        WriteIniFile(IniSecImageStorage, IniKeyImageDirectory, ImagesStoragePath);
+      end;
+    except
+      { Keep workstation startup non-fatal if the APP_STATE migration has not run yet. }
+    end;
+  end;
 
   { Assign the correct procedures }
   if ImageStorageMode = ImageStorageMode_File then

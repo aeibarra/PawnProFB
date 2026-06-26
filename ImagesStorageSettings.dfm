@@ -3,7 +3,7 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Images Storage Settings'
-  ClientHeight = 253
+  ClientHeight = 367
   ClientWidth = 601
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,13 +20,14 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
     Left = 0
     Top = 0
     Width = 601
-    Height = 253
+    Height = 367
     ActivePage = TabSheet1
     Align = alClient
     HotTrack = True
     TabOrder = 0
     TabWidth = 150
     OnChange = PageControlImageSettingsChange
+    ExplicitHeight = 253
     object TabSheet1: TTabSheet
       Caption = '  Images Storage  '
       object RzGroupBox1: TRzGroupBox
@@ -35,6 +36,7 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
         Top = 3
         Width = 587
         Height = 155
+        Align = alTop
         Color = clWhite
         GradientColorStyle = gcsCustom
         GradientColorStop = clWhite
@@ -100,15 +102,16 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
       object RzGroupBox2: TRzGroupBox
         AlignWithMargins = True
         Left = 3
-        Top = 152
+        Top = 266
         Width = 587
         Height = 66
         Align = alBottom
         Color = clWhite
         GradientColorStyle = gcsCustom
         GradientColorStop = clWhite
-        TabOrder = 1
+        TabOrder = 2
         VisualStyle = vsGradient
+        ExplicitTop = 152
         DesignSize = (
           587
           66)
@@ -137,6 +140,32 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
           TabOrder = 1
         end
       end
+      object gbSharedImagePath: TRzGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 164
+        Width = 587
+        Height = 101
+        Align = alTop
+        Caption = 'Secondary Workstation Shared Image Path (UNC)'
+        TabOrder = 1
+        ExplicitTop = 165
+        object RzLabel2: TRzLabel
+          Left = 52
+          Top = 36
+          Width = 205
+          Height = 17
+          Caption = 'Shared image folder path (UNC):'
+        end
+        object edImageSharedFolder: TRzEdit
+          Left = 52
+          Top = 56
+          Width = 476
+          Height = 25
+          Text = ''
+          TabOrder = 0
+        end
+      end
     end
     object TabSheetMigrateImages: TTabSheet
       Caption = 'Migrate to Folder'
@@ -146,11 +175,12 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
         Left = 3
         Top = 3
         Width = 587
-        Height = 215
+        Height = 329
         Align = alClient
         Color = clWhite
         GradientColorStyle = gcsCustom
         TabOrder = 0
+        ExplicitHeight = 427
         object lblFolder: TLabel
           Left = 56
           Top = 74
