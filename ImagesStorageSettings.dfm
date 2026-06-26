@@ -13,9 +13,10 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
   Font.Style = []
   PopupMode = pmAuto
   Position = poScreenCenter
+  OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 17
-  object PageControl1: TPageControl
+  object PageControlImageSettings: TPageControl
     Left = 0
     Top = 0
     Width = 601
@@ -25,7 +26,7 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
     HotTrack = True
     TabOrder = 0
     TabWidth = 150
-    OnChange = PageControl1Change
+    OnChange = PageControlImageSettingsChange
     object TabSheet1: TTabSheet
       Caption = '  Images Storage  '
       object RzGroupBox1: TRzGroupBox
@@ -137,7 +138,7 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
         end
       end
     end
-    object TabSheet2: TTabSheet
+    object TabSheetMigrateImages: TTabSheet
       Caption = 'Migrate to Folder'
       ImageIndex = 1
       object RzGroupBox3: TRzGroupBox

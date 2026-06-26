@@ -73,8 +73,6 @@ const
   YesNo: array [false..true] of String = ('N', 'Y');
 
   IniFileName = 'PawnPro.ini';
-  IniSecConn = 'CONNECTION';
-  IniSecClientsWindows = 'CLIENTWINDOW';
   IniKeyBarcode = 'BARCODE';
 
   IniKeyRepPolPrn = 'POLICEREP';
@@ -86,14 +84,15 @@ const
   IniSecLeadsOnline     = 'LEADS_ONLINE';
   IniKeyLeadsOnlinePath = 'CSVPath';
 
-  IniSecBackup = 'BACKUP';
-  IniKeyBackupPath = 'Path';
-
   IniSecImageBackup = 'IMAGE_BACKUP';
   IniKeyImageBackupLastBackupDate = 'LastBackupDate';
+  IniKeyImageBackupLastAuditWeek = 'LastAuditWeek';
 
   IniSecSettings = 'SETTINGS';
   IniKeyShowGoldPrice = 'SHOWGOLDPRICE';
+
+  IniSecGoldPrice = 'GOLD_PRICE';
+  IniKeyGoldPriceUrl = 'Url';
 
   IniSecImageStorage = 'IMAGE_STORAGE';
   IniKeyStorageMode = 'StorageMode';
@@ -103,6 +102,18 @@ const
 
   IniSecDatabase = 'DATABASE';
   IniKeyIsLocalDatabase = 'IsLocalDatabase';
+
+  // [CONNECTION_FB] keys. The section name itself is still inline in
+  // PawnDM.ConfigureFBConnectionFor; this constant exists because both the
+  // main app and PawnProSetup.exe need to refer to it.
+  IniSecConnFB        = 'CONNECTION_FB';
+  IniKeyConnFBHost     = 'host';
+  IniKeyConnFBDatabase = 'database';
+  IniKeyConnFBUser     = 'user';
+  IniKeyPassword       = 'password';      // legacy cleartext
+  IniKeyPasswordEnc    = 'password_enc';  // DPAPI Base64 blob (preferred)
+  IniKeyConnFBPort     = 'port';
+  IniKeyConnFBCharset  = 'charset';
 
   PawnDateCalcByDays  = 'D';
   PawnDateCalcByMonth = 'M';
@@ -146,6 +157,7 @@ function WindowsDirectory: string;
 function ReadIniFile(Section, Key: string): string;
 procedure WriteIniFile(Section, Key, Value: string);
 procedure WriteLastImageBackupDate;
+function DetectDatabaseIsLocal: Boolean;
 
 //function CreateTempView(SQLStatement: string): string;
 //Procedure ExecSQLStatement(SQLStatement: string);
@@ -313,6 +325,24 @@ end;
 procedure WriteLastImageBackupDate;
 begin
   WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastBackupDate, FormatDateTime('yyyy-mm-dd', Date));
+end;
+
+// Heuristic: does the configured Firebird host point at this machine? Used to
+// seed [DATABASE] IsLocalDatabase on first run, when the key has never been
+// written. A non-local DB means no backup drive is attached, so the backup
+// option is disabled. Reads the same [CONNECTION_FB] host that
+// ConfigureFBConnectionFor uses.
+function DetectDatabaseIsLocal: Boolean;
+var
+  Host: string;
+begin
+  Host := LowerCase(Trim(ReadIniFile(IniSecConnFB, IniKeyConnFBHost)));
+  Result := (Host = '')          or
+            (Host = 'localhost')  or
+            (Host = '127.0.0.1')  or
+            (Host = '::1')        or
+            (Host = '.')          or
+            SameText(Host, GetStationName);
 end;
 
 {function CreateTempView(SQLStatement: string): string;

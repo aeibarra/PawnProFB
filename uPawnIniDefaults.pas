@@ -49,8 +49,10 @@ begin
     EnsureKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'DATABASE');
 
     // ----- [DATABASE] -----
-    // 95% of installs are single-machine; remote-DB stores edit the INI by hand.
-    EnsureKey(Ini, 'DATABASE', 'IsLocalDatabase', 'Y');
+    // IsLocalDatabase is intentionally NOT seeded here. On first run, when the
+    // key is absent, TDM.DataModuleCreate detects it from the configured FB
+    // host (DetectDatabaseIsLocal) and writes the answer. Remote-DB stores
+    // resolve to 'N' and lose the backup option (no backup drive attached).
 
     // ----- [IMAGE_BACKUP] -----
     EnsureKey(Ini, 'IMAGE_BACKUP', 'LastBackupDate', '');

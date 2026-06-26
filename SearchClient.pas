@@ -835,6 +835,7 @@ type
     qryTypesJ_TYPE_DESC: TWideStringField;
     qryMetalJ_METAL: TWideStringField;
     qryMetalJ_METAL_DESC: TWideStringField;
+    btnCustPicID: TBitBtn;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -1049,6 +1050,12 @@ begin
   DM.RefreshStoreQry;
 
   btnAdjPoliceReport.Visible := DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4];
+
+  { In FILE storage mode a blank image folder means there's nowhere to view or
+    store item pictures, so disable the button. DATABASE mode keeps it enabled
+    (images come from the DB; the path is intentionally blank there). }
+  btnItemPictures.Enabled := (ImageStorageMode <> ImageStorageMode_File) or
+                             (Trim(ImagesStoragePath) <> '');
 
   DM.GetJTypes(qryTypes);
   DM.GetJStyles(qryStyles);

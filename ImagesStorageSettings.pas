@@ -9,9 +9,9 @@ uses
 
 type
   TfrmImagesStorageSettings = class(TForm)
-    PageControl1: TPageControl;
+    PageControlImageSettings: TPageControl;
     TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
+    TabSheetMigrateImages: TTabSheet;
     RzGroupBox1: TRzGroupBox;
     rbStoreInDB: TRadioButton;
     rbStoreInDir: TRadioButton;
@@ -29,9 +29,10 @@ type
     procedure rbStoreInDBClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
-    procedure PageControl1Change(Sender: TObject);
+    procedure PageControlImageSettingsChange(Sender: TObject);
     procedure btnSelectFolderClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -100,6 +101,11 @@ begin
   end;
 end;
 
+procedure TfrmImagesStorageSettings.FormCreate(Sender: TObject);
+begin
+  TabSheetMigrateImages.Enabled := false;
+end;
+
 procedure TfrmImagesStorageSettings.FormShow(Sender: TObject);
 begin
   lblProgress.Caption := '';
@@ -112,7 +118,7 @@ begin
   rbStoreInDBClick(nil);
 end;
 
-procedure TfrmImagesStorageSettings.PageControl1Change(Sender: TObject);
+procedure TfrmImagesStorageSettings.PageControlImageSettingsChange(Sender: TObject);
 begin
   lblFolder.Caption := edImageDirectory.Text;
 end;

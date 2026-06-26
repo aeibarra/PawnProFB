@@ -12,6 +12,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   DesignSize = (
     851
     655)
@@ -182,11 +183,11 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     end
     object edFBDBName: TEdit
       Left = 315
-      Top = 103
+      Top = 105
       Width = 283
       Height = 29
       TabOrder = 5
-      Text = 'C:\DB\PawnData.fdb'
+      Text = 'C:\DB\PAWNDATA.FDB'
     end
     object edFBUser: TEdit
       Left = 179

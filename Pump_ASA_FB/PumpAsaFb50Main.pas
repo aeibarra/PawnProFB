@@ -50,11 +50,18 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure btnTestAsaClick(Sender: TObject);
     procedure btnTestFbClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     FNotNullCols: TStringList;  // lazy-init; holds "TABLE.COLUMN" for every FB NOT NULL column
+    FNullCoercions: TStringList;
+    FNullCoercionSummaryLogged: Boolean;
     procedure ConfigureFBDatabaseConnection;
     procedure GetADOConnectionStr;
     procedure LogLine(const S: string);
+    procedure LogConnectionSummary;
+    procedure WritePumpLogFile;
+    procedure ResetNullCoercionLog;
+    procedure LogNullCoercionSummary;
     procedure LoadFbNotNullMetadata;
     procedure ApplyNullCoercion(AQuery: TFDQuery; const ATable: string);
     procedure WipeFirebirdDatabase;
@@ -92,6 +99,9 @@ type
     procedure PumpExportLogFileDetail;
     procedure PumpGoldPriceHistory;
     procedure PostPumpReseed;
+    function AsaScalar(const SQL: string): Variant;
+    function FbScalar(const SQL: string): Variant;
+    function ValidatePostPump: Integer;
   public
     { Public declarations }
   end;
@@ -158,68 +168,84 @@ begin
 
   GetADOConnectionStr;
   ConfigureFBDatabaseConnection;
-
-  fbPath := ConnectionFB.Params.Values['Database'];
-  if MessageDlg(
-       Format('This will ERASE all data in the Firebird database at:' + sLineBreak +
-              '  %s' + sLineBreak + sLineBreak + 'Continue?', [fbPath]),
-       mtWarning, [mbYes, mbNo], 0) <> mrYes then
-  begin
-    LogLine('Pump cancelled by user.');
-    Exit;
-  end;
+  LogConnectionSummary;
 
   try
-    ConnDB.Connected := True;
-    try
-      ConnectionFB.Connected := True;
-      try
-        LoadFbNotNullMetadata;
-        WipeFirebirdDatabase;
-        PumpStates;
-        PumpJTypes;
-        PumpJMetals;
-        PumpJStyles;
-        PumpJGenders;
-        PumpJStoneShapes;
-        PumpJStoneColors;
-        PumpItemStatus;
-        PumpTransactionTypes;
-        PumpStore;
-        PumpBackupSettings;
-        PumpExportFormat;
-        PumpPaymentTypes;
-        PumpImagesTypes;
-        PumpInvCategories;
-        PumpTableKeys;
-        PumpCustomer;
-        PumpTransactions;
-        PumpInventoryItems;
-        PumpStones;
-        PumpSalesItems;
-        PumpPayments;
-        PumpImagesData;
-        PumpImagesDataBackup;
-        PumpInventoryItemStatusLog;
-        PumpBackupHistory;
-        PumpExportFileLog;
-        PumpExportLogFileDetail;
-        PumpGoldPriceHistory;
-        PostPumpReseed;
-        lblCurrentProcess.Caption := '';
-        LogLine('Pump complete.');
-      finally
-        ConnectionFB.Connected := False;
-      end;
-    finally
-      ConnDB.Connected := False;
-    end;
-  except
-    on E: Exception do
+    btnGo.Enabled := False;
+    fbPath := ConnectionFB.Params.Values['Database'];
+    if MessageDlg(
+         Format('This will copy ASA data from:' + sLineBreak +
+                '  %s / %s' + sLineBreak + sLineBreak +
+                'and ERASE all data in the Firebird database at:' + sLineBreak +
+                '  %s' + sLineBreak + sLineBreak + 'Continue?',
+                [Trim(edAsaServerIP.Text), Trim(edAsaDBName.Text), fbPath]),
+         mtWarning, [mbYes, mbNo], 0) <> mrYes then
     begin
-      lblCurrentProcess.Caption := '';
-      LogLine(Format('  PUMP FAILED: [%s] %s', [E.ClassName, E.Message]));
+      LogLine('Pump cancelled by user.');
+      Exit;
     end;
+
+    try
+      ConnDB.Connected := True;
+      try
+        ConnectionFB.Connected := True;
+        try
+          LoadFbNotNullMetadata;
+          ResetNullCoercionLog;
+          WipeFirebirdDatabase;
+          PumpStates;
+          PumpJTypes;
+          PumpJMetals;
+          PumpJStyles;
+          PumpJGenders;
+          PumpJStoneShapes;
+          PumpJStoneColors;
+          PumpItemStatus;
+          PumpTransactionTypes;
+          PumpStore;
+          PumpBackupSettings;
+          PumpExportFormat;
+          PumpPaymentTypes;
+          PumpImagesTypes;
+          PumpInvCategories;
+          PumpTableKeys;
+          PumpCustomer;
+          PumpTransactions;
+          PumpInventoryItems;
+          PumpStones;
+          PumpSalesItems;
+          PumpPayments;
+          PumpImagesData;
+          PumpImagesDataBackup;
+          PumpInventoryItemStatusLog;
+          PumpBackupHistory;
+          PumpExportFileLog;
+          PumpExportLogFileDetail;
+          PumpGoldPriceHistory;
+          PostPumpReseed;
+          LogNullCoercionSummary;
+          if ValidatePostPump > 0 then
+            raise Exception.Create('Post-pump validation failed. Review the validation log above.');
+          lblCurrentProcess.Caption := '';
+          LogLine('Pump complete.');
+        finally
+          ConnectionFB.Connected := False;
+        end;
+      finally
+        ConnDB.Connected := False;
+      end;
+    except
+      on E: Exception do
+      begin
+        lblCurrentProcess.Caption := '';
+        if FNullCoercions <> nil then
+          LogNullCoercionSummary;
+        LogLine(Format('  PUMP FAILED: [%s] %s', [E.ClassName, E.Message]));
+      end;
+    end;
+  finally
+    WritePumpLogFile;
+    btnGo.Enabled := True;
   end;
 end;
 
@@ -1063,6 +1089,253 @@ begin
   end;
 end;
 
+function TfrmPumpAsaFb50Main.AsaScalar(const SQL: string): Variant;
+var
+  q: TADOQuery;
+begin
+  q := TADOQuery.Create(nil);
+  try
+    q.Connection := ConnDB;
+    q.SQL.Text := SQL;
+    q.Open;
+    Result := q.Fields[0].Value;
+  finally
+    q.Free;
+  end;
+end;
+
+function TfrmPumpAsaFb50Main.FbScalar(const SQL: string): Variant;
+var
+  q: TFDQuery;
+begin
+  q := TFDQuery.Create(nil);
+  try
+    q.Connection := ConnectionFB;
+    q.SQL.Text := SQL;
+    q.Open;
+    Result := q.Fields[0].Value;
+  finally
+    q.Free;
+  end;
+end;
+
+function ScalarAsInt64(const V: Variant): Int64;
+begin
+  if VarIsNull(V) or VarIsEmpty(V) then
+    Result := 0
+  else
+    Result := StrToInt64Def(VarToStr(V), 0);
+end;
+
+function ScalarAsFloat(const V: Variant): Double;
+begin
+  if VarIsNull(V) or VarIsEmpty(V) then
+    Result := 0
+  else
+    try
+      Result := V;
+    except
+      Result := StrToFloatDef(VarToStr(V), 0);
+    end;
+end;
+
+function ScalarAsDateKey(const V: Variant): Integer;
+begin
+  if VarIsNull(V) or VarIsEmpty(V) then
+    Result := 0
+  else
+    Result := Trunc(VarToDateTime(V));
+end;
+
+function TfrmPumpAsaFb50Main.ValidatePostPump: Integer;
+const
+  SUM_EPSILON = 0.01;
+var
+  ErrorCount: Integer;
+
+  procedure Fail(const Msg: string);
+  begin
+    Inc(ErrorCount);
+    LogLine('  VALIDATION FAIL: ' + Msg);
+  end;
+
+  procedure Pass(const Msg: string);
+  begin
+    LogLine('  validation ok: ' + Msg);
+  end;
+
+  procedure CheckCount(const LabelText, AsaTable, FbTable: string);
+  var
+    asaCount, fbCount: Int64;
+  begin
+    asaCount := ScalarAsInt64(AsaScalar('SELECT COUNT(*) FROM ' + AsaTable));
+    fbCount := ScalarAsInt64(FbScalar('SELECT COUNT(*) FROM ' + FbTable));
+    if asaCount <> fbCount then
+      Fail(Format('%s row count ASA=%d FB=%d', [LabelText, asaCount, fbCount]))
+    else
+      Pass(Format('%s row count = %d', [LabelText, fbCount]));
+  end;
+
+  procedure CheckCountSQL(const LabelText, AsaSQL, FbSQL: string);
+  var
+    asaCount, fbCount: Int64;
+  begin
+    asaCount := ScalarAsInt64(AsaScalar(AsaSQL));
+    fbCount := ScalarAsInt64(FbScalar(FbSQL));
+    if asaCount <> fbCount then
+      Fail(Format('%s count ASA=%d FB=%d', [LabelText, asaCount, fbCount]))
+    else
+      Pass(Format('%s count = %d', [LabelText, fbCount]));
+  end;
+
+  procedure CheckSum(const LabelText, AsaSQL, FbSQL: string);
+  var
+    asaValue, fbValue: Double;
+  begin
+    asaValue := ScalarAsFloat(AsaScalar(AsaSQL));
+    fbValue := ScalarAsFloat(FbScalar(FbSQL));
+    if Abs(asaValue - fbValue) > SUM_EPSILON then
+      Fail(Format('%s ASA=%.2f FB=%.2f', [LabelText, asaValue, fbValue]))
+    else
+      Pass(Format('%s = %.2f', [LabelText, fbValue]));
+  end;
+
+  procedure CheckMaxDate(const LabelText, AsaSQL, FbSQL: string);
+  var
+    asaDate, fbDate: Integer;
+  begin
+    asaDate := ScalarAsDateKey(AsaScalar(AsaSQL));
+    fbDate := ScalarAsDateKey(FbScalar(FbSQL));
+    if asaDate <> fbDate then
+      Fail(Format('%s ASA=%s FB=%s',
+        [LabelText, DateToStr(asaDate), DateToStr(fbDate)]))
+    else
+      Pass(Format('%s = %s', [LabelText, DateToStr(fbDate)]));
+  end;
+
+  procedure CheckFbZero(const LabelText, SQL: string);
+  var
+    n: Int64;
+  begin
+    n := ScalarAsInt64(FbScalar(SQL));
+    if n <> 0 then
+      Fail(Format('%s = %d', [LabelText, n]))
+    else
+      Pass(LabelText + ' = 0');
+  end;
+
+  procedure CheckImageTypeCounts;
+  var
+    src: TADOQuery;
+    imageTypeNo: Integer;
+    asaCount, fbCount: Int64;
+  begin
+    src := TADOQuery.Create(nil);
+    try
+      src.Connection := ConnDB;
+      src.SQL.Text :=
+        'SELECT ImageTypeNo, COUNT(*) AS N ' +
+        'FROM ImagesData GROUP BY ImageTypeNo ORDER BY ImageTypeNo';
+      src.Open;
+      while not src.Eof do
+      begin
+        imageTypeNo := src.FieldByName('ImageTypeNo').AsInteger;
+        asaCount := src.FieldByName('N').AsLargeInt;
+        fbCount := ScalarAsInt64(FbScalar(Format(
+          'SELECT COUNT(*) FROM IMAGES_DATA WHERE IMAGE_TYPE_NO = %d',
+          [imageTypeNo])));
+        if asaCount <> fbCount then
+          Fail(Format('ImagesData image type %d count ASA=%d FB=%d',
+                      [imageTypeNo, asaCount, fbCount]))
+        else
+          Pass(Format('ImagesData image type %d count = %d',
+                      [imageTypeNo, fbCount]));
+        src.Next;
+      end;
+    finally
+      src.Free;
+    end;
+  end;
+
+begin
+  lblCurrentProcess.Caption := 'Validating pump...';
+  LogLine('Running post-pump validation...');
+  ErrorCount := 0;
+
+  CheckCount('States -> STATES', 'States', 'STATES');
+  CheckCount('JTypes -> J_TYPES', 'JTypes', 'J_TYPES');
+  CheckCount('JMetals -> J_METALS', 'JMetals', 'J_METALS');
+  CheckCount('JStyles -> J_STYLES', 'JStyles', 'J_STYLES');
+  CheckCount('JGenders -> J_GENDERS', 'JGenders', 'J_GENDERS');
+  CheckCount('JStoneShapes -> J_STONE_SHAPES', 'JStoneShapes', 'J_STONE_SHAPES');
+  CheckCount('JStoneColors -> J_STONE_COLORS', 'JStoneColors', 'J_STONE_COLORS');
+  CheckCount('ItemStatus -> ITEM_STATUS', 'ItemStatus', 'ITEM_STATUS');
+  CheckCount('TransactionTypes -> TRANSACTION_TYPES', 'TransactionTypes', 'TRANSACTION_TYPES');
+  CheckCount('Store -> STORE', 'Store', 'STORE');
+  CheckCount('BackupSettings -> BACKUP_SETTINGS', 'BackupSettings', 'BACKUP_SETTINGS');
+  CheckCount('ExportFormat -> EXPORT_FORMAT', 'ExportFormat', 'EXPORT_FORMAT');
+  CheckCount('PaymentTypes -> PAYMENT_TYPES', 'PaymentTypes', 'PAYMENT_TYPES');
+  CheckCount('ImagesTypes -> IMAGES_TYPES', 'ImagesTypes', 'IMAGES_TYPES');
+  CheckCount('InvCategories -> INV_CATEGORIES', 'InvCategories', 'INV_CATEGORIES');
+  CheckCountSQL('TableKeys -> TABLE_KEYS ticket rows',
+    'SELECT COUNT(*) FROM TableKeys WHERE TableName IN (''PawnTicketNo'', ''LayawayTicketNo'')',
+    'SELECT COUNT(*) FROM TABLE_KEYS WHERE TABLE_NAME IN (''PawnTicketNo'', ''LayawayTicketNo'')');
+  CheckCount('Customer -> CUSTOMER', 'Customer', 'CUSTOMER');
+  CheckCount('Transactions -> TRANSACTIONS', 'Transactions', 'TRANSACTIONS');
+  CheckCount('InventoryItems -> INVENTORY_ITEMS', 'InventoryItems', 'INVENTORY_ITEMS');
+  CheckCount('Stones -> STONES', 'Stones', 'STONES');
+  CheckCount('SalesItems -> SALES_ITEMS', 'SalesItems', 'SALES_ITEMS');
+  CheckCount('Payments -> PAYMENTS', 'Payments', 'PAYMENTS');
+  CheckCount('ImagesData -> IMAGES_DATA', 'ImagesData', 'IMAGES_DATA');
+  CheckCount('ImagesDataBackup -> IMAGES_DATA_BACKUP', 'ImagesDataBackup', 'IMAGES_DATA_BACKUP');
+  CheckCount('InventoryItemStatusLog -> INVENTORY_ITEM_STATUS_LOG', 'InventoryItemStatusLog', 'INVENTORY_ITEM_STATUS_LOG');
+  CheckCount('BackupHistory -> BACKUP_HISTORY', 'BackupHistory', 'BACKUP_HISTORY');
+  CheckCount('ExportFileLog -> EXPORT_FILE_LOG', 'ExportFileLog', 'EXPORT_FILE_LOG');
+  CheckCount('ExportLogFileDetail -> EXPORT_LOG_FILE_DETAIL', 'ExportLogFileDetail', 'EXPORT_LOG_FILE_DETAIL');
+  CheckCount('GoldPriceHistory -> GOLD_PRICE_HISTORY', 'GoldPriceHistory', 'GOLD_PRICE_HISTORY');
+
+  CheckSum('Transaction pawn amount sum',
+           'SELECT COALESCE(SUM(TranPawnAmount), 0) FROM Transactions',
+           'SELECT COALESCE(SUM(TRAN_PAWN_AMOUNT), 0) FROM TRANSACTIONS');
+  CheckSum('Payment amount sum',
+           'SELECT COALESCE(SUM(PayAmount), 0) FROM Payments',
+           'SELECT COALESCE(SUM(PAY_AMOUNT), 0) FROM PAYMENTS');
+  CheckMaxDate('Max transaction date',
+               'SELECT MAX(CAST(TranDate AS DATE)) FROM Transactions',
+               'SELECT MAX(TRAN_DATE) FROM TRANSACTIONS');
+  CheckMaxDate('Max payment date',
+               'SELECT MAX(PayDate) FROM Payments',
+               'SELECT MAX(PAY_DATE) FROM PAYMENTS');
+  CheckImageTypeCounts;
+
+  CheckFbZero('Orphan TRANSACTIONS.CUST_NO',
+    'SELECT COUNT(*) FROM TRANSACTIONS T ' +
+    'LEFT JOIN CUSTOMER C ON C.CUST_NO = T.CUST_NO ' +
+    'WHERE T.CUST_NO IS NOT NULL AND C.CUST_NO IS NULL');
+  CheckFbZero('Orphan INVENTORY_ITEMS.TRANSACTION_NO',
+    'SELECT COUNT(*) FROM INVENTORY_ITEMS I ' +
+    'LEFT JOIN TRANSACTIONS T ON T.TRANSACTION_NO = I.TRANSACTION_NO ' +
+    'WHERE I.TRANSACTION_NO IS NOT NULL AND T.TRANSACTION_NO IS NULL');
+  CheckFbZero('Orphan PAYMENTS.TRANSACTION_NO',
+    'SELECT COUNT(*) FROM PAYMENTS P ' +
+    'LEFT JOIN TRANSACTIONS T ON T.TRANSACTION_NO = P.TRANSACTION_NO ' +
+    'WHERE P.TRANSACTION_NO IS NOT NULL AND T.TRANSACTION_NO IS NULL');
+  CheckFbZero('Orphan STONES.INV_ITEM_NO',
+    'SELECT COUNT(*) FROM STONES S ' +
+    'LEFT JOIN INVENTORY_ITEMS I ON I.INV_ITEM_NO = S.INV_ITEM_NO ' +
+    'WHERE I.INV_ITEM_NO IS NULL');
+  CheckFbZero('Orphan INVENTORY_ITEM_STATUS_LOG.INV_ITEM_NO',
+    'SELECT COUNT(*) FROM INVENTORY_ITEM_STATUS_LOG L ' +
+    'LEFT JOIN INVENTORY_ITEMS I ON I.INV_ITEM_NO = L.INV_ITEM_NO ' +
+    'WHERE I.INV_ITEM_NO IS NULL');
+
+  Result := ErrorCount;
+  if ErrorCount = 0 then
+    LogLine('VALIDATION PASSED.')
+  else
+    LogLine(Format('VALIDATION FAILED with %d issue(s).', [ErrorCount]));
+end;
+
 procedure TfrmPumpAsaFb50Main.PumpStates;
 var
   src: TADOQuery;
@@ -1115,6 +1388,74 @@ begin
   MemoErrors.Lines.Add(Format('[%s] %s', [FormatDateTime('hh:nn:ss', Now), S]));
 end;
 
+procedure TfrmPumpAsaFb50Main.LogConnectionSummary;
+begin
+  LogLine('Pump run started.');
+  LogLine(Format('  ASA source: host=%s database=%s user=%s',
+    [Trim(edAsaServerIP.Text), Trim(edAsaDBName.Text), Trim(edAsaUser.Text)]));
+  LogLine(Format('  Firebird target: server=%s port=%s database=%s user=%s charset=%s',
+    [Trim(edFBServer.Text), Trim(edFBPort.Text), Trim(edFBDBName.Text),
+     Trim(edFBUser.Text), Trim(edFBCharSet.Text)]));
+end;
+
+procedure TfrmPumpAsaFb50Main.WritePumpLogFile;
+var
+  logFileName: string;
+begin
+  if MemoErrors.Lines.Count = 0 then
+    Exit;
+
+  logFileName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) +
+                 Format('PumpAsaFb50.%s.log',
+                        [FormatDateTime('yyyymmdd-hhnnss', Now)]);
+  try
+    MemoErrors.Lines.Add(Format('[%s] Writing pump log: %s',
+      [FormatDateTime('hh:nn:ss', Now), logFileName]));
+    MemoErrors.Lines.SaveToFile(logFileName);
+  except
+    on E: Exception do
+      MemoErrors.Lines.Add(Format('[%s] Could not write pump log: [%s] %s',
+        [FormatDateTime('hh:nn:ss', Now), E.ClassName, E.Message]));
+  end;
+end;
+
+procedure TfrmPumpAsaFb50Main.ResetNullCoercionLog;
+begin
+  if FNullCoercions = nil then
+  begin
+    FNullCoercions := TStringList.Create;
+    FNullCoercions.CaseSensitive := False;
+    FNullCoercions.Sorted := True;
+    FNullCoercions.Duplicates := dupIgnore;
+  end;
+  FNullCoercions.Clear;
+  FNullCoercionSummaryLogged := False;
+end;
+
+procedure TfrmPumpAsaFb50Main.LogNullCoercionSummary;
+var
+  i, total: Integer;
+begin
+  if FNullCoercionSummaryLogged then
+    Exit;
+  FNullCoercionSummaryLogged := True;
+
+  total := 0;
+  if FNullCoercions <> nil then
+    for i := 0 to FNullCoercions.Count - 1 do
+      Inc(total, NativeInt(FNullCoercions.Objects[i]));
+
+  if total = 0 then
+  begin
+    LogLine('NULL coercion summary: none.');
+    Exit;
+  end;
+
+  LogLine(Format('NULL coercion summary: %d value(s) coerced.', [total]));
+  for i := 0 to FNullCoercions.Count - 1 do
+    LogLine(Format('  %s: %d', [FNullCoercions[i], NativeInt(FNullCoercions.Objects[i])]));
+end;
+
 // Reads FB system catalog once per pump run and caches every column declared
 // NOT NULL as an uppercase "TABLE.COLUMN" key. The ApplyNullCoercion helper
 // below uses it to decide whether a NULL-valued parameter needs to be coerced.
@@ -1158,7 +1499,8 @@ end;
 procedure TfrmPumpAsaFb50Main.ApplyNullCoercion(AQuery: TFDQuery;
                                                 const ATable: string);
 var
-  i: Integer;
+  i, coercionIndex: Integer;
+  coercionCount: NativeInt;
   P: TFDParam;
   key, tableUpper: string;
 begin
@@ -1184,6 +1526,20 @@ begin
       ftMemo, ftWideMemo, ftFmtMemo:
         P.Value := ' ';
     end;
+
+    if not P.IsNull then
+    begin
+      if FNullCoercions = nil then
+        ResetNullCoercionLog;
+      coercionIndex := FNullCoercions.IndexOf(key);
+      if coercionIndex < 0 then
+        FNullCoercions.AddObject(key, TObject(NativeInt(1)))
+      else
+      begin
+        coercionCount := NativeInt(FNullCoercions.Objects[coercionIndex]) + 1;
+        FNullCoercions.Objects[coercionIndex] := TObject(NativeInt(coercionCount));
+      end;
+    end;
   end;
 end;
 
@@ -1194,7 +1550,7 @@ var
 begin
   LogLine('Testing ASA connection...');
   try
-//    GetADOConnectionStr;
+    GetADOConnectionStr;
     ConnDB.Connected := True;
     try
       qry := TADOQuery.Create(nil);
@@ -1248,9 +1604,17 @@ end;
 procedure TfrmPumpAsaFb50Main.FormCreate(Sender: TObject);
 begin
   lblCurrentProcess.Caption := '';
+  edAsaPassword.PasswordChar := '*';
+  edFBPassword.PasswordChar := '*';
 
   GetADOConnectionStr;
   ConfigureFBDatabaseConnection;
+end;
+
+procedure TfrmPumpAsaFb50Main.FormDestroy(Sender: TObject);
+begin
+  FNullCoercions.Free;
+  FNotNullCols.Free;
 end;
 
 end.

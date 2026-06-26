@@ -470,8 +470,7 @@ end;
 procedure TfrmExportPoliceInformation.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-  PropertyStore.Save;
-
+  // Remember the export folder in the EXE-folder ini (not the per-user temp ini)
   WriteIniFile(IniSecLeadsOnline, IniKeyLeadsOnlinePath, edExportFolder.Text);
 end;
 
@@ -486,10 +485,17 @@ begin
   lblProgress.Caption := '';
   lblRegenProgress.Caption := '';
 
-  PropertyStore.Load;
+  // The export folder now lives in the EXE-folder ini (GlobalIniFile)
+  edExportFolder.Text := ReadIniFile(IniSecLeadsOnline, IniKeyLeadsOnlinePath);
 
+  // Migration: if it's not there yet, pull the last value from the old
+  // PropertyStore location (per-user temp ini) and persist it to the EXE-folder ini
   if trim(edExportFolder.Text) = '' then
-    edExportFolder.Text := ReadIniFile(IniSecLeadsOnline, IniKeyLeadsOnlinePath);
+    begin
+      PropertyStore.Load;
+      if trim(edExportFolder.Text) <> '' then
+        WriteIniFile(IniSecLeadsOnline, IniKeyLeadsOnlinePath, edExportFolder.Text);
+    end;
 
   PageControlExport.ActivePageIndex := 0;
   pgItemPics.ActivePageIndex := 0;

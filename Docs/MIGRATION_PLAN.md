@@ -1,7 +1,7 @@
 # PawnPro — SQL Anywhere 16 → Firebird 5 Migration Plan
 
 Status: **Phases 1–2 complete; Phase 3 ~70% — finishing remaining unmigrated forms**
-Last updated: 2026-05-04
+Last updated: 2026-06-18
 
 This document captures the migration strategy agreed during the initial brainstorm. It is the primary hand-off artifact — a future Claude Code session (or any developer) should be able to read this, pick up context, and continue the work without needing the original conversation.
 
@@ -11,6 +11,8 @@ This document captures the migration strategy agreed during the initial brainsto
 
 ### Done
 
+- **Image backup audit + gold price refresh** - FB5 defaults image storage to `FILE` while keeping the `DATABASE` backend code available. The weekly Tue/Wed image-backup audit compares backup files by size and SHA-256 and marks bad copies for recopy. Gold-price refresh now uses Yahoo's no-key chart endpoint and writes history rows with `SOURCE='Yahoo'`.
+- **Credential encryption layer landed** — `PawnProSetup.exe` (new sub-project in `PawnProSetup\`) rotates the FB SYSDBA password to a strong per-store value at install time, encrypts it via Windows DPAPI into `[CONNECTION_FB] password_enc=`, and writes a `recovery.dat` sealed with the vendor's offline public key. `TDM.ConfigureFBConnectionFor` now prefers `password_enc=` over legacy cleartext `password=` (backwards-compatible). New `COMMON\DPAPIUtils.pas` and `COMMON\SealedBox.pas` (libsodium bindings). One-shot vendor-keypair generator in `Tools\GenerateVendorKeypair.dpr`. Offline recovery decrypter in `Tools\RecoveryDecrypt.dpr`. **Pilot conversions gated on this**: no FB5 store deploys on `masterkey`. See `PawnProSetup\README.md` for the build steps.
 - **Foundation** — `TFDConnection` (`ConnFB`) wired against `[CONNECTION_FB]` in `PawnPro.ini`; the FB-side helpers `OpenSQLStatementFB` / `ExecSQLStatementFB` replace the ASA `qryDummy`-based versions; FB stored-proc wrappers ported (`SP_GET_NEXT_KEY`, `SPI_GOLD_PRICE`, `SPU_CALC_UNIT_COST_FROM_WEIGHT`, etc.); backup ported to FB Services API via the new reusable `..\COMMON\Nvv.FB5.DBA.pas` (`TFB5DBA.BackupDatabase` with optional retention; `TDM.RunBackup` orchestrates async + master-form auto-close path); STATIONS feature retired.
 - **TDM datasets ported to TFDQuery on `ConnFB`** — `qryStore`, `qryStates`, `qryItemStatus` (briefcase via `clnItemStatus: TFDMemTable`), `qryCustomers`, `qryTransactions`, `qryPayments`, `qryLastPayment`. The ADO-era leftovers (`qryFoo_`, `qryDummy`, `prvFoo` providers) all retired.
 - **J-lookups centralized in DM** — `clnJTypes` / `clnJStyles` / `clnJMetals` / `clnJGenders` / `clnJStoneShapes` / `clnJStoneColors` are all `TFDMemTable`s loaded once at `DataModuleCreate`. Forms get a copy via `DM.GetJ*(localMemTable)`. Unified through `TDM.CopyMemTableData(Source: TDataSet; Target: TFDMemTable)`.
@@ -141,8 +143,9 @@ Work top-down. **Compile and smoke-test after every phase boundary.** Do not let
 
 - [x] `TFDConnection` + `TFDPhysFBDriverLink` on `TDM`, FB connection string reading `[CONNECTION_FB]` from `PawnPro.ini`.
 - [x] `OpenSQLStatementFB` / `ExecSQLStatementFB` in `PawnGlobal.pas`. ASA versions retired; `qryDummy` removed.
-- [x] Stored-proc wrappers: `SP_GET_NEXT_KEY` (replaces `fn_GetNextKey`), `SPI_GOLD_PRICE`, `SPU_CALC_UNIT_COST_FROM_WEIGHT`, `SP_CONNECTED`, `SP_CREATE_EXPORT_LOG`, `REP_CUSTOMER_WITH_LATE_PAYMENTS`, `FN_TRAN_WITH_LATE_PAYMENT`, trigger `TRG_INV_ITEMS_STATUS_LOG`.
+- [x] Stored-proc wrappers: `SP_GET_NEXT_KEY` (replaces `fn_GetNextKey`), `SPI_GOLD_PRICE`, `SPU_CALC_UNIT_COST_FROM_WEIGHT`, `SP_CONNECTED`, `SP_CREATE_EXPORT_LOG`, `REP_CUSTOMER_WITH_LATE_PAYMENTS`, `FN_TRAN_WITH_LATE_PAYMENT`, trigger `TRG_INV_ITEMS_STATUS_LOG`. The UI gold-price refresh now uses Yahoo's no-key quote endpoint and writes `GOLD_PRICE_HISTORY` directly with `SOURCE='Yahoo'`; the proc remains in schema for compatibility.
 - [x] `BackupDatabase` ported via reusable `..\COMMON\Nvv.FB5.DBA.pas` (`TFB5DBA.BackupDatabase` with retention). Async wrapper `TDM.RunBackup` runs on a worker `TFDConnection`; the auto-close-time backup uses the same orchestrator.
+- [x] File-image backup audit added for FB5. `TDM.StartImageBackupAuditIfDue` runs in the background on Tuesday/Wednesday at most once per week, compares source and backup files by size + SHA-256, and marks bad backup rows for recopy by deleting from `IMAGES_DATA_BACKUP`.
 
 ### Phase 2 — Data modules ✅ done
 
@@ -240,7 +243,9 @@ Once everything above compiles and smoke-tests:
 
 ## 6. Codebase-specific gotchas
 
-- **Image storage mode** (`[IMAGE_STORAGE] StorageMode` = `DATABASE` or `FILE`). The three procedure pointers `GetImageProc` / `SaveImageProc` / `DeleteImageProc` in `PawnGlobal` are bound in `TfrmPawnMain.FormShow`. Both paths must work under FireDAC; the pump must handle both modes correctly (BLOBs in `DATABASE` mode; file-folder copy in `FILE` mode).
+- **Image storage mode** (`[IMAGE_STORAGE] StorageMode` = `DATABASE` or `FILE`). FB5 defaults missing/blank mode to `FILE`, but the DB-image backend remains in place for future fallback. The three procedure pointers `GetImageProc` / `SaveImageProc` / `DeleteImageProc` in `PawnGlobal` are bound in `TfrmPawnMain.InitializeImageStorage`. Both paths must continue to compile under FireDAC; the pump must handle both modes correctly (BLOBs in `DATABASE` mode; file-folder copy in `FILE` mode).
+- **Image backup audit.** In file mode, startup may launch `TDM.StartImageBackupAuditIfDue` on Tuesday/Wednesday if `[IMAGE_BACKUP] LastAuditWeek` is stale. It uses a worker-owned `TFDConnection`, throttles disk reads, compares size and SHA-256, and deletes mismatched rows from `IMAGES_DATA_BACKUP` so the next backup recopies them.
+- **Gold price source.** The FB5 UI uses Yahoo chart data by default from `[GOLD_PRICE] Url`. No API key is required. If the endpoint fails, the status panel should fail quietly because the gold display is cosmetic.
 - **Key generator continuity.** After pumping, the `NextKeys` (or equivalent) table must hold values ≥ `MAX()` of every referenced table. Recompute as a post-pump step or new records will collide.
 - **Calculated fields are app-side.** `c*`-prefixed fields (`qryStorecCity` etc.) live in `OnCalcFields` handlers — never migrate them as database columns and never write to them.
 - **Status values differ by table kind.** Transaction status is `Char` (`'A'`/`'I'`); pawn-item status is `String` (`'Pawned'`/`'Redeemed'`/…). Don't conflate.
@@ -278,6 +283,8 @@ Manual test sequence to run after every phase boundary. Without an automated tes
 10. Run one of each major report.
 11. LeadsOnline export generates expected file.
 12. Backup database — verify file written.
+13. In file-image mode, temporarily remove or alter one backed-up image and confirm the next eligible weekly audit marks it for recopy.
+14. Enable gold-price display and confirm Yahoo price loads without an API key.
 
 Expected outcome for each step documented before Phase 1 begins, so regressions are obvious.
 

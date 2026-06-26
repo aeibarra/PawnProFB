@@ -10,7 +10,7 @@ uses
   Buttons, ExtCtrls, ImgList, ComCtrls, ToolWin, Data.DB, System.Threading,
   System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls,
   System.Actions, RzButton, RzPanel, Vcl.StdCtrls,
-  // FireDAC (gold-price background task uses thread-local FB connection + proc)
+  // FireDAC (gold-price background task uses a thread-local FB connection)
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.FB, FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait,
@@ -384,9 +384,6 @@ begin
   Width := Screen.WorkAreaWidth;
 
   frmSplash.Free;
-//  ClientsMnu.Visible := false;
-
-//  ToolButtonbackUp.Hint := ReadIniFile(IniSecBackup, IniKeyBackupPath);
 
   Caption := 'Pawn ' + GetVersionInfo(ParamStr(0), '');
 
@@ -412,6 +409,7 @@ begin
     end;
 
   InitializeImageStorage;
+  DM.StartImageBackupAuditIfDue;
 end;
 
 procedure TfrmPawnMain.ListofnewPawns1Click(Sender: TObject);
@@ -806,10 +804,16 @@ begin
       PricePerOunce: Double;
       TitleStatusMessage, StatusMessage: string;
       lblColorRed: boolean;
+      GoldPriceUrl: string;
       LAsyncConn: TFDConnection;
-      LSaveProc: TFDStoredProc;
+      LSaveQuery: TFDQuery;
     begin
-      // Thread-local FB connection + stored proc, configured from the same
+      TitleStatusMessage := ' 24K Gold Price:';
+      StatusMessage := 'Unable to load price.';
+      lblColorRed := True;
+      LAsyncConn := nil;
+
+      // Thread-local FB connection, configured from the same
       // [CONNECTION_FB] params as DM.ConnFB. No shared DM components touched.
       LAsyncConn := TFDConnection.Create(nil);
       try
@@ -818,29 +822,64 @@ begin
 
         LClient := TNetHTTPClient.Create(nil);
         try
-          LResponse := LClient.Get('https://min-api.cryptocompare.com/data/price?fsym=PAXG&tsyms=USD');
+          GoldPriceUrl := Trim(ReadIniFile(IniSecGoldPrice, IniKeyGoldPriceUrl));
+          if GoldPriceUrl = '' then
+            GoldPriceUrl := 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d';
+
+          LResponse := LClient.Get(GoldPriceUrl);
 
           if LResponse.StatusCode = 200 then
           begin
             LJSON := TJSONObject.ParseJSONValue(LResponse.ContentAsString) as TJSONObject;
+            if LJSON = nil then
+              raise Exception.Create('Invalid gold price response.');
             try
-              PricePerOunce := LJSON.GetValue<Double>('USD');
+              var ChartObj := LJSON.GetValue<TJSONObject>('chart');
+              if ChartObj = nil then
+                raise Exception.Create('Invalid Yahoo gold price response.');
+
+              var ResultsArray := ChartObj.GetValue<TJSONArray>('result');
+              if (ResultsArray = nil) or (ResultsArray.Count = 0) then
+                raise Exception.Create('Yahoo gold price response has no result.');
+
+              var ResultObj := ResultsArray.Items[0] as TJSONObject;
+              var MetaObj := ResultObj.GetValue<TJSONObject>('meta');
+              if MetaObj = nil then
+                raise Exception.Create('Yahoo gold price response has no metadata.');
+
+              PricePerOunce := MetaObj.GetValue<Double>('regularMarketPrice');
               TitleStatusMessage := ' 24K Gold Price:';
               StatusMessage := Format(' %m per Ounce. %m per gram. ', [PricePerOunce, (PricePerOunce / 31.1034768)]);
 
               try
-                LSaveProc := TFDStoredProc.Create(nil);
+                LSaveQuery := TFDQuery.Create(nil);
                 try
-                  LSaveProc.Connection := LAsyncConn;
-                  LSaveProc.StoredProcName := 'SPI_GOLD_PRICE';
-                  LSaveProc.Prepare;  // populates Params from FB metadata
-                  LSaveProc.Params.ParamByName('PRICE_PER_OUNCE').AsCurrency := PricePerOunce;
-                  LSaveProc.Params.ParamByName('CURRENCY').AsString := 'USD';
-                  LSaveProc.ExecProc;
-                  var LastGldPrice := LSaveProc.Params.ParamByName('LAST_G_PRICE').AsCurrency;
+                  LSaveQuery.Connection := LAsyncConn;
+                  LSaveQuery.SQL.Text :=
+                    'SELECT FIRST 1 PRICE_PER_OUNCE ' +
+                    'FROM GOLD_PRICE_HISTORY ' +
+                    'ORDER BY PRICE_ID DESC';
+                  LSaveQuery.Open;
+
+                  var LastGldPrice: Currency := 0;
+                  if not LSaveQuery.Eof then
+                    LastGldPrice := LSaveQuery.FieldByName('PRICE_PER_OUNCE').AsCurrency;
+
                   lblColorRed := LastGldPrice > PricePerOunce;
+
+                  if LastGldPrice <> PricePerOunce then
+                  begin
+                    LSaveQuery.Close;
+                    LSaveQuery.SQL.Text :=
+                      'INSERT INTO GOLD_PRICE_HISTORY (PRICE_PER_OUNCE, CURRENCY, FETCHDATETIME, SOURCE) ' +
+                      'VALUES (:PRICE_PER_OUNCE, :CURRENCY, CURRENT_TIMESTAMP, :SOURCE)';
+                    LSaveQuery.Params.ParamByName('PRICE_PER_OUNCE').AsCurrency := PricePerOunce;
+                    LSaveQuery.Params.ParamByName('CURRENCY').AsString := 'USD';
+                    LSaveQuery.Params.ParamByName('SOURCE').AsString := 'Yahoo';
+                    LSaveQuery.ExecSQL;
+                  end;
                 finally
-                  LSaveProc.Free;
+                  LSaveQuery.Free;
                 end;
               except
                 on E: Exception do
@@ -862,7 +901,7 @@ begin
       end;
 
       try
-        if LAsyncConn.Connected then
+        if Assigned(LAsyncConn) and LAsyncConn.Connected then
           LAsyncConn.Connected := False;
       finally
         LAsyncConn.Free;
@@ -889,7 +928,7 @@ procedure TfrmPawnMain.InitializeImageStorage;
 begin
   ImageStorageMode := ReadIniFile(IniSecImageStorage, IniKeyStorageMode);
   if ImageStorageMode = '' then
-    ImageStorageMode := ImageStorageMode_Database;
+    ImageStorageMode := ImageStorageMode_File;
 
   ImagesStoragePath := ReadIniFile(IniSecImageStorage, IniKeyImageDirectory);
 

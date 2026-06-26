@@ -10,7 +10,7 @@
  *      (ALTER COLUMN ... TO on a PK column is refused by FB, so we rebuild.)
  *   2. GOLD_PRICE_HISTORY.FETCHDATETIME -> default CURRENT_TIMESTAMP
  *                                          (was CURRENT_DATE on a TIMESTAMP col)
- *   3. GOLD_PRICE_HISTORY.SOURCE        -> default 'CryptoCompare'
+ *   3. GOLD_PRICE_HISTORY.SOURCE        -> default 'Yahoo'
  ******************************************************************************/
 
 
@@ -41,12 +41,12 @@ ALTER TABLE GOLD_PRICE_HISTORY ALTER COLUMN FETCHDATETIME SET DEFAULT CURRENT_TI
 
 
 /* ---------------------------------------------------------------------------
- * 3. GOLD_PRICE_HISTORY.SOURCE: restore the 'CryptoCompare' default from ASA
- *    SPI_GOLD_PRICE already passes SOURCE explicitly, but any direct INSERT
- *    that omitted it failed (column is NOT NULL with no default).
+ * 3. GOLD_PRICE_HISTORY.SOURCE: keep the default aligned with the current
+ *    no-key Yahoo price source. SPI_GOLD_PRICE already passes SOURCE
+ *    explicitly, but any direct INSERT that omitted it failed.
  * ------------------------------------------------------------------------ */
 
-ALTER TABLE GOLD_PRICE_HISTORY ALTER COLUMN SOURCE SET DEFAULT 'CryptoCompare';
+ALTER TABLE GOLD_PRICE_HISTORY ALTER COLUMN SOURCE SET DEFAULT 'Yahoo';
 
 
 COMMIT;

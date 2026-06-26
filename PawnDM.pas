@@ -706,6 +706,8 @@ begin
 
   Password := GetFBPasswordFromIni(PasswordEnc, Password, AConn = ConnFB);
 
+  FDPhysFBDriverLink1.VendorLib := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
+
   AConn.Connected := False;
   AConn.Params.Clear;
   AConn.DriverName := 'FB';
@@ -776,6 +778,15 @@ begin
   // run before any other INI read so first-run installs don't fall back to
   // per-call defaults that never get written to disk.
   EnsureIniDefaults(GlobalIniFile);
+
+  // First run: if the local-database flag has never been written, detect it
+  // from the configured FB host and persist the answer so admins can override
+  // later. A non-local DB disables the backup option (no backup drive attached).
+  if Trim(ReadIniFile(IniSecDatabase, IniKeyIsLocalDatabase)) = '' then
+    if DetectDatabaseIsLocal then
+      WriteIniFile(IniSecDatabase, IniKeyIsLocalDatabase, 'Y')
+    else
+      WriteIniFile(IniSecDatabase, IniKeyIsLocalDatabase, 'N');
 
   IsLocalDatabase := ReadIniFile(IniSecDatabase, IniKeyIsLocalDatabase) <> 'N';
 

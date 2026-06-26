@@ -3,7 +3,7 @@ object frmClients: TfrmClients
   Top = 172
   Caption = 'Clients'
   ClientHeight = 752
-  ClientWidth = 1672
+  ClientWidth = 1669
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object frmClients: TfrmClients
   object Splitter1: TSplitter
     Left = 0
     Top = 389
-    Width = 1672
+    Width = 1669
     Height = 8
     Cursor = crVSplit
     Align = alTop
@@ -31,24 +31,26 @@ object frmClients: TfrmClients
   object pnTop: TPanel
     Left = 0
     Top = 0
-    Width = 1672
+    Width = 1669
     Height = 389
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 1672
     object PanelClientInfo: TPanel
       Left = 0
       Top = 82
-      Width = 1672
+      Width = 1669
       Height = 307
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitWidth = 1672
       object gridClients: TDBGrid
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 1666
+        Width = 1663
         Height = 234
         Align = alClient
         DataSource = DM.DSCustomers
@@ -189,56 +191,48 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
-            Width = 64
             Visible = True
           end
           item
@@ -253,11 +247,15 @@ object frmClients: TfrmClients
         AlignWithMargins = True
         Left = 3
         Top = 243
-        Width = 1666
+        Width = 1663
         Height = 61
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitWidth = 1666
+        DesignSize = (
+          1663
+          61)
         object btnAdjPoliceReport: TRzToolButton
           Left = 596
           Top = 12
@@ -327,18 +325,35 @@ object frmClients: TfrmClients
           TabOrder = 3
           OnClick = btnPrintPolRptClick
         end
+        object btnCustPicID: TBitBtn
+          Left = 1523
+          Top = 4
+          Width = 134
+          Height = 52
+          Hint = 'F5'
+          Anchors = [akTop, akRight]
+          Caption = 'Customer'#13#10'Picture ID'
+          ImageIndex = 50
+          ImageName = 'TakePictureID'
+          Images = DM.vilMain
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          ExplicitLeft = 1526
+        end
       end
     end
     object GroupBox1: TGroupBox
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 1666
+      Width = 1663
       Height = 76
       Align = alTop
       TabOrder = 0
+      ExplicitWidth = 1666
       DesignSize = (
-        1666
+        1663
         76)
       object Label1: TLabel
         Left = 41
@@ -459,7 +474,7 @@ object frmClients: TfrmClients
       end
       object btnExit: TBitBtn
         AlignWithMargins = True
-        Left = 1558
+        Left = 1555
         Top = 10
         Width = 92
         Height = 54
@@ -472,6 +487,7 @@ object frmClients: TfrmClients
         ModalResult = 2
         TabOrder = 5
         OnClick = btnExitClick
+        ExplicitLeft = 1558
       end
       object edTicketNo: TEdit
         Left = 312
@@ -510,12 +526,13 @@ object frmClients: TfrmClients
   object PanelDetail: TPanel
     Left = 0
     Top = 397
-    Width = 1672
+    Width = 1669
     Height = 355
     Align = alClient
     BevelOuter = bvNone
     Constraints.MinHeight = 200
     TabOrder = 1
+    ExplicitWidth = 1672
     object SplitterBottom: TSplitter
       Left = 687
       Top = 0
@@ -1137,7 +1154,7 @@ object frmClients: TfrmClients
       AlignWithMargins = True
       Left = 693
       Top = 3
-      Width = 976
+      Width = 973
       Height = 349
       Hint = ''
       ActivePage = TabItems
@@ -1149,15 +1166,17 @@ object frmClients: TfrmClients
       TabIndex = 1
       TabOrder = 1
       OnChange = pgTransDetailChange
+      ExplicitWidth = 976
       FixedDimension = 35
       object TabPayment: TRzTabSheet
         ImageIndex = 21
         Caption = 'Payments'
+        ExplicitWidth = 972
         object gridPayments: TDBGrid
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 966
+          Width = 963
           Height = 202
           Align = alClient
           DataSource = DM.DSPayments
@@ -1238,7 +1257,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end
             item
@@ -1286,7 +1304,6 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
-              Width = 64
               Visible = True
             end>
         end
@@ -1294,16 +1311,17 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 247
-          Width = 966
+          Width = 963
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 966
           DesignSize = (
-            966
+            963
             60)
           object btnPrintPayReceipt: TRzToolButton
-            Left = 761
+            Left = 758
             Top = 2
             Width = 192
             Height = 50
@@ -1389,19 +1407,20 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 211
-          Width = 966
+          Width = 963
           Height = 30
           Align = alBottom
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 966
           DesignSize = (
-            962
+            959
             26)
           object lblNextPaymentInfo: TJvLinkLabel
             Left = 15
             Top = 1
-            Width = 933
+            Width = 930
             Height = 21
             Caption = 'Normal text <b>Bold text</b>'
             Text.Strings = (
@@ -1420,11 +1439,12 @@ object frmClients: TfrmClients
       object TabItems: TRzTabSheet
         ImageIndex = 22
         Caption = '   Items    '
+        ExplicitWidth = 972
         object gridItems: TDBGrid
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 966
+          Width = 963
           Height = 202
           Align = alClient
           DataSource = dsInvItems
@@ -1552,13 +1572,14 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 247
-          Width = 966
+          Width = 963
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 966
           DesignSize = (
-            966
+            963
             60)
           object bntCalcUnitcost: TRzToolButton
             Left = 268
@@ -1660,7 +1681,7 @@ object frmClients: TfrmClients
             OnClick = btnDeleteItemClick
           end
           object btnItemPictures: TRzBitBtn
-            Left = 818
+            Left = 815
             Top = 2
             Width = 145
             Height = 50
@@ -1671,25 +1692,27 @@ object frmClients: TfrmClients
             ImageIndex = 18
             Images = DM.vilMain24
             Margin = 10
+            ExplicitLeft = 818
           end
         end
         object pnPawnItemBalance: TPanel
           AlignWithMargins = True
           Left = 3
           Top = 211
-          Width = 966
+          Width = 963
           Height = 30
           Align = alBottom
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 966
           DesignSize = (
-            962
+            959
             26)
           object lblNextPaymentInfoItems: TJvLinkLabel
             Left = 15
             Top = 1
-            Width = 933
+            Width = 930
             Height = 21
             Caption = 'Normal text <b>Bold text</b>'
             Text.Strings = (

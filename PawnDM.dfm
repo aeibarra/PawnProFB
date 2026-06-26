@@ -6,31 +6,31 @@ object DM: TDM
   object DSCustomers: TDataSource
     DataSet = qryCustomers
     Left = 635
-    Top = 134
+    Top = 92
   end
   object DSStates: TDataSource
     DataSet = qryStates
     Left = 147
-    Top = 134
+    Top = 92
   end
   object DSTransactions: TDataSource
     DataSet = qryTransactions
     Left = 498
-    Top = 134
+    Top = 92
   end
   object DSPayments: TDataSource
     DataSet = qryPayments
     Left = 773
-    Top = 134
+    Top = 92
   end
   object DSStore: TDataSource
     DataSet = qryStore
     Left = 240
-    Top = 134
+    Top = 92
   end
   object RegIniFile: TRzRegIniFile
     Left = 126
-    Top = 559
+    Top = 517
   end
   object ImageListBtn: TImageList
     Tag = 1
@@ -38,7 +38,7 @@ object DM: TDM
     Height = 32
     Width = 32
     Left = 41
-    Top = 497
+    Top = 455
     Bitmap = {
       494C01011C00D801040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
@@ -4283,7 +4283,7 @@ object DM: TDM
       'where IMAGES_DATA_NO = :ImagesDataNo'
       '')
     Left = 1365
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'ImagesDataNo'
@@ -4324,7 +4324,7 @@ object DM: TDM
     Params = <>
     StoreDefs = True
     Left = 276
-    Top = 236
+    Top = 194
     object clnWeigthUnitsWeigthUnitValue: TWideStringField
       FieldName = 'WeigthUnitValue'
       Size = 1
@@ -4342,7 +4342,7 @@ object DM: TDM
       '        TRAN_CLOSE_REASON = :TranCloseReason'
       'where TRANSACTION_NO = :TransactionNo')
     Left = 1132
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'TranStatus'
@@ -4390,7 +4390,7 @@ object DM: TDM
       'WHERE TRANSACTION_NO = :TransactionNo'
       '')
     Left = 1132
-    Top = 134
+    Top = 92
     ParamData = <
       item
         Name = 'TransactionNo'
@@ -4658,13 +4658,18 @@ object DM: TDM
         CollectionIndex = 54
         CollectionName = 'imagesgallery'
         Name = 'imagesgallery'
+      end
+      item
+        CollectionIndex = 55
+        CollectionName = 'TakePictureID'
+        Name = 'TakePictureID'
       end>
     ImageCollection = svgMain
     Width = 40
     Height = 40
     Size = 40
     Left = 116
-    Top = 409
+    Top = 367
   end
   object svgMain: TSVGIconImageCollection
     SVGIconItems = <
@@ -7192,9 +7197,27 @@ object DM: TDM
           'b4" stop-opacity="0"/><stop offset="1" stop-color="#8f4c5e"/></l' +
           'inearGradient><circle cx="25" cy="15" r="3" fill="url(#y4DIm6YSk' +
           'RVXQC2YLIiGPh)"/></svg>'
+      end
+      item
+        IconName = 'TakePictureID'
+        SVGText = 
+          '<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://ww' +
+          'w.w3.org/2000/svg">'#13#10'  <rect x="4" y="9" width="32" height="22" ' +
+          'rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>'#13#10#13 +
+          #10'  <!-- ID photo -->'#13#10'  <circle cx="14" cy="18" r="4" fill="none' +
+          '" stroke="currentColor" stroke-width="2.5"/>'#13#10'  <path d="M9 27c1' +
+          '.5-4 8.5-4 10 0"'#13#10'        fill="none"'#13#10'        stroke="currentCo' +
+          'lor"'#13#10'        stroke-width="2.5"'#13#10'        stroke-linecap="round"' +
+          '/>'#13#10#13#10'  <!-- ID text lines -->'#13#10'  <rect x="23" y="15" width="9" ' +
+          'height="2.5" rx="1.2" fill="currentColor"/>'#13#10'  <rect x="23" y="2' +
+          '1" width="7" height="2.5" rx="1.2" fill="currentColor"/>'#13#10#13#10'  <!' +
+          '-- Camera overlay -->'#13#10'  <circle cx="30" cy="29" r="6" fill="cur' +
+          'rentColor"/>'#13#10'  <path d="M27 26h5l1 1.2v3.8h-7v-3.8z" fill="whit' +
+          'e"/>'#13#10'  <circle cx="30" cy="29" r="1.5" fill="currentColor"/>'#13#10'<' +
+          '/svg>'
       end>
     Left = 36
-    Top = 408
+    Top = 366
   end
   object vilMain24: TSVGIconVirtualImageList
     Tag = 1
@@ -7448,13 +7471,18 @@ object DM: TDM
         CollectionIndex = 54
         CollectionName = 'imagesgallery'
         Name = 'imagesgallery'
+      end
+      item
+        CollectionIndex = 55
+        CollectionName = 'TakePictureID'
+        Name = 'TakePictureID'
       end>
     ImageCollection = svgMain
     Width = 32
     Height = 32
     Size = 32
     Left = 112
-    Top = 467
+    Top = 425
   end
   object qryPawnPay: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -7465,7 +7493,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 1268
-    Top = 74
+    Top = 32
   end
   object qryTotalPaid: TFDQuery
     Connection = ConnFB
@@ -7474,7 +7502,7 @@ object DM: TDM
       'from PAYMENTS'
       'where TRANSACTION_NO = :TransactionNo')
     Left = 1001
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'TransactionNo'
@@ -7497,7 +7525,7 @@ object DM: TDM
       'where IMAGES_DATA_NO = :ImagesDataNo'
       '')
     Left = 1003
-    Top = 134
+    Top = 92
     ParamData = <
       item
         Name = 'ImagesDataNo'
@@ -7521,16 +7549,16 @@ object DM: TDM
       'DriverID=FB')
     LoginPrompt = False
     Left = 35
-    Top = 74
+    Top = 32
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
     Left = 34
-    Top = 151
+    Top = 109
   end
   object qryDummyFB: TFDQuery
     Connection = ConnFB
     Left = 142
-    Top = 224
+    Top = 182
   end
   object qryBackupSetings: TFDQuery
     Connection = ConnFB
@@ -7541,7 +7569,7 @@ object DM: TDM
       '  BACKUP_IMAGES_PATH'
       'FROM BACKUP_SETTINGS;')
     Left = 139
-    Top = 303
+    Top = 261
     object qryBackupSetingsBACKUP_PATH: TWideStringField
       FieldName = 'BACKUP_PATH'
       Origin = 'BACKUP_PATH'
@@ -7579,7 +7607,7 @@ object DM: TDM
       'WHERE CUST_NO = :CUST_NO AND TRAN_TYPE IN ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
       'ORDER BY TRAN_STATUS, TRAN_DATE DESC, TRAN_TICKET_NO DESC')
     Left = 498
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'CUST_NO'
@@ -7742,7 +7770,7 @@ object DM: TDM
       'FROM STORE'
       'WHERE STORE_NO = '#39'0'#39)
     Left = 239
-    Top = 74
+    Top = 32
     object qryStorecCity: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cCity'
@@ -7880,7 +7908,7 @@ object DM: TDM
       'SELECT STATE_ABBR, STATE_NAME '
       'FROM STATES')
     Left = 144
-    Top = 74
+    Top = 32
     object qryStatesSTATE_ABBR: TWideStringField
       FieldName = 'STATE_ABBR'
       Origin = 'STATE_ABBR'
@@ -7912,7 +7940,7 @@ object DM: TDM
       '   --SearchByPhone'
       'ORDER BY CUST_FIRST, CUST_LAST')
     Left = 635
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'CUST_LAST'
@@ -8115,7 +8143,7 @@ object DM: TDM
       'WHERE TRANSACTION_NO = :TRANSACTION_NO'
       'ORDER BY PAYMENT_NO DESC')
     Left = 773
-    Top = 74
+    Top = 32
     ParamData = <
       item
         Name = 'TRANSACTION_NO'
@@ -8195,7 +8223,7 @@ object DM: TDM
       ') P ON P.TRANSACTION_NO = T.TRANSACTION_NO'
       'WHERE T.TRANSACTION_NO = :TRANSACTION_NO')
     Left = 775
-    Top = 196
+    Top = 154
     ParamData = <
       item
         Name = 'TRANSACTION_NO'
@@ -8219,7 +8247,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 887
-    Top = 74
+    Top = 32
   end
   object qryItemStatus: TFDQuery
     Connection = ConnFB
@@ -8228,7 +8256,7 @@ object DM: TDM
       'FROM ITEM_STATUS'
       'ORDER BY STATUS_DESC')
     Left = 887
-    Top = 134
+    Top = 92
   end
   object qryCalcUnitCostFromWeight: TFDQuery
     Connection = ConnFB
@@ -8237,7 +8265,7 @@ object DM: TDM
         'EXECUTE PROCEDURE SPU_CALC_UNIT_COST_FROM_WEIGHT(:TRANSACTION_NO' +
         ')')
     Left = 1137
-    Top = 196
+    Top = 154
     ParamData = <
       item
         Name = 'TRANSACTION_NO'
@@ -8254,7 +8282,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
-    Top = 228
+    Top = 186
     object clnJGendersJ_GENDER: TWideStringField
       FieldName = 'J_GENDER'
       Required = True
@@ -8275,7 +8303,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
-    Top = 282
+    Top = 240
     object clnJMetalsJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Required = True
@@ -8296,7 +8324,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 374
-    Top = 335
+    Top = 293
     object clnJStoneColorsJ_STONE_COLOR: TWideStringField
       FieldName = 'J_STONE_COLOR'
       Required = True
@@ -8317,7 +8345,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 468
-    Top = 230
+    Top = 188
     object clnJStoneShapesJ_SHAPE: TWideStringField
       FieldName = 'J_SHAPE'
       Required = True
@@ -8338,7 +8366,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 468
-    Top = 284
+    Top = 242
     object clnJStylesJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Required = True
@@ -8359,7 +8387,7 @@ object DM: TDM
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 468
-    Top = 337
+    Top = 295
     object clnJTypesJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Required = True
