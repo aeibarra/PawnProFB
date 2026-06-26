@@ -8,7 +8,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Vcl.Menus,
   Buttons, ExtCtrls, ImgList, ComCtrls, ToolWin, Data.DB, System.Threading,
-  System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls,
+  System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls, System.Generics.Collections,
   System.Actions, RzButton, RzPanel, Vcl.StdCtrls,
   // FireDAC (gold-price background task uses a thread-local FB connection)
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
@@ -811,7 +811,7 @@ begin
       TitleStatusMessage := ' 24K Gold Price:';
       StatusMessage := 'Unable to load price.';
       lblColorRed := True;
-      LAsyncConn := nil;
+//      LAsyncConn := nil;
 
       // Thread-local FB connection, configured from the same
       // [CONNECTION_FB] params as DM.ConnFB. No shared DM components touched.
@@ -928,9 +928,12 @@ procedure TfrmPawnMain.InitializeImageStorage;
 var
   SharedImagePath: string;
 begin
-  ImageStorageMode := ReadIniFile(IniSecImageStorage, IniKeyStorageMode);
-  if ImageStorageMode = '' then
-    ImageStorageMode := ImageStorageMode_File;
+  { DB image storage is retired in the Firebird version. Force FILE mode and
+    overwrite any stale DATABASE/blank value in the ini so a machine that was
+    previously misconfigured (or seeded before this fix) self-heals on launch. }
+  if not SameText(ReadIniFile(IniSecImageStorage, IniKeyStorageMode), ImageStorageMode_File) then
+    WriteIniFile(IniSecImageStorage, IniKeyStorageMode, ImageStorageMode_File);
+  ImageStorageMode := ImageStorageMode_File;
 
   ImagesStoragePath := ReadIniFile(IniSecImageStorage, IniKeyImageDirectory);
   if not IsLocalDatabase then

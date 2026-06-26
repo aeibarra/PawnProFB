@@ -268,7 +268,8 @@ begin
   EnsureIniKey(Ini, 'LEADS_ONLINE', 'CSVPath', '');
 
   EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', '');
-  EnsureIniKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'DATABASE');
+  // DB image storage is retired in the Firebird version; default to FILE.
+  EnsureIniKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'FILE');
 
   Ini.WriteString('DATABASE', 'IsLocalDatabase', IsLocalValue);
 

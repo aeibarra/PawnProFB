@@ -46,7 +46,8 @@ begin
 
     // ----- [IMAGE_STORAGE] -----
     EnsureKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', '');
-    EnsureKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'DATABASE');
+    // DB image storage is retired in the Firebird version; default to FILE.
+    EnsureKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'FILE');
 
     // ----- [DATABASE] -----
     // IsLocalDatabase is intentionally NOT seeded here. On first run, when the

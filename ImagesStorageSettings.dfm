@@ -27,7 +27,6 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
     TabOrder = 0
     TabWidth = 150
     OnChange = PageControlImageSettingsChange
-    ExplicitHeight = 253
     object TabSheet1: TTabSheet
       Caption = '  Images Storage  '
       object RzGroupBox1: TRzGroupBox
@@ -111,7 +110,6 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
         GradientColorStop = clWhite
         TabOrder = 2
         VisualStyle = vsGradient
-        ExplicitTop = 152
         DesignSize = (
           587
           66)
@@ -149,11 +147,10 @@ object frmImagesStorageSettings: TfrmImagesStorageSettings
         Align = alTop
         Caption = 'Secondary Workstation Shared Image Path (UNC)'
         TabOrder = 1
-        ExplicitTop = 165
         object RzLabel2: TRzLabel
           Left = 52
           Top = 36
-          Width = 205
+          Width = 192
           Height = 17
           Caption = 'Shared image folder path (UNC):'
         end

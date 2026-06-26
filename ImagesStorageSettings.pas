@@ -1,4 +1,4 @@
-unit ImagesStorageSettings;
+﻿unit ImagesStorageSettings;
 
 interface
 
@@ -83,13 +83,13 @@ begin
     Exit;
   end;
 
-  if not DirectoryExists(LocalImageDir) then
+  if not System.SysUtils.DirectoryExists(LocalImageDir) then
   begin
     if PawnConfirm('The image storage folder does not exist:' + sLineBreak + sLineBreak +
          LocalImageDir + sLineBreak + sLineBreak + 'Do you want to create it?',
          'Image Storage Settings', Self) then
     begin
-      if not ForceDirectories(LocalImageDir) then
+      if not System.SysUtils.ForceDirectories(LocalImageDir) then
       begin
         PawnWarn('PawnPro could not create the folder:' + sLineBreak + sLineBreak +
           LocalImageDir, 'Image Storage Settings', Self);
