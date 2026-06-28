@@ -84,10 +84,28 @@ Expected files copied by setup include:
 
 - `PawnProFB.exe`
 - `fbclient.dll`
-- a blank or seeded `PAWNDATA.FDB`
+- `plugins\chacha.dll`, `plugins.conf`, `firebird.msg` — the Firebird wire
+  encryption client files (see "Wire encryption" below)
+- a blank or seeded `PAWNDATA.FDB` — copied **only for local-DB installs**, and
+  to the aliased database path (the `databases.conf` location), not the install
+  folder. A client/workstation does not receive a local copy. An existing
+  database is never overwritten.
 
 `PawnPro.ini` is created or updated by setup instead of copied with a plain
 password.
+
+### Wire encryption
+
+Firebird 5 defaults to `WireCrypt = Required`, so a client must be able to
+negotiate an encrypted wire protocol or the server rejects the connection
+("connection rejected by remote interface"). The strong ChaCha cipher ships as a
+plugin, so the setup copies `plugins\chacha.dll` (the cipher), `plugins.conf`
+(maps the ChaCha64 plugin name to it), and `firebird.msg` (readable server error
+text) next to `fbclient.dll`. This folds in the standalone
+`CopyFbClientCrypto.bat`, which is kept only as a manual fallback.
+
+These files are copied for every install; they are harmless for a local/loopback
+install and required for any client that connects to a remote host.
 
 The setup app should ask for:
 
