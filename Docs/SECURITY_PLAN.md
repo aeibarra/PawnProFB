@@ -73,6 +73,12 @@ The `PawnProSetup` app is the first-run provisioning tool. Its job is to:
 5. Test a fresh Firebird connection using the new password.
 6. Write the new password to `PawnPro.ini` as DPAPI `password_enc`.
 7. Ensure no plain `password=` key remains in `PawnPro.ini`.
+8. For single-workstation installs, set Firebird `RemoteBindAddress = localhost`
+   in `firebird.conf` so the server listens on loopback only (LAN machines
+   cannot reach it). For multi-workstation installs, disable that restriction so
+   the server listens on all interfaces (Firebird's default when unset).
+9. Create/update the Firebird database alias in `databases.conf`:
+   `PAWNDATA = <database path>\PAWNDATA.FDB`.
 
 Expected files copied by setup include:
 
@@ -91,6 +97,7 @@ The setup app should ask for:
 - Database path, for example `C:\Pawn\PAWNDATA.FDB`
 - Current `SYSDBA` password, usually `masterkey` on a fresh Firebird install
 - New `SYSDBA` password
+- Whether this is a single-workstation or multi-workstation installation
 
 The Firebird password change can be issued through FireDAC after connecting with
 the current valid `SYSDBA` password:
@@ -104,6 +111,25 @@ literal with `QuotedStr(NewPassword)`.
 
 Important: this password change affects the Firebird server/security database,
 not only one PawnPro `.FDB` file.
+
+`RemoteBindAddress` is a Firebird server configuration setting. Changing it
+requires editing the local Firebird `firebird.conf` and restarting the Firebird
+Server service before the new setting takes effect.
+
+Note: do **not** use `RemoteAccess = false` for the standalone lockdown. Firebird
+treats every TCP/IP connection — including `localhost` — as remote, so
+`RemoteAccess = false` would also reject PawnPro's own `localhost:3050`
+connection. `RemoteBindAddress = localhost` blocks LAN machines while still
+allowing the local app to connect over TCP.
+
+The generated production INI should use the alias as the database value:
+
+```ini
+[CONNECTION_FB]
+database=PAWNDATA
+```
+
+The physical database path remains in Firebird's `databases.conf`.
 
 ## Step 2 implementation phases
 

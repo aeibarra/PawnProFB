@@ -3,14 +3,15 @@ unit PawnProSetupMain;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes,
   System.Classes, System.Hash, System.IniFiles, Vcl.Graphics, Vcl.Controls,
-  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton;
+  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton, Vcl.ExtCtrls;
 
 type
   TPawnProFileInfo = record
     FileName: string;
     Overwrite: Boolean;
+    SubFolder: string;  // relative to the install folder, e.g. 'plugins\'; '' = root
   end;
 
   TfrmPawnProSetupMain = class(TForm)
@@ -34,6 +35,7 @@ type
     edCurrentPassword: TEdit;
     edNewPassword: TEdit;
     chkIsDBLocal: TCheckBox;
+    rgSngleInstallation: TRadioGroup;
     procedure btnBrowseInstallFolderClick(Sender: TObject);
     procedure btnCopyPawnProFilesClick(Sender: TObject);
     procedure btnTestConnectionClick(Sender: TObject);
@@ -56,9 +58,17 @@ type
     procedure CopyPawnProFile(const SrcFolder, TargetFolder: string;
       const FileInfo: TPawnProFileInfo);
     procedure CopyPawnProFiles(const SrcFolder, TargetFolder: string);
+    procedure CopyFbClientCryptoFiles(const SrcFolder, TargetFolder: string);
+    procedure CopyDatabaseFile(const SrcFolder: string);
     procedure CreateDefaultPawnProIni(const TargetFolder: string);
     procedure WriteCommonIniDefaults(Ini: TIniFile);
     procedure WriteEncryptedConnectionIni(const TargetFolder, Password: string);
+    function IsSingleWorkstationInstall: Boolean;
+    function FindFirebirdConfPath: string;
+    function FindFirebirdDatabasesConfPath: string;
+    procedure SetFirebirdDatabaseAlias;
+    procedure SetFirebirdRemoteAccess(AllowRemoteAccess: Boolean);
+    procedure UpdateFirebirdRemoteAccessFromSelection;
     procedure FormatIniSectionSpacing(const IniPath: string);
   public
     { Public declarations }
@@ -74,10 +84,24 @@ implementation
 uses PawnProSetupDM, DPAPIUtils;
 
 const
-  PAWNPRO_FILES: array[0..2] of TPawnProFileInfo = (
-    (FileName: 'fbclient.dll';   Overwrite: True),
-    (FileName: 'PAWNDATA.FDB';   Overwrite: False),
-    (FileName: 'PawnProFB.exe';  Overwrite: True)
+  PAWNPRO_DB_ALIAS = 'PAWNDATA';
+
+  // PAWNDATA.FDB is intentionally NOT here -- it is handled by CopyDatabaseFile,
+  // which copies it to the aliased database path (DatabasePath) and only for a
+  // local-DB install. A client/workstation must not receive a local copy.
+  PAWNPRO_FILES: array[0..1] of TPawnProFileInfo = (
+    (FileName: 'fbclient.dll';   Overwrite: True; SubFolder: ''),
+    (FileName: 'PawnProFB.exe';  Overwrite: True; SubFolder: '')
+  );
+
+  // Firebird wire-encryption client files (folds in CopyFbClientCrypto.bat) so a
+  // workstation can satisfy the server's WireCrypt=Required on remote connects.
+  // chacha.dll must land in plugins\ next to fbclient.dll; plugins.conf maps the
+  // ChaCha64 plugin name to it; firebird.msg gives readable server error text.
+  FBCRYPTO_FILES: array[0..2] of TPawnProFileInfo = (
+    (FileName: 'chacha.dll';   Overwrite: True; SubFolder: 'plugins\'),
+    (FileName: 'plugins.conf'; Overwrite: True; SubFolder: ''),
+    (FileName: 'firebird.msg'; Overwrite: True; SubFolder: '')
   );
 
 procedure TfrmPawnProSetupMain.FormCreate(Sender: TObject);
@@ -195,39 +219,45 @@ end;
 procedure TfrmPawnProSetupMain.CopyPawnProFile(const SrcFolder, TargetFolder: string;
   const FileInfo: TPawnProFileInfo);
 var
-  SourceFile, TargetFile, FileName: string;
+  SourceFile, TargetFile, FileName, RelName, TargetSubDir: string;
 begin
   FileName := FileInfo.FileName;
-  SourceFile := SrcFolder + FileName;
-  TargetFile := TargetFolder + FileName;
+  RelName := FileInfo.SubFolder + FileName;
+  SourceFile := SrcFolder + RelName;
+  TargetFile := TargetFolder + RelName;
 
   if not FileExists(SourceFile) then
     raise Exception.CreateFmt('Source file is missing: %s', [SourceFile]);
+
+  TargetSubDir := ExtractFilePath(TargetFile);
+  if (TargetSubDir <> '') and not DirectoryExists(TargetSubDir) then
+    if not ForceDirectories(TargetSubDir) then
+      raise Exception.CreateFmt('Could not create target folder: %s', [TargetSubDir]);
 
   if FileExists(TargetFile) then
   begin
     if not FileInfo.Overwrite then
     begin
-      Log(FileName + ' already exists. Skipped because overwrite is disabled.');
+      Log(RelName + ' already exists. Skipped because overwrite is disabled.');
       Exit;
     end;
 
     if FilesAreSame(SourceFile, TargetFile) then
     begin
-      Log(FileName + ' is already current. Skipped.');
+      Log(RelName + ' is already current. Skipped.');
       Exit;
     end;
 
-    Log(FileName + ' is different. Replacing target file.');
+    Log(RelName + ' is different. Replacing target file.');
   end
   else
-    Log(FileName + ' is missing. Copying file.');
+    Log(RelName + ' is missing. Copying file.');
 
   if not CopyFile(PChar(SourceFile), PChar(TargetFile), False) then
     raise Exception.CreateFmt('Copy failed for %s. Windows error: %d',
-      [FileName, GetLastError]);
+      [RelName, GetLastError]);
 
-  Log(FileName + ' copied.');
+  Log(RelName + ' copied.');
 end;
 
 procedure TfrmPawnProSetupMain.CopyPawnProFiles(const SrcFolder, TargetFolder: string);
@@ -240,6 +270,56 @@ begin
     CopyPawnProFile(SrcFolder, TargetFolder, PAWNPRO_FILES[I]);
 
   Log('Finished copying PawnPro files.');
+end;
+
+procedure TfrmPawnProSetupMain.CopyFbClientCryptoFiles(const SrcFolder, TargetFolder: string);
+var
+  I: Integer;
+begin
+  Log('Copying Firebird wire-encryption client files (ChaCha)...');
+
+  for I := Low(FBCRYPTO_FILES) to High(FBCRYPTO_FILES) do
+    CopyPawnProFile(SrcFolder, TargetFolder, FBCRYPTO_FILES[I]);
+
+  Log('Finished copying Firebird wire-encryption client files.');
+end;
+
+procedure TfrmPawnProSetupMain.CopyDatabaseFile(const SrcFolder: string);
+// Copies the seed PAWNDATA.FDB to the aliased database path (DatabasePath), not
+// the install folder, so the file actually lives where the alias/connection
+// points. Skipped for non-local installs -- a client uses the server's DB.
+var
+  SourceFile, TargetFile, TargetDir: string;
+begin
+  if not chkIsDBLocal.Checked then
+  begin
+    Log('Database is not local to this machine. Skipping PAWNDATA.FDB copy.');
+    Exit;
+  end;
+
+  SourceFile := SrcFolder + 'PAWNDATA.FDB';
+  TargetFile := DatabasePath;
+
+  if not FileExists(SourceFile) then
+    raise Exception.CreateFmt('Source file is missing: %s', [SourceFile]);
+
+  TargetDir := ExtractFilePath(TargetFile);
+  if (TargetDir <> '') and not DirectoryExists(TargetDir) then
+    if not ForceDirectories(TargetDir) then
+      raise Exception.CreateFmt('Could not create database folder: %s', [TargetDir]);
+
+  if FileExists(TargetFile) then
+  begin
+    Log('Database already exists at ' + TargetFile + '. Skipped (will not overwrite).');
+    Exit;
+  end;
+
+  // bFailIfExists = True: never clobber an existing database.
+  if not CopyFile(PChar(SourceFile), PChar(TargetFile), True) then
+    raise Exception.CreateFmt('Database copy failed for %s. Windows error: %d',
+      [TargetFile, GetLastError]);
+
+  Log('Database copied to ' + TargetFile);
 end;
 
 procedure EnsureIniKey(Ini: TIniFile; const Section, Key, Value: string);
@@ -307,7 +387,9 @@ begin
   Ini := TIniFile.Create(IniPath);
   try
     Ini.WriteString('CONNECTION_FB', 'host', Trim(edHost.Text));
-    Ini.WriteString('CONNECTION_FB', 'database', DatabasePath);
+    // Connect via the PAWNDATA alias (registered in databases.conf), not a raw
+    // path, so the ini is identical on the host and every workstation.
+    Ini.WriteString('CONNECTION_FB', 'database', PAWNPRO_DB_ALIAS);
     Ini.WriteString('CONNECTION_FB', 'user', 'sysdba');
     Ini.WriteString('CONNECTION_FB', 'port', IntToStr(Port));
     Ini.WriteString('CONNECTION_FB', 'charset', 'UTF8');
@@ -335,7 +417,7 @@ begin
   Ini := TIniFile.Create(LocalIniPath);
   try
     Ini.WriteString('CONNECTION_FB', 'host', Trim(edHost.Text));
-    Ini.WriteString('CONNECTION_FB', 'database', DatabasePath);
+    Ini.WriteString('CONNECTION_FB', 'database', PAWNPRO_DB_ALIAS);
     Ini.WriteString('CONNECTION_FB', 'user', 'sysdba');
     Ini.WriteString('CONNECTION_FB', 'password_enc', DPAPIProtect(Password));
     Ini.DeleteKey('CONNECTION_FB', 'password');
@@ -348,6 +430,228 @@ begin
 
   FormatIniSectionSpacing(LocalIniPath);
   Log('PawnPro.ini updated. Plain password key removed.');
+end;
+
+function TfrmPawnProSetupMain.IsSingleWorkstationInstall: Boolean;
+begin
+  Result := rgSngleInstallation.ItemIndex = 0;
+end;
+
+function FirstExistingFile(const FileNames: array of string): string;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := Low(FileNames) to High(FileNames) do
+  begin
+    if (Trim(FileNames[I]) <> '') and FileExists(FileNames[I]) then
+      Exit(FileNames[I]);
+  end;
+end;
+
+function TfrmPawnProSetupMain.FindFirebirdConfPath: string;
+var
+  ProgramFiles64, ProgramFiles: string;
+begin
+  ProgramFiles64 := GetEnvironmentVariable('ProgramW6432');
+  ProgramFiles := GetEnvironmentVariable('ProgramFiles');
+  if ProgramFiles64 <> '' then
+    ProgramFiles64 := IncludeTrailingPathDelimiter(ProgramFiles64);
+  if ProgramFiles <> '' then
+    ProgramFiles := IncludeTrailingPathDelimiter(ProgramFiles);
+
+  // Only the real Firebird install is edited; a copy in the setup source folder
+  // would never be read by the running server, so it is intentionally not searched.
+  Result := FirstExistingFile([
+    ProgramFiles64 + 'Firebird\Firebird_5_0\firebird.conf',
+    ProgramFiles + 'Firebird\Firebird_5_0\firebird.conf'
+  ]);
+end;
+
+function TfrmPawnProSetupMain.FindFirebirdDatabasesConfPath: string;
+var
+  FirebirdConfPath: string;
+  ProgramFiles64, ProgramFiles: string;
+begin
+  FirebirdConfPath := FindFirebirdConfPath;
+  if (FirebirdConfPath <> '') and FileExists(ExtractFilePath(FirebirdConfPath) + 'databases.conf') then
+    Exit(ExtractFilePath(FirebirdConfPath) + 'databases.conf');
+
+  ProgramFiles64 := GetEnvironmentVariable('ProgramW6432');
+  ProgramFiles := GetEnvironmentVariable('ProgramFiles');
+  if ProgramFiles64 <> '' then
+    ProgramFiles64 := IncludeTrailingPathDelimiter(ProgramFiles64);
+  if ProgramFiles <> '' then
+    ProgramFiles := IncludeTrailingPathDelimiter(ProgramFiles);
+
+  // As with firebird.conf, only the real Firebird install is searched.
+  Result := FirstExistingFile([
+    ProgramFiles64 + 'Firebird\Firebird_5_0\databases.conf',
+    ProgramFiles + 'Firebird\Firebird_5_0\databases.conf'
+  ]);
+end;
+
+procedure TfrmPawnProSetupMain.SetFirebirdDatabaseAlias;
+var
+  ConfPath, AliasLine, Line, Trimmed: string;
+  Lines: TStringList;
+  I: Integer;
+  Found: Boolean;
+
+  function IsAliasLine(const S: string): Boolean;
+  var
+    T: string;
+  begin
+    T := Trim(S);
+    if (T <> '') and (T[1] = '#') then
+      T := Trim(Copy(T, 2, MaxInt));
+
+    Result :=
+      SameText(Copy(T, 1, Length(PAWNPRO_DB_ALIAS)), PAWNPRO_DB_ALIAS) and
+      ((Length(T) = Length(PAWNPRO_DB_ALIAS)) or
+       CharInSet(T[Length(PAWNPRO_DB_ALIAS) + 1], [' ', #9, '=']));
+  end;
+
+begin
+  ConfPath := FindFirebirdDatabasesConfPath;
+  if ConfPath = '' then
+    raise Exception.Create(
+      'databases.conf was not found. Expected Firebird 5 x64 path: ' +
+      'C:\Program Files\Firebird\Firebird_5_0\databases.conf');
+
+  AliasLine := PAWNPRO_DB_ALIAS + ' = ' + DatabasePath;
+
+  Lines := TStringList.Create;
+  try
+    Lines.LoadFromFile(ConfPath);
+    Found := False;
+
+    for I := 0 to Lines.Count - 1 do
+    begin
+      Line := Lines[I];
+      Trimmed := Trim(Line);
+
+      if IsAliasLine(Trimmed) then
+      begin
+        if not Found then
+        begin
+          Lines[I] := AliasLine;
+          Found := True;
+        end
+        else if (Trimmed <> '') and (Trimmed[1] <> '#') then
+          Lines[I] := '# Duplicate ' + PAWNPRO_DB_ALIAS + ' alias disabled by PawnProSetup: ' + Trimmed;
+      end;
+    end;
+
+    if not Found then
+    begin
+      Lines.Add('');
+      Lines.Add('# Set by PawnProSetup.');
+      Lines.Add(AliasLine);
+    end;
+
+    Lines.SaveToFile(ConfPath);
+  finally
+    Lines.Free;
+  end;
+
+  Log('Updated Firebird database alias in ' + ConfPath + ': ' + AliasLine);
+end;
+
+procedure TfrmPawnProSetupMain.SetFirebirdRemoteAccess(AllowRemoteAccess: Boolean);
+// Standalone lockdown is done via RemoteBindAddress, NOT RemoteAccess. Firebird
+// treats every TCP/IP connection -- including localhost -- as "remote", so
+// RemoteAccess=false would also reject PawnPro's own localhost:3050 connection.
+// RemoteBindAddress=localhost binds the listener to loopback only: other machines
+// on the LAN cannot reach the server, but the local app still connects over TCP.
+var
+  ConfPath, Trimmed: string;
+  Lines: TStringList;
+  I: Integer;
+  Found: Boolean;
+
+  function IsBindLine(const S: string): Boolean;
+  var
+    T: string;
+  begin
+    T := Trim(S);
+    if (T <> '') and (T[1] = '#') then
+      T := Trim(Copy(T, 2, MaxInt));
+
+    Result :=
+      SameText(Copy(T, 1, Length('RemoteBindAddress')), 'RemoteBindAddress') and
+      ((Length(T) = Length('RemoteBindAddress')) or
+       CharInSet(T[Length('RemoteBindAddress') + 1], [' ', #9, '=']));
+  end;
+
+begin
+  ConfPath := FindFirebirdConfPath;
+  if ConfPath = '' then
+  begin
+    Log('WARNING: firebird.conf was not found. RemoteBindAddress was not changed.');
+    Log('Expected Firebird 5 x64 path: C:\Program Files\Firebird\Firebird_5_0\firebird.conf');
+    Exit;
+  end;
+
+  Lines := TStringList.Create;
+  try
+    Lines.LoadFromFile(ConfPath);
+    Found := False;
+
+    for I := 0 to Lines.Count - 1 do
+    begin
+      Trimmed := Trim(Lines[I]);
+      if not IsBindLine(Trimmed) then
+        Continue;
+
+      if AllowRemoteAccess then
+      begin
+        // Multi-workstation: disable any active bind restriction so the server
+        // listens on all interfaces (Firebird's default when unset).
+        if (Trimmed <> '') and (Trimmed[1] <> '#') then
+          Lines[I] := '# Disabled by PawnProSetup (listen on all interfaces): ' + Trimmed;
+      end
+      else
+      begin
+        // Standalone: restrict the listener to loopback only.
+        if not Found then
+        begin
+          Lines[I] := 'RemoteBindAddress = localhost';
+          Found := True;
+        end
+        else if (Trimmed <> '') and (Trimmed[1] <> '#') then
+          Lines[I] := '# Duplicate RemoteBindAddress disabled by PawnProSetup: ' + Trimmed;
+      end;
+    end;
+
+    if (not AllowRemoteAccess) and (not Found) then
+    begin
+      Lines.Add('');
+      Lines.Add('# Set by PawnProSetup (standalone store: loopback only).');
+      Lines.Add('RemoteBindAddress = localhost');
+    end;
+
+    Lines.SaveToFile(ConfPath);
+  finally
+    Lines.Free;
+  end;
+
+  if AllowRemoteAccess then
+    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress cleared (listen on all interfaces).')
+  else
+    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = localhost (loopback only).');
+  Log('Restart the Firebird Server service for this setting to take effect.');
+end;
+
+procedure TfrmPawnProSetupMain.UpdateFirebirdRemoteAccessFromSelection;
+begin
+  if rgSngleInstallation.ItemIndex < 0 then
+  begin
+    Log('WARNING: Single/multiple workstation installation was not selected. Firebird RemoteBindAddress was not changed.');
+    Exit;
+  end;
+
+  SetFirebirdRemoteAccess(not IsSingleWorkstationInstall);
 end;
 
 procedure TfrmPawnProSetupMain.FormatIniSectionSpacing(const IniPath: string);
@@ -410,6 +714,8 @@ begin
       edDatabase.Text := InstallFolder + 'PAWNDATA.FDB';
 
     CopyPawnProFiles(SrcFolder, InstallFolder);
+    CopyFbClientCryptoFiles(SrcFolder, InstallFolder);
+    CopyDatabaseFile(SrcFolder);
     CreateDefaultPawnProIni(InstallFolder);
   except
     on E: Exception do
@@ -495,6 +801,8 @@ begin
       Port, StatesCount, ErrorMsg) then
       raise Exception.Create('Current SYSDBA password failed: ' + ErrorMsg);
 
+    SetFirebirdDatabaseAlias;
+
     if SameText(edCurrentPassword.Text, edNewPassword.Text) then
       Log('Current and new passwords match. Skipping ALTER USER; updating encrypted INI.')
     else
@@ -507,6 +815,7 @@ begin
     end;
 
     WriteEncryptedConnectionIni(TargetFolder, edNewPassword.Text);
+    UpdateFirebirdRemoteAccessFromSelection;
 
     Log('Testing encrypted INI after update...');
     if not DM.TestConnectionFromIni(IniPath, StatesCount, ErrorMsg) then

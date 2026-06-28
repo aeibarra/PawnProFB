@@ -2,7 +2,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
   Left = 0
   Top = 0
   Caption = 'PawnPro Setup'
-  ClientHeight = 584
+  ClientHeight = 681
   ClientWidth = 1165
   Color = clBtnFace
   Constraints.MinHeight = 550
@@ -20,7 +20,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Left = 568
     Top = 3
     Width = 594
-    Height = 578
+    Height = 675
     Align = alClient
     Caption = 'Log'
     TabOrder = 0
@@ -29,7 +29,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       Left = 5
       Top = 25
       Width = 584
-      Height = 548
+      Height = 645
       Align = alClient
       ReadOnly = True
       ScrollBars = ssBoth
@@ -41,7 +41,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Left = 3
     Top = 3
     Width = 559
-    Height = 578
+    Height = 675
     Align = alLeft
     Caption = 'Installation Steps'
     TabOrder = 1
@@ -150,37 +150,37 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     end
     object btnCopyPawnProFiles: TRzButton
       Left = 25
-      Top = 380
+      Top = 472
       Width = 446
       Height = 56
       Alignment = taLeftJustify
       Caption = '    01 - Copy Files Needed to Run PawnPro'
-      TabOrder = 6
+      TabOrder = 8
       OnClick = btnCopyPawnProFilesClick
     end
     object btnTestConnection: TRzButton
       Left = 25
-      Top = 504
+      Top = 596
       Width = 215
       Height = 56
       Alignment = taLeftJustify
       Caption = '    03 - Test Encrypted INI'
-      TabOrder = 7
+      TabOrder = 9
       OnClick = btnTestConnectionClick
     end
     object btnEnterStoreInfo: TRzButton
       Left = 25
-      Top = 442
+      Top = 534
       Width = 445
       Height = 56
       Alignment = taLeftJustify
       Caption = '    02 - Set Firebird Password + Encrypt INI'
-      TabOrder = 8
+      TabOrder = 10
       OnClick = btnEnterStoreInfoClick
     end
     object chkIsDBLocal: TCheckBox
       Left = 25
-      Top = 348
+      Top = 345
       Width = 185
       Height = 17
       Caption = 'Is Database Local?'
@@ -192,7 +192,19 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       Font.Style = [fsBold]
       ParentFont = False
       State = cbChecked
-      TabOrder = 9
+      TabOrder = 6
+    end
+    object rgSngleInstallation: TRadioGroup
+      Left = 25
+      Top = 377
+      Width = 280
+      Height = 80
+      Caption = 'Is this a single workstation installation?'
+      ItemIndex = 0
+      Items.Strings = (
+        'Yes'
+        'No')
+      TabOrder = 7
     end
   end
 end
