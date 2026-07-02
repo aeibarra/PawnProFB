@@ -36,7 +36,6 @@ object frmClients: TfrmClients
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1672
     object PanelClientInfo: TPanel
       Left = 0
       Top = 82
@@ -45,7 +44,6 @@ object frmClients: TfrmClients
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 1672
       object gridClients: TDBGrid
         AlignWithMargins = True
         Left = 3
@@ -63,6 +61,15 @@ object frmClients: TfrmClients
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
         Columns = <
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'cHasPics'
+            Title.Alignment = taCenter
+            Title.Caption = 'Pics'
+            Width = 31
+            Visible = True
+          end
           item
             Expanded = False
             FieldName = 'CUST_NO'
@@ -191,48 +198,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -252,7 +267,6 @@ object frmClients: TfrmClients
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 1666
         DesignSize = (
           1663
           61)
@@ -339,7 +353,7 @@ object frmClients: TfrmClients
           ParentShowHint = False
           ShowHint = True
           TabOrder = 4
-          ExplicitLeft = 1526
+          OnClick = btnCustPicIDClick
         end
       end
     end
@@ -351,7 +365,6 @@ object frmClients: TfrmClients
       Height = 76
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 1666
       DesignSize = (
         1663
         76)
@@ -487,7 +500,6 @@ object frmClients: TfrmClients
         ModalResult = 2
         TabOrder = 5
         OnClick = btnExitClick
-        ExplicitLeft = 1558
       end
       object edTicketNo: TEdit
         Left = 312
@@ -532,7 +544,6 @@ object frmClients: TfrmClients
     BevelOuter = bvNone
     Constraints.MinHeight = 200
     TabOrder = 1
-    ExplicitWidth = 1672
     object SplitterBottom: TSplitter
       Left = 687
       Top = 0
@@ -1166,12 +1177,10 @@ object frmClients: TfrmClients
       TabIndex = 1
       TabOrder = 1
       OnChange = pgTransDetailChange
-      ExplicitWidth = 976
       FixedDimension = 35
       object TabPayment: TRzTabSheet
         ImageIndex = 21
         Caption = 'Payments'
-        ExplicitWidth = 972
         object gridPayments: TDBGrid
           AlignWithMargins = True
           Left = 3
@@ -1257,6 +1266,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1304,6 +1314,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -1316,7 +1327,6 @@ object frmClients: TfrmClients
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 966
           DesignSize = (
             963
             60)
@@ -1413,7 +1423,6 @@ object frmClients: TfrmClients
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitWidth = 966
           DesignSize = (
             959
             26)
@@ -1439,7 +1448,6 @@ object frmClients: TfrmClients
       object TabItems: TRzTabSheet
         ImageIndex = 22
         Caption = '   Items    '
-        ExplicitWidth = 972
         object gridItems: TDBGrid
           AlignWithMargins = True
           Left = 3
@@ -1577,7 +1585,6 @@ object frmClients: TfrmClients
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 966
           DesignSize = (
             963
             60)
@@ -1692,7 +1699,6 @@ object frmClients: TfrmClients
             ImageIndex = 18
             Images = DM.vilMain24
             Margin = 10
-            ExplicitLeft = 818
           end
         end
         object pnPawnItemBalance: TPanel
@@ -1705,7 +1711,6 @@ object frmClients: TfrmClients
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitWidth = 966
           DesignSize = (
             959
             26)
@@ -14869,9 +14874,9 @@ object frmClients: TfrmClients
     SQL.Strings = (
       'SELECT'
       '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
-      
-        '           WHERE T01.IMAG_REF_TO_ROW_NO = INVENTORY_ITEMS.INV_IT' +
-        'EM_NO)) AS HAS_PICS,'
+
+        '           WHERE T01.IMAGE_TYPE_NO = 2 AND T01.IMAG_REF_TO_ROW_NO' +
+        ' = INVENTORY_ITEMS.INV_ITEM_NO)) AS HAS_PICS,'
       '  INVENTORY_ITEMS.*'
       'FROM INVENTORY_ITEMS'
       'WHERE TRANSACTION_NO = :TRANSACTION_NO')

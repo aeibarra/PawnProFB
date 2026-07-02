@@ -3,8 +3,8 @@ object frmItemPictures: TfrmItemPictures
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Item Pictures'
-  ClientHeight = 598
-  ClientWidth = 1098
+  ClientHeight = 662
+  ClientWidth = 1190
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -13,32 +13,24 @@ object frmItemPictures: TfrmItemPictures
   Font.Style = []
   PopupMode = pmAuto
   Position = poOwnerFormCenter
+  OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 20
-  object ImageJewelrySet: TImage
-    Left = 364
-    Top = 0
-    Width = 734
-    Height = 517
-    Align = alClient
-    AutoSize = True
-    ExplicitLeft = 1019
-    ExplicitWidth = 594
-    ExplicitHeight = 491
-  end
   object gbFooter: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 520
-    Width = 1092
+    Top = 584
+    Width = 1184
     Height = 75
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 520
+    ExplicitWidth = 1092
     DesignSize = (
-      1092
+      1184
       75)
     object btnExit: TBitBtn
-      Left = 968
+      Left = 1060
       Top = 14
       Width = 109
       Height = 49
@@ -52,6 +44,7 @@ object frmItemPictures: TfrmItemPictures
       ModalResult = 2
       TabOrder = 0
       OnClick = btnExitClick
+      ExplicitLeft = 968
     end
     object btnTakeNewPic: TRzBitBtn
       Left = 16
@@ -95,16 +88,17 @@ object frmItemPictures: TfrmItemPictures
     Left = 3
     Top = 3
     Width = 358
-    Height = 511
+    Height = 575
     Align = alLeft
     Caption = 'Images'
     TabOrder = 1
+    ExplicitHeight = 511
     object DBGrid1: TDBGrid
       AlignWithMargins = True
       Left = 5
       Top = 25
       Width = 348
-      Height = 481
+      Height = 545
       Align = alClient
       DataSource = dsItemImages
       Font.Charset = ANSI_CHARSET
@@ -139,6 +133,94 @@ object frmItemPictures: TfrmItemPictures
         end>
     end
   end
+  object Panel1: TPanel
+    Left = 364
+    Top = 0
+    Width = 826
+    Height = 581
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitLeft = 636
+    ExplicitTop = 96
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object pnImgTop: TPanel
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
+      Width = 820
+      Height = 41
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      ExplicitLeft = 130
+      ExplicitTop = 38
+      ExplicitWidth = 185
+      object lblZoom: TLabel
+        Left = 300
+        Top = 11
+        Width = 36
+        Height = 20
+        Caption = '100%'
+      end
+      object btnZoomOut: TButton
+        Left = 8
+        Top = 4
+        Width = 75
+        Height = 33
+        Caption = 'Zoom -'
+        TabOrder = 0
+        OnClick = btnZoomOutClick
+      end
+      object btnZoomIn: TButton
+        Left = 87
+        Top = 4
+        Width = 75
+        Height = 33
+        Caption = 'Zoom +'
+        TabOrder = 1
+        OnClick = btnZoomInClick
+      end
+      object btnZoomFit: TButton
+        Left = 166
+        Top = 4
+        Width = 60
+        Height = 33
+        Caption = 'Fit'
+        TabOrder = 2
+        OnClick = btnZoomFitClick
+      end
+      object btnZoom100: TButton
+        Left = 230
+        Top = 4
+        Width = 64
+        Height = 33
+        Caption = '100%'
+        TabOrder = 3
+        OnClick = btnZoom100Click
+      end
+    end
+    object sbImage: TScrollBox
+      Left = 0
+      Top = 47
+      Width = 826
+      Height = 534
+      Align = alClient
+      BorderStyle = bsNone
+      TabOrder = 1
+      object ImageJewelrySet: TImage
+        Left = 0
+        Top = 0
+        Width = 820
+        Height = 500
+        Stretch = True
+        OnMouseDown = ImageJewelrySetMouseDown
+        OnMouseMove = ImageJewelrySetMouseMove
+        OnMouseUp = ImageJewelrySetMouseUp
+      end
+    end
+  end
   object qryItemImages: TFDQuery
     AfterScroll = qryItemImagesAfterScroll
     OnNewRecord = qryItemImagesNewRecord
@@ -155,13 +237,20 @@ object frmItemPictures: TfrmItemPictures
       '  IMAGE_DATA,'
       '  CREATED'
       'from IMAGES_DATA'
-      'where IMAGE_TYPE_NO = 2 and IMAG_REF_TO_ROW_NO = :INV_ITEM_NO'
+      
+        'where IMAGE_TYPE_NO = :IMAGE_TYPE_NO and IMAG_REF_TO_ROW_NO = :R' +
+        'EF_ROW_NO'
       'order by IMAGES_DATA_NO')
     Left = 55
     Top = 75
     ParamData = <
       item
-        Name = 'INV_ITEM_NO'
+        Name = 'IMAGE_TYPE_NO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Name = 'REF_ROW_NO'
         DataType = ftInteger
         ParamType = ptInput
       end>

@@ -14,6 +14,8 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
   PopupMode = pmAuto
   Position = poOwnerFormCenter
   OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   DesignSize = (
     833
@@ -46,13 +48,6 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
       Width = 64
       Height = 17
       Caption = 'Camera #1'
-    end
-    object Label1: TLabel
-      Left = 495
-      Top = 11
-      Width = 80
-      Height = 17
-      Caption = 'Display mode'
     end
     object btnStart: TRzToolButton
       Left = 207
@@ -96,8 +91,8 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
       Caption = 'Video Size'
     end
     object SpeedButton1: TSpeedButton
-      Left = 658
-      Top = 17
+      Left = 512
+      Top = 12
       Width = 40
       Height = 35
       Flat = True
@@ -172,20 +167,6 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
       Text = 'No cameras found'
       OnChange = ComboBox_CamsChange
     end
-    object ComboBox_DisplayMode: TComboBox
-      Left = 495
-      Top = 28
-      Width = 148
-      Height = 25
-      Style = csDropDownList
-      ItemIndex = 0
-      TabOrder = 1
-      Text = 'Normal'
-      Items.Strings = (
-        'Normal'
-        'Inverted'
-        'Gray Scale')
-    end
     object btnExit: TBitBtn
       Left = 719
       Top = 7
@@ -197,7 +178,7 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
       ImageIndex = 2
       ImageName = 'actExit'
       Images = DM.vilMain
-      TabOrder = 2
+      TabOrder = 1
       OnClick = btnExitClick
     end
     object edImageDesc: TEdit
@@ -214,7 +195,7 @@ object frmCapturePicFromCamera: TfrmCapturePicFromCamera
       Height = 25
       Style = csDropDownList
       Enabled = False
-      TabOrder = 4
+      TabOrder = 2
       OnChange = ComboBox1Change
     end
   end

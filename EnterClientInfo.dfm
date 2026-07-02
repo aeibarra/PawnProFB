@@ -500,7 +500,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     end
     object edCellNumber: TDBPawnPhoneEdit
       Left = 29
-      Top = 299
+      Top = 298
       Width = 115
       Height = 28
       MaxLength = 14
@@ -511,7 +511,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     end
     object edHomePhoneNumber: TDBPawnPhoneEdit
       Left = 155
-      Top = 299
+      Top = 298
       Width = 115
       Height = 28
       MaxLength = 14
@@ -522,7 +522,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     end
     object edBussinessPhoneNumber: TDBPawnPhoneEdit
       Left = 283
-      Top = 299
+      Top = 298
       Width = 115
       Height = 28
       MaxLength = 14
@@ -533,7 +533,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
     end
     object edOtherPhoneNumber: TDBPawnPhoneEdit
       Left = 408
-      Top = 299
+      Top = 298
       Width = 115
       Height = 28
       MaxLength = 14

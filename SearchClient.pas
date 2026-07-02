@@ -898,6 +898,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure qryPoliceRepCustCalcFields(DataSet: TDataSet);
     procedure btnItemPicturesClick(Sender: TObject);
+    procedure btnCustPicIDClick(Sender: TObject);
     procedure TimerForScanTimer(Sender: TObject);
     procedure btnTestClick(Sender: TObject);
     procedure pgTransDetailChange(Sender: TObject);
@@ -965,7 +966,7 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPayment, CardReader, EditInvItem, Entertems,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
-  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus;
+  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, uPawnDialogs;
 
 {$R *.DFM}
 
@@ -1056,6 +1057,7 @@ begin
     (images come from the DB; the path is intentionally blank there). }
   btnItemPictures.Enabled := (ImageStorageMode <> ImageStorageMode_File) or
                              (Trim(ImagesStoragePath) <> '');
+  btnCustPicID.Enabled := btnItemPictures.Enabled;
 
   DM.GetJTypes(qryTypes);
   DM.GetJStyles(qryStyles);
@@ -2190,26 +2192,52 @@ begin
 end;
 
 procedure TfrmClients.btnItemPicturesClick(Sender: TObject);
-var
-  SaveRecNo: integer;
 begin
   if qryInvItems.RecordCount = 0 then
     exit;
 
   frmItemPictures := TfrmItemPictures.Create(self);
   try
+    frmItemPictures.ImageTypeNo := ImageType_ItemPicture;
     frmItemPictures.ImagRefToRowNo := qryInvItemsINV_ITEM_NO.AsInteger;
     frmItemPictures.TicketNo := DM.qryTransactionsTRAN_TICKET_NO.AsString;
     frmItemPictures.ItemCountInTran := GetRecNo(qryInvItems.RecNo);
     frmItemPictures.ShowModal;
+
+    { Re-fetch the current item so the "Pics" indicator (a computed column on
+      qryInvItems) reflects a picture that was just added. }
     if frmItemPictures.PictureTaken then
-      begin
-        SaveRecNo := qryInvItems.RecNo;
+      try
+        qryInvItems.RefreshRecord;
+      except
+        // Non-critical: the flag updates on the next refresh if this fails.
+      end;
+  finally
+    frmItemPictures.Free;
+  end;
+end;
 
-        qryInvItems.Close;
-        qryInvItems.Open;
+procedure TfrmClients.btnCustPicIDClick(Sender: TObject);
+begin
+  if DM.qryCustomersCUST_NO.AsInteger <= 0 then
+    begin
+      PawnInfo('Please select a customer first.', 'Customer Pictures', Self);
+      exit;
+    end;
 
-        qryInvItems.RecNo := SaveRecNo;
+  frmItemPictures := TfrmItemPictures.Create(self);
+  try
+    frmItemPictures.ImageTypeNo := ImageType_CustomerID;
+    frmItemPictures.ImagRefToRowNo := DM.qryCustomersCUST_NO.AsInteger;
+    frmItemPictures.ShowModal;
+
+    { Re-fetch the current customer so the "Pics" indicator (a computed column
+      on qryCustomers) reflects a picture that was just added. }
+    if frmItemPictures.PictureTaken then
+      try
+        DM.qryCustomers.RefreshRecord;
+      except
+        // Non-critical: the flag updates on the next search if this fails.
       end;
   finally
     frmItemPictures.Free;
@@ -2376,23 +2404,33 @@ begin
 end;
 
 procedure TfrmClients.mnuPawnStatusActiveClick(Sender: TObject);
+var
+  TransactionNo, InvItemNo: integer;
 begin
-  DM.PutPawnBackToActive(DM.qryTransactionsTRANSACTION_NO.AsInteger);
+  TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  InvItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
 
-  DM.RefreshFBQry(DM.qryTransactions);
-  DM.RefreshFBQry(qryInvItems);
+  DM.PutPawnBackToActive(TransactionNo);
+
+  DM.RefreshFBQry(DM.qryTransactions, TransactionNo, 'TRANSACTION_NO');
+  DM.RefreshFBQry(qryInvItems, InvItemNo, 'INV_ITEM_NO');
 end;
 
 procedure TfrmClients.mnuPawnStatusInactiveClick(Sender: TObject);
+var
+  TransactionNo, InvItemNo: integer;
 begin
+  TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  InvItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
+
   frmPawnChangeStatus := TfrmPawnChangeStatus.Create(Self);
   try
     CenterPopupOnControl(gridPawn, frmPawnChangeStatus);
-    frmPawnChangeStatus.TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+    frmPawnChangeStatus.TransactionNo := TransactionNo;
     if frmPawnChangeStatus.ShowModal = mrOk then
       begin
-        DM.RefreshFBQry(DM.qryTransactions);
-        DM.RefreshFBQry(qryInvItems);
+        DM.RefreshFBQry(DM.qryTransactions, TransactionNo, 'TRANSACTION_NO');
+        DM.RefreshFBQry(qryInvItems, InvItemNo, 'INV_ITEM_NO');
       end;
   finally
     frmPawnChangeStatus.Free;

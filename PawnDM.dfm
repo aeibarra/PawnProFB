@@ -4402,7 +4402,7 @@ object DM: TDM
     object qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField
       FieldName = 'PawnStatusCode'
     end
-    object qryGetPawnStatusFromItemsItemCount: TIntegerField
+    object qryGetPawnStatusFromItemsItemCount: TLargeintField
       FieldName = 'ItemCount'
     end
   end
@@ -7931,9 +7931,14 @@ object DM: TDM
     UpdateOptions.KeyFields = 'CUST_NO'
     UpdateOptions.AutoIncFields = 'CUST_NO'
     SQL.Strings = (
-      'SELECT *'
+      'SELECT'
+      '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
+
+        '           WHERE T01.IMAGE_TYPE_NO = 1 AND T01.IMAG_REF_TO_ROW_NO ' +
+        '= CUSTOMER.CUST_NO)) AS HAS_CUST_PICS,'
+      '  CUSTOMER.*'
       'FROM CUSTOMER'
-      
+
         'WHERE CUST_LAST LIKE :CUST_LAST AND CUST_FIRST LIKE :CUST_FIRST ' +
         'AND CUST_NO > 0'
       '   --SearchByTicketNo'
@@ -7987,6 +7992,19 @@ object DM: TDM
       FieldKind = fkCalculated
       FieldName = 'cCustAge'
       Calculated = True
+    end
+    object qryCustomerscHasPics: TWideStringField
+      FieldKind = fkCalculated
+      FieldName = 'cHasPics'
+      Size = 1
+      Calculated = True
+    end
+    object qryCustomersHAS_CUST_PICS: TBooleanField
+      AutoGenerateValue = arDefault
+      FieldName = 'HAS_CUST_PICS'
+      Origin = 'HAS_CUST_PICS'
+      ProviderFlags = []
+      ReadOnly = True
     end
     object qryCustomersCUST_NO: TIntegerField
       AutoGenerateValue = arAutoInc

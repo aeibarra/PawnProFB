@@ -46,7 +46,7 @@ type
     qryUpdPawnStatus: TFDQuery;
     qryGetPawnStatusFromItems: TFDQuery;
     qryGetPawnStatusFromItemsPawnStatusCode: TSmallintField;
-    qryGetPawnStatusFromItemsItemCount: TIntegerField;
+    qryGetPawnStatusFromItemsItemCount: TLargeintField;
     vilMain: TSVGIconVirtualImageList;
     svgMain: TSVGIconImageCollection;
     vilMain24: TSVGIconVirtualImageList;
@@ -155,6 +155,8 @@ type
     qryCustomerscCustPhCell: TWideStringField;
     qryCustomerscCustFlDrvLic: TWideStringField;
     qryCustomerscCustAge: TIntegerField;
+    qryCustomerscHasPics: TWideStringField;
+    qryCustomersHAS_CUST_PICS: TBooleanField;
     qryPayments: TFDQuery;
     qryLastPayment: TFDQuery;
     qryLastPaymentLASTPAYMENTDATE: TDateField;
@@ -275,7 +277,8 @@ type
     procedure FillPawnStatusCombobox(cb: TRzComboBox; StatusToSelect: String);
     procedure SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
     procedure PutPawnBackToActive(TransactionNo: integer);
-    procedure RefreshFBQry(Qry: TFDQuery);
+    procedure RefreshFBQry(Qry: TFDQuery); overload;
+    procedure RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string); overload;
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     function GetPawnStatusFromItems(TransactionNo: integer): integer;
     procedure UpdatePawnStatusBaseOnItems(TransactionNo: integer);
@@ -1678,6 +1681,11 @@ begin
     qryCustomerscCustAge.AsInteger := YearsBetween(Date, qryCustomersCUST_DOB.AsDateTime)
   else
     qryCustomerscCustAge.AsInteger := 0;
+
+  if qryCustomersHAS_CUST_PICS.AsBoolean then
+    qryCustomerscHasPics.AsString := 'X'
+  else
+    qryCustomerscHasPics.AsString := '';
 end;
 
 procedure TDM.qryCustomersCustFlDrvLicGetText(Sender: TField; var Text: string;
@@ -2118,18 +2126,33 @@ begin
 end;
 
 procedure TDM.RefreshFBQry(Qry: TFDQuery);
+begin
+  RefreshFBQry(Qry, Unassigned, '');
+end;
+
+procedure TDM.RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string);
 var
   SavePos: integer;
+  HasKey: boolean;
+  FoundKey: boolean;
 begin
   if Qry.RecNo > 0 then
     begin
       SavePos := Qry.RecNo;
+      HasKey := (Trim(DSKeyField) <> '') and not VarIsEmpty(DSKey) and
+        not VarIsNull(DSKey) and (VarToStr(DSKey) <> '');
+      FoundKey := False;
 
       Qry.DisableControls;
       try
         Qry.Close;
         Qry.Open;
-        Qry.RecNo := SavePos;
+
+        if HasKey and Assigned(Qry.FindField(DSKeyField)) then
+          FoundKey := Qry.Locate(DSKeyField, DSKey, []);
+
+        if not FoundKey then
+          Qry.RecNo := SavePos;
       finally
         Qry.EnableControls;
       end;

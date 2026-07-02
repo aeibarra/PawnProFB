@@ -105,6 +105,12 @@ const
   ImageStorageMode_Database = 'DATABASE';
   ImageStorageMode_File = 'FILE';
 
+  { IMAGES_TYPES.IMAGE_TYPE seed values (see PawnPro_FB5_SeedReferenceData.sql).
+    Images are stored in IMAGES_DATA keyed by (IMAGE_TYPE_NO, IMAG_REF_TO_ROW_NO):
+    Customer ID pics reference CUST_NO, item pics reference INV_ITEM_NO. }
+  ImageType_CustomerID  = 1;
+  ImageType_ItemPicture = 2;
+
   AppStateKeyImageSharedPath = 'IMAGE_SHARED_PATH';
 
   IniSecDatabase = 'DATABASE';
