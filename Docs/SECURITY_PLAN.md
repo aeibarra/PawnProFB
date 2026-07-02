@@ -1,6 +1,6 @@
 # PawnProFB Security Plan
 
-Last updated: 2026-06-18
+Last updated: 2026-07-01
 
 This document captures the incremental security plan for the Firebird 5 version
 of PawnProFB. The goal is to improve production security in small steps, verify
@@ -84,6 +84,9 @@ Expected files copied by setup include:
 
 - `PawnProFB.exe`
 - `fbclient.dll`
+- `libsodium.dll` — **load-time dependency of `PawnProFB.exe`** (backup
+  encryption, see "Encrypted database backups" below). The app will not start
+  without it in the install folder, so setup copies it next to `PawnProFB.exe`.
 - `plugins\chacha.dll`, `plugins.conf`, `firebird.msg` — the Firebird wire
   encryption client files (see "Wire encryption" below)
 - a blank or seeded `PAWNDATA.FDB` — copied **only for local-DB installs**, and
@@ -178,21 +181,68 @@ Later, the setup app should support generating a strong password and showing it
 once for the installer to record in the customer password manager. The generated
 password should then be saved only as DPAPI `password_enc` in `PawnPro.ini`.
 
-## Existing advanced recovery idea
+## Vendor public-key recovery (libsodium / SealedBox)
 
-There is also an existing advanced design using `libsodium.dll` and
-`COMMON\SealedBox.pas` to create a vendor recovery file named `recovery.dat`.
+`libsodium.dll` and `COMMON\SealedBox.pas` provide public/private-key
+encryption used in two places:
 
-That design uses public/private key encryption:
+- **Password recovery envelope** (`recovery.dat`): the setup app embeds a vendor
+  public key and seals the store password into `recovery.dat`; the private key
+  remains offline with the vendor; a recovery tool decrypts it if the customer
+  loses the database password.
+- **Encrypted database backups** (see below): the same vendor keypair seals each
+  backup's data key.
 
-- The setup app embeds a vendor public key.
-- The setup app seals the store password into `recovery.dat`.
-- The private key remains offline with the vendor.
-- A separate recovery tool can decrypt `recovery.dat` if the customer loses the
-  database password.
+Both share one vendor keypair. The public half is embedded via
+`SetupVendorPublicKey.inc`; the secret half (`vendor_secret.key`) lives only on
+the offline vendor vault USB and is never shipped or committed (`*.key` is
+git-ignored). Because backups now depend on it, `libsodium.dll` is a **shipped,
+required** runtime file (not optional): the main app will not launch without it.
 
-This is useful, but it is not required for the first basic security rounds.
-Step 1 and Step 2 only require Windows DPAPI.
+## Encrypted database backups
+
+The in-app backup (`TDM.RunBackup`, DB menu) produces a Firebird `.fbk` via the
+Services API (`TFB5DBA.BackupDatabase`) and then **encrypts it at rest** so the
+plaintext — which contains client PII/SSN — never lingers on disk, a USB, or a
+backup folder.
+
+Scheme (hybrid envelope, `COMMON\Nvv.Crypto.FileEnvelope.pas`):
+
+1. A random per-backup data key encrypts the `.fbk` with libsodium
+   XChaCha20-Poly1305 secretstream (chunked/streaming; each chunk is
+   authenticated, so tampering/truncation fails on restore).
+2. That data key is sealed to the embedded vendor **public** key via
+   `SealedBox`. Only the offline `vendor_secret.key` can open it.
+3. Output is `PawnPro_<ts>.fbk.enc`; the plaintext `.fbk` is securely deleted;
+   the 7 newest `.enc` are retained.
+
+Properties:
+
+- The store never handles a key or password. Encryption is automatic and uses
+  only the embedded public key (harmless if extracted from the EXE).
+- One vendor keypair works for all stores.
+- Kill-switch: `[BACKUP] EncryptBackups=0` restores legacy plaintext backups
+  (default/missing = ON).
+
+**Restore (vendor only):** on the store's PC (remote or via the vault USB), from
+a folder holding `vendor_secret.key` + `libsodium.dll` + `PawnProDecrypt.exe`:
+
+```
+PawnProDecrypt.exe  PawnPro_<ts>.fbk.enc  PAWNDATA.fbk
+gbak -c -user sysdba -password <pw>  PAWNDATA.fbk  localhost:C:\DB\PAWNDATA.FDB
+```
+
+`Tools\PawnProDecrypt` reads `vendor_secret.key` and derives the public key from
+it if `vendor_public.key` is absent, so the secret-only vault works as-is. See
+`Tools\HOW_TO_RECOVER_FROM_BACKUP.txt`.
+
+Caveats: gbak must write a plaintext `.fbk` before it is encrypted+deleted (a
+brief on-disk window). Image-folder backups remain plaintext (out of scope for
+now). Losing `vendor_secret.key` makes **all** stores' backups unrecoverable —
+keep the vault USB backed up.
+
+This machinery is not required for the Step 1 / Step 2 password work, which only
+uses Windows DPAPI.
 
 ## Future security rounds
 
