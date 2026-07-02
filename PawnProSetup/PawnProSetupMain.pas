@@ -89,9 +89,13 @@ const
   // PAWNDATA.FDB is intentionally NOT here -- it is handled by CopyDatabaseFile,
   // which copies it to the aliased database path (DatabasePath) and only for a
   // local-DB install. A client/workstation must not receive a local copy.
-  PAWNPRO_FILES: array[0..1] of TPawnProFileInfo = (
+
+  PAWNPRO_FILES: array[0..2] of TPawnProFileInfo = (
     (FileName: 'fbclient.dll';   Overwrite: True; SubFolder: ''),
-    (FileName: 'PawnProFB.exe';  Overwrite: True; SubFolder: '')
+    (FileName: 'PawnProFB.exe';  Overwrite: True; SubFolder: ''),
+    // libsodium.dll is a load-time dependency of PawnProFB.exe (backup
+    // encryption); the app will not start without it next to the EXE.
+    (FileName: 'libsodium.dll';  Overwrite: True; SubFolder: '')
   );
 
   // Firebird wire-encryption client files (folds in CopyFbClientCrypto.bat) so a
