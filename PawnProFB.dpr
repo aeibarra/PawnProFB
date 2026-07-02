@@ -50,6 +50,8 @@ uses
   Nvv.IO.CSV.Delphi.NvvCSVClasses in '..\COMMON\Nvv.IO.CSV.Delphi.NvvCSVClasses.pas',
   Nvv.FB5.DBA in '..\COMMON\Nvv.FB5.DBA.pas',
   DPAPIUtils in '..\COMMON\DPAPIUtils.pas',
+  SealedBox in '..\COMMON\SealedBox.pas',
+  Nvv.Crypto.FileEnvelope in '..\COMMON\Nvv.Crypto.FileEnvelope.pas',
   DrvLic_PDF417Parsing in 'DrvLic_PDF417Parsing.pas',
   SelectedItemsInGridClass in '..\COMMON\SelectedItemsInGridClass.pas',
   CheckBoxDrawer in 'CheckBoxDrawer.pas',

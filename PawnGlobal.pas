@@ -88,6 +88,11 @@ const
   IniKeyImageBackupLastBackupDate = 'LastBackupDate';
   IniKeyImageBackupLastAuditWeek = 'LastAuditWeek';
 
+  IniSecBackup = 'BACKUP';
+  // Encrypt the .fbk at rest to the vendor public key. Default (missing/empty)
+  // = ON. Disable only with an explicit off value ('0','N','NO','FALSE','OFF').
+  IniKeyEncryptBackups = 'EncryptBackups';
+
   IniSecSettings = 'SETTINGS';
   IniKeyShowGoldPrice = 'SHOWGOLDPRICE';
 

@@ -1,0 +1,58 @@
+============================================================
+  PawnPro - HOW TO RECOVER FROM AN ENCRYPTED BACKUP
+============================================================
+
+PawnPro backups are encrypted (files named  PawnPro_<timestamp>.fbk.enc ).
+Only the vendor secret key can decrypt them. This folder / USB is the vault.
+
+Keep these together in ONE folder (e.g. the USB "E:\PawnPKey" or a copy):
+    PawnProDecrypt.exe      <- the decrypt tool
+    libsodium.dll           <- required crypto library
+    vendor_secret.key       <- 32-byte vendor secret key (KEEP PRIVATE)
+    (vendor_public.key)     <- OPTIONAL. If missing, it is derived from the secret.
+
+------------------------------------------------------------
+  STEP 1 - Decrypt the backup  (.fbk.enc  ->  .fbk)
+------------------------------------------------------------
+Open a Command Prompt in this folder and run:
+
+    PawnProDecrypt.exe  PawnPro_<ts>.fbk.enc  PAWNDATA.fbk
+
+  - Replace  PawnPro_<ts>.fbk.enc  with the actual encrypted backup file name.
+  - PAWNDATA.fbk  is the decrypted output (you can name it anything).
+
+Example:
+    PawnProDecrypt.exe  PawnPro_20260701_083000.fbk.enc  PAWNDATA.fbk
+
+If it prints "Done." the decrypted PAWNDATA.fbk is ready.
+If it reports an error (tampered / wrong key), STOP - do not restore.
+
+------------------------------------------------------------
+  STEP 2 - Restore the database  (.fbk  ->  live .FDB)
+------------------------------------------------------------
+Use Firebird's gbak. Adjust <pw> and the target path for the store.
+
+    gbak -c -user sysdba -password <pw>  PAWNDATA.fbk  localhost:C:\DB\PAWNDATA.FDB
+
+  - -c            = create (restore) a database from the backup
+  - <pw>          = the SYSDBA password for THIS store's Firebird server
+  - C:\DB\PAWNDATA.FDB = the live database path PawnPro expects (see PawnPro.ini
+                    [CONNECTION_FB] database=... )
+
+  IMPORTANT: If C:\DB\PAWNDATA.FDB already exists and you want to overwrite it,
+  add  -rep  instead of  -c :
+    gbak -rep -user sysdba -password <pw>  PAWNDATA.fbk  localhost:C:\DB\PAWNDATA.FDB
+  (-rep replaces an existing database. Only do this if you are sure.)
+
+gbak.exe ships with Firebird (e.g. C:\Program Files\Firebird\Firebird_5_0\).
+If gbak isn't on PATH, run it with its full path.
+
+------------------------------------------------------------
+  NOTES
+------------------------------------------------------------
+- All stores use the SAME vendor key, so this one folder recovers any store.
+- vendor_secret.key is the ONLY thing that can decrypt backups. Never lose it,
+  never send it to a store, never commit it to git. Keep a spare copy of the
+  USB in a safe place.
+- After a recovery, have the store change the SYSDBA password via PawnProSetup.
+============================================================

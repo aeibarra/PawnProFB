@@ -301,9 +301,68 @@ var
 
 implementation
 
-Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA, IdHashSHA;
+Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA,
+  SealedBox, Nvv.Crypto.FileEnvelope, IdHashSHA;
 
 {$R *.DFM}
+
+// 32-byte Curve25519 vendor PUBLIC key (VENDOR_PUBLIC_KEY). Backups are sealed
+// to it; only the vendor's offline secret key can decrypt. Public -> harmless
+// if extracted from the EXE.
+{$I SetupVendorPublicKey.inc}
+
+// The embedded vendor public key as TBytes, for EncryptFileToVendor.
+function GetVendorPublicKey: TBytes;
+begin
+  SetLength(Result, Length(VENDOR_PUBLIC_KEY));
+  Move(VENDOR_PUBLIC_KEY[0], Result[0], Length(VENDOR_PUBLIC_KEY));
+end;
+
+// Backup encryption is ON unless the ini explicitly turns it off. Missing or
+// empty value = ON (secure by default).
+function BackupEncryptionEnabled: Boolean;
+var
+  V: string;
+begin
+  V := UpperCase(Trim(ReadIniFile(IniSecBackup, IniKeyEncryptBackups)));
+  Result := (V <> '0') and (V <> 'N') and (V <> 'NO') and
+            (V <> 'FALSE') and (V <> 'OFF');
+end;
+
+// Best-effort overwrite-then-delete of a plaintext backup, to shrink the
+// window where cleartext PII sits on disk after we've made the encrypted copy.
+procedure SecureDeleteFile(const FileName: string);
+var
+  FS: TFileStream;
+  Zeros: TBytes;
+  Remaining, ThisWrite: Int64;
+begin
+  try
+    if FileExists(FileName) then
+    begin
+      FS := TFileStream.Create(FileName, fmOpenReadWrite or fmShareExclusive);
+      try
+        SetLength(Zeros, 64 * 1024);
+        FillChar(Zeros[0], Length(Zeros), 0);
+        Remaining := FS.Size;
+        FS.Position := 0;
+        while Remaining > 0 do
+        begin
+          ThisWrite := Remaining;
+          if ThisWrite > Length(Zeros) then
+            ThisWrite := Length(Zeros);
+          FS.WriteBuffer(Zeros[0], ThisWrite);
+          Dec(Remaining, ThisWrite);
+        end;
+      finally
+        FS.Free;
+      end;
+    end;
+  except
+    // Overwrite is best-effort; still attempt the delete below.
+  end;
+  System.SysUtils.DeleteFile(FileName);
+end;
 
 function SHA256OfStream(AStream: TStream): string;
 var
@@ -2360,6 +2419,7 @@ procedure TDM.RunBackup(const ABackupPath, AImageTargetPath: string;
 
 var
   Conn: TFDConnection;
+  EncFile: string;
 begin
   AResult := Default(TBackupResult);
 
@@ -2371,6 +2431,21 @@ begin
 
       NotifyPhase(bpDatabase);
       AResult.WrittenFile := BackupDatabaseToFileWithConnection(Conn, ABackupPath);
+
+      // Encrypt the plaintext .fbk at rest, sealed to the vendor public key.
+      // The store never handles a key; only the vendor's offline secret key
+      // can decrypt (see Tools\PawnProDecrypt). Can be disabled per-site via
+      // [BACKUP] EncryptBackups=0.
+      if BackupEncryptionEnabled then
+      begin
+        EncFile := AResult.WrittenFile + '.enc';
+        EncryptFileToVendor(AResult.WrittenFile, EncFile, GetVendorPublicKey);
+        SecureDeleteFile(AResult.WrittenFile);
+        AResult.WrittenFile := EncFile;
+        // Retain the 7 most recent encrypted backups (matches the plaintext
+        // retention TFB5DBA.BackupDatabase applies to *.fbk).
+        TFB5DBA.PruneOldBackups(ABackupPath, 'PawnPro_*.fbk.enc', 7);
+      end;
 
       if ADoImageBackup then
       begin
