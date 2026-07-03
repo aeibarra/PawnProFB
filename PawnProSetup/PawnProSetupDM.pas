@@ -120,8 +120,7 @@ begin
   end;
 end;
 
-function TDM.TestConnectionFromIni(const IniPath: string; out StatesCount: Integer;
-  out ErrorMsg: string): Boolean;
+function TDM.TestConnectionFromIni(const IniPath: string; out StatesCount: Integer;  out ErrorMsg: string): Boolean;
 var
   Q: TFDQuery;
 begin

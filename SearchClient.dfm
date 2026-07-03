@@ -531,7 +531,7 @@ object frmClients: TfrmClients
         Height = 25
         MaxLength = 14
         TabOrder = 3
-        Text = '(   )   -    '
+        Text = '(   )    -    '
       end
     end
   end
@@ -944,7 +944,7 @@ object frmClients: TfrmClients
           object btnDeletePurchase: TBitBtn
             Left = 289
             Top = 2
-            Width = 99
+            Width = 95
             Height = 50
             Caption = ' Delete'
             Glyph.Data = {
@@ -1114,7 +1114,7 @@ object frmClients: TfrmClients
           object btnDeleteLayaway: TBitBtn
             Left = 417
             Top = 2
-            Width = 88
+            Width = 95
             Height = 50
             Caption = ' Delete'
             Glyph.Data = {
@@ -14874,9 +14874,9 @@ object frmClients: TfrmClients
     SQL.Strings = (
       'SELECT'
       '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
-
-        '           WHERE T01.IMAGE_TYPE_NO = 2 AND T01.IMAG_REF_TO_ROW_NO' +
-        ' = INVENTORY_ITEMS.INV_ITEM_NO)) AS HAS_PICS,'
+      
+        '           WHERE T01.IMAGE_TYPE_NO = 2 AND T01.IMAG_REF_TO_ROW_N' +
+        'O = INVENTORY_ITEMS.INV_ITEM_NO)) AS HAS_PICS,'
       '  INVENTORY_ITEMS.*'
       'FROM INVENTORY_ITEMS'
       'WHERE TRANSACTION_NO = :TRANSACTION_NO')

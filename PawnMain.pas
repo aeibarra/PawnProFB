@@ -270,17 +270,34 @@ begin
   ImageBackupPath := '';
   DoImageBackup := False;
 
-  DM.qryBackupSetings.Open;
-  try
-    if not DM.qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP.AsBoolean or not IsLocalDatabase then
-      Exit;
+  // Close-on-exit backup requires a live local database. If the DB is
+  // unreachable there is nothing to back up, so never let a connection
+  // failure block the user from exiting the application.
+  if not IsLocalDatabase or not Assigned(DM) or not Assigned(DM.ConnFB) or
+    not DM.ConnFB.Connected then
+    Exit;
 
-    BackupPath := DM.qryBackupSetingsBACKUP_PATH.AsString;
-    ImageBackupPath := DM.qryBackupSetingsBACKUP_IMAGES_PATH.AsString;
-    DoImageBackup := (ImageStorageMode = ImageStorageMode_File) and
-      (ImageBackupPath <> '') and DirectoryExists(ImageBackupPath);
-  finally
-    DM.qryBackupSetings.Close;
+  try
+    DM.qryBackupSetings.Open;
+    try
+      if not DM.qryBackupSetingsAUTO_BACKUP_WHEN_CLOSE_APP.AsBoolean then
+        Exit;
+
+      BackupPath := DM.qryBackupSetingsBACKUP_PATH.AsString;
+      ImageBackupPath := DM.qryBackupSetingsBACKUP_IMAGES_PATH.AsString;
+      DoImageBackup := (ImageStorageMode = ImageStorageMode_File) and
+        (ImageBackupPath <> '') and DirectoryExists(ImageBackupPath);
+    finally
+      DM.qryBackupSetings.Close;
+    end;
+  except
+    // Could not read backup settings (e.g. DB dropped after startup) —
+    // allow the app to close rather than trapping the user.
+    on E: Exception do
+    begin
+      CanClose := True;
+      Exit;
+    end;
   end;
 
   try

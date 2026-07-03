@@ -96,7 +96,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Manifest_File>PawnProSetup.manifest</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>soapserver;vclwinx;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;FireDACCommonODBC;IndyProtocols;vclx;dbxcds;vcledge;FmxTeeUI;FireDACSqliteDriver;DbxClientDriver;soapmidas;TeeUI;dbexpress;inet;vcltouch;fmxdae;SysToolsDR;CustomIPTransport;EssentialsDR;rbIBE2337;rbCIDE2337;IndySystem;rbBDE2337;ibxbindings;rbUSERDesign2337;dclRBIBE2337;vclFireDAC;FireDACCommon;bindcompdbx;rtl;FireDACMySQLDriver;DBXSqliteDriver;vclimg;FireDAC;inetdbxpress;xmlrtl;ibxpress;rbCloudSC2337;dsnap;vclib;fmxobj;bindcompvclsmp;SVGIconImageList;EditUtilsD;rbDB2337;rbDAD2337;SVGIconImageListRestClient;FireDACCommonDriver;rbFireDAC2337;IndyIPClient;bindcompvclwinx;dclRBDBE2337;dclRBADO2337;bindcompfmx;SysToolsDBDR;inetdb;ibmonitor;rbRIDE2337;Tee;SVGIconImageListFMX;OrpheusDBDR;vclactnband;fmxFireDAC;rbDIDE2337;DBXMySQLDriver;rbIDE2337;VclSmp;fmxase;dbrtl;rbADO2337;TeeDB;FireDACMSAccDriver;rbRTL2337;rbUSER2337;vcldsnap;DBXInterBaseDriver;OrpheusDR;Skia.Package.VCL;vcldb;rbDBE2337;bindcomp;rbRest2337;inetstn;IndyCore;RESTBackendComponents;FireDACADSDriver;RaizeComponentsVclDb;RESTComponents;vcl;IndyIPServer;dsnapxml;dsnapcon;adortl;LockBoxDR;FireDACPgDriver;tethering;EditorLocalMenuDemo;bindcompvcl;rbRCL2337;CloudService;FMXTee;soaprtl;rbRAP2337;RaizeComponentsVcl;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -105,7 +105,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Manifest_File>PawnProSetup.manifest</Manifest_File>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
@@ -118,7 +118,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Manifest_File>PawnProSetup.manifest</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>

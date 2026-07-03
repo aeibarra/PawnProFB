@@ -249,6 +249,7 @@ type
     function ShouldBackupImages: Boolean;
     procedure BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
     procedure StartImageBackupAuditIfDue;
+    procedure ExportAllImagesToFolder(var ExportCount: integer; var ErrorMessage: string; ProgressLabel: TLabel = nil);
     procedure RunBackup(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean; out AResult: TBackupResult; AOnPhase: TBackupPhaseProc = nil);
     procedure SaveImageToFile(ImagesDataNo: integer; FileName: string);
     procedure ExportImageToPath(ImagesDataNo: integer; DestPath: string);
@@ -261,7 +262,6 @@ type
     procedure SaveImageToDatabase_FromPath(ImagesDataNo: integer; FileName: string; ImageDate: TDateTime);
     procedure DeleteImageFromDatabase(ImagesDataNo: integer);
     procedure DeleteImageFromFile(ImagesDataNo: integer);
-    procedure ExportAllImagesToFolder(var ExportCount: integer; var ErrorMessage: string; ProgressLabel: TLabel = nil);
     function CalcPawnDefaultDate(TransactionDate: TDateTime; PawnDefaultMonths: integer): TDateTime;
     function GetPawnMaturityDate(TransactionDate: TDateTime): TDateTime;
     procedure GetWeightUnits(cln: TClientDataSet);
@@ -2711,6 +2711,7 @@ begin
           ImageQuery.Next;
         end;
 
+        WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditDate, FormatDateTime('yyyy-mm-dd', Date));
         WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek, CurrentAuditWeek);
       finally
         MarkQuery.Free;

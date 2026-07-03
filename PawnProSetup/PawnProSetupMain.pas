@@ -52,6 +52,9 @@ type
     function DefaultDatabasePath: string;
     function IniPath: string;
     function DatabasePath: string;
+    function ConnectDatabase: string;
+    function ImagesFolder: string;
+    procedure CreateImagesFolder;
     function Port: Integer;
     procedure SyncDatabasePathWithInstallFolder;
     function FilesAreSame(const FileName1, FileName2: string): Boolean;
@@ -177,6 +180,49 @@ begin
   Result := Trim(edDatabase.Text);
   if Result = '' then
     Result := DefaultDatabasePath;
+end;
+
+function TfrmPawnProSetupMain.ConnectDatabase: string;
+// The database identifier to hand FireDAC for a live connection. On the DB-host
+// machine that is the real local .FDB path. On a client/workstation the .FDB is
+// remote, so we must connect via the PAWNDATA alias (resolved on the server's
+// databases.conf) -- a client-local path would be interpreted server-side and
+// fail. This mirrors what the generated PawnPro.ini stores (database=PAWNDATA).
+begin
+  if chkIsDBLocal.Checked then
+    Result := DatabasePath
+  else
+    Result := PAWNPRO_DB_ALIAS;
+end;
+
+function TfrmPawnProSetupMain.ImagesFolder: string;
+// Default on-disk image store for a host/local install: <InstallFolder>\PawnImages.
+// Seeded into [IMAGE_STORAGE] ImageDirectory so a fresh install has a working
+// FILE image path out of the box (the admin can relocate it later in the app).
+begin
+  Result := TargetFolder + 'PawnImages';
+end;
+
+procedure TfrmPawnProSetupMain.CreateImagesFolder;
+var
+  Folder: string;
+begin
+  // Only the DB host stores images locally; a client points at the host's shared
+  // image path, so it gets no local PawnImages folder.
+  if not chkIsDBLocal.Checked then
+    Exit;
+
+  Folder := ImagesFolder;
+  if DirectoryExists(Folder) then
+  begin
+    Log('Images folder already exists: ' + Folder);
+    Exit;
+  end;
+
+  if ForceDirectories(Folder) then
+    Log('Created images folder: ' + Folder)
+  else
+    Log('WARNING: could not create images folder: ' + Folder);
 end;
 
 function TfrmPawnProSetupMain.Port: Integer;
@@ -351,7 +397,13 @@ begin
 
   EnsureIniKey(Ini, 'LEADS_ONLINE', 'CSVPath', '');
 
-  EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', '');
+  // Seed a working image folder so a fresh host install doesn't start with an
+  // empty ImageDirectory. Only for local/host installs -- a client uses the
+  // host's shared image path. EnsureIniKey won't clobber an existing value.
+  if chkIsDBLocal.Checked then
+    EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', ImagesFolder)
+  else
+    EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', '');
   // DB image storage is retired in the Firebird version; default to FILE.
   EnsureIniKey(Ini, 'IMAGE_STORAGE', 'StorageMode', 'FILE');
 
@@ -649,6 +701,15 @@ end;
 
 procedure TfrmPawnProSetupMain.UpdateFirebirdRemoteAccessFromSelection;
 begin
+  // RemoteBindAddress lives in the server's firebird.conf and is a server-only
+  // setting. A client/workstation has no local Firebird server to configure, so
+  // skip it there (avoids a misleading "firebird.conf not found" warning).
+  if not chkIsDBLocal.Checked then
+  begin
+    Log('Client/workstation install: RemoteBindAddress is a server setting; skipping.');
+    Exit;
+  end;
+
   if rgSngleInstallation.ItemIndex < 0 then
   begin
     Log('WARNING: Single/multiple workstation installation was not selected. Firebird RemoteBindAddress was not changed.');
@@ -720,6 +781,7 @@ begin
     CopyPawnProFiles(SrcFolder, InstallFolder);
     CopyFbClientCryptoFiles(SrcFolder, InstallFolder);
     CopyDatabaseFile(SrcFolder);
+    CreateImagesFolder;
     CreateDefaultPawnProIni(InstallFolder);
   except
     on E: Exception do
@@ -800,25 +862,53 @@ begin
     if not FileExists(IniPath) then
       CreateDefaultPawnProIni(TargetFolder);
 
+    // Make sure the seeded ImageDirectory actually exists (no-op if Copy Files
+    // already created it, or on a client install).
+    CreateImagesFolder;
+
     Log('Testing current SYSDBA password...');
-    if not DM.TestConnection(Trim(edHost.Text), DatabasePath, edCurrentPassword.Text,
+    if not DM.TestConnection(Trim(edHost.Text), ConnectDatabase, edCurrentPassword.Text,
       Port, StatesCount, ErrorMsg) then
       raise Exception.Create('Current SYSDBA password failed: ' + ErrorMsg);
 
-    SetFirebirdDatabaseAlias;
+    // The PAWNDATA alias lives in the server's databases.conf and is resolved
+    // server-side. Only the DB-host machine should edit databases.conf; a
+    // client/workstation has no local Firebird server, so touching it here
+    // would raise "databases.conf was not found" and abort before the encrypted
+    // INI is written. The client still connects fine via database=PAWNDATA.
+    if chkIsDBLocal.Checked then
+      SetFirebirdDatabaseAlias
+    else
+      Log('Client/workstation install: PAWNDATA alias is resolved on the server; ' +
+        'skipping local databases.conf.');
 
-    if SameText(edCurrentPassword.Text, edNewPassword.Text) then
+    // ALTER USER SYSDBA changes the Firebird *security database*, which is
+    // server-wide -- not scoped to this .FDB. It must only ever be done from the
+    // DB-host machine. From a client it would rotate the whole server's password
+    // and silently break the server's own PawnPro.ini (still holding the old
+    // encrypted password). A client only writes its own encrypted INI.
+    if not chkIsDBLocal.Checked then
+      Log('Client/workstation install: not changing the server SYSDBA password; ' +
+        'writing the encrypted INI only.')
+    else if SameText(edCurrentPassword.Text, edNewPassword.Text) then
       Log('Current and new passwords match. Skipping ALTER USER; updating encrypted INI.')
     else
     begin
       Log('Changing Firebird SYSDBA password...');
-      if not DM.ChangeSysdbaPassword(Trim(edHost.Text), DatabasePath,
+      if not DM.ChangeSysdbaPassword(Trim(edHost.Text), ConnectDatabase,
         edCurrentPassword.Text, edNewPassword.Text, Port, ErrorMsg) then
         raise Exception.Create('Could not change SYSDBA password: ' + ErrorMsg);
       Log('SYSDBA password changed and verified with a fresh connection.');
     end;
 
-    WriteEncryptedConnectionIni(TargetFolder, edNewPassword.Text);
+    // On the host, the password to store is the (possibly rotated) new one. On a
+    // client we never rotate, so store the current password that just verified a
+    // successful connection -- not edNewPassword, which the client ignores.
+    if chkIsDBLocal.Checked then
+      WriteEncryptedConnectionIni(TargetFolder, edNewPassword.Text)
+    else
+      WriteEncryptedConnectionIni(TargetFolder, edCurrentPassword.Text);
+
     UpdateFirebirdRemoteAccessFromSelection;
 
     Log('Testing encrypted INI after update...');

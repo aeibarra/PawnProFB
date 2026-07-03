@@ -86,6 +86,7 @@ const
 
   IniSecImageBackup = 'IMAGE_BACKUP';
   IniKeyImageBackupLastBackupDate = 'LastBackupDate';
+  IniKeyImageBackupLastAuditDate = 'LastAuditDate';
   IniKeyImageBackupLastAuditWeek = 'LastAuditWeek';
 
   IniSecBackup = 'BACKUP';
