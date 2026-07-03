@@ -2196,32 +2196,39 @@ begin
 end;
 
 function TDM.GetItemStatus(qryInvItems: TDataSet): string;
+// Derive the item's current lifecycle status from the authoritative *_DATE
+// columns, NOT from INV_ITEM_STATUS. INV_ITEM_STATUS is an unreliable legacy
+// char -- e.g. purchases pumped from the old ASA database carry 'P', which made
+// this routine label purchase items as "Pawned". The date columns are written by
+// the workflow and are the source of truth, so check them most-advanced first.
 begin
-  if qryInvItems.FieldByName('InvItemNo').IsNull then
-    exit;
+  Result := '';
 
-  if qryInvItems.FieldByName('InvItemStatus').AsString = TranPawn then
-    begin
-      Result := 'Pawned';
-    end
-  else if qryInvItems.FieldByName('InvItemStatus').AsString = TranPurchase then
-    begin
-      Result := 'Purchase';
-      if not qryInvItems.FieldByName('MeltedDate').IsNull then
-        Result := 'Melted'
-      else if not qryInvItems.FieldByName('ForSaleDate').IsNull then
-        Result := 'For Sale';
-    end
-  else if qryInvItems.FieldByName('InvItemStatus').AsString = TranLayaway then
-    begin
-      Result := 'Layaway';
-      if not qryInvItems.FieldByName('SoldDate').IsNull then
-        Result := 'Sold / Close';
-    end
-  else if qryInvItems.FieldByName('InvItemStatus').AsString = TranForSale then
-    begin
-      Result := 'For Sale';
-    end;
+  if qryInvItems.FieldByName('InvItemNo').IsNull then
+    Exit;
+
+  if not qryInvItems.FieldByName('SoldDate').IsNull then
+  begin
+    // A sold layaway keeps its "closed" wording; anything else is simply Sold.
+    if not qryInvItems.FieldByName('LayawayDate').IsNull then
+      Result := 'Sold / Close'
+    else
+      Result := PawnItemStatus_Sold;
+  end
+  else if not qryInvItems.FieldByName('MeltedDate').IsNull then
+    Result := PawnItemStatus_Melted
+  else if not qryInvItems.FieldByName('RedeemedDate').IsNull then
+    Result := PawnItemStatus_Redeemed
+  else if not qryInvItems.FieldByName('ForSaleDate').IsNull then
+    Result := PawnItemStatus_ForSale
+  else if not qryInvItems.FieldByName('DefaultedDate').IsNull then
+    Result := PawnItemStatus_Defaulted
+  else if not qryInvItems.FieldByName('PurchaseDate').IsNull then
+    Result := 'Purchase'
+  else if not qryInvItems.FieldByName('LayawayDate').IsNull then
+    Result := PawnItemStatus_Layaway
+  else if not qryInvItems.FieldByName('PawnedDate').IsNull then
+    Result := PawnItemStatus_Pawned;
 end;
 
 function TDM.GetImageFilePath(ImagesDataNo: integer; ImageDate: TDateTime): string;

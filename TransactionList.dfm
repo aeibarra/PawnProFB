@@ -719,7 +719,7 @@ object frmTransactionList: TfrmTransactionList
           Visible = True
         end>
     end
-    object Panel4: TPanel
+    object pnDetail: TPanel
       Left = 0
       Top = 0
       Width = 667
@@ -737,9 +737,9 @@ object frmTransactionList: TfrmTransactionList
     end
   end
   object qryTranList: TFDQuery
-    Connection = DM.ConnFB
     AfterScroll = qryTranListAfterScroll
     OnCalcFields = qryTranListCalcFields
+    Connection = DM.ConnFB
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     SQL.Strings = (
@@ -861,8 +861,8 @@ object frmTransactionList: TfrmTransactionList
       '  JOIN CUSTOMER T2 ON T1.CUST_NO = T2.CUST_NO'
       '  JOIN TRANSACTION_TYPES T3 ON T1.TRAN_TYPE = T3.TRAN_TYPE'
       
-        'WHERE T1.TRAN_STATUS = '#39'A'#39' AND T1.TRAN_DATE between :FDate and ' +
-        ':ToDate'
+        'WHERE T1.TRAN_STATUS = '#39'A'#39' AND T1.TRAN_DATE between :FDate and :' +
+        'ToDate'
       'GROUP BY T1.TRAN_TYPE, T3.TRAN_TYPE_DESC')
     Left = 248
     Top = 232
@@ -1735,8 +1735,8 @@ object frmTransactionList: TfrmTransactionList
     end
   end
   object qryInvItems: TFDQuery
-    Connection = DM.ConnFB
     OnCalcFields = qryInvItemsCalcFields
+    Connection = DM.ConnFB
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     SQL.Strings = (

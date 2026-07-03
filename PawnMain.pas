@@ -1,4 +1,4 @@
-unit PawnMain;
+﻿unit PawnMain;
 
 {$WARN SYMBOL_PLATFORM OFF}
 {$WARN UNIT_PLATFORM OFF}

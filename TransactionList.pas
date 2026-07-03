@@ -8,7 +8,9 @@ uses
   RzEdit, Data.DB, ppBands, ppClass, ppCtrls, ppStrtch,
   ppMemo, ppPrnabl, ppVar, ppCache, ppProd, ppReport, ppComm, ppRelatv, ppDB,
   ppDBPipe, Vcl.ExtCtrls, RzCommon, RzForms, RzButton, RzTabs,
-  FireDAC.Comp.Client, FireDAC.Stan.Param;
+  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmTransactionList = class(TForm)
@@ -146,7 +148,7 @@ type
     DBGrid6: TDBGrid;
     pnIntems: TPanel;
     gridItems: TDBGrid;
-    Panel4: TPanel;
+    pnDetail: TPanel;
     Splitter1: TSplitter;
     GroupBox6: TGroupBox;
     pnPurchase: TPanel;
@@ -167,6 +169,7 @@ type
     function PawnStatusTotals: string;
     function PawnDefaultedStatusTotals: string;
     procedure TransactionListOpen;
+    procedure RefreshInvItems;
   public
     { Public declarations }
   end;
@@ -260,18 +263,22 @@ begin
   0: //Pawn
     begin
       TranTypeStr := TranPawn;
+      pnDetail.Caption := 'Pawn Items'
     end;
   1: //Purchase
     begin
       TranTypeStr := TranPurchase;
+      pnDetail.Caption := 'Purchase Items'
     end;
   2: //Lawyaway
     begin
       TranTypeStr := TranLayaway;
+      pnDetail.Caption := 'Lawyaway Items'
     end;
   3: //For Sale
     begin
       TranTypeStr := TranForSale;
+      pnDetail.Caption := 'Items for Sale'
     end;
   end;
 
@@ -285,6 +292,9 @@ begin
   Screen.Cursor := crHourGlass;
   try
     qryTranList.Open;
+    // AfterScroll does not fire on Open, so refresh the detail explicitly for the
+    // first row of the newly filtered list (or clear it if the list is empty).
+    RefreshInvItems;
   finally
     Screen.Cursor := crDefault;
   end;
@@ -362,9 +372,21 @@ end;
 
 procedure TfrmTransactionList.qryTranListAfterScroll(DataSet: TDataSet);
 begin
-    qryInvItems.Close;
-    qryInvItems.Params.ParamByName('TransactionNo').AsInteger := qryTranListTransactionNo.AsInteger;
-    qryInvItems.Open;
+  RefreshInvItems;
+end;
+
+procedure TfrmTransactionList.RefreshInvItems;
+// Re-query the detail (items) grid for the currently selected transaction.
+// Called both on master navigation (AfterScroll) and right after the master is
+// (re)opened -- opening a dataset does NOT fire AfterScroll, so without the
+// explicit call after Open the detail grid keeps showing the previous tab's
+// (e.g. Pawn) items when you switch tabs or run a new search.
+begin
+  qryInvItems.Close;
+  if qryTranList.IsEmpty then
+    Exit;
+  qryInvItems.Params.ParamByName('TransactionNo').AsInteger := qryTranListTransactionNo.AsInteger;
+  qryInvItems.Open;
 end;
 
 procedure TfrmTransactionList.qryTranListCalcFields(DataSet: TDataSet);
