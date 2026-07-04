@@ -76,6 +76,7 @@ begin
       exit;
     end;
 
+  ConfigureUSDateFormat;
   Application.Initialize;
 
   frmSplash := TfrmSplash.Create(Application);

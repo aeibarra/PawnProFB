@@ -1843,68 +1843,54 @@ begin
 end;
 
 procedure TDM.UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
-var
-  sDefaultedDate, sRedeemedDate, sMeltedDate, sForSaleDate: string;
-  sSQL: string;
 begin
-  sRedeemedDate := 'Null';
-  sDefaultedDate := 'Null';
-  sMeltedDate := 'Null';
-  sForSaleDate := 'Null';
-
-  if not VarIsNull(RedeemedDate) then
-    sRedeemedDate := AsaDateToStr(RedeemedDate);
-
-  if not VarIsNull(DefaultedDate) then
-    sDefaultedDate := AsaDateToStr(DefaultedDate);
-
-  if not VarIsNull(MeltedDate) then
-    sMeltedDate := AsaDateToStr(MeltedDate);
-
-  if not VarIsNull(ForSaleDate) then
-    sForSaleDate := AsaDateToStr(ForSaleDate);
-
-  sSQL := Format('UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = %s, DEFAULTED_DATE = %s, MELTED_DATE = %s, FORSALE_DATE = %s ' +
-                 ' WHERE INV_ITEM_NO = %d ',
-                [sRedeemedDate, sDefaultedDate, sMeltedDate, sForSaleDate, InvItemNo]);
-
-  ConnFB.ExecSQL(sSQL);
-
+  ConnFB.ExecSQL(
+    'UPDATE INVENTORY_ITEMS ' +
+    'SET REDEEMED_DATE = :REDEEMED_DATE, ' +
+    '    DEFAULTED_DATE = :DEFAULTED_DATE, ' +
+    '    MELTED_DATE = :MELTED_DATE, ' +
+    '    FORSALE_DATE = :FORSALE_DATE ' +
+    'WHERE INV_ITEM_NO = :INV_ITEM_NO',
+    [RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, InvItemNo]);
 end;
 
 procedure TDM.UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
 var
-  sDefaultedDate, sRedeemedDate, sMeltedDate, sForSaleDate: string;
-  sSQL: string;
+  DefaultedDate, RedeemedDate, MeltedDate, ForSaleDate: Variant;
 begin
-  sRedeemedDate := 'Null';
-  sDefaultedDate := 'Null';
-  sMeltedDate := 'Null';
-  sForSaleDate := 'Null';
+  RedeemedDate := Null;
+  DefaultedDate := Null;
+  MeltedDate := Null;
+  ForSaleDate := Null;
 
   if CloseReason = PawnCloseReasonRedeemed then
-    sRedeemedDate := AsaDateToStr(Date);
+    RedeemedDate := Date;
 
   if CloseReason = PawnCloseReasonDefaulted then
-    sDefaultedDate := AsaDateToStr(Date);
+    DefaultedDate := Date;
 
   //Item Actions
 
   if PawnDefaultedItemAction > 0 then
     begin
       if PawnDefaultedItemAction = PawnDefaultedItemMelted then
-        sMeltedDate := AsaDateToStr(Date);
+        MeltedDate := Date;
 
      if PawnDefaultedItemAction = PawnDefaultedItemForSale then
-        sForSaleDate := AsaDateToStr(Date);
+        ForSaleDate := Date;
     end;
 
-    sSQL := Format('UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = %s, DEFAULTED_DATE = %s, MELTED_DATE = %s, FORSALE_DATE = %s ' +
-                   ' WHERE TRANSACTION_NO = %d and INV_ITEM_STATUS = ''P'' and REDEEMED_DATE is null and DEFAULTED_DATE is NULL ',
-                  [sRedeemedDate, sDefaultedDate, sMeltedDate, sForSaleDate, TransactionNo]);
-
-    ConnFB.ExecSQL(sSQL);
-
+  ConnFB.ExecSQL(
+    'UPDATE INVENTORY_ITEMS ' +
+    'SET REDEEMED_DATE = :REDEEMED_DATE, ' +
+    '    DEFAULTED_DATE = :DEFAULTED_DATE, ' +
+    '    MELTED_DATE = :MELTED_DATE, ' +
+    '    FORSALE_DATE = :FORSALE_DATE ' +
+    'WHERE TRANSACTION_NO = :TRANSACTION_NO ' +
+    '  AND INV_ITEM_STATUS = ''P'' ' +
+    '  AND REDEEMED_DATE IS NULL ' +
+    '  AND DEFAULTED_DATE IS NULL',
+    [RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, TransactionNo]);
 end;
 
 procedure TDM.SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);

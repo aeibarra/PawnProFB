@@ -690,10 +690,8 @@ begin
         DM.qryCustomersCUST_FIRST.AsString := frmDriverLicCardReader.edFirst.Text;
         DM.qryCustomersCUST_LAST.AsString := frmDriverLicCardReader.edLast.Text;
         DM.qryCustomersCUST_MID.AsString := frmDriverLicCardReader.edMiddle.Text;
-        try
-          DM.qryCustomersCUST_DOB.AsDateTime := StrToDate(frmDriverLicCardReader.edDOB.Text);
-        except
-        end;
+        if frmDriverLicCardReader.edDOB.Date > 0 then
+          DM.qryCustomersCUST_DOB.AsDateTime := frmDriverLicCardReader.edDOB.Date;
         DM.qryCustomersCUST_ADDR.AsString :=  frmDriverLicCardReader.edAddress.Text;
         DM.qryCustomersCUST_CITY.AsString := frmDriverLicCardReader.edCity.Text;
         DM.qryCustomersCUST_STATE.AsString := frmDriverLicCardReader.edState.Text;

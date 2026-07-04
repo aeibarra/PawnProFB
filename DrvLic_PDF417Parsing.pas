@@ -317,20 +317,30 @@ end;
 
 function GetSecDate(D: string): TDateTime;
 var
-  DStr: string;
-  DD: integer;
+  Day, Month, Year, FirstPart: Integer;
 begin
-  if TryStrToInt(Copy(D, 1, 2), DD) then
+  Result := 0;
+  if Length(D) < 8 then
+    Exit;
+
+  if TryStrToInt(Copy(D, 1, 2), FirstPart) then
     begin
-      if DD <= 12 then
-        DStr := Copy(D, 1, 2) + '/' + Copy(D, 3, 2) + '/' + Copy(D, 5, 4)
+      if FirstPart <= 12 then
+      begin
+        if not TryStrToInt(Copy(D, 1, 2), Month) then Exit;
+        if not TryStrToInt(Copy(D, 3, 2), Day) then Exit;
+        if not TryStrToInt(Copy(D, 5, 4), Year) then Exit;
+      end
       else
-        DStr := Copy(D, 5, 2) + '/' + Copy(D, 7, 2) + '/' + Copy(D, 1, 4);
+      begin
+        if not TryStrToInt(Copy(D, 1, 4), Year) then Exit;
+        if not TryStrToInt(Copy(D, 5, 2), Month) then Exit;
+        if not TryStrToInt(Copy(D, 7, 2), Day) then Exit;
+      end;
+
+      if not TryEncodeDate(Year, Month, Day, Result) then
+        Result := 0;
     end;
-
-  if not TryStrToDate(DStr, Result) then
-
-    Result := 0;
 end;
 
 function FindNextSecHeaderPosition(const BarcodeData: string; StartPos, EndPos: integer): integer;
@@ -657,8 +667,10 @@ begin
   ///////////DOB////////////////////////////////////
   GetNextParam(RawData, DOBStr, RawParamLen, false);
 
-  DOBStr := Copy(DOBStr, 3, 2) + '/' + Copy(DOBStr, 11, 2) + '/' + Copy(DOBStr, 5, 4);
-  if not TryStrToDate(DOBStr, DOB) then
+  if not TryEncodeDate(StrToIntDef(Copy(DOBStr, 5, 4), 0),
+                       StrToIntDef(Copy(DOBStr, 3, 2), 0),
+                       StrToIntDef(Copy(DOBStr, 11, 2), 0),
+                       DOB) then
     DrvLicInfo.DOB := null
   else
     DrvLicInfo.DOB := DOB;

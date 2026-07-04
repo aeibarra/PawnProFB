@@ -136,10 +136,17 @@ end;
 
 function GetSecDate(D: string): TDateTime;
 var
-  DStr: string;
+  Day, Month, Year: Integer;
 begin
-  DStr := Copy(D, 1, 2) + '/' + Copy(D, 3, 2) + '/' + Copy(D, 5, 4);
-  if not TryStrToDate(DStr, Result) then
+  Result := 0;
+  if Length(D) < 8 then
+    Exit;
+
+  if not TryStrToInt(Copy(D, 1, 2), Month) then Exit;
+  if not TryStrToInt(Copy(D, 3, 2), Day) then Exit;
+  if not TryStrToInt(Copy(D, 5, 4), Year) then Exit;
+
+  if not TryEncodeDate(Year, Month, Day, Result) then
     Result := 0;
 end;
 

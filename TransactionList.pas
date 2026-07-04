@@ -190,20 +190,12 @@ begin
 end;
 
 function TfrmTransactionList.PawnStatusTotals: string;
-var
- SQLStr, FromDate, ToDate: string;
 begin
-  SQLStr := 'SELECT CAST(SUM(CASE WHEN PAWNED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "PawnedCount", ' + sLineBreak +
-                   'CAST(SUM(CASE WHEN REDEEMED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "RedeemedCount", ' + sLineBreak +
-                   'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedCount" ' + sLineBreak +
+  Result := 'SELECT CAST(SUM(CASE WHEN PAWNED_DATE BETWEEN :FDate AND :ToDate THEN 1 ELSE 0 END) AS INTEGER) AS "PawnedCount", ' + sLineBreak +
+            'CAST(SUM(CASE WHEN REDEEMED_DATE BETWEEN :FDate AND :ToDate THEN 1 ELSE 0 END) AS INTEGER) AS "RedeemedCount", ' + sLineBreak +
+            'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FDate AND :ToDate THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedCount" ' + sLineBreak +
             'FROM INVENTORY_ITEMS ' + sLineBreak +
             'WHERE PAWNED_DATE IS NOT NULL;  ' + sLineBreak;
-
-  FromDate := AsaDateToStr(edFDate.Date);
-  ToDate := AsaDateToStr(edToDate.Date);
-
-  Result := StringReplace(SQLStr, ':FD', FromDate, [rfIgnoreCase, rfReplaceAll]);
-  Result := StringReplace(Result, ':TD', ToDate, [rfIgnoreCase, rfReplaceAll]);
 end;
 
 procedure TfrmTransactionList.PgCntrlTransactionTypeChange(Sender: TObject);
@@ -212,18 +204,10 @@ begin
 end;
 
 function TfrmTransactionList.PawnDefaultedStatusTotals: string;
-var
- SQLStr, FromDate, ToDate: string;
 begin
-  SQLStr := 'SELECT CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD AND MELTED_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedMeltedCount", ' + sLineBreak +
-                   'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FD AND :TD AND FORSALE_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedForSaleCount" ' + sLineBreak +
+  Result := 'SELECT CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FDate AND :ToDate AND MELTED_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedMeltedCount", ' + sLineBreak +
+            'CAST(SUM(CASE WHEN DEFAULTED_DATE BETWEEN :FDate AND :ToDate AND FORSALE_DATE IS NOT NULL THEN 1 ELSE 0 END) AS INTEGER) AS "DefaultedForSaleCount" ' + sLineBreak +
             'FROM INVENTORY_ITEMS WHERE PAWNED_DATE IS NOT NULL ';
-
-  FromDate := AsaDateToStr(edFDate.Date);
-  ToDate := AsaDateToStr(edToDate.Date);
-
-  Result := StringReplace(SQLStr, ':FD', FromDate, [rfIgnoreCase, rfReplaceAll]);
-  Result := StringReplace(Result, ':TD', ToDate, [rfIgnoreCase, rfReplaceAll]);
 end;
 
 
@@ -245,49 +229,55 @@ end;
 
 procedure TfrmTransactionList.TransactionListOpen;
 var
-  St1, St2, TranTypeStr: string;
+  St1, St2, TranType, TranTypeStr: string;
 begin
-  St1 := QuotedStr('A');
-  St2 := QuotedStr('I');
+  St1 := 'A';
+  St2 := 'I';
   if cbStatus.ItemIndex = 1 then
   begin
-    St2 := QuotedStr('A');
+    St2 := 'A';
   end
   else if cbStatus.ItemIndex = 2 then
   begin
-    St1 := QuotedStr('I');
+    St1 := 'I';
   end;
 
+  TranType := '';
   TranTypeStr := '';
   case pgCntrlTransactionType.TabIndex of
   0: //Pawn
     begin
-      TranTypeStr := TranPawn;
+      TranType := TranPawn;
       pnDetail.Caption := 'Pawn Items'
     end;
   1: //Purchase
     begin
-      TranTypeStr := TranPurchase;
+      TranType := TranPurchase;
       pnDetail.Caption := 'Purchase Items'
     end;
   2: //Lawyaway
     begin
-      TranTypeStr := TranLayaway;
+      TranType := TranLayaway;
       pnDetail.Caption := 'Lawyaway Items'
     end;
   3: //For Sale
     begin
-      TranTypeStr := TranForSale;
+      TranType := TranForSale;
       pnDetail.Caption := 'Items for Sale'
     end;
   end;
 
-  if TranTypeStr <> '' then
-    TranTypeStr := ' AND T1.TRAN_TYPE = ' + QuotedStr(TranTypeStr);
+  if TranType <> '' then
+    TranTypeStr := ' AND T1.TRAN_TYPE = :TranType';
 
   qryTranList.Close;
-  qryTranList.SQL[Param_LineNo_qryTranList] := Format('WHERE T1.TRAN_STATUS in (%s, %s) and T1.TRAN_DATE between %s and %s' + TranTypeStr,
-                                                      [St1, St2, AsaDateToStr(edFDate.Date), AsaDateToStr(edToDate.Date)]);
+  qryTranList.SQL[Param_LineNo_qryTranList] := 'WHERE T1.TRAN_STATUS in (:Status1, :Status2) and T1.TRAN_DATE between :FDate and :ToDate' + TranTypeStr;
+  qryTranList.Params.ParamByName('Status1').AsString := St1;
+  qryTranList.Params.ParamByName('Status2').AsString := St2;
+  qryTranList.Params.ParamByName('FDate').AsDate := edFDate.Date;
+  qryTranList.Params.ParamByName('ToDate').AsDate := edToDate.Date;
+  if TranTypeStr <> '' then
+    qryTranList.Params.ParamByName('TranType').AsString := TranType;
 
   Screen.Cursor := crHourGlass;
   try
@@ -320,10 +310,14 @@ begin
 
     qryTotals.Close;
     qryTotals.SQL.Text := PawnStatusTotals;
+    qryTotals.Params.ParamByName('FDate').AsDate := edFDate.Date;
+    qryTotals.Params.ParamByName('ToDate').AsDate := edToDate.Date;
     qryTotals.Open;
 
     qryDefaultTotals.Close;
     qryDefaultTotals.SQL.Text := PawnDefaultedStatusTotals;
+    qryDefaultTotals.Params.ParamByName('FDate').AsDate := edFDate.Date;
+    qryDefaultTotals.Params.ParamByName('ToDate').AsDate := edToDate.Date;
     qryDefaultTotals.Open;
   finally
     Screen.Cursor := crDefault;

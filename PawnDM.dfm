@@ -7933,12 +7933,12 @@ object DM: TDM
     SQL.Strings = (
       'SELECT'
       '  (EXISTS (SELECT 1 FROM IMAGES_DATA T01'
-
-        '           WHERE T01.IMAGE_TYPE_NO = 1 AND T01.IMAG_REF_TO_ROW_NO ' +
-        '= CUSTOMER.CUST_NO)) AS HAS_CUST_PICS,'
+      
+        '           WHERE T01.IMAGE_TYPE_NO = 1 AND T01.IMAG_REF_TO_ROW_N' +
+        'O = CUSTOMER.CUST_NO)) AS HAS_CUST_PICS,'
       '  CUSTOMER.*'
       'FROM CUSTOMER'
-
+      
         'WHERE CUST_LAST LIKE :CUST_LAST AND CUST_FIRST LIKE :CUST_FIRST ' +
         'AND CUST_NO > 0'
       '   --SearchByTicketNo'

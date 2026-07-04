@@ -206,10 +206,10 @@ procedure WriteTextFile(FileName: string; Line: string);
 function FormatPhoneUSA(Ph: string): string;
 function FormatFLDriverLic(FL_DRV_LIC: string): string;
 function MaskCustomerID(const IDType, IDNumber: string): string;
-function AsaDateToStr(D: TDateTime): string;
 function GetRecNo(RecNo: integer): integer;
 function SelectExportFolder(var FDir: string): boolean;
 function CombinePhones(const Separator: string; const PhonesArray: array of string): string;
+procedure ConfigureUSDateFormat;
 
 procedure ReadCSVString_GetOneFieldData(HeaderPresent: boolean; const ACSVString: string; FieldNo: integer; var FldData: string);
 procedure ReadCSVString(HeaderPresent: boolean; const ACSVString: string; var OneFldNamePerLine, OneFldPerLine: string);
@@ -487,7 +487,7 @@ begin
     exit;
 
   xgender := UpCase(gender[1]);
-  if not ((xlast <> '') and (xfirst <> '') and (CharInSet(xgender, ['M', 'F'])) and (xdob > StrToDate('01/01/1900'))) then
+  if not ((xlast <> '') and (xfirst <> '') and (CharInSet(xgender, ['M', 'F'])) and (xdob > EncodeDate(1900, 1, 1))) then
     exit;
 
 //  xgender := trim(LowCase(xgender));
@@ -892,17 +892,19 @@ begin
     Result := IDType;
 end;
 
-function AsaDateToStr(D: TDateTime): string;
-begin
-  Result := QuotedStr(FormatDateTime('yyyy-mm-dd', D));
-end;
-
 function GetRecNo(RecNo: integer): integer;
 begin
   if RecNo <= 0 then
     Result := 1
   else
     Result := RecNo;
+end;
+
+procedure ConfigureUSDateFormat;
+begin
+  FormatSettings.DateSeparator := '/';
+  FormatSettings.ShortDateFormat := 'mm/dd/yyyy';
+  FormatSettings.LongDateFormat := 'mmmm d, yyyy';
 end;
 
 (*

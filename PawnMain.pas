@@ -197,6 +197,7 @@ type
     SaveOriPaintboxColor: TColor;
     procedure SelectTab(const ATab: string);    { design-time actions }
     procedure RefreshGoldPrice(var Msg: TMessage); Message sx_RefreshGoldPrice;
+    procedure WMSettingChange(var Msg: TMessage); Message WM_SETTINGCHANGE;
     procedure InitializeImageStorage;
   public
     { Public declarations }
@@ -802,6 +803,16 @@ begin
   // Paint the blue underline for the active button
   if Assigned(ActiveButton) then
     PaintUnderLine(pbUnderTabs.Canvas, ActiveButton.Left, 1, clNavy);
+end;
+
+procedure TfrmPawnMain.WMSettingChange(var Msg: TMessage);
+begin
+  inherited;
+  // Windows broadcasts WM_SETTINGCHANGE when a user changes regional/locale
+  // settings while the app is running, which can revert the global
+  // FormatSettings the RTL/VCL re-read from the OS. Re-pin the USA date format
+  // so date display/parsing stays consistent regardless of the machine locale.
+  ConfigureUSDateFormat;
 end;
 
 procedure TfrmPawnMain.RefreshGoldPrice(var Msg: TMessage);
