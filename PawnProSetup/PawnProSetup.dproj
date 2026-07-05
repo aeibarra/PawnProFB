@@ -103,13 +103,18 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.37.1.1;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>PawnProSetup.manifest</Manifest_File>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
         <Icon_MainIcon>PawnProSetup_Icon3.ico</Icon_MainIcon>
+        <DCC_ExeOutput>.\</DCC_ExeOutput>
+        <DCC_DcuOutput>.\Units</DCC_DcuOutput>
+        <VerInfo_MinorVer>37</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Build>1</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_WinARM64EC)'!=''">
         <DCC_UsePackage>soapserver;vclwinx;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;FireDACCommonODBC;IndyProtocols;vclx;dbxcds;vcledge;FmxTeeUI;FireDACSqliteDriver;DbxClientDriver;soapmidas;TeeUI;dbexpress;inet;vcltouch;fmxdae;CustomIPTransport;IndySystem;ibxbindings;vclFireDAC;FireDACCommon;bindcompdbx;rtl;FireDACMySQLDriver;DBXSqliteDriver;vclimg;FireDAC;inetdbxpress;xmlrtl;ibxpress;dsnap;vclib;fmxobj;bindcompvclsmp;FireDACCommonDriver;IndyIPClient;bindcompvclwinx;bindcompfmx;inetdb;ibmonitor;Tee;vclactnband;fmxFireDAC;DBXMySQLDriver;VclSmp;fmxase;dbrtl;TeeDB;FireDACMSAccDriver;vcldsnap;DBXInterBaseDriver;Skia.Package.VCL;vcldb;bindcomp;inetstn;IndyCore;RESTBackendComponents;FireDACADSDriver;RaizeComponentsVclDb;RESTComponents;vcl;IndyIPServer;dsnapxml;dsnapcon;adortl;FireDACPgDriver;tethering;bindcompvcl;CloudService;FMXTee;soaprtl;RaizeComponentsVcl;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>

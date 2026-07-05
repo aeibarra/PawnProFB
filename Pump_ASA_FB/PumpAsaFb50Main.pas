@@ -246,6 +246,7 @@ begin
   finally
     WritePumpLogFile;
     btnGo.Enabled := True;
+    lblCurrentProcess.Caption := 'Finished';
   end;
 end;
 
