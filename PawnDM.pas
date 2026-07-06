@@ -68,7 +68,7 @@ type
     qryTransactionsCUST_NO: TIntegerField;
     qryTransactionsTRAN_DATE: TDateField;
     qryTransactionsTRAN_TICKET_NO: TWideStringField;
-    qryTransactionsTRAN_COMMENT: TMemoField;
+    qryTransactionsTRAN_COMMENT: TWideMemoField;
     qryTransactionsTRAN_MATURITY: TDateField;
     qryTransactionsTRAN_TYPE: TWideStringField;
     qryTransactionsTRAN_STATUS: TWideStringField;
@@ -148,7 +148,7 @@ type
     qryCustomersCUST_PH_BUSINESS: TWideStringField;
     qryCustomersCUST_PH_BEEP: TWideStringField;
     qryCustomersCUST_PH_CELL: TWideStringField;
-    qryCustomersCUST_COMMENT: TMemoField;
+    qryCustomersCUST_COMMENT: TWideMemoField;
     qryCustomersCCustPhHome: TWideStringField;
     qryCustomersCCustPhBussiness: TWideStringField;
     qryCustomersCCustPhBeep: TWideStringField;
@@ -166,7 +166,7 @@ type
     qryPaymentsTRANSACTION_NO: TIntegerField;
     qryPaymentsPAY_DATE: TDateField;
     qryPaymentsPAY_AMOUNT: TFloatField;
-    qryPaymentsPAY_COMMENT: TMemoField;
+    qryPaymentsPAY_COMMENT: TWideMemoField;
     qryPaymentsPAY_METHOD: TSmallintField;
     qryPaymentsPAY_INTEREST: TFloatField;
     qryPaymentsPAY_PRINCIPAL: TFloatField;

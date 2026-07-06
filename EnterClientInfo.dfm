@@ -505,7 +505,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Height = 28
       MaxLength = 14
       TabOrder = 21
-      Text = '(   )   -    '
+      Text = '(   )    -    '
       DataSource = DM.DSCustomers
       DataField = 'CUST_PH_CELL'
     end
@@ -516,7 +516,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Height = 28
       MaxLength = 14
       TabOrder = 22
-      Text = '(   )   -    '
+      Text = '(   )    -    '
       DataSource = DM.DSCustomers
       DataField = 'CUST_PH_HOME'
     end
@@ -527,7 +527,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Height = 28
       MaxLength = 14
       TabOrder = 23
-      Text = '(   )   -    '
+      Text = '(   )    -    '
       DataSource = DM.DSCustomers
       DataField = 'CUST_PH_BUSINESS'
     end
@@ -538,7 +538,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       Height = 28
       MaxLength = 14
       TabOrder = 24
-      Text = '(   )   -    '
+      Text = '(   )    -    '
       DataSource = DM.DSCustomers
       DataField = 'CUST_PH_BEEP'
     end

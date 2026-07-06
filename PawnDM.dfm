@@ -7686,10 +7686,10 @@ object DM: TDM
       Origin = 'TRAN_TICKET_NO'
       Size = 30
     end
-    object qryTransactionsTRAN_COMMENT: TMemoField
+    object qryTransactionsTRAN_COMMENT: TWideMemoField
       FieldName = 'TRAN_COMMENT'
       Origin = 'TRAN_COMMENT'
-      BlobType = ftMemo
+      BlobType = ftWideMemo
     end
     object qryTransactionsTRAN_MATURITY: TDateField
       FieldName = 'TRAN_MATURITY'
@@ -8137,10 +8137,10 @@ object DM: TDM
       Origin = 'CUST_PH_CELL'
       Size = 14
     end
-    object qryCustomersCUST_COMMENT: TMemoField
+    object qryCustomersCUST_COMMENT: TWideMemoField
       FieldName = 'CUST_COMMENT'
       Origin = 'CUST_COMMENT'
-      BlobType = ftMemo
+      BlobType = ftWideMemo
     end
   end
   object qryPayments: TFDQuery
@@ -8198,10 +8198,10 @@ object DM: TDM
       Origin = 'PAY_AMOUNT'
       currency = True
     end
-    object qryPaymentsPAY_COMMENT: TMemoField
+    object qryPaymentsPAY_COMMENT: TWideMemoField
       FieldName = 'PAY_COMMENT'
       Origin = 'PAY_COMMENT'
-      BlobType = ftMemo
+      BlobType = ftWideMemo
     end
     object qryPaymentsPAY_METHOD: TSmallintField
       FieldName = 'PAY_METHOD'
