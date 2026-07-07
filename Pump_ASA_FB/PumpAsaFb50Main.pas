@@ -64,6 +64,7 @@ type
     procedure LogNullCoercionSummary;
     procedure LoadFbNotNullMetadata;
     procedure ApplyNullCoercion(AQuery: TFDQuery; const ATable: string);
+    procedure CleanAsaOrphans;
     procedure WipeFirebirdDatabase;
     procedure PumpTwoColLookup(const SrcTable, SrcCol1, SrcCol2,
                                DstTable, DstCol1, DstCol2: string);
@@ -188,6 +189,7 @@ begin
     try
       ConnDB.Connected := True;
       try
+        CleanAsaOrphans;
         ConnectionFB.Connected := True;
         try
           LoadFbNotNullMetadata;
@@ -282,6 +284,64 @@ begin
 
   LogLine(Format('  OK. Wiped %d rows across %d tables.',
                  [TotalDeleted, Length(WIPE_ORDER)]));
+end;
+
+procedure TfrmPumpAsaFb50Main.CleanAsaOrphans;
+const
+  ORPHAN_STONES_WHERE =
+    'NOT EXISTS (' +
+    '  SELECT 1 FROM InventoryItems ii ' +
+    '  WHERE ii.InvItemNo = Stones.InvItemNo' +
+    ') OR EXISTS (' +
+    '  SELECT 1 FROM InventoryItems ii ' +
+    '  WHERE ii.InvItemNo = Stones.InvItemNo ' +
+    '    AND ii.TransactionNo IS NOT NULL ' +
+    '    AND NOT EXISTS (' +
+    '      SELECT 1 FROM Transactions t ' +
+    '      WHERE t.TransactionNo = ii.TransactionNo' +
+    '    )' +
+    ')';
+  ORPHAN_INVENTORY_WHERE =
+    'TransactionNo IS NOT NULL ' +
+    'AND NOT EXISTS (' +
+    '  SELECT 1 FROM Transactions t ' +
+    '  WHERE t.TransactionNo = InventoryItems.TransactionNo' +
+    ')';
+
+  function ExecAsaDelete(const SQL: string): Integer;
+  var
+    RowsAffected: Integer;
+  begin
+    RowsAffected := 0;
+    ConnDB.Execute(SQL, RowsAffected, []);
+    Result := RowsAffected;
+  end;
+
+  function VariantAsInt64(const V: Variant): Int64;
+  begin
+    if VarIsNull(V) or VarIsEmpty(V) then
+      Result := 0
+    else
+      Result := StrToInt64Def(VarToStr(V), 0);
+  end;
+
+var
+  OrphanStones, OrphanItems: Int64;
+  DeletedStones, DeletedItems: Integer;
+begin
+  lblCurrentProcess.Caption := 'Cleaning ASA orphan rows...';
+  LogLine('Cleaning ASA orphan InventoryItems and Stones before pump...');
+
+  OrphanStones := VariantAsInt64(AsaScalar('SELECT COUNT(*) FROM Stones WHERE ' + ORPHAN_STONES_WHERE));
+  DeletedStones := ExecAsaDelete('DELETE FROM Stones WHERE ' + ORPHAN_STONES_WHERE);
+
+  OrphanItems := VariantAsInt64(AsaScalar('SELECT COUNT(*) FROM InventoryItems WHERE ' + ORPHAN_INVENTORY_WHERE));
+  DeletedItems := ExecAsaDelete('DELETE FROM InventoryItems WHERE ' + ORPHAN_INVENTORY_WHERE);
+
+  LogLine(Format('  OK. Removed %d orphan Stones rows (%d detected).',
+                 [DeletedStones, OrphanStones]));
+  LogLine(Format('  OK. Removed %d orphan InventoryItems rows (%d detected).',
+                 [DeletedItems, OrphanItems]));
 end;
 
 procedure TfrmPumpAsaFb50Main.PumpTwoColLookup(

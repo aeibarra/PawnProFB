@@ -187,7 +187,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
       Width = 283
       Height = 29
       TabOrder = 5
-      Text = 'C:\DB\PAWNDATA.FDB'
+      Text = 'C:\PAWN\PAWNDATA.FDB'
     end
     object edFBUser: TEdit
       Left = 179
@@ -203,7 +203,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
       Width = 131
       Height = 29
       TabOrder = 7
-      Text = 'masterkey'
+      Text = '@PepitoKAKITA'
     end
     object edFBPort: TEdit
       Left = 452
