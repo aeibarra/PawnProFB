@@ -682,14 +682,24 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
   object qrySentImg: TFDQuery
     Connection = DM.ConnFB
     SQL.Strings = (
-      'select'
-      '  IMAGES_DATA_NO as "ImagesDataNo",'
-      '  IMAGE_DESC as "ImageDesc",'
-      '  UPLOAD_TIME as "UploadTime",'
-      '  UPLOAD_FILE_NAME as "UploadFileName"'
-      'from IMAGES_DATA'
-      'where UPLOAD_TIME is not null'
-      'order by UPLOAD_TIME desc')
+      'select * from ('
+      '  select'
+      '    IMAGES_DATA_NO as "ImagesDataNo",'
+      '    IMAGE_DESC as "ImageDesc",'
+      '    UPLOAD_TIME as "UploadTime",'
+      '    UPLOAD_FILE_NAME as "UploadFileName"'
+      '  from IMAGES_DATA'
+      '  where UPLOAD_TIME is not null'
+      '  union all'
+      '  select'
+      '    S.IMAGES_DATA_NO as "ImagesDataNo",'
+      '    D.IMAGE_DESC as "ImageDesc",'
+      '    S.UPLOAD_TIME as "UploadTime",'
+      '    S.UPLOAD_FILE_NAME as "UploadFileName"'
+      '  from EXPORT_IMAGE_SENT S'
+      '    join IMAGES_DATA D on D.IMAGES_DATA_NO = S.IMAGES_DATA_NO'
+      ')'
+      'order by "UploadTime" desc')
     Left = 1028
     Top = 164
     object qrySentImgImagesDataNo: TIntegerField

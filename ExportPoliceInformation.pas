@@ -133,6 +133,8 @@ type
     function GetInvItemNo(TransactionNo, ItemSeq: integer): integer;
     procedure UpdateExportLogFileDetail_InvItemNo_ItemSeq(ID, ItemSeq,
       InvItemNo: integer);
+    procedure SendCustomerIdImagesForTran(TransactionNo, TicketNo: integer;
+      const TranType: string; TranDate: TDateTime; const TempImgPath: string);
   public
     { Public declarations }
   end;
@@ -294,14 +296,65 @@ begin
     end;
 end;
 
+procedure TfrmExportPoliceInformation.SendCustomerIdImagesForTran(TransactionNo, TicketNo: integer;
+  const TranType: string; TranDate: TDateTime; const TempImgPath: string);
+var
+  qryCust: TFDQuery;
+  ImgFileName: string;
+  ImagesDataNo: integer;
+begin
+  qryCust := TFDQuery.Create(nil);
+  try
+    qryCust.Connection := DM.ConnFB;
+    // Customer ID photos (IMAGE_TYPE_NO = 1) are keyed to CUST_NO. Send each one
+    // that has not yet been logged as sent for THIS transaction.
+    qryCust.SQL.Text :=
+      'select T3.IMAGES_DATA_NO as "ImagesDataNo" '#13#10 +
+      'from TRANSACTIONS T4 '#13#10 +
+      '  join IMAGES_DATA T3 on T3.IMAG_REF_TO_ROW_NO = T4.CUST_NO and T3.IMAGE_TYPE_NO = 1 '#13#10 +
+      'where T4.TRANSACTION_NO = :TransactionNo '#13#10 +
+      '  and not exists (select 1 from EXPORT_IMAGE_SENT S '#13#10 +
+      '                  where S.TRANSACTION_NO = T4.TRANSACTION_NO '#13#10 +
+      '                    and S.IMAGES_DATA_NO = T3.IMAGES_DATA_NO)';
+    qryCust.Params.ParamByName('TransactionNo').AsInteger := TransactionNo;
+    qryCust.Open;
+    while not qryCust.Eof do
+      begin
+        ImagesDataNo := qryCust.FieldByName('ImagesDataNo').AsInteger;
+
+        // Transaction-image name: no item-number component, "I" classification.
+        ImgFileName := DM_LeadsOnline.GetLeadsOnlineCustIdFileName(DM.qryStoreLEADS_STORE_ID.AsString,
+                         TranType, TranDate, TicketNo, ImagesDataNo);
+        try
+          DM.ExportImageToPath(ImagesDataNo, TempImgPath + ImgFileName);
+          FTP.Put(TempImgPath + ImgFileName);
+          if chkShowTxDetail.Checked then
+            MemoTxResult.Lines.Add(FTP.LastCmdResult.ToString);
+          DeleteFile(TempImgPath + ImgFileName);
+          DM_LeadsOnline.MarkTranImageAsSent(TransactionNo, ImagesDataNo, ImgFileName);
+          MemoTxResult.Lines.Add(ImgFileName + ' Ok');
+        except
+          on e: exception do
+            MemoTxResult.Lines.Add(ImgFileName + ' Error: ' + e.Message);
+        end;
+
+        qryCust.Next;
+      end;
+  finally
+    qryCust.Free;
+  end;
+end;
+
 procedure TfrmExportPoliceInformation.btnSendImagesClick(Sender: TObject);
 var
   ImgFileName, TempImgPath: string;
   ImgTxResult: string;
   i, TotalImg: integer;
   ErrorInTx: boolean;
+  LastCustTranNo: integer;
 begin
   ErrorInTx := false;
+  LastCustTranNo := -1;
   MemoTxResult.Lines.Clear;
   TempImgPath := GetWindowsTempDir;
 
@@ -342,6 +395,19 @@ begin
           inc(i);
           lblSendImgProgress.Caption := Format('Sending Image %d of %d', [i, TotalImg]);
           Application.ProcessMessages;
+
+          // Once per transaction, send the customer ID photo (if any). Because we
+          // drive off the item-image list, this covers only transactions that have
+          // item pictures being sent, and sends the photo once per ticket.
+          if qryImagesNotExpTransactionNo.AsInteger <> LastCustTranNo then
+            begin
+              LastCustTranNo := qryImagesNotExpTransactionNo.AsInteger;
+              SendCustomerIdImagesForTran(qryImagesNotExpTransactionNo.AsInteger,
+                                          qryImagesNotExpTranTicketNo.AsInteger,
+                                          qryImagesNotExpTranType.AsString,
+                                          qryImagesNotExpTranDate.AsDateTime,
+                                          TempImgPath);
+            end;
 
           ImgFileName := DM_LeadsOnline.GetLeadsOnlineFileName(DM.qryStoreLEADS_STORE_ID.AsString, qryImagesNotExpTranType.AsString,
                                                                qryImagesNotExpTranDate.AsDateTime, qryImagesNotExpTranTicketNo.AsInteger,

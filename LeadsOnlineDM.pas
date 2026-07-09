@@ -146,7 +146,12 @@ type
      ExportProcType: integer; FromDate, ToDate: TDateTime; LimitRows: boolean; LimitToRowsNo: integer);
     procedure ExportFileFromHist(var lbl: TLabel; FileName: string; ExportLogID: integer);
     function GetLeadsOnlineFileName(LeadsStoreId, TranType: string; TranDate: TDatetime; TransactionNo, ItemSeq, PictureId: integer): string;
+    { Transaction-image name for a customer ID photo. Per the LeadsOnline
+      "Uploading Images" spec these carry NO item-number component and use the
+      "I" (customer ID) classification letter. }
+    function GetLeadsOnlineCustIdFileName(LeadsStoreId, TranType: string; TranDate: TDatetime; TransactionNo, PictureId: integer): string;
     procedure MarImageAsSent(ImagesDataNo: integer; const UploadFileName: string);
+    procedure MarkTranImageAsSent(TransactionNo, ImagesDataNo: integer; const UploadFileName: string);
   end;
 
 var
@@ -452,17 +457,31 @@ begin
 
 end;
 
-function TDM_LeadsOnline.GetLeadsOnlineFileName(LeadsStoreId, TranType: string; TranDate: TDatetime; TransactionNo, ItemSeq, PictureId: integer): string;
-var
-  Tran: string;
+{ 3rd picture-code letter = transaction type (must match the data file):
+  Pawn -> 'P', Buy/Purchase (our 'U') -> 'B'. }
+function LeadsTranTypeLetter(const TranType: string): string;
 begin
   if TranType = 'P' then
-    Tran := 'P'
+    Result := 'P'
   else if TranType = 'U' then
-    Tran := 'B';
+    Result := 'B'
+  else
+    Result := 'Y'; // Unknown, per spec
+end;
 
-  Result := 'IMG_AN' + Tran + '_' + LeadsStoreId + '_' + FormatDateTime('yyyymmdd', TranDate) + '_' + TransactionNo.ToString + '_' +
+function TDM_LeadsOnline.GetLeadsOnlineFileName(LeadsStoreId, TranType: string; TranDate: TDatetime; TransactionNo, ItemSeq, PictureId: integer): string;
+begin
+  // Item image: IMG_<A=article><N=camera n/a><tran>_<store>_<date>_<tran#>_<item#>_<picID>.JPG
+  Result := 'IMG_AN' + LeadsTranTypeLetter(TranType) + '_' + LeadsStoreId + '_' + FormatDateTime('yyyymmdd', TranDate) + '_' + TransactionNo.ToString + '_' +
              Format('%.2d', [ItemSeq]) + '_' + Format('%.3d', [PictureId]) + '.JPG';
+end;
+
+function TDM_LeadsOnline.GetLeadsOnlineCustIdFileName(LeadsStoreId, TranType: string; TranDate: TDatetime; TransactionNo, PictureId: integer): string;
+begin
+  // Customer ID (transaction) image: IMG_<I=customer ID><N=camera n/a><tran>_<store>_<date>_<tran#>_<picID>.JPG
+  // NOTE: transaction images have NO item-number component.
+  Result := 'IMG_IN' + LeadsTranTypeLetter(TranType) + '_' + LeadsStoreId + '_' + FormatDateTime('yyyymmdd', TranDate) + '_' + TransactionNo.ToString + '_' +
+             Format('%.3d', [PictureId]) + '.JPG';
 end;
 
 procedure TDM_LeadsOnline.MarImageAsSent(ImagesDataNo: integer; const UploadFileName: string);
@@ -470,6 +489,18 @@ begin
   qryExpImgMarkAsSent.Params.ParamByName('UploadFileName').AsString := UploadFileName;
   qryExpImgMarkAsSent.Params.ParamByName('ImagesDataNo').AsInteger := ImagesDataNo;
   qryExpImgMarkAsSent.ExecSQL;
+end;
+
+{ Records a customer ID photo as sent for one specific transaction. Unlike item
+  images (which stamp IMAGES_DATA.UPLOAD_TIME), a customer photo is shared across
+  the customer's transactions, so the send is logged per (transaction, image). }
+procedure TDM_LeadsOnline.MarkTranImageAsSent(TransactionNo, ImagesDataNo: integer; const UploadFileName: string);
+begin
+  DM.ConnFB.ExecSQL(
+    'UPDATE OR INSERT INTO EXPORT_IMAGE_SENT (TRANSACTION_NO, IMAGES_DATA_NO, UPLOAD_TIME, UPLOAD_FILE_NAME) ' +
+    'VALUES (:TRANSACTION_NO, :IMAGES_DATA_NO, CURRENT_TIMESTAMP, :UPLOAD_FILE_NAME) ' +
+    'MATCHING (TRANSACTION_NO, IMAGES_DATA_NO)',
+    [TransactionNo, ImagesDataNo, UploadFileName]);
 end;
 
 end.
