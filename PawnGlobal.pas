@@ -1143,7 +1143,7 @@ const
 var
   Device, Port: array[0..255] of Char;
   ProfileBuf: array[0..255] of Char;
-  BinCount, I, StartIdx, LenProfile: Integer;
+  BinCount, I, J, StartIdx, LenProfile: Integer;
   NamesBuf: TArray<Char>;
   OneName: string;
   PrinterIdx: Integer;
@@ -1196,7 +1196,17 @@ begin
   for I := 0 to BinCount - 1 do
   begin
     StartIdx := I * BIN_NAME_LEN;
-    OneName := PChar(@NamesBuf[StartIdx]); // read until #0
+    // DC_BINNAMES entries are fixed 24-char blocks and are NOT guaranteed to be
+    // null-terminated. Read at most BIN_NAME_LEN chars, stopping at the first #0,
+    // so a full-length name can't spill into the next block (or past the buffer
+    // on the last bin) and corrupt the tray name.
+    OneName := '';
+    for J := StartIdx to StartIdx + BIN_NAME_LEN - 1 do
+    begin
+      if NamesBuf[J] = #0 then
+        Break;
+      OneName := OneName + NamesBuf[J];
+    end;
     Result[I] := Trim(OneName);
   end;
 end;

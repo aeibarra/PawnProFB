@@ -1,4 +1,4 @@
-unit SearchClient;
+﻿unit SearchClient;
 
 interface
 
@@ -1043,10 +1043,13 @@ begin
   pgTransDetail.ActivePageIndex := 1;
   pgTransactions.ActivePageIndex := 0;
 
+  // Reload printer settings from the INI FIRST, then use them — otherwise the
+  // button visibility (and any print launched from this form) can act on stale
+  // values from a prior load / a setting just changed in the setup screen.
+  LoadPrinterSettingsFromIni(GlobalIniFile, AppPrinterSettings);
+
   btnPrintPayReceipt.Visible := AppPrinterSettings.UsePaymentReceiptPrinter;
   btnPrintEnvLabel.Visible := AppPrinterSettings.UseEnvelopeLabelPrinter;
-
-  LoadPrinterSettingsFromIni(GlobalIniFile, AppPrinterSettings);
 
   DM.RefreshStoreQry;
 
@@ -1413,7 +1416,9 @@ end;
 procedure TfrmClients.btnPrintPayReceiptClick(Sender: TObject);
 begin
   if DM.qryPayments.RecordCount > 0 then
+  begin
     DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+  end;
 end;
 
 procedure TfrmClients.btnPrintPolRptClick(Sender: TObject);

@@ -86,7 +86,7 @@ end;
 
 procedure TfrmSetupBarcodePrinter.cbPrintersPayReceiptChange(Sender: TObject);
 begin
-  FillPrinterTrays(cbPayReceiptBins, cbPrinters.Text);
+  FillPrinterTrays(cbPayReceiptBins, cbPrintersPayReceipt.Text);
 end;
 
 procedure TfrmSetupBarcodePrinter.cbTypeOfPoliceReportChange(Sender: TObject);
@@ -139,7 +139,7 @@ begin
   if cbPrinters.ItemIndex >= 0 then
     begin
       cbPrintersChange(nil);
-      idx := cbPolicePrinterBins.Items.IndexOf(AppPrinterSettings.PayReceiptPrinterBin);
+      idx := cbPolicePrinterBins.Items.IndexOf(AppPrinterSettings.PoliceReportBin);
       if idx >= 0 then
         cbPolicePrinterBins.ItemIndex := idx;
     end;
@@ -155,7 +155,7 @@ begin
     end;
 
   chkUseEnvelopeLabelPrinter.Checked := AppPrinterSettings.UseEnvelopeLabelPrinter;
-  cbPrintersEnvelopeLabel.ItemIndex := cbPrintersPayReceipt.Items.IndexOf(AppPrinterSettings.PayReceiptPrinter);
+  cbPrintersEnvelopeLabel.ItemIndex := cbPrintersEnvelopeLabel.Items.IndexOf(AppPrinterSettings.EnvelopeLabelPrinterName);
 end;
 
 end.
