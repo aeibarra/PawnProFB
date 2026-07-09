@@ -1,4 +1,4 @@
-unit PawnProSetupMain;
+﻿unit PawnProSetupMain;
 
 interface
 
@@ -13,6 +13,10 @@ type
     Overwrite: Boolean;
     SubFolder: string;  // relative to the install folder, e.g. 'plugins\'; '' = root
   end;
+
+  // Current multi-workstation state as read back from the server's firebird.conf.
+  // smUnknown = no local Firebird server (client PC, or Firebird not installed).
+  TStationMode = (smUnknown, smSingle, smMultiple);
 
   TfrmPawnProSetupMain = class(TForm)
     GroupBox1: TGroupBox;
@@ -34,12 +38,20 @@ type
     edDatabase: TEdit;
     edCurrentPassword: TEdit;
     edNewPassword: TEdit;
-    chkIsDBLocal: TCheckBox;
     rgSngleInstallation: TRadioGroup;
+    gbStationMng: TGroupBox;
+    lblStationsStatus: TLabel;
+    btnMultStationsEnableDisable: TButton;
+    gbIsDBLocal: TGroupBox;
+    rbIsDBLocalYES: TRadioButton;
+    rbIsDBLocalNO: TRadioButton;
+    lblIsDBLocal: TLabel;
     procedure btnBrowseInstallFolderClick(Sender: TObject);
     procedure btnCopyPawnProFilesClick(Sender: TObject);
     procedure btnTestConnectionClick(Sender: TObject);
     procedure btnEnterStoreInfoClick(Sender: TObject);
+    procedure btnMultStationsEnableDisableClick(Sender: TObject);
+    procedure IsDBLocalSelectionChanged(Sender: TObject);
     procedure edInstallFolderChange(Sender: TObject);
     procedure edDatabaseChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -67,11 +79,17 @@ type
     procedure WriteCommonIniDefaults(Ini: TIniFile);
     procedure WriteEncryptedConnectionIni(const TargetFolder, Password: string);
     function IsSingleWorkstationInstall: Boolean;
+    function IsDatabaseLocal: Boolean;
+    function IsDBLocalSelected: Boolean;
+    function ValidateDBLocalSelected: Boolean;
+    procedure UpdateStepButtonsEnabled;
     function FindFirebirdConfPath: string;
     function FindFirebirdDatabasesConfPath: string;
     procedure SetFirebirdDatabaseAlias;
     procedure SetFirebirdRemoteAccess(AllowRemoteAccess: Boolean);
     procedure UpdateFirebirdRemoteAccessFromSelection;
+    function GetStationMode: TStationMode;
+    procedure RefreshStationStatus;
     procedure FormatIniSectionSpacing(const IniPath: string);
   public
     { Public declarations }
@@ -115,6 +133,8 @@ procedure TfrmPawnProSetupMain.FormCreate(Sender: TObject);
 begin
   FDatabasePathFollowsInstallFolder := True;
   SyncDatabasePathWithInstallFolder;
+  RefreshStationStatus;
+  UpdateStepButtonsEnabled;
 end;
 
 procedure TfrmPawnProSetupMain.btnBrowseInstallFolderClick(Sender: TObject);
@@ -189,7 +209,7 @@ function TfrmPawnProSetupMain.ConnectDatabase: string;
 // databases.conf) -- a client-local path would be interpreted server-side and
 // fail. This mirrors what the generated PawnPro.ini stores (database=PAWNDATA).
 begin
-  if chkIsDBLocal.Checked then
+  if IsDatabaseLocal then
     Result := DatabasePath
   else
     Result := PAWNPRO_DB_ALIAS;
@@ -209,7 +229,7 @@ var
 begin
   // Only the DB host stores images locally; a client points at the host's shared
   // image path, so it gets no local PawnImages folder.
-  if not chkIsDBLocal.Checked then
+  if not IsDatabaseLocal then
     Exit;
 
   Folder := ImagesFolder;
@@ -341,7 +361,7 @@ procedure TfrmPawnProSetupMain.CopyDatabaseFile(const SrcFolder: string);
 var
   SourceFile, TargetFile, TargetDir: string;
 begin
-  if not chkIsDBLocal.Checked then
+  if not IsDatabaseLocal then
   begin
     Log('Database is not local to this machine. Skipping PAWNDATA.FDB copy.');
     Exit;
@@ -382,7 +402,7 @@ procedure TfrmPawnProSetupMain.WriteCommonIniDefaults(Ini: TIniFile);
 var
   IsLocalValue: string;
 begin
-  if chkIsDBLocal.Checked then
+  if IsDatabaseLocal then
     IsLocalValue := 'Y'
   else
     IsLocalValue := 'N';
@@ -400,7 +420,7 @@ begin
   // Seed a working image folder so a fresh host install doesn't start with an
   // empty ImageDirectory. Only for local/host installs -- a client uses the
   // host's shared image path. EnsureIniKey won't clobber an existing value.
-  if chkIsDBLocal.Checked then
+  if IsDatabaseLocal then
     EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', ImagesFolder)
   else
     EnsureIniKey(Ini, 'IMAGE_STORAGE', 'ImageDirectory', '');
@@ -491,6 +511,51 @@ end;
 function TfrmPawnProSetupMain.IsSingleWorkstationInstall: Boolean;
 begin
   Result := rgSngleInstallation.ItemIndex = 0;
+end;
+
+function TfrmPawnProSetupMain.IsDatabaseLocal: Boolean;
+// "Is the database local to this machine?" -- Yes = DB host, No = client/workstation.
+// The gbIsDBLocal radios default to neither checked, so callers must gate on
+// ValidateDBLocalSelected first; this only reports which one is chosen.
+begin
+  Result := rbIsDBLocalYES.Checked;
+end;
+
+function TfrmPawnProSetupMain.IsDBLocalSelected: Boolean;
+begin
+  Result := rbIsDBLocalYES.Checked or rbIsDBLocalNO.Checked;
+end;
+
+function TfrmPawnProSetupMain.ValidateDBLocalSelected: Boolean;
+// Guard shared by installation steps 1/2/3. The DB-local answer drives whether we
+// copy a local database, edit the server config, and rotate the SYSDBA password,
+// so nothing may run until the operator has explicitly answered Yes or No.
+begin
+  Result := IsDBLocalSelected;
+  if not Result then
+  begin
+    Log('ERROR: Please answer "Is Database Local?" (Yes or No) before continuing.');
+    MessageDlg('Please select whether the database is local to this machine ' +
+      '(Yes or No) before running the installation steps.', mtWarning, [mbOK], 0);
+  end;
+end;
+
+procedure TfrmPawnProSetupMain.UpdateStepButtonsEnabled;
+// Steps 1/2/3 stay disabled until the operator answers "Is Database Local?" so
+// the DB-local branching can never run on an unset value. The runtime guard in
+// each handler (ValidateDBLocalSelected) still stands as a second line.
+var
+  Selected: Boolean;
+begin
+  Selected := IsDBLocalSelected;
+  btnCopyPawnProFiles.Enabled := Selected;
+  btnEnterStoreInfo.Enabled := Selected;
+  btnTestConnection.Enabled := Selected;
+end;
+
+procedure TfrmPawnProSetupMain.IsDBLocalSelectionChanged(Sender: TObject);
+begin
+  UpdateStepButtonsEnabled;
 end;
 
 function FirstExistingFile(const FileNames: array of string): string;
@@ -704,7 +769,7 @@ begin
   // RemoteBindAddress lives in the server's firebird.conf and is a server-only
   // setting. A client/workstation has no local Firebird server to configure, so
   // skip it there (avoids a misleading "firebird.conf not found" warning).
-  if not chkIsDBLocal.Checked then
+  if not IsDatabaseLocal then
   begin
     Log('Client/workstation install: RemoteBindAddress is a server setting; skipping.');
     Exit;
@@ -717,6 +782,134 @@ begin
   end;
 
   SetFirebirdRemoteAccess(not IsSingleWorkstationInstall);
+end;
+
+function TfrmPawnProSetupMain.GetStationMode: TStationMode;
+// Reads the CURRENT multi-workstation state straight from the server's
+// firebird.conf so the UI reflects reality, not the radio-group selection.
+// An active "RemoteBindAddress = localhost/127.0.0.1/::1" line means the
+// listener is bound to loopback => Single. No active bind restriction (line
+// absent or commented, or bound to an external address) => Multiple. No local
+// firebird.conf => Unknown (this is a client PC or Firebird is not installed).
+var
+  ConfPath, T, Value: string;
+  Lines: TStringList;
+  I, P: Integer;
+begin
+  Result := smUnknown;
+  ConfPath := FindFirebirdConfPath;
+  if ConfPath = '' then
+    Exit;
+
+  Lines := TStringList.Create;
+  try
+    Lines.LoadFromFile(ConfPath);
+    // Firebird's default when RemoteBindAddress is unset is to listen on all
+    // interfaces, so absence of an active bind line means Multiple.
+    Result := smMultiple;
+
+    for I := 0 to Lines.Count - 1 do
+    begin
+      T := Trim(Lines[I]);
+      if (T = '') or (T[1] = '#') then
+        Continue;
+      if not SameText(Copy(T, 1, Length('RemoteBindAddress')), 'RemoteBindAddress') then
+        Continue;
+      if not ((Length(T) = Length('RemoteBindAddress')) or
+              CharInSet(T[Length('RemoteBindAddress') + 1], [' ', #9, '='])) then
+        Continue;
+
+      P := Pos('=', T);
+      if P = 0 then
+        Continue;
+
+      Value := LowerCase(Trim(Copy(T, P + 1, MaxInt)));
+      // SetFirebirdRemoteAccess keeps at most one active bind line, but if a
+      // hand-edited file has several the last active one wins (matches Firebird).
+      if (Value = 'localhost') or (Value = '127.0.0.1') or (Value = '::1') then
+        Result := smSingle
+      else if Value <> '' then
+        Result := smMultiple;
+    end;
+  finally
+    Lines.Free;
+  end;
+end;
+
+procedure TfrmPawnProSetupMain.RefreshStationStatus;
+// Syncs the standalone gbStationMng controls (status label + toggle button) with
+// the live firebird.conf state. Called at startup and after every toggle.
+begin
+  case GetStationMode of
+    smSingle:
+      begin
+        lblStationsStatus.Caption := 'Current: SINGLE workstation (loopback only)';
+        btnMultStationsEnableDisable.Caption := 'Enable Multiple Workstations';
+        btnMultStationsEnableDisable.Enabled := True;
+      end;
+    smMultiple:
+      begin
+        lblStationsStatus.Caption := 'Current: MULTIPLE workstations (all interfaces)';
+        btnMultStationsEnableDisable.Caption := 'Disable (Single Workstation)';
+        btnMultStationsEnableDisable.Enabled := True;
+      end;
+  else
+    lblStationsStatus.Caption := 'No local Firebird server on this PC (client install)';
+    btnMultStationsEnableDisable.Caption := 'Enable Multiple Workstations';
+    btnMultStationsEnableDisable.Enabled := False;
+  end;
+end;
+
+procedure TfrmPawnProSetupMain.btnMultStationsEnableDisableClick(Sender: TObject);
+// Standalone enable/disable of multiple workstations. Touches ONLY the server's
+// firebird.conf RemoteBindAddress -- no binaries, no database, no PawnPro.ini,
+// no SYSDBA password -- so it is safe to run against a good working setup.
+var
+  Mode: TStationMode;
+  EnableMultiple: Boolean;
+  Prompt: string;
+begin
+  Mode := GetStationMode;
+  if Mode = smUnknown then
+  begin
+    Log('ERROR: Firebird 5 server (firebird.conf) was not found on this machine.');
+    Log('The multiple-workstation setting only applies to the DB-host PC.');
+    Exit;
+  end;
+
+  EnableMultiple := (Mode = smSingle);  // toggle to the opposite of the current state
+
+  if EnableMultiple then
+    Prompt := 'Enable MULTIPLE workstations?' + sLineBreak + sLineBreak +
+      'The Firebird server will listen on all network interfaces so other PCs ' +
+      'on the LAN can connect to this database.'
+  else
+    Prompt := 'Switch to a SINGLE workstation?' + sLineBreak + sLineBreak +
+      'The Firebird server will listen on loopback only. Other PCs on the LAN ' +
+      'will no longer be able to connect to this database.';
+
+  if MessageDlg(Prompt, mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  try
+    // AllowRemoteAccess = True enables multiple workstations (clears the loopback
+    // bind); False restricts to loopback for a single workstation.
+    SetFirebirdRemoteAccess(EnableMultiple);
+
+    if EnableMultiple then
+    begin
+      Log('Multiple workstations ENABLED.');
+      Log('Reminder: open TCP port ' + IntToStr(Port) + ' in Windows Firewall, and ' +
+        'confirm the PAWNDATA alias exists in databases.conf so workstations resolve it.');
+    end
+    else
+      Log('Multiple workstations DISABLED (single workstation, loopback only).');
+  except
+    on E: Exception do
+      Log('ERROR: ' + E.Message);
+  end;
+
+  RefreshStationStatus;
 end;
 
 procedure TfrmPawnProSetupMain.FormatIniSectionSpacing(const IniPath: string);
@@ -758,6 +951,9 @@ begin
   SrcFolder := SourceFolder;
   InstallFolder := TargetFolder;
 
+  if not ValidateDBLocalSelected then
+    Exit;
+
   if Trim(edInstallFolder.Text) = '' then
   begin
     Log('ERROR: Please enter the target install folder.');
@@ -797,6 +993,9 @@ var
   ErrorMsg: string;
   StatesCount: Integer;
 begin
+  if not ValidateDBLocalSelected then
+    Exit;
+
   if Trim(edInstallFolder.Text) = '' then
   begin
     Log('ERROR: Please enter the target install folder.');
@@ -816,6 +1015,9 @@ var
   ErrorMsg: string;
   StatesCount: Integer;
 begin
+  if not ValidateDBLocalSelected then
+    Exit;
+
   if Trim(edInstallFolder.Text) = '' then
   begin
     Log('ERROR: Please enter the target install folder.');
@@ -876,7 +1078,7 @@ begin
     // client/workstation has no local Firebird server, so touching it here
     // would raise "databases.conf was not found" and abort before the encrypted
     // INI is written. The client still connects fine via database=PAWNDATA.
-    if chkIsDBLocal.Checked then
+    if IsDatabaseLocal then
       SetFirebirdDatabaseAlias
     else
       Log('Client/workstation install: PAWNDATA alias is resolved on the server; ' +
@@ -887,7 +1089,7 @@ begin
     // DB-host machine. From a client it would rotate the whole server's password
     // and silently break the server's own PawnPro.ini (still holding the old
     // encrypted password). A client only writes its own encrypted INI.
-    if not chkIsDBLocal.Checked then
+    if not IsDatabaseLocal then
       Log('Client/workstation install: not changing the server SYSDBA password; ' +
         'writing the encrypted INI only.')
     else if SameText(edCurrentPassword.Text, edNewPassword.Text) then
@@ -904,7 +1106,7 @@ begin
     // On the host, the password to store is the (possibly rotated) new one. On a
     // client we never rotate, so store the current password that just verified a
     // successful connection -- not edNewPassword, which the client ignores.
-    if chkIsDBLocal.Checked then
+    if IsDatabaseLocal then
       WriteEncryptedConnectionIni(TargetFolder, edNewPassword.Text)
     else
       WriteEncryptedConnectionIni(TargetFolder, edCurrentPassword.Text);

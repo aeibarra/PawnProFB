@@ -2,7 +2,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
   Left = 0
   Top = 0
   Caption = 'PawnPro Setup'
-  ClientHeight = 681
+  ClientHeight = 807
   ClientWidth = 1165
   Color = clBtnFace
   Constraints.MinHeight = 550
@@ -20,20 +20,22 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Left = 568
     Top = 3
     Width = 594
-    Height = 675
+    Height = 801
     Align = alClient
     Caption = 'Log'
     TabOrder = 0
+    ExplicitHeight = 767
     object MemoLog: TMemo
       AlignWithMargins = True
       Left = 5
       Top = 25
       Width = 584
-      Height = 645
+      Height = 771
       Align = alClient
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
+      ExplicitHeight = 737
     end
   end
   object GroupBox2: TGroupBox
@@ -41,10 +43,11 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Left = 3
     Top = 3
     Width = 559
-    Height = 675
+    Height = 801
     Align = alLeft
     Caption = 'Installation Steps'
     TabOrder = 1
+    ExplicitHeight = 767
     object lblInstallFolder: TLabel
       Left = 25
       Top = 28
@@ -96,6 +99,19 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       Flat = False
       OnClick = btnBrowseInstallFolderClick
       HotNumGlyphs = 0
+    end
+    object lblIsDBLocal: TLabel
+      Left = 33
+      Top = 344
+      Width = 128
+      Height = 20
+      Caption = 'Is Database Local?'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object edInstallFolder: TEdit
       Left = 25
@@ -178,33 +194,65 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       TabOrder = 10
       OnClick = btnEnterStoreInfoClick
     end
-    object chkIsDBLocal: TCheckBox
-      Left = 25
-      Top = 345
-      Width = 185
-      Height = 17
-      Caption = 'Is Database Local?'
-      Checked = True
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      ParentFont = False
-      State = cbChecked
-      TabOrder = 6
-    end
     object rgSngleInstallation: TRadioGroup
       Left = 25
-      Top = 377
+      Top = 386
       Width = 280
       Height = 80
       Caption = 'Is this a single workstation installation?'
-      ItemIndex = 0
       Items.Strings = (
         'Yes'
         'No')
       TabOrder = 7
+    end
+    object gbStationMng: TGroupBox
+      Left = 25
+      Top = 658
+      Width = 460
+      Height = 120
+      Caption = 'Enable / disable Multiple Workstations'
+      TabOrder = 11
+      object lblStationsStatus: TLabel
+        Left = 26
+        Top = 29
+        Width = 110
+        Height = 20
+        Caption = 'lblStationsStatus'
+      end
+      object btnMultStationsEnableDisable: TButton
+        Left = 26
+        Top = 55
+        Width = 405
+        Height = 42
+        Caption = 'Enable'
+        TabOrder = 0
+        OnClick = btnMultStationsEnableDisableClick
+      end
+    end
+    object gbIsDBLocal: TGroupBox
+      Left = 185
+      Top = 339
+      Width = 137
+      Height = 31
+      TabOrder = 6
+      object rbIsDBLocalYES: TRadioButton
+        Left = 16
+        Top = 8
+        Width = 44
+        Height = 17
+        Caption = 'Yes'
+        TabOrder = 0
+        OnClick = IsDBLocalSelectionChanged
+      end
+      object rbIsDBLocalNO: TRadioButton
+        Left = 73
+        Top = 8
+        Width = 44
+        Height = 17
+        Caption = 'No'
+        TabOrder = 1
+        OnClick = IsDBLocalSelectionChanged
+      end
     end
   end
 end
