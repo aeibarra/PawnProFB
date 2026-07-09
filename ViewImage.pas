@@ -1,4 +1,4 @@
-unit ViewImage;
+﻿unit ViewImage;
 
 interface
 

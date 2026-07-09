@@ -1,4 +1,4 @@
-unit uDBMigrations;
+﻿unit uDBMigrations;
 
 {
   Startup schema-migration runner (Firebird 5 / FireDAC).

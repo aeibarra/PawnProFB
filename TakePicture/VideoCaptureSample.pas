@@ -1,4 +1,4 @@
-unit VideoCaptureSample;
+﻿unit VideoCaptureSample;
 
 interface
 

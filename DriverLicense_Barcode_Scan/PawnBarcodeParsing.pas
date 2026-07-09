@@ -1,4 +1,4 @@
-unit PawnBarcodeParsing;
+﻿unit PawnBarcodeParsing;
 
 interface
 

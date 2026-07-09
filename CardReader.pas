@@ -1,4 +1,4 @@
-unit CardReader;
+﻿unit CardReader;
 
 interface
 

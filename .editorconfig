@@ -9,3 +9,12 @@ end_of_line = crlf
 
 [*.{md,txt,sql}]
 end_of_line = unset
+
+# Encoding: stop spurious line-1 diffs from tools disagreeing on the UTF-8 BOM.
+# RAD Studio saves Delphi units (*.pas/*.dpr/*.inc) WITH a BOM but forms (*.dfm)
+# WITHOUT one, so we standardize on exactly that.
+[*.{pas,dpr,dpk,inc}]
+charset = utf-8-bom
+
+[*.dfm]
+charset = utf-8

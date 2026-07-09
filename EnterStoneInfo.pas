@@ -1,4 +1,4 @@
-unit EnterStoneInfo;
+﻿unit EnterStoneInfo;
 
 interface
 

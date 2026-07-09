@@ -1,4 +1,4 @@
-unit EditInvItem;
+﻿unit EditInvItem;
 
 interface
 

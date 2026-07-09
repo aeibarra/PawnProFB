@@ -1,4 +1,4 @@
-unit DrvLic_PDF417Parsing;
+﻿unit DrvLic_PDF417Parsing;
 
 interface
 

@@ -1,4 +1,4 @@
-unit EditInvCategory;
+﻿unit EditInvCategory;
 
 interface
 

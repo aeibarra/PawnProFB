@@ -1,4 +1,4 @@
-unit CapturePicFromCamera;
+﻿unit CapturePicFromCamera;
 
 interface
 

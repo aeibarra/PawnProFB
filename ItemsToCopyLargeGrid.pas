@@ -1,4 +1,4 @@
-unit ItemsToCopyLargeGrid;
+﻿unit ItemsToCopyLargeGrid;
 
 interface
 

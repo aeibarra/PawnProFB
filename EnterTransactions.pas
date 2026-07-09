@@ -1,4 +1,4 @@
-unit EnterTransactions;
+﻿unit EnterTransactions;
 
 interface
 

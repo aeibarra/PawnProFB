@@ -1,4 +1,4 @@
-unit uPawnDialogs;
+﻿unit uPawnDialogs;
 
 interface
 

@@ -1,4 +1,4 @@
-unit SetupBarcodePrinter;
+﻿unit SetupBarcodePrinter;
 
 interface
 
