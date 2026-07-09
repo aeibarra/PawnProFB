@@ -305,7 +305,7 @@ var
 implementation
 
 Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA,
-  SealedBox, Nvv.Crypto.FileEnvelope, IdHashSHA;
+  SealedBox, Nvv.Crypto.FileEnvelope, IdHashSHA, uDBMigrations;
 
 {$R *.DFM}
 
@@ -595,6 +595,19 @@ end;
 
 procedure TDM.CheckForMissingDBChanges;
 begin
+  // Apply any pending schema migrations for already-deployed stores. Fatal on
+  // failure: never let the app run against a half-migrated database.
+  try
+    EnsureDatabaseCurrent(ConnFB);
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Database update FAILED — the application cannot start.' + sLineBreak + sLineBreak +
+                  'The database schema could not be brought up to date.' + sLineBreak +
+                  'Error: [' + E.ClassName + '] ' + E.Message);
+      raise;
+    end;
+  end;
 end;
 
 function TDM.GetWeightUnitAbbr(WeightUnit: string): string;

@@ -114,6 +114,10 @@ const
 
   AppStateKeyImageSharedPath = 'IMAGE_SHARED_PATH';
 
+  // Current DB schema version, tracked in APP_STATE.VALUE_INT. Read/written by
+  // the startup migration runner (uDBMigrations). See CURRENT_DB_VERSION there.
+  AppStateKeyDbSchemaVersion = 'DB_SCHEMA_VERSION';
+
   IniSecDatabase = 'DATABASE';
   IniKeyIsLocalDatabase = 'IsLocalDatabase';
 

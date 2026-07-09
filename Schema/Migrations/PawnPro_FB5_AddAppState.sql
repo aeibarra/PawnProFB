@@ -28,6 +28,10 @@ BEGIN
        )';
 END^
 
+-- Commit the table before the procedures compile against it; otherwise isql
+-- reports "Table unknown APP_STATE" when creating SPS/SPU_APP_STATE.
+COMMIT^
+
 CREATE OR ALTER PROCEDURE SPS_APP_STATE (
   P_STATE_KEY VARCHAR(50))
 RETURNS (
