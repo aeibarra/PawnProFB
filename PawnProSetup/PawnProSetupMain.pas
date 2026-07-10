@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes,
-  System.Classes, System.Hash, System.IniFiles, Vcl.Graphics, Vcl.Controls,
+  System.Classes, System.Hash, System.IniFiles, System.Win.Registry,
+  Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton, Vcl.ExtCtrls;
 
 type
@@ -570,23 +571,64 @@ begin
   end;
 end;
 
+function FirebirdRootFromRegistry: string;
+// The Firebird installer records its install root under this key. Read it so the
+// server config is found no matter where Firebird was installed. Tries the 64-bit
+// registry view first, then the 32-bit (WOW6432Node) view for a 32-bit Firebird.
+
+  function ReadInstanceRoot(AAccess: LongWord): string;
+  var
+    Reg: TRegistry;
+  begin
+    Result := '';
+    Reg := TRegistry.Create(KEY_READ or AAccess);
+    try
+      Reg.RootKey := HKEY_LOCAL_MACHINE;
+      if Reg.OpenKeyReadOnly('SOFTWARE\Firebird Project\Firebird Server\Instances') then
+        try
+          if Reg.ValueExists('DefaultInstance') then
+            Result := Trim(Reg.ReadString('DefaultInstance'));
+        finally
+          Reg.CloseKey;
+        end;
+    finally
+      Reg.Free;
+    end;
+  end;
+
+begin
+  Result := ReadInstanceRoot(KEY_WOW64_64KEY);
+  if Result = '' then
+    Result := ReadInstanceRoot(KEY_WOW64_32KEY);
+end;
+
 function TfrmPawnProSetupMain.FindFirebirdConfPath: string;
 var
-  ProgramFiles64, ProgramFiles: string;
+  Candidates: TArray<string>;
+
+  procedure AddRoot(const Root: string);
+  begin
+    if Trim(Root) <> '' then
+      Candidates := Candidates + [IncludeTrailingPathDelimiter(Root) + 'firebird.conf'];
+  end;
+
 begin
-  ProgramFiles64 := GetEnvironmentVariable('ProgramW6432');
-  ProgramFiles := GetEnvironmentVariable('ProgramFiles');
-  if ProgramFiles64 <> '' then
-    ProgramFiles64 := IncludeTrailingPathDelimiter(ProgramFiles64);
-  if ProgramFiles <> '' then
-    ProgramFiles := IncludeTrailingPathDelimiter(ProgramFiles);
+  Candidates := [];
+
+  // 1. Explicit FIREBIRD environment variable, if the admin set one.
+  AddRoot(GetEnvironmentVariable('FIREBIRD'));
+  // 2. The install root the Firebird installer recorded in the registry -- works
+  //    regardless of where Firebird was installed (custom folder, other drive,
+  //    or a 32-bit install under Program Files (x86)).
+  AddRoot(FirebirdRootFromRegistry);
+  // 3. Default install locations as a last-resort fallback.
+  AddRoot(GetEnvironmentVariable('ProgramW6432') + '\Firebird\Firebird_5_0');
+  AddRoot(GetEnvironmentVariable('ProgramFiles') + '\Firebird\Firebird_5_0');
+  AddRoot(GetEnvironmentVariable('ProgramFiles(x86)') + '\Firebird\Firebird_5_0');
 
   // Only the real Firebird install is edited; a copy in the setup source folder
   // would never be read by the running server, so it is intentionally not searched.
-  Result := FirstExistingFile([
-    ProgramFiles64 + 'Firebird\Firebird_5_0\firebird.conf',
-    ProgramFiles + 'Firebird\Firebird_5_0\firebird.conf'
-  ]);
+  Result := FirstExistingFile(Candidates);
 end;
 
 function TfrmPawnProSetupMain.FindFirebirdDatabasesConfPath: string;
@@ -727,10 +769,16 @@ begin
 
       if AllowRemoteAccess then
       begin
-        // Multi-workstation: disable any active bind restriction so the server
-        // listens on all interfaces (Firebird's default when unset).
-        if (Trimmed <> '') and (Trimmed[1] <> '#') then
-          Lines[I] := '# Disabled by PawnProSetup (listen on all interfaces): ' + Trimmed;
+        // Multi-workstation: bind the listener to all interfaces (0.0.0.0) so
+        // other PCs on the LAN can connect. Written explicitly rather than relying
+        // on the "unset = all interfaces" default -- matches the verified config.
+        if not Found then
+        begin
+          Lines[I] := 'RemoteBindAddress = 0.0.0.0';
+          Found := True;
+        end
+        else if (Trimmed <> '') and (Trimmed[1] <> '#') then
+          Lines[I] := '# Duplicate RemoteBindAddress disabled by PawnProSetup: ' + Trimmed;
       end
       else
       begin
@@ -745,11 +793,19 @@ begin
       end;
     end;
 
-    if (not AllowRemoteAccess) and (not Found) then
+    if not Found then
     begin
       Lines.Add('');
-      Lines.Add('# Set by PawnProSetup (standalone store: loopback only).');
-      Lines.Add('RemoteBindAddress = localhost');
+      if AllowRemoteAccess then
+      begin
+        Lines.Add('# Set by PawnProSetup (multi-workstation: all interfaces).');
+        Lines.Add('RemoteBindAddress = 0.0.0.0');
+      end
+      else
+      begin
+        Lines.Add('# Set by PawnProSetup (standalone store: loopback only).');
+        Lines.Add('RemoteBindAddress = localhost');
+      end;
     end;
 
     Lines.SaveToFile(ConfPath);
@@ -758,7 +814,7 @@ begin
   end;
 
   if AllowRemoteAccess then
-    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress cleared (listen on all interfaces).')
+    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = 0.0.0.0 (listen on all interfaces).')
   else
     Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = localhost (loopback only).');
   Log('Restart the Firebird Server service for this setting to take effect.');
