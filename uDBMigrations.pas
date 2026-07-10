@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 1;
+  CURRENT_DB_VERSION = 2;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -186,6 +186,20 @@ begin
     '  CONSTRAINT UQ_EXPORT_IMAGE_SENT UNIQUE (TRANSACTION_NO, IMAGES_DATA_NO))');
 end;
 
+// v2 - remembers transactions whose customer-ID upload must be retried. Rows
+// are created only when the item-image send loop qualifies the transaction.
+procedure Step2_ExportImagePending(Conn: TFDConnection);
+begin
+  if RelationExists(Conn, 'EXPORT_IMAGE_PENDING') then
+    Exit;
+
+  ExecDDL(Conn,
+    'CREATE TABLE EXPORT_IMAGE_PENDING (' +
+    '  TRANSACTION_NO INTEGER NOT NULL,' +
+    '  QUEUED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,' +
+    '  CONSTRAINT PK_EXPORT_IMAGE_PENDING PRIMARY KEY (TRANSACTION_NO))');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
@@ -204,7 +218,13 @@ begin
     SetDbVersion(Conn, 1);
   end;
 
-  // Future steps: if V < 2 then begin Step2_...(Conn); SetDbVersion(Conn, 2); end;
+  if V < 2 then
+  begin
+    Step2_ExportImagePending(Conn);
+    SetDbVersion(Conn, 2);
+  end;
+
+  // Future steps: if V < 3 then begin Step3_...(Conn); SetDbVersion(Conn, 3); end;
 end;
 
 end.

@@ -135,6 +135,7 @@ type
       InvItemNo: integer);
     procedure SendCustomerIdImagesForTran(TransactionNo, TicketNo: integer;
       const TranType: string; TranDate: TDateTime; const TempImgPath: string);
+    procedure RetryPendingCustomerIdImages(const TempImgPath: string);
   public
     { Public declarations }
   end;
@@ -303,19 +304,36 @@ var
   ImgFileName: string;
   ImagesDataNo: integer;
 begin
+  // Reaching this routine from the item-image loop proves that the transaction
+  // qualifies. Persist that fact before FTP so a failure can be retried later.
+  DM.ConnFB.ExecSQL(
+    'UPDATE OR INSERT INTO EXPORT_IMAGE_PENDING (TRANSACTION_NO, QUEUED_AT) ' +
+    'VALUES (:TRANSACTION_NO, CURRENT_TIMESTAMP) MATCHING (TRANSACTION_NO)',
+    [TransactionNo]);
+  // A later batch of item pictures for an already-completed transaction must
+  // not create a permanent pending row or resend an updated historical ID.
+  DM.ConnFB.ExecSQL(
+    'DELETE FROM EXPORT_IMAGE_PENDING P WHERE P.TRANSACTION_NO = :TRANSACTION_NO ' +
+    'AND EXISTS (SELECT 1 FROM EXPORT_IMAGE_SENT S ' +
+    'JOIN IMAGES_DATA SI ON SI.IMAGES_DATA_NO = S.IMAGES_DATA_NO ' +
+    'WHERE S.TRANSACTION_NO = P.TRANSACTION_NO AND SI.IMAGE_TYPE_NO = 1)',
+    [TransactionNo]);
+
   qryCust := TFDQuery.Create(nil);
   try
     qryCust.Connection := DM.ConnFB;
-    // Customer ID photos (IMAGE_TYPE_NO = 1) are keyed to CUST_NO. Send each one
-    // that has not yet been logged as sent for THIS transaction.
+    // A successful customer-ID send completes the transaction. If an earlier
+    // attempt failed and the operator replaced the picture, use the latest row.
     qryCust.SQL.Text :=
-      'select T3.IMAGES_DATA_NO as "ImagesDataNo" '#13#10 +
+      'select first 1 T3.IMAGES_DATA_NO as "ImagesDataNo" '#13#10 +
       'from TRANSACTIONS T4 '#13#10 +
       '  join IMAGES_DATA T3 on T3.IMAG_REF_TO_ROW_NO = T4.CUST_NO and T3.IMAGE_TYPE_NO = 1 '#13#10 +
       'where T4.TRANSACTION_NO = :TransactionNo '#13#10 +
       '  and not exists (select 1 from EXPORT_IMAGE_SENT S '#13#10 +
-      '                  where S.TRANSACTION_NO = T4.TRANSACTION_NO '#13#10 +
-      '                    and S.IMAGES_DATA_NO = T3.IMAGES_DATA_NO)';
+      '                    join IMAGES_DATA SI on SI.IMAGES_DATA_NO = S.IMAGES_DATA_NO '#13#10 +
+      '                   where S.TRANSACTION_NO = T4.TRANSACTION_NO '#13#10 +
+      '                     and SI.IMAGE_TYPE_NO = 1) '#13#10 +
+      'order by T3.CREATED desc nulls last, T3.IMAGES_DATA_NO desc';
     qryCust.Params.ParamByName('TransactionNo').AsInteger := TransactionNo;
     qryCust.Open;
     while not qryCust.Eof do
@@ -332,6 +350,9 @@ begin
             MemoTxResult.Lines.Add(FTP.LastCmdResult.ToString);
           DeleteFile(TempImgPath + ImgFileName);
           DM_LeadsOnline.MarkTranImageAsSent(TransactionNo, ImagesDataNo, ImgFileName);
+          DM.ConnFB.ExecSQL(
+            'DELETE FROM EXPORT_IMAGE_PENDING WHERE TRANSACTION_NO = :TRANSACTION_NO',
+            [TransactionNo]);
           MemoTxResult.Lines.Add(ImgFileName + ' Ok');
         except
           on e: exception do
@@ -342,6 +363,55 @@ begin
       end;
   finally
     qryCust.Free;
+  end;
+end;
+
+procedure TfrmExportPoliceInformation.RetryPendingCustomerIdImages(const TempImgPath: string);
+var
+  qryPending: TFDQuery;
+  RetryCount: Integer;
+begin
+  qryPending := TFDQuery.Create(nil);
+  try
+    qryPending.Connection := DM.ConnFB;
+    // Only the item-image loop creates pending rows, so this cannot backfill
+    // historical transactions that predate the customer-ID feature.
+    qryPending.SQL.Text :=
+      'select '#13#10 +
+      '  T.TRANSACTION_NO as "TransactionNo", '#13#10 +
+      '  T.TRAN_TICKET_NO as "TicketNo", '#13#10 +
+      '  T.TRAN_TYPE as "TranType", '#13#10 +
+      '  T.TRAN_DATE as "TranDate" '#13#10 +
+      'from EXPORT_IMAGE_PENDING P '#13#10 +
+      '  join TRANSACTIONS T on T.TRANSACTION_NO = P.TRANSACTION_NO '#13#10 +
+      'where exists (select 1 from IMAGES_DATA CI '#13#10 +
+      '              where CI.IMAG_REF_TO_ROW_NO = T.CUST_NO '#13#10 +
+      '                and CI.IMAGE_TYPE_NO = 1) '#13#10 +
+      '  and not exists (select 1 from EXPORT_IMAGE_SENT S '#13#10 +
+      '                    join IMAGES_DATA SI on SI.IMAGES_DATA_NO = S.IMAGES_DATA_NO '#13#10 +
+      '                   where S.TRANSACTION_NO = T.TRANSACTION_NO '#13#10 +
+      '                     and SI.IMAGE_TYPE_NO = 1) '#13#10 +
+      'order by T.TRANSACTION_NO';
+    qryPending.Open;
+
+    RetryCount := qryPending.RecordCount;
+    if RetryCount > 0 then
+      MemoTxResult.Lines.Add(Format('Retrying %d pending customer ID image(s)...',
+        [RetryCount]));
+
+    qryPending.First;
+    while not qryPending.Eof do
+    begin
+      SendCustomerIdImagesForTran(
+        qryPending.FieldByName('TransactionNo').AsInteger,
+        qryPending.FieldByName('TicketNo').AsInteger,
+        qryPending.FieldByName('TranType').AsString,
+        qryPending.FieldByName('TranDate').AsDateTime,
+        TempImgPath);
+      qryPending.Next;
+    end;
+  finally
+    qryPending.Free;
   end;
 end;
 
@@ -357,9 +427,6 @@ begin
   LastCustTranNo := -1;
   MemoTxResult.Lines.Clear;
   TempImgPath := GetWindowsTempDir;
-
-  if qryImagesNotExp.RecordCount = 0 then
-    exit;
 
   btnSendImages.Enabled := false;
   try
@@ -385,6 +452,10 @@ begin
 //    MemoTxResult.Lines.Add(FTP.LastCmdResult.Text.Text);
 
     try
+      // Retry earlier customer-ID failures even when all related item pictures
+      // have since been marked sent.
+      RetryPendingCustomerIdImages(TempImgPath);
+
       qryImagesNotExp.DisableControls;
 
       TotalImg := qryImagesNotExp.RecordCount;
