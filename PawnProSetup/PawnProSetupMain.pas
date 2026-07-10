@@ -917,38 +917,122 @@ begin
 end;
 
 function RestartFirebirdService(out ErrMsg: string): Boolean;
-// Stops and restarts the Firebird 5 default-instance service via the Service
-// Control Manager so a firebird.conf change takes effect without a manual
-// restart. Requires elevation (PawnProSetup already runs elevated to edit the
-// server config); on failure it returns False with a reason for the caller.
+// Restarts Firebird so a firebird.conf change takes effect, via the Service
+// Control Manager. Handles the Firebird Guardian: when present it would auto-
+// restart the server behind us, so the Guardian is stopped first, then the
+// server, then the Guardian is started again (it launches a fresh server that
+// re-reads firebird.conf). Requires elevation (PawnProSetup runs elevated to
+// edit the server config); on failure returns False with a reason -- including
+// the raw Win32 error code -- for the caller to log.
 const
-  FB_SERVICE = 'FirebirdServerDefaultInstance';
-  TIMEOUT_MS = 30000;
+  FB_SERVER   = 'FirebirdServerDefaultInstance';
+  FB_GUARDIAN = 'FirebirdGuardianDefaultInstance';
+  TIMEOUT_MS  = 30000;
+  ERR_SERVICE_ALREADY_RUNNING = 1056;
+  ERR_SERVICE_NOT_ACTIVE      = 1062;
 var
-  SCM, Svc: SC_HANDLE;
-  Status: TServiceStatus;
-  Args: PWideChar;
+  SCM: SC_HANDLE;
 
-  function CurrentState: DWORD;
+  function Failed(const What: string): string;
+  var
+    E: DWORD;
   begin
-    if QueryServiceStatus(Svc, Status) then
-      Result := Status.dwCurrentState
-    else
-      Result := 0;
+    E := GetLastError;
+    Result := What + ' (' + Trim(SysErrorMessage(E)) + ' [' + IntToStr(E) + '])';
   end;
 
-  function WaitForState(Target: DWORD): Boolean;
+  function ServiceExists(const Name: string): Boolean;
   var
+    H: SC_HANDLE;
+  begin
+    H := OpenService(SCM, PChar(Name), SERVICE_QUERY_STATUS);
+    Result := H <> 0;
+    if Result then
+      CloseServiceHandle(H);
+  end;
+
+  function WaitState(Svc: SC_HANDLE; Target: DWORD): Boolean;
+  var
+    St: TServiceStatus;
     StartTick: Cardinal;
   begin
     StartTick := GetTickCount;
-    while CurrentState <> Target do
-    begin
+    repeat
+      if not QueryServiceStatus(Svc, St) then
+        Exit(False);
+      if St.dwCurrentState = Target then
+        Exit(True);
       if GetTickCount - StartTick > TIMEOUT_MS then
         Exit(False);
       Sleep(250);
+    until False;
+  end;
+
+  function StopService(const Name: string): Boolean;
+  var
+    Svc: SC_HANDLE;
+    St: TServiceStatus;
+  begin
+    Result := False;
+    Svc := OpenService(SCM, PChar(Name), SERVICE_STOP or SERVICE_QUERY_STATUS);
+    if Svc = 0 then
+    begin
+      ErrMsg := Failed('cannot open "' + Name + '"');
+      Exit;
     end;
-    Result := True;
+    try
+      if not QueryServiceStatus(Svc, St) then
+      begin
+        ErrMsg := Failed('cannot query "' + Name + '"');
+        Exit;
+      end;
+      if St.dwCurrentState = SERVICE_STOPPED then
+        Exit(True);
+      if St.dwCurrentState <> SERVICE_STOP_PENDING then
+        if not ControlService(Svc, SERVICE_CONTROL_STOP, St) then
+        begin
+          if GetLastError = ERR_SERVICE_NOT_ACTIVE then
+            Exit(True);
+          ErrMsg := Failed('cannot stop "' + Name + '"');
+          Exit;
+        end;
+      if WaitState(Svc, SERVICE_STOPPED) then
+        Result := True
+      else
+        ErrMsg := '"' + Name + '" did not stop within the timeout';
+    finally
+      CloseServiceHandle(Svc);
+    end;
+  end;
+
+  function StartOneService(const Name: string): Boolean;
+  var
+    Svc: SC_HANDLE;
+    Args: PWideChar;
+  begin
+    Result := False;
+    Svc := OpenService(SCM, PChar(Name), SERVICE_START or SERVICE_QUERY_STATUS);
+    if Svc = 0 then
+    begin
+      ErrMsg := Failed('cannot open "' + Name + '"');
+      Exit;
+    end;
+    try
+      Args := nil;
+      if not StartService(Svc, 0, Args) then
+      begin
+        if GetLastError = ERR_SERVICE_ALREADY_RUNNING then
+          Exit(True);
+        ErrMsg := Failed('cannot start "' + Name + '"');
+        Exit;
+      end;
+      if WaitState(Svc, SERVICE_RUNNING) then
+        Result := True
+      else
+        ErrMsg := '"' + Name + '" did not start within the timeout';
+    finally
+      CloseServiceHandle(Svc);
+    end;
   end;
 
 begin
@@ -958,46 +1042,25 @@ begin
   SCM := OpenSCManager(nil, nil, SC_MANAGER_CONNECT);
   if SCM = 0 then
   begin
-    ErrMsg := 'cannot open the Service Control Manager (' + SysErrorMessage(GetLastError) + ')';
+    ErrMsg := Failed('cannot open the Service Control Manager');
     Exit;
   end;
   try
-    Svc := OpenService(SCM, FB_SERVICE, SERVICE_START or SERVICE_STOP or SERVICE_QUERY_STATUS);
-    if Svc = 0 then
+    if ServiceExists(FB_GUARDIAN) then
     begin
-      ErrMsg := 'cannot open the "' + FB_SERVICE + '" service (' + SysErrorMessage(GetLastError) + ')';
-      Exit;
-    end;
-    try
-      if CurrentState <> SERVICE_STOPPED then
-      begin
-        if not ControlService(Svc, SERVICE_CONTROL_STOP, Status) then
-        begin
-          ErrMsg := 'stop request failed (' + SysErrorMessage(GetLastError) + ')';
-          Exit;
-        end;
-        if not WaitForState(SERVICE_STOPPED) then
-        begin
-          ErrMsg := 'the service did not stop within the timeout';
-          Exit;
-        end;
-      end;
-
-      Args := nil;
-      if not StartService(Svc, 0, Args) then
-      begin
-        ErrMsg := 'start request failed (' + SysErrorMessage(GetLastError) + ')';
-        Exit;
-      end;
-      if not WaitForState(SERVICE_RUNNING) then
-      begin
-        ErrMsg := 'the service did not start within the timeout';
-        Exit;
-      end;
-
+      // Guardian present: stop it first so it can't relaunch the server behind
+      // us, stop the server, then start the Guardian (it brings a fresh server
+      // up). The extra server start is best-effort in case the Guardian is slow.
+      if not StopService(FB_GUARDIAN) then Exit;
+      if not StopService(FB_SERVER) then Exit;
+      if not StartOneService(FB_GUARDIAN) then Exit;
+      StartOneService(FB_SERVER);
       Result := True;
-    finally
-      CloseServiceHandle(Svc);
+    end
+    else
+    begin
+      if not StopService(FB_SERVER) then Exit;
+      Result := StartOneService(FB_SERVER);
     end;
   finally
     CloseServiceHandle(SCM);
