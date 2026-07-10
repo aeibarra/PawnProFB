@@ -3,8 +3,8 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes,
-  System.Classes, System.Hash, System.IniFiles, System.Win.Registry,
+  Winapi.Windows, Winapi.Messages, Winapi.WinSvc, System.SysUtils, System.Variants,
+  System.UITypes, System.Classes, System.Hash, System.IniFiles, System.Win.Registry,
   Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton, Vcl.ExtCtrls;
 
@@ -916,6 +916,94 @@ begin
   end;
 end;
 
+function RestartFirebirdService(out ErrMsg: string): Boolean;
+// Stops and restarts the Firebird 5 default-instance service via the Service
+// Control Manager so a firebird.conf change takes effect without a manual
+// restart. Requires elevation (PawnProSetup already runs elevated to edit the
+// server config); on failure it returns False with a reason for the caller.
+const
+  FB_SERVICE = 'FirebirdServerDefaultInstance';
+  TIMEOUT_MS = 30000;
+var
+  SCM, Svc: SC_HANDLE;
+  Status: TServiceStatus;
+  Args: PWideChar;
+
+  function CurrentState: DWORD;
+  begin
+    if QueryServiceStatus(Svc, Status) then
+      Result := Status.dwCurrentState
+    else
+      Result := 0;
+  end;
+
+  function WaitForState(Target: DWORD): Boolean;
+  var
+    StartTick: Cardinal;
+  begin
+    StartTick := GetTickCount;
+    while CurrentState <> Target do
+    begin
+      if GetTickCount - StartTick > TIMEOUT_MS then
+        Exit(False);
+      Sleep(250);
+    end;
+    Result := True;
+  end;
+
+begin
+  Result := False;
+  ErrMsg := '';
+
+  SCM := OpenSCManager(nil, nil, SC_MANAGER_CONNECT);
+  if SCM = 0 then
+  begin
+    ErrMsg := 'cannot open the Service Control Manager (' + SysErrorMessage(GetLastError) + ')';
+    Exit;
+  end;
+  try
+    Svc := OpenService(SCM, FB_SERVICE, SERVICE_START or SERVICE_STOP or SERVICE_QUERY_STATUS);
+    if Svc = 0 then
+    begin
+      ErrMsg := 'cannot open the "' + FB_SERVICE + '" service (' + SysErrorMessage(GetLastError) + ')';
+      Exit;
+    end;
+    try
+      if CurrentState <> SERVICE_STOPPED then
+      begin
+        if not ControlService(Svc, SERVICE_CONTROL_STOP, Status) then
+        begin
+          ErrMsg := 'stop request failed (' + SysErrorMessage(GetLastError) + ')';
+          Exit;
+        end;
+        if not WaitForState(SERVICE_STOPPED) then
+        begin
+          ErrMsg := 'the service did not stop within the timeout';
+          Exit;
+        end;
+      end;
+
+      Args := nil;
+      if not StartService(Svc, 0, Args) then
+      begin
+        ErrMsg := 'start request failed (' + SysErrorMessage(GetLastError) + ')';
+        Exit;
+      end;
+      if not WaitForState(SERVICE_RUNNING) then
+      begin
+        ErrMsg := 'the service did not start within the timeout';
+        Exit;
+      end;
+
+      Result := True;
+    finally
+      CloseServiceHandle(Svc);
+    end;
+  finally
+    CloseServiceHandle(SCM);
+  end;
+end;
+
 procedure TfrmPawnProSetupMain.btnMultStationsEnableDisableClick(Sender: TObject);
 // Standalone enable/disable of multiple workstations. Touches ONLY the server's
 // firebird.conf RemoteBindAddress -- no binaries, no database, no PawnPro.ini,
@@ -923,7 +1011,8 @@ procedure TfrmPawnProSetupMain.btnMultStationsEnableDisableClick(Sender: TObject
 var
   Mode: TStationMode;
   EnableMultiple: Boolean;
-  Prompt: string;
+  Prompt, RestartErr: string;
+  RestartOK: Boolean;
 begin
   Mode := GetStationMode;
   if Mode = smUnknown then
@@ -960,6 +1049,28 @@ begin
     end
     else
       Log('Multiple workstations DISABLED (single workstation, loopback only).');
+
+    // RemoteBindAddress only takes effect after a Firebird restart -- offer to do
+    // it now so the operator doesn't have to restart the service by hand.
+    if MessageDlg('Restart the Firebird service now so the change takes effect?' + sLineBreak + sLineBreak +
+         'Any workstations currently connected will be briefly disconnected.',
+         mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      Log('Restarting the Firebird service...');
+      Screen.Cursor := crHourGlass;
+      try
+        RestartOK := RestartFirebirdService(RestartErr);
+      finally
+        Screen.Cursor := crDefault;
+      end;
+      if RestartOK then
+        Log('Firebird service restarted -- the setting is now active.')
+      else
+        Log('Could not restart Firebird automatically: ' + RestartErr + '. ' +
+          'Please restart the "Firebird Server - DefaultInstance" service manually.');
+    end
+    else
+      Log('Remember to restart the Firebird service for the change to take effect.');
   except
     on E: Exception do
       Log('ERROR: ' + E.Message);
