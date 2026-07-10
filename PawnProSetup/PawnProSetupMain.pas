@@ -3,7 +3,7 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Winapi.WinSvc, System.SysUtils, System.Variants,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.UITypes, System.Classes, System.Hash, System.IniFiles, System.Win.Registry,
   Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton, Vcl.ExtCtrls;
@@ -917,154 +917,72 @@ begin
 end;
 
 function RestartFirebirdService(out ErrMsg: string): Boolean;
-// Restarts Firebird so a firebird.conf change takes effect, via the Service
-// Control Manager. Handles the Firebird Guardian: when present it would auto-
-// restart the server behind us, so the Guardian is stopped first, then the
-// server, then the Guardian is started again (it launches a fresh server that
-// re-reads firebird.conf). Requires elevation (PawnProSetup runs elevated to
-// edit the server config); on failure returns False with a reason -- including
-// the raw Win32 error code -- for the caller to log.
+// Restarts Firebird so a firebird.conf change takes effect by running the same
+// "net stop" / "net start" sequence an admin uses at a command prompt -- the
+// method verified to work on-site. Shelling out avoids the SCM API quirks that
+// left a direct stop/start ineffective. PawnProSetup runs elevated (to edit the
+// server config) and the spawned net.exe inherits that token.
 const
-  FB_SERVER   = 'FirebirdServerDefaultInstance';
-  FB_GUARDIAN = 'FirebirdGuardianDefaultInstance';
-  TIMEOUT_MS  = 30000;
-  ERR_SERVICE_ALREADY_RUNNING = 1056;
-  ERR_SERVICE_NOT_ACTIVE      = 1062;
+  FB_SERVICE = 'FirebirdServerDefaultInstance';
+
+  function RunAndWait(const CommandLine: string; out ExitCode: DWORD): Boolean;
+  var
+    SI: TStartupInfo;
+    PI: TProcessInformation;
+    Cmd: string;
+  begin
+    Result := False;
+    ExitCode := DWORD(-1);
+    FillChar(SI, SizeOf(SI), 0);
+    SI.cb := SizeOf(SI);
+    SI.dwFlags := STARTF_USESHOWWINDOW;
+    SI.wShowWindow := SW_HIDE;
+    Cmd := CommandLine;
+    UniqueString(Cmd);  // CreateProcess may write into the command-line buffer
+    if not CreateProcess(nil, PChar(Cmd), nil, nil, False, CREATE_NO_WINDOW,
+                         nil, nil, SI, PI) then
+      Exit;
+    try
+      if WaitForSingleObject(PI.hProcess, 60000) <> WAIT_OBJECT_0 then
+        Exit;
+      Result := GetExitCodeProcess(PI.hProcess, ExitCode);
+    finally
+      CloseHandle(PI.hThread);
+      CloseHandle(PI.hProcess);
+    end;
+  end;
+
 var
-  SCM: SC_HANDLE;
-
-  function Failed(const What: string): string;
-  var
-    E: DWORD;
-  begin
-    E := GetLastError;
-    Result := What + ' (' + Trim(SysErrorMessage(E)) + ' [' + IntToStr(E) + '])';
-  end;
-
-  function ServiceExists(const Name: string): Boolean;
-  var
-    H: SC_HANDLE;
-  begin
-    H := OpenService(SCM, PChar(Name), SERVICE_QUERY_STATUS);
-    Result := H <> 0;
-    if Result then
-      CloseServiceHandle(H);
-  end;
-
-  function WaitState(Svc: SC_HANDLE; Target: DWORD): Boolean;
-  var
-    St: TServiceStatus;
-    StartTick: Cardinal;
-  begin
-    StartTick := GetTickCount;
-    repeat
-      if not QueryServiceStatus(Svc, St) then
-        Exit(False);
-      if St.dwCurrentState = Target then
-        Exit(True);
-      if GetTickCount - StartTick > TIMEOUT_MS then
-        Exit(False);
-      Sleep(250);
-    until False;
-  end;
-
-  function StopService(const Name: string): Boolean;
-  var
-    Svc: SC_HANDLE;
-    St: TServiceStatus;
-  begin
-    Result := False;
-    Svc := OpenService(SCM, PChar(Name), SERVICE_STOP or SERVICE_QUERY_STATUS);
-    if Svc = 0 then
-    begin
-      ErrMsg := Failed('cannot open "' + Name + '"');
-      Exit;
-    end;
-    try
-      if not QueryServiceStatus(Svc, St) then
-      begin
-        ErrMsg := Failed('cannot query "' + Name + '"');
-        Exit;
-      end;
-      if St.dwCurrentState = SERVICE_STOPPED then
-        Exit(True);
-      if St.dwCurrentState <> SERVICE_STOP_PENDING then
-        if not ControlService(Svc, SERVICE_CONTROL_STOP, St) then
-        begin
-          if GetLastError = ERR_SERVICE_NOT_ACTIVE then
-            Exit(True);
-          ErrMsg := Failed('cannot stop "' + Name + '"');
-          Exit;
-        end;
-      if WaitState(Svc, SERVICE_STOPPED) then
-        Result := True
-      else
-        ErrMsg := '"' + Name + '" did not stop within the timeout';
-    finally
-      CloseServiceHandle(Svc);
-    end;
-  end;
-
-  function StartOneService(const Name: string): Boolean;
-  var
-    Svc: SC_HANDLE;
-    Args: PWideChar;
-  begin
-    Result := False;
-    Svc := OpenService(SCM, PChar(Name), SERVICE_START or SERVICE_QUERY_STATUS);
-    if Svc = 0 then
-    begin
-      ErrMsg := Failed('cannot open "' + Name + '"');
-      Exit;
-    end;
-    try
-      Args := nil;
-      if not StartService(Svc, 0, Args) then
-      begin
-        if GetLastError = ERR_SERVICE_ALREADY_RUNNING then
-          Exit(True);
-        ErrMsg := Failed('cannot start "' + Name + '"');
-        Exit;
-      end;
-      if WaitState(Svc, SERVICE_RUNNING) then
-        Result := True
-      else
-        ErrMsg := '"' + Name + '" did not start within the timeout';
-    finally
-      CloseServiceHandle(Svc);
-    end;
-  end;
-
+  ExitCode: DWORD;
 begin
   Result := False;
   ErrMsg := '';
 
-  SCM := OpenSCManager(nil, nil, SC_MANAGER_CONNECT);
-  if SCM = 0 then
+  // Stop. net exit code 2 = "service is not started" (already stopped) -- ok.
+  if not RunAndWait('net stop ' + FB_SERVICE, ExitCode) then
   begin
-    ErrMsg := Failed('cannot open the Service Control Manager');
+    ErrMsg := 'could not run "net stop ' + FB_SERVICE + '"';
     Exit;
   end;
-  try
-    if ServiceExists(FB_GUARDIAN) then
-    begin
-      // Guardian present: stop it first so it can't relaunch the server behind
-      // us, stop the server, then start the Guardian (it brings a fresh server
-      // up). The extra server start is best-effort in case the Guardian is slow.
-      if not StopService(FB_GUARDIAN) then Exit;
-      if not StopService(FB_SERVER) then Exit;
-      if not StartOneService(FB_GUARDIAN) then Exit;
-      StartOneService(FB_SERVER);
-      Result := True;
-    end
-    else
-    begin
-      if not StopService(FB_SERVER) then Exit;
-      Result := StartOneService(FB_SERVER);
-    end;
-  finally
-    CloseServiceHandle(SCM);
+  if (ExitCode <> 0) and (ExitCode <> 2) then
+  begin
+    ErrMsg := '"net stop ' + FB_SERVICE + '" failed (exit code ' + IntToStr(ExitCode) + ')';
+    Exit;
   end;
+
+  // Start. Exit 0 = started fresh; anything else means it did not come back up.
+  if not RunAndWait('net start ' + FB_SERVICE, ExitCode) then
+  begin
+    ErrMsg := 'could not run "net start ' + FB_SERVICE + '"';
+    Exit;
+  end;
+  if ExitCode <> 0 then
+  begin
+    ErrMsg := '"net start ' + FB_SERVICE + '" failed (exit code ' + IntToStr(ExitCode) + ')';
+    Exit;
+  end;
+
+  Result := True;
 end;
 
 procedure TfrmPawnProSetupMain.btnMultStationsEnableDisableClick(Sender: TObject);
