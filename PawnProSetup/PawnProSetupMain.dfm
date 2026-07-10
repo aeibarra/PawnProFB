@@ -24,7 +24,6 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Align = alClient
     Caption = 'Log'
     TabOrder = 0
-    ExplicitHeight = 767
     object MemoLog: TMemo
       AlignWithMargins = True
       Left = 5
@@ -35,7 +34,6 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitHeight = 737
     end
   end
   object GroupBox2: TGroupBox
@@ -47,7 +45,6 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
     Align = alLeft
     Caption = 'Installation Steps'
     TabOrder = 1
-    ExplicitHeight = 767
     object lblInstallFolder: TLabel
       Left = 25
       Top = 28

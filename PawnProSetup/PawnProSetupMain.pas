@@ -3,7 +3,7 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  Winapi.Windows, Winapi.Messages, Winapi.WinSvc, System.SysUtils, System.Variants,
   System.UITypes, System.Classes, System.Hash, System.IniFiles, System.Win.Registry,
   Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzButton, Vcl.ExtCtrls;
@@ -917,72 +917,145 @@ begin
 end;
 
 function RestartFirebirdService(out ErrMsg: string): Boolean;
-// Restarts Firebird so a firebird.conf change takes effect by running the same
-// "net stop" / "net start" sequence an admin uses at a command prompt -- the
-// method verified to work on-site. Shelling out avoids the SCM API quirks that
-// left a direct stop/start ineffective. PawnProSetup runs elevated (to edit the
-// server config) and the spawned net.exe inherits that token.
+// Restarts Firebird through the Service Control Manager and does not issue the
+// start until SCM confirms that the service is fully stopped. Firebird can take
+// a while to detach databases after accepting the stop request, so merely
+// waiting for a command-line process to exit is not sufficient.
 const
   FB_SERVICE = 'FirebirdServerDefaultInstance';
+  SERVICE_TIMEOUT_MS = 120000;
 
-  function RunAndWait(const CommandLine: string; out ExitCode: DWORD): Boolean;
+  function ServiceStateName(State: DWORD): string;
+  begin
+    case State of
+      SERVICE_STOPPED: Result := 'stopped';
+      SERVICE_START_PENDING: Result := 'start pending';
+      SERVICE_STOP_PENDING: Result := 'stop pending';
+      SERVICE_RUNNING: Result := 'running';
+      SERVICE_CONTINUE_PENDING: Result := 'continue pending';
+      SERVICE_PAUSE_PENDING: Result := 'pause pending';
+      SERVICE_PAUSED: Result := 'paused';
+    else
+      Result := 'state ' + IntToStr(State);
+    end;
+  end;
+
+  function QueryStatus(Service: SC_HANDLE; out Status: SERVICE_STATUS_PROCESS): Boolean;
   var
-    SI: TStartupInfo;
-    PI: TProcessInformation;
-    Cmd: string;
+    BytesNeeded: DWORD;
+  begin
+    FillChar(Status, SizeOf(Status), 0);
+    Result := QueryServiceStatusEx(Service, SC_STATUS_PROCESS_INFO, @Status,
+      SizeOf(Status), BytesNeeded);
+  end;
+
+  function WaitForState(Service: SC_HANDLE; DesiredState: DWORD;
+    out LastState: DWORD): Boolean;
+  var
+    Status: SERVICE_STATUS_PROCESS;
+    Started, LastProgress: UInt64;
+    PreviousCheckpoint, Delay: DWORD;
   begin
     Result := False;
-    ExitCode := DWORD(-1);
-    FillChar(SI, SizeOf(SI), 0);
-    SI.cb := SizeOf(SI);
-    SI.dwFlags := STARTF_USESHOWWINDOW;
-    SI.wShowWindow := SW_HIDE;
-    Cmd := CommandLine;
-    UniqueString(Cmd);  // CreateProcess may write into the command-line buffer
-    if not CreateProcess(nil, PChar(Cmd), nil, nil, False, CREATE_NO_WINDOW,
-                         nil, nil, SI, PI) then
-      Exit;
-    try
-      if WaitForSingleObject(PI.hProcess, 60000) <> WAIT_OBJECT_0 then
+    LastState := 0;
+    Started := GetTickCount64;
+    LastProgress := Started;
+    PreviousCheckpoint := 0;
+
+    while QueryStatus(Service, Status) do
+    begin
+      LastState := Status.dwCurrentState;
+      if LastState = DesiredState then
+        Exit(True);
+
+      if Status.dwCheckPoint > PreviousCheckpoint then
+      begin
+        PreviousCheckpoint := Status.dwCheckPoint;
+        LastProgress := GetTickCount64;
+      end;
+
+      if (GetTickCount64 - Started >= SERVICE_TIMEOUT_MS) or
+         ((Status.dwWaitHint > 0) and
+          (GetTickCount64 - LastProgress > UInt64(Status.dwWaitHint) + 10000)) then
         Exit;
-      Result := GetExitCodeProcess(PI.hProcess, ExitCode);
-    finally
-      CloseHandle(PI.hThread);
-      CloseHandle(PI.hProcess);
+
+      Delay := Status.dwWaitHint div 10;
+      if Delay < 250 then Delay := 250;
+      if Delay > 2000 then Delay := 2000;
+      Sleep(Delay);
+      Application.ProcessMessages;
     end;
   end;
 
 var
-  ExitCode: DWORD;
+  Manager, Service: SC_HANDLE;
+  Status: SERVICE_STATUS_PROCESS;
+  StopStatus: TServiceStatus;
+  LastState: DWORD;
+  ServiceArgs: LPCWSTR;
 begin
   Result := False;
   ErrMsg := '';
+  Manager := OpenSCManager(nil, nil, SC_MANAGER_CONNECT);
+  if Manager = 0 then
+  begin
+    ErrMsg := 'could not open Service Control Manager: ' + SysErrorMessage(GetLastError);
+    Exit;
+  end;
+  try
+    Service := OpenService(Manager, FB_SERVICE,
+      SERVICE_QUERY_STATUS or SERVICE_STOP or SERVICE_START);
+    if Service = 0 then
+    begin
+      ErrMsg := 'could not open service "' + FB_SERVICE + '": ' +
+        SysErrorMessage(GetLastError);
+      Exit;
+    end;
+    try
+      if not QueryStatus(Service, Status) then
+      begin
+        ErrMsg := 'could not query Firebird service: ' + SysErrorMessage(GetLastError);
+        Exit;
+      end;
 
-  // Stop. net exit code 2 = "service is not started" (already stopped) -- ok.
-  if not RunAndWait('net stop ' + FB_SERVICE, ExitCode) then
-  begin
-    ErrMsg := 'could not run "net stop ' + FB_SERVICE + '"';
-    Exit;
-  end;
-  if (ExitCode <> 0) and (ExitCode <> 2) then
-  begin
-    ErrMsg := '"net stop ' + FB_SERVICE + '" failed (exit code ' + IntToStr(ExitCode) + ')';
-    Exit;
-  end;
+      if Status.dwCurrentState <> SERVICE_STOPPED then
+      begin
+        if Status.dwCurrentState <> SERVICE_STOP_PENDING then
+          if not ControlService(Service, SERVICE_CONTROL_STOP, StopStatus) then
+          begin
+            ErrMsg := 'could not stop Firebird service: ' + SysErrorMessage(GetLastError);
+            Exit;
+          end;
 
-  // Start. Exit 0 = started fresh; anything else means it did not come back up.
-  if not RunAndWait('net start ' + FB_SERVICE, ExitCode) then
-  begin
-    ErrMsg := 'could not run "net start ' + FB_SERVICE + '"';
-    Exit;
-  end;
-  if ExitCode <> 0 then
-  begin
-    ErrMsg := '"net start ' + FB_SERVICE + '" failed (exit code ' + IntToStr(ExitCode) + ')';
-    Exit;
-  end;
+        if not WaitForState(Service, SERVICE_STOPPED, LastState) then
+        begin
+          ErrMsg := 'timed out waiting for Firebird to stop (last state: ' +
+            ServiceStateName(LastState) + ')';
+          Exit;
+        end;
+      end;
 
-  Result := True;
+      ServiceArgs := nil;
+      if not StartService(Service, 0, ServiceArgs) then
+      begin
+        ErrMsg := 'could not start Firebird service: ' + SysErrorMessage(GetLastError);
+        Exit;
+      end;
+
+      if not WaitForState(Service, SERVICE_RUNNING, LastState) then
+      begin
+        ErrMsg := 'timed out waiting for Firebird to start (last state: ' +
+          ServiceStateName(LastState) + ')';
+        Exit;
+      end;
+
+      Result := True;
+    finally
+      CloseServiceHandle(Service);
+    end;
+  finally
+    CloseServiceHandle(Manager);
+  end;
 end;
 
 procedure TfrmPawnProSetupMain.btnMultStationsEnableDisableClick(Sender: TObject);
@@ -1160,8 +1233,9 @@ end;
 
 procedure TfrmPawnProSetupMain.btnEnterStoreInfoClick(Sender: TObject);
 var
-  ErrorMsg: string;
+  ErrorMsg, RestartErr: string;
   StatesCount: Integer;
+  RestartOK: Boolean;
 begin
   if not ValidateDBLocalSelected then
     Exit;
@@ -1260,6 +1334,27 @@ begin
       WriteEncryptedConnectionIni(TargetFolder, edCurrentPassword.Text);
 
     UpdateFirebirdRemoteAccessFromSelection;
+
+    // A server-side RemoteBindAddress change is not active until Firebird has
+    // fully restarted. Client/workstation installs skip this because they do
+    // not have a local Firebird service or firebird.conf to manage.
+    if IsDatabaseLocal then
+    begin
+      Log('Restarting the Firebird service to apply RemoteBindAddress...');
+      Screen.Cursor := crHourGlass;
+      try
+        RestartOK := RestartFirebirdService(RestartErr);
+      finally
+        Screen.Cursor := crDefault;
+      end;
+
+      if not RestartOK then
+        raise Exception.Create('Firebird configuration was updated, but the service ' +
+          'could not be restarted: ' + RestartErr + '. Restart the "Firebird Server ' +
+          '- DefaultInstance" service manually, then test the connection again.');
+
+      Log('Firebird service restarted -- RemoteBindAddress is now active.');
+    end;
 
     Log('Testing encrypted INI after update...');
     if not DM.TestConnectionFromIni(IniPath, StatesCount, ErrorMsg) then
