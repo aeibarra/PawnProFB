@@ -215,8 +215,7 @@ type
     procedure PopulateWeightUnits;
     procedure LoadLookupMemTables;
     procedure LoadLookupMemTable(AMemTable: TFDMemTable; const ASQL: string);
-    function GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string;
-      AllowPrompt: Boolean): string;
+    function GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string; AllowPrompt: Boolean): string;
     procedure SavePendingFBPasswordToIni;
     procedure UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
     function GetPawnPeriod(const PawnDate, CheckDate: TDateTime): Integer;
@@ -799,47 +798,46 @@ begin
   end;
 end;
 
-function TDM.GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string;
-  AllowPrompt: Boolean): string;
+function TDM.GetFBPasswordFromIni(const PasswordEnc, LegacyPassword: string; AllowPrompt: Boolean): string;
 begin
   Result := '';
 
   if PasswordEnc <> '' then
-  begin
-    try
-      Result := DPAPIUnprotect(PasswordEnc);
-      FDeleteLegacyFBPasswordFromIni := LegacyPassword <> '';
-      Exit;
-    except
-      on E: Exception do
-      begin
-        if not AllowPrompt then
-          raise;
-
-        MessageDlg(
-          'PawnPro could not decrypt the database password saved in PawnPro.ini.' +
-          sLineBreak + sLineBreak +
-          'This usually happens when the INI file was copied from another workstation.' +
-          sLineBreak +
-          'Please enter the Firebird database password so it can be encrypted for this workstation.',
-          mtInformation, [mbOK], 0);
-      end;
-    end;
-  end
-  else if LegacyPassword <> '' then
-  begin
-    Result := LegacyPassword;
-    FDeleteLegacyFBPasswordFromIni := True;
-  end
-  else if AllowPrompt then
-  begin
-    if not PromptForDatabasePassword(Result) then
     begin
-      Application.Terminate;
-      Halt(0);
-      Abort;
-    end;
-  end
+      try
+        Result := DPAPIUnprotect(PasswordEnc);
+        FDeleteLegacyFBPasswordFromIni := LegacyPassword <> '';
+        Exit;
+      except
+        on E: Exception do
+        begin
+          if not AllowPrompt then
+            raise;
+
+          MessageDlg(
+            'PawnPro could not decrypt the database password saved in PawnPro.ini.' +
+            sLineBreak + sLineBreak +
+            'This usually happens when the INI file was copied from another workstation.' +
+            sLineBreak +
+            'Please enter the Firebird database password so it can be encrypted for this workstation.',
+            mtInformation, [mbOK], 0);
+        end;
+      end;
+    end
+  else if LegacyPassword <> '' then
+    begin
+      Result := LegacyPassword;
+      FDeleteLegacyFBPasswordFromIni := True;
+    end
+  else if AllowPrompt then
+    begin
+      if not PromptForDatabasePassword(Result) then
+      begin
+        Application.Terminate;
+        Halt(0);
+        Abort;
+      end;
+    end
   else
     raise Exception.Create('PawnPro.ini is missing [CONNECTION_FB] password_enc.');
 

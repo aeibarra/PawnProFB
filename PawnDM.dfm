@@ -4663,6 +4663,16 @@ object DM: TDM
         CollectionIndex = 55
         CollectionName = 'TakePictureID'
         Name = 'TakePictureID'
+      end
+      item
+        CollectionIndex = 56
+        CollectionName = 'actChangeTranStatus'
+        Name = 'actChangeTranStatus'
+      end
+      item
+        CollectionIndex = 57
+        CollectionName = 'icons8-change'
+        Name = 'icons8-change'
       end>
     ImageCollection = svgMain
     Width = 40
@@ -7215,6 +7225,55 @@ object DM: TDM
           'rentColor"/>'#13#10'  <path d="M27 26h5l1 1.2v3.8h-7v-3.8z" fill="whit' +
           'e"/>'#13#10'  <circle cx="30" cy="29" r="1.5" fill="currentColor"/>'#13#10'<' +
           '/svg>'
+      end
+      item
+        IconName = 'actChangeTranStatus'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 120 120" w' +
+          'idth="60px" height="60px" baseProfile="basic"><path d="M59.956,1' +
+          '09.004c-24.813,0-45-20.187-45-45h10c0,19.299,15.701,35,35,35s35-' +
+          '15.701,35-35 s-15.701-35-35-35c-6.582,0-12.993,1.835-18.541,5.30' +
+          '8l-5.306-8.477c7.14-4.469,15.386-6.831,23.847-6.831 c24.813,0,45' +
+          ',20.187,45,45S84.769,109.004,59.956,109.004z" opacity=".35"/><po' +
+          'lygon points="35.378,13.881 21.079,37.054 47.637,43.065" opacity' +
+          '=".35"/><path fill="none" stroke="#008d00" stroke-miterlimit="10' +
+          '" stroke-width="10" d="M38.763,26.074 c6.144-3.847,13.409-6.07,2' +
+          '1.193-6.07c22.091,0,40,17.909,40,40s-17.909,40-40,40s-40-17.909-' +
+          '40-40"/><polygon fill="#44bf00" points="35.378,9.881 21.079,33.0' +
+          '54 47.637,39.065"/><path d="M57.686,75.867c3.95,0,6.659-1.749,6.' +
+          '659-4.514c0-2.765-2.822-4.007-6.716-5.305c-5.7-1.975-11.287-4.57' +
+          '1-11.287-12.02 c0-5.474,3.781-9.876,9.65-11.4V38h7.336v4.176c2.9' +
+          '35,0.338,5.869,1.298,7.901,2.427v8.86c-2.258-1.749-6.208-3.33-9.' +
+          '876-3.33 c-3.612,0-5.756,1.749-5.756,3.894c0,2.54,2.878,3.725,6.' +
+          '49,4.966c5.756,1.975,11.569,4.571,11.569,12.302 c0,5.869-4.063,1' +
+          '0.554-10.327,12.133V88h-7.336v-4.176c-3.894-0.395-7.337-1.749-9.' +
+          '537-3.216v-9.481 C49.052,73.948,53.68,75.867,57.686,75.867z" opa' +
+          'city=".35"/><path fill="#44bf00" d="M57.686,72.867c3.95,0,6.659-' +
+          '1.749,6.659-4.514c0-2.765-2.822-4.007-6.716-5.305 c-5.7-1.975-11' +
+          '.287-4.571-11.287-12.02c0-5.474,3.781-9.876,9.65-11.4V35h7.336v4' +
+          '.176c2.935,0.338,5.869,1.298,7.901,2.427v8.86 c-2.258-1.749-6.20' +
+          '8-3.33-9.876-3.33c-3.612,0-5.756,1.749-5.756,3.894c0,2.54,2.878,' +
+          '3.725,6.49,4.966 c5.756,1.975,11.569,4.571,11.569,12.302c0,5.869' +
+          '-4.063,10.554-10.327,12.133V85h-7.336v-4.176 c-3.894-0.395-7.337' +
+          '-1.749-9.537-3.216v-9.481C49.052,70.948,53.68,72.867,57.686,72.8' +
+          '67z"/></svg>'
+      end
+      item
+        IconName = 'icons8-change'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" wid' +
+          'th="48px" height="48px"><linearGradient id="fHH1575ypYIq9ckEi_Im' +
+          'ra" x1="31" x2="31" y1=".192" y2="34.099" gradientUnits="userSpa' +
+          'ceOnUse"><stop offset="0" stop-color="#199ae0"/><stop offset="1"' +
+          ' stop-color="#0782d8"/></linearGradient><path fill="url(#fHH1575' +
+          'ypYIq9ckEi_Imra)" d="M44.707,8.293l-8-8c-0.391-0.391-1.023-0.391' +
+          '-1.414,0l-8,8'#9'c-0.286,0.286-0.372,0.716-0.217,1.09C27.231,9.756,' +
+          '27.596,10,28,10h3v14H17v10h22c1.105,0,2-0.895,2-2V10h3'#9'c0.404,0,' +
+          '0.769-0.244,0.924-0.617C45.079,9.009,44.993,8.579,44.707,8.293z"' +
+          '/><path fill="#3cf" d="M31,24V14H9c-1.105,0-2,0.895-2,2v22H4c-0.' +
+          '404,0-0.769,0.244-0.924,0.617'#9'c-0.155,0.374-0.069,0.804,0.217,1.' +
+          '09l8,8c0.391,0.391,1.023,0.391,1.414,0l8-8c0.286-0.286,0.372-0.7' +
+          '16,0.217-1.09'#9'C20.769,38.244,20.404,38,20,38h-3V24H31z"/></svg>'
       end>
     Left = 36
     Top = 366
@@ -7476,6 +7535,16 @@ object DM: TDM
         CollectionIndex = 55
         CollectionName = 'TakePictureID'
         Name = 'TakePictureID'
+      end
+      item
+        CollectionIndex = 56
+        CollectionName = 'actChangeTranStatus'
+        Name = 'actChangeTranStatus'
+      end
+      item
+        CollectionIndex = 57
+        CollectionName = 'icons8-change'
+        Name = 'icons8-change'
       end>
     ImageCollection = svgMain
     Width = 32
