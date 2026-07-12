@@ -836,6 +836,8 @@ type
     qryMetalJ_METAL: TWideStringField;
     qryMetalJ_METAL_DESC: TWideStringField;
     btnCustPicID: TBitBtn;
+    btnReactivate: TBitBtn;
+    btnChangePawnStatus: TBitBtn;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -925,6 +927,8 @@ type
     procedure btnCloseLayawayClick(Sender: TObject);
     procedure mnuPawnStatusInactiveClick(Sender: TObject);
     procedure mnuReOpenLayawayClick(Sender: TObject);
+    procedure btnReactivateClick(Sender: TObject);
+    procedure btnChangePawnStatusClick(Sender: TObject);
   private
     LastThreeKeys: TKeyQueue;
     ScanningCard, PreHeaderDetected: boolean;
@@ -946,6 +950,7 @@ type
     procedure UpdateStatusOnSelectedItemInPopUp(TransactionNo, ItemNo: integer;
       const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     procedure GetPaymentDueDateBalanceMessage;
+    procedure UpdatePawnStatusActions;
     procedure ProcessNewPaymentDueDateMessage(var Msg: TMessage); Message sx_RefreshPaymentDueDateMesg;
     procedure AddEditPayments(NewRow: boolean);
     procedure AddEditLayaway(NewRow: boolean);
@@ -1037,6 +1042,7 @@ end;
 
 procedure TfrmClients.FormShow(Sender: TObject);
 begin
+  btnChangePawnStatus.Left := btnReactivate.Left;
   lblNextPaymentInfo.Caption := '';
   lblNextPaymentInfoItems.Caption := '';
 
@@ -1082,6 +1088,7 @@ begin
 
   edFirst.SetFocus;
   pgTransDetailChange(nil);
+  UpdatePawnStatusActions;
   Invalidate;
 end;
 
@@ -1781,6 +1788,25 @@ end;
 procedure TfrmClients.ProcessNewPaymentDueDateMessage(var Msg: TMessage);
 begin
   GetPaymentDueDateBalanceMessage;
+  UpdatePawnStatusActions;
+end;
+
+procedure TfrmClients.UpdatePawnStatusActions;
+var
+  HasPawn, IsActive: boolean;
+begin
+  HasPawn := DM.qryTransactions.Active and
+             not DM.qryTransactions.IsEmpty and
+             (DM.qryTransactionsTRANSACTION_NO.AsInteger > 0) and
+             (DM.qryTransactionsTRAN_TYPE.AsString = TranPawn);
+  IsActive := HasPawn and
+              (DM.qryTransactionsTRAN_STATUS.AsString = TranStatus_Active);
+
+  btnChangePawnStatus.Visible := IsActive;
+  btnReactivate.Visible := HasPawn and not IsActive;
+
+  mnuPawnStatusInactive.Enabled := IsActive;
+  mnuPawnStatusActive.Enabled := HasPawn and not IsActive;
 end;
 
 procedure TfrmClients.qryInvItemsAfterScroll(DataSet: TDataSet);
@@ -2105,6 +2131,8 @@ begin
   pnPawnItemBalance.Visible := PawnTabActive;
   btnPrintPayReceipt.Visible := PawnTabActive;  //Pawn
 
+  UpdatePawnStatusActions;
+
 //  if DM.qryTransactions.Active then
 //    DM.qryTransactions.First;
 end;
@@ -2139,8 +2167,17 @@ end;
 
 procedure TfrmClients.PopMnuTransactionsPopup(Sender: TObject);
 begin
-  mnuPawnStatusActive.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'A';
-  mnuPawnStatusInactive.Enabled := DM.qryTransactionsTRAN_STATUS.AsString <> 'I';
+  UpdatePawnStatusActions;
+end;
+
+procedure TfrmClients.btnReactivateClick(Sender: TObject);
+begin
+  mnuPawnStatusActiveClick(Sender);
+end;
+
+procedure TfrmClients.btnChangePawnStatusClick(Sender: TObject);
+begin
+  mnuPawnStatusInactiveClick(Sender);
 end;
 
 procedure TfrmClients.AddEditLayaway(NewRow: boolean);

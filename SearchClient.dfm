@@ -2,8 +2,8 @@ object frmClients: TfrmClients
   Left = 322
   Top = 172
   Caption = 'Clients'
-  ClientHeight = 752
-  ClientWidth = 1669
+  ClientHeight = 785
+  ClientWidth = 1735
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -19,8 +19,8 @@ object frmClients: TfrmClients
   TextHeight = 17
   object Splitter1: TSplitter
     Left = 0
-    Top = 389
-    Width = 1669
+    Top = 413
+    Width = 1735
     Height = 8
     Cursor = crVSplit
     Align = alTop
@@ -31,16 +31,16 @@ object frmClients: TfrmClients
   object pnTop: TPanel
     Left = 0
     Top = 0
-    Width = 1669
-    Height = 389
+    Width = 1735
+    Height = 413
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     object PanelClientInfo: TPanel
       Left = 0
       Top = 82
-      Width = 1669
-      Height = 307
+      Width = 1735
+      Height = 331
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -48,8 +48,8 @@ object frmClients: TfrmClients
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 1663
-        Height = 234
+        Width = 1729
+        Height = 258
         Align = alClient
         DataSource = DM.DSCustomers
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -261,14 +261,14 @@ object frmClients: TfrmClients
       object Panel12: TPanel
         AlignWithMargins = True
         Left = 3
-        Top = 243
-        Width = 1663
+        Top = 267
+        Width = 1729
         Height = 61
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
-          1663
+          1729
           61)
         object btnAdjPoliceReport: TRzToolButton
           Left = 596
@@ -340,7 +340,7 @@ object frmClients: TfrmClients
           OnClick = btnPrintPolRptClick
         end
         object btnCustPicID: TBitBtn
-          Left = 1523
+          Left = 1589
           Top = 4
           Width = 134
           Height = 52
@@ -361,12 +361,12 @@ object frmClients: TfrmClients
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 1663
+      Width = 1729
       Height = 76
       Align = alTop
       TabOrder = 0
       DesignSize = (
-        1663
+        1729
         76)
       object Label1: TLabel
         Left = 41
@@ -487,7 +487,7 @@ object frmClients: TfrmClients
       end
       object btnExit: TBitBtn
         AlignWithMargins = True
-        Left = 1555
+        Left = 1621
         Top = 10
         Width = 92
         Height = 54
@@ -537,27 +537,28 @@ object frmClients: TfrmClients
   end
   object PanelDetail: TPanel
     Left = 0
-    Top = 397
-    Width = 1669
-    Height = 355
+    Top = 421
+    Width = 1735
+    Height = 364
     Align = alClient
     BevelOuter = bvNone
     Constraints.MinHeight = 200
     TabOrder = 1
     object SplitterBottom: TSplitter
-      Left = 687
+      Left = 813
       Top = 0
-      Height = 355
+      Height = 364
       Beveled = True
       ExplicitLeft = 651
       ExplicitTop = -2
+      ExplicitHeight = 355
     end
     object pgTransactions: TRzPageControl
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 681
-      Height = 349
+      Width = 807
+      Height = 358
       Hint = ''
       ActivePage = TabPawnTran
       Align = alLeft
@@ -575,8 +576,8 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 671
-          Height = 238
+          Width = 797
+          Height = 247
           Align = alClient
           DataSource = DM.DSTransactions
           Font.Charset = ANSI_CHARSET
@@ -731,12 +732,15 @@ object frmClients: TfrmClients
         object Panel4: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 247
-          Width = 671
+          Top = 256
+          Width = 797
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
+          DesignSize = (
+            797
+            60)
           object btnNewPawn: TBitBtn
             Left = 17
             Top = 2
@@ -816,6 +820,38 @@ object frmClients: TfrmClients
             Margin = 5
             Spacing = -5
           end
+          object btnReactivate: TBitBtn
+            Left = 630
+            Top = 2
+            Width = 158
+            Height = 50
+            Hint = 'F8'
+            Anchors = [akTop, akRight]
+            Caption = 'Reactivate Pawn'
+            ImageIndex = 51
+            ImageName = 'actChangeTranStatus'
+            Images = DM.vilMain24
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = btnReactivateClick
+          end
+          object btnChangePawnStatus: TBitBtn
+            Left = 592
+            Top = 2
+            Width = 158
+            Height = 50
+            Hint = 'F8'
+            Anchors = [akTop, akRight]
+            Caption = 'Change Pawn '#13#10'Status'
+            ImageIndex = 52
+            ImageName = 'icons8-change'
+            Images = DM.vilMain24
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+            OnClick = btnChangePawnStatusClick
+          end
         end
       end
       object TabPurchaseTran: TRzTabSheet
@@ -824,8 +860,8 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 671
-          Height = 238
+          Width = 797
+          Height = 247
           Align = alClient
           DataSource = DM.DSTransactions
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -905,8 +941,8 @@ object frmClients: TfrmClients
         object Panel5: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 247
-          Width = 671
+          Top = 256
+          Width = 797
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
@@ -985,8 +1021,8 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 671
-          Height = 238
+          Width = 797
+          Height = 247
           Align = alClient
           DataSource = DM.DSTransactions
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -1057,8 +1093,8 @@ object frmClients: TfrmClients
         object Panel6: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 247
-          Width = 671
+          Top = 256
+          Width = 797
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
@@ -1070,10 +1106,10 @@ object frmClients: TfrmClients
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            671
+            797
             60)
           object btnLayawayRcpt: TRzToolButton
-            Left = 530
+            Left = 656
             Top = 2
             Width = 131
             Height = 50
@@ -1086,6 +1122,7 @@ object frmClients: TfrmClients
             Anchors = [akTop, akRight]
             Caption = 'Print Receipt'
             OnClick = btnLayawayRcptClick
+            ExplicitLeft = 530
           end
           object btnNewLayaway: TBitBtn
             Left = 17
@@ -1163,10 +1200,10 @@ object frmClients: TfrmClients
     end
     object pgTransDetail: TRzPageControl
       AlignWithMargins = True
-      Left = 693
+      Left = 819
       Top = 3
-      Width = 973
-      Height = 349
+      Width = 913
+      Height = 358
       Hint = ''
       ActivePage = TabItems
       Align = alClient
@@ -1185,8 +1222,8 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 963
-          Height = 202
+          Width = 903
+          Height = 211
           Align = alClient
           DataSource = DM.DSPayments
           Font.Charset = ANSI_CHARSET
@@ -1321,17 +1358,17 @@ object frmClients: TfrmClients
         object Panel3: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 247
-          Width = 963
+          Top = 256
+          Width = 903
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
           DesignSize = (
-            963
+            903
             60)
           object btnPrintPayReceipt: TRzToolButton
-            Left = 758
+            Left = 698
             Top = 2
             Width = 192
             Height = 50
@@ -1416,20 +1453,20 @@ object frmClients: TfrmClients
         object pnPawnPayBalance: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 211
-          Width = 963
+          Top = 220
+          Width = 903
           Height = 30
           Align = alBottom
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
           DesignSize = (
-            959
+            899
             26)
           object lblNextPaymentInfo: TJvLinkLabel
             Left = 15
             Top = 1
-            Width = 930
+            Width = 870
             Height = 21
             Caption = 'Normal text <b>Bold text</b>'
             Text.Strings = (
@@ -1452,8 +1489,8 @@ object frmClients: TfrmClients
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 963
-          Height = 202
+          Width = 903
+          Height = 211
           Align = alClient
           DataSource = dsInvItems
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -1579,14 +1616,14 @@ object frmClients: TfrmClients
         object Panel7: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 247
-          Width = 963
+          Top = 256
+          Width = 903
           Height = 60
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
           DesignSize = (
-            963
+            903
             60)
           object bntCalcUnitcost: TRzToolButton
             Left = 268
@@ -1688,7 +1725,7 @@ object frmClients: TfrmClients
             OnClick = btnDeleteItemClick
           end
           object btnItemPictures: TRzBitBtn
-            Left = 815
+            Left = 755
             Top = 2
             Width = 145
             Height = 50
@@ -1704,20 +1741,20 @@ object frmClients: TfrmClients
         object pnPawnItemBalance: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 211
-          Width = 963
+          Top = 220
+          Width = 903
           Height = 30
           Align = alBottom
           BevelKind = bkFlat
           BevelOuter = bvNone
           TabOrder = 2
           DesignSize = (
-            959
+            899
             26)
           object lblNextPaymentInfoItems: TJvLinkLabel
             Left = 15
             Top = 1
-            Width = 930
+            Width = 870
             Height = 21
             Caption = 'Normal text <b>Bold text</b>'
             Text.Strings = (
@@ -14812,8 +14849,8 @@ object frmClients: TfrmClients
   end
   object PopMnuPawnItems: TPopupMenu
     OnPopup = PopMnuPawnItemsPopup
-    Left = 755
-    Top = 475
+    Left = 636
+    Top = 499
     object popmnuItemPawned: TMenuItem
       Caption = 'Pawned'
       OnClick = popmnuItemPawnedClick
