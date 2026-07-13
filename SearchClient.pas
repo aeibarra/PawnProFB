@@ -2172,12 +2172,14 @@ end;
 
 procedure TfrmClients.btnReactivateClick(Sender: TObject);
 begin
-  mnuPawnStatusActiveClick(Sender);
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger > 0 then
+    mnuPawnStatusActiveClick(Sender);
 end;
 
 procedure TfrmClients.btnChangePawnStatusClick(Sender: TObject);
 begin
-  mnuPawnStatusInactiveClick(Sender);
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger > 0 then
+    mnuPawnStatusInactiveClick(Sender);
 end;
 
 procedure TfrmClients.AddEditLayaway(NewRow: boolean);

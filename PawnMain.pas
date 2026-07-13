@@ -403,7 +403,7 @@ begin
 
   frmSplash.Free;
 
-  Caption := 'Pawn ' + GetVersionInfo(ParamStr(0), '');
+  Caption := 'Pawn FB - ' + GetVersionInfo(ParamStr(0), '');
 
   Self.AutoSize := true;
   Application.ProcessMessages;
