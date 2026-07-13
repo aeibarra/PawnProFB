@@ -50,12 +50,14 @@ type
   private
     VideoImage   : TVideoImage;
     OnNewFrameBusy: boolean;
+    FStopping    : boolean;   // teardown in progress: drop any late-arriving frame
     fFrameCnt    : integer;
     fSkipCnt     : integer;
     PropCtrl     : ARRAY[TVideoProperty] OF TPropertyControl;
     VideoBMPIndex: integer;
     VideoBMP     : ARRAY[0..1] OF TBitmap;   // double-buffered live frames
     procedure CleanPaintBoxVideo;
+    procedure StopCapture;
     procedure InitFrame;
     procedure OnNewFrame(Sender: TObject; Width, Height: integer;
       DataPtr: pointer);
@@ -104,6 +106,13 @@ var
   Actual    : integer;
   AutoMode  : boolean;
 begin
+  { Re-arm frame delivery: a prior Stop unhooked our callback (and set FStopping)
+    so late frames could not reach a form being torn down. Restore both before we
+    start streaming again. }
+  FStopping := false;
+  if Assigned(VideoImage) then
+    VideoImage.OnNewVideoFrame := OnNewFrame;
+
   btnStart.Enabled := false;
   btnTakePic.Enabled := true;
   btnTakePicBR.Enabled := true;
@@ -180,6 +189,14 @@ procedure TfrmCapturePicFromCamera.OnNewFrame(Sender: TObject; Width, Height: in
 begin
   { Delivered on the main thread (VFrames posts a message), so it is safe to
     touch the VCL here. We just grab the current camera frame and paint it. }
+
+  { Frames are posted to a message queue and dispatched later; one can still be
+    delivered while we are stopping/closing (the queue is pumped during
+    Stop/TakePic/Close). If we are tearing down, the target bitmaps or the
+    VideoImage may already be gone -- drop the frame instead of faulting. }
+  if FStopping or not Assigned(VideoImage) then
+    Exit;
+
   PaintBox_Video.Width := Width;
   PaintBox_Video.Height := Height;
 
@@ -193,6 +210,8 @@ begin
   OnNewFrameBusy := true;
   try
     VideoBMPIndex := 1 - VideoBMPIndex;
+    if not Assigned(VideoBMP[VideoBMPIndex]) then
+      Exit;
     VideoImage.GetBitmap(VideoBMP[VideoBMPIndex]);
     PaintBox_Video.Canvas.Draw(0, 0, VideoBMP[VideoBMPIndex]);
   finally
@@ -217,11 +236,29 @@ begin
   CleanPaintBoxVideo;
 end;
 
+{ Stop the live video safely: unhook our frame callback FIRST so no
+  already-queued frame can call back into this form while (or after) the
+  DirectShow graph is being released, then stop the graph. Safe to call more
+  than once and when the camera never started. }
+procedure TfrmCapturePicFromCamera.StopCapture;
+begin
+  FStopping := true;
+  if Assigned(VideoImage) then
+    begin
+      VideoImage.OnNewVideoFrame := nil;
+      try
+        VideoImage.VideoStop;
+      except
+        // Ignore errors stopping an already-stopped or failed graph.
+      end;
+    end;
+end;
+
 procedure TfrmCapturePicFromCamera.btnStopClick(Sender: TObject);
 begin
   Screen.Cursor := crHourGlass;
-  Application.ProcessMessages;
-  VideoImage.VideoStop;
+  StopCapture;                  // unhook callback, then stop the graph
+  Application.ProcessMessages;  // drain queued frame messages (now no-ops)
   Screen.Cursor := crDefault;
   btnStart.Enabled := true;
   btnStop.Enabled := false;
@@ -405,16 +442,11 @@ end;
 procedure TfrmCapturePicFromCamera.FormDestroy(Sender: TObject);
 begin
   { Stop and release the DirectShow graph and the frame buffers. Without this
-    every capture leaked a video graph (COM) plus two bitmaps. }
-  if Assigned(VideoImage) then
-    begin
-      try
-        VideoImage.VideoStop;
-      except
-        // Ignore errors stopping an already-stopped or failed graph.
-      end;
-      FreeAndNil(VideoImage);
-    end;
+    every capture leaked a video graph (COM) plus two bitmaps. StopCapture
+    unhooks the frame callback first, so no late frame can touch the bitmaps we
+    are about to free. }
+  StopCapture;
+  FreeAndNil(VideoImage);
 
   FreeAndNil(VideoBMP[0]);
   FreeAndNil(VideoBMP[1]);

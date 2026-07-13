@@ -199,8 +199,14 @@ begin
 end;
 
  procedure TfrmItemPictures.AdEditPicture(NewPic: boolean);
+var
+  CaptureForm: TfrmCapturePicFromCamera;
 begin
-  frmCapturePicFromCamera := TfrmCapturePicFromCamera.Create(Self);
+  { Create with no owner (not Self): if the camera teardown ever faults inside
+    Free, an owned form would be left registered under this one and the next
+    open would raise "A component named ... already exists". A nil owner + local
+    var keeps the failure contained to this call. }
+  CaptureForm := TfrmCapturePicFromCamera.Create(nil);
   try
     DoNoLoadImage := true;
     if NewPic then
@@ -208,12 +214,12 @@ begin
     else
       qryItemImages.Edit;
 
-    frmCapturePicFromCamera.ImageDesc := qryItemImagesIMAGE_DESC.AsString;
+    CaptureForm.ImageDesc := qryItemImagesIMAGE_DESC.AsString;
     Screen.Cursor := crHourGlass;
-    if frmCapturePicFromCamera.ShowModal = mrOk then
+    if CaptureForm.ShowModal = mrOk then
       begin
-        qryItemImagesIMAGE_DESC.AsString := frmCapturePicFromCamera.ImageDesc;
-        qryItemImagesIMAGE_DATA.LoadFromFile(frmCapturePicFromCamera.SavePicFileName);
+        qryItemImagesIMAGE_DESC.AsString := CaptureForm.ImageDesc;
+        qryItemImagesIMAGE_DATA.LoadFromFile(CaptureForm.SavePicFileName);
         qryItemImages.Post;
         PictureTaken := true;
 
@@ -229,9 +235,9 @@ begin
             end;
           end;
 
-        SaveImageProc(qryItemImagesIMAGES_DATA_NO.AsInteger, frmCapturePicFromCamera.SavePicFileName, qryItemImagesCREATED.AsDateTime);
+        SaveImageProc(qryItemImagesIMAGES_DATA_NO.AsInteger, CaptureForm.SavePicFileName, qryItemImagesCREATED.AsDateTime);
 
-        DeleteFile(frmCapturePicFromCamera.SavePicFileName);
+        DeleteFile(CaptureForm.SavePicFileName);
 
         DoNoLoadImage := false;
         DisplayImage(qryItemImagesIMAGES_DATA_NO.AsInteger);
@@ -243,7 +249,7 @@ begin
 
   finally
     DoNoLoadImage := false;
-    frmCapturePicFromCamera.Free;
+    CaptureForm.Free;
   end;
 end;
 

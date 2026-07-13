@@ -2234,32 +2234,39 @@ begin
 end;
 
 procedure TfrmClients.btnItemPicturesClick(Sender: TObject);
+var
+  PicForm: TfrmItemPictures;
 begin
   if qryInvItems.RecordCount = 0 then
     exit;
 
-  frmItemPictures := TfrmItemPictures.Create(self);
+  { nil owner + local var: a fault during the picture form's teardown cannot
+    leave it registered under frmClients and break the next open with
+    "A component named frmItemPictures already exists". }
+  PicForm := TfrmItemPictures.Create(nil);
   try
-    frmItemPictures.ImageTypeNo := ImageType_ItemPicture;
-    frmItemPictures.ImagRefToRowNo := qryInvItemsINV_ITEM_NO.AsInteger;
-    frmItemPictures.TicketNo := DM.qryTransactionsTRAN_TICKET_NO.AsString;
-    frmItemPictures.ItemCountInTran := GetRecNo(qryInvItems.RecNo);
-    frmItemPictures.ShowModal;
+    PicForm.ImageTypeNo := ImageType_ItemPicture;
+    PicForm.ImagRefToRowNo := qryInvItemsINV_ITEM_NO.AsInteger;
+    PicForm.TicketNo := DM.qryTransactionsTRAN_TICKET_NO.AsString;
+    PicForm.ItemCountInTran := GetRecNo(qryInvItems.RecNo);
+    PicForm.ShowModal;
 
     { Re-fetch the current item so the "Pics" indicator (a computed column on
       qryInvItems) reflects a picture that was just added. }
-    if frmItemPictures.PictureTaken then
+    if PicForm.PictureTaken then
       try
         qryInvItems.RefreshRecord;
       except
         // Non-critical: the flag updates on the next refresh if this fails.
       end;
   finally
-    frmItemPictures.Free;
+    PicForm.Free;
   end;
 end;
 
 procedure TfrmClients.btnCustPicIDClick(Sender: TObject);
+var
+  PicForm: TfrmItemPictures;
 begin
   if DM.qryCustomersCUST_NO.AsInteger <= 0 then
     begin
@@ -2267,22 +2274,23 @@ begin
       exit;
     end;
 
-  frmItemPictures := TfrmItemPictures.Create(self);
+  { nil owner + local var -- see btnItemPicturesClick. }
+  PicForm := TfrmItemPictures.Create(nil);
   try
-    frmItemPictures.ImageTypeNo := ImageType_CustomerID;
-    frmItemPictures.ImagRefToRowNo := DM.qryCustomersCUST_NO.AsInteger;
-    frmItemPictures.ShowModal;
+    PicForm.ImageTypeNo := ImageType_CustomerID;
+    PicForm.ImagRefToRowNo := DM.qryCustomersCUST_NO.AsInteger;
+    PicForm.ShowModal;
 
     { Re-fetch the current customer so the "Pics" indicator (a computed column
       on qryCustomers) reflects a picture that was just added. }
-    if frmItemPictures.PictureTaken then
+    if PicForm.PictureTaken then
       try
         DM.qryCustomers.RefreshRecord;
       except
         // Non-critical: the flag updates on the next search if this fails.
       end;
   finally
-    frmItemPictures.Free;
+    PicForm.Free;
   end;
 end;
 
