@@ -165,6 +165,11 @@ var
   ImageStorageMode: string;          // DATABASE or FILE
   ImagesStoragePath: string;          // Path for file-based storage
   IsLocalDatabase: boolean;           // True if DB is on same machine, False if remote
+  AppShuttingDown: boolean;           // Set once the main form is closing for real.
+                                      // Background workers must check this before
+                                      // touching any VCL control: the main thread has
+                                      // left its message loop by then, so the form and
+                                      // its controls may already be gone.
   GetImageProc: TGetImageProc;        // Procedure pointer for getting images
   SaveImageProc: TSaveImageProc;      // Procedure pointer for saving images
   DeleteImageProc: TDeleteImageProc;  // Procedure pointer for deleting images

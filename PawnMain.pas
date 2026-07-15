@@ -199,6 +199,8 @@ type
     procedure RefreshGoldPrice(var Msg: TMessage); Message sx_RefreshGoldPrice;
     procedure WMSettingChange(var Msg: TMessage); Message WM_SETTINGCHANGE;
     procedure InitializeImageStorage;
+  protected
+    procedure DoClose(var Action: TCloseAction); override;
   public
     { Public declarations }
   end;
@@ -263,9 +265,17 @@ var
   BackupPath, ImageBackupPath: string;
   DoImageBackup: Boolean;
   BackupDone: Boolean;
+  SaveTimerEnabled: Boolean;
   R: TBackupResult;
 begin
   CanClose := True;
+
+  // Stop the gold-price timer before anything else. The close-on-exit backup
+  // below pumps messages while it waits, so a timer tick here would spawn a
+  // fresh gold-price worker at the exact moment we are trying to shut down.
+  // Restored on the paths that abort the close.
+  SaveTimerEnabled := Timer15Min.Enabled;
+  Timer15Min.Enabled := False;
 
   BackupPath := '';
   ImageBackupPath := '';
@@ -356,6 +366,7 @@ begin
       begin
         PawnError(R.ImageError, 'Backup Images', Self);
         CanClose := False;
+        Timer15Min.Enabled := SaveTimerEnabled;
       end;
 
     finally
@@ -366,10 +377,22 @@ begin
     on E: Exception do
     begin
       CanClose := false;
+      Timer15Min.Enabled := SaveTimerEnabled;
       MsgInfo('Unable to backup: ' + E.Message);
     end;
   end;
 
+end;
+
+// Runs only once OnCloseQuery has approved the close, so this is the point of
+// no return. Flag it globally before the main thread leaves its message loop:
+// background workers key off AppShuttingDown to know that queued UI updates must
+// be dropped rather than applied to controls that are about to be destroyed.
+procedure TfrmPawnMain.DoClose(var Action: TCloseAction);
+begin
+  AppShuttingDown := True;
+  Timer15Min.Enabled := False;
+  inherited;
 end;
 
 procedure TfrmPawnMain.FormCreate(Sender: TObject);
@@ -816,7 +839,16 @@ begin
 end;
 
 procedure TfrmPawnMain.RefreshGoldPrice(var Msg: TMessage);
+const
+  // The gold display is cosmetic, so fail fast rather than let a worker linger.
+  // Without these the RTL defaults to 60s each, which is how a task ends up
+  // still in flight long after the user has closed the app.
+  GoldPriceConnectTimeoutMs  = 5000;
+  GoldPriceResponseTimeoutMs = 10000;
 begin
+  if AppShuttingDown then
+    Exit;
+
   RichEditGLdPrice.Clear;
   RichEditGLdPrice.SelAttributes.Color := clGray;
   RichEditGLdPrice.SelText := 'Loading price...';
@@ -850,6 +882,9 @@ begin
 
         LClient := TNetHTTPClient.Create(nil);
         try
+          LClient.ConnectionTimeout := GoldPriceConnectTimeoutMs;
+          LClient.ResponseTimeout   := GoldPriceResponseTimeoutMs;
+
           GoldPriceUrl := Trim(ReadIniFile(IniSecGoldPrice, IniKeyGoldPriceUrl));
           if GoldPriceUrl = '' then
             GoldPriceUrl := 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d';
@@ -935,9 +970,17 @@ begin
         LAsyncConn.Free;
       end;
 
-      TThread.Synchronize(nil, procedure
+      // Queue, never Synchronize. Synchronize blocks this worker until the main
+      // thread drains the sync queue; if the user has closed the app the main
+      // thread has already left its message loop, nobody drains it, and the
+      // worker parks forever -- which in turn hangs thread-pool finalization and
+      // leaves PawnProFB.exe alive as a windowless background process. Queue
+      // hands the update over without waiting, so the worker always exits.
+      TThread.Queue(nil, procedure
       begin
-       DisplayFormattedText(RichEditGLdPrice, TitleStatusMessage, StatusMessage, lblColorRed);
+        if AppShuttingDown then
+          Exit;
+        DisplayFormattedText(RichEditGLdPrice, TitleStatusMessage, StatusMessage, lblColorRed);
       end);
     end);
 end;

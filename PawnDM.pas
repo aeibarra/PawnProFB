@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB, FireDAC.DApt,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
   FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, System.SyncObjs;
 
 type
   TBackupPhase = (bpStarting, bpDatabase, bpImages, bpLogging, bpDone);
@@ -211,6 +211,12 @@ type
   private
     FPendingFBPasswordForIni: string;
     FDeleteLegacyFBPasswordFromIni: Boolean;
+    // Weekly image-backup audit worker. Held (not fire-and-forget) so shutdown
+    // can signal it and wait: it can run for many minutes on a store with a
+    // large image set, and it must not still be touching FireDAC or the DM's
+    // captured state while the process is tearing down.
+    FAuditThread: TThread;
+    FAuditStop: TEvent;
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
     procedure LoadLookupMemTables;
@@ -966,6 +972,11 @@ end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
+  // Created first: if anything below raises, the destructor still runs and must
+  // find a usable stop event. Manual-reset -- once shutdown is signalled it stays
+  // signalled for every wait in the audit worker.
+  FAuditStop := TEvent.Create(nil, True, False, '');
+
   SaveCustQry := DM.qryCustomers.SQL.Text;
 
   RegIniFile.Path := LocalIniFile;
@@ -1050,6 +1061,22 @@ end;
 
 procedure TDM.DataModuleDestroy(Sender: TObject);
 begin
+  // Stop the audit worker before anything else. It captures Self and owns its
+  // own TFDConnection, so it has to be fully finished before the DM's state goes
+  // away or the connection is closed underneath it. Signalling the event breaks
+  // it out of its waits promptly rather than after the full 15s/100ms sleeps.
+  if Assigned(FAuditStop) then
+    FAuditStop.SetEvent;
+
+  if Assigned(FAuditThread) then
+  begin
+    FAuditThread.Terminate;
+    FAuditThread.WaitFor;
+    FreeAndNil(FAuditThread);
+  end;
+
+  FreeAndNil(FAuditStop);
+
   // Close FB connection cleanly. Mirrors implicit ADO close.
   if ConnFB.Connected then
     ConnFB.Connected := False;
@@ -2561,7 +2588,6 @@ var
   BackupImagesPath, SourceRoot, TargetRoot: string;
   DayNo, WeekYear, WeekNo: Word;
   SettingsQuery: TFDQuery;
-  AuditThread: TThread;
 
   function ReadBackupImagesPath: string;
   begin
@@ -2579,6 +2605,9 @@ var
   end;
 
 begin
+  if Assigned(FAuditThread) then
+    Exit;
+
   if ImageStorageMode <> ImageStorageMode_File then
     Exit;
 
@@ -2602,7 +2631,7 @@ begin
   SourceRoot := IncludeTrailingPathDelimiter(ImagesStoragePath);
   TargetRoot := IncludeTrailingPathDelimiter(BackupImagesPath);
 
-  AuditThread := TThread.CreateAnonymousThread(
+  FAuditThread := TThread.CreateAnonymousThread(
     procedure
     var
       Conn: TFDConnection;
@@ -2613,6 +2642,14 @@ begin
       SourceStream, BackupStream: TFileStream;
       SourceBytes, BackupBytes: Int64;
       SourceHash, BackupHash: string;
+
+      // Every wait in this worker goes through here, so shutdown never has to sit
+      // through the remaining delay. Returns True when the app wants us gone --
+      // callers must bail out immediately.
+      function StopRequested(TimeoutMs: Cardinal): Boolean;
+      begin
+        Result := FAuditStop.WaitFor(TimeoutMs) = wrSignaled;
+      end;
 
       function BuildImagePathForRoot(const RootPath: string; AImagesDataNo: integer; AImageDate: TDateTime): string;
       begin
@@ -2644,7 +2681,9 @@ begin
       end;
 
     begin
-      Sleep(AuditDelayMs);
+      if StopRequested(AuditDelayMs) then
+        Exit;
+
       Conn := nil;
       ImageQuery := nil;
       MarkQuery := nil;
@@ -2711,7 +2750,11 @@ begin
             MarkForBackup;
           end;
 
-          Sleep(AuditThrottleMs);
+          // Doubles as the throttle and the shutdown check: bailing out here
+          // skips the week marker below, so a partial pass is retried on the next
+          // launch instead of being recorded as done.
+          if StopRequested(AuditThrottleMs) then
+            Exit;
           ImageQuery.Next;
         end;
 
@@ -2723,9 +2766,10 @@ begin
         Conn.Free;
       end;
     end);
-  AuditThread.FreeOnTerminate := True;
-  AuditThread.Priority := tpLowest;
-  AuditThread.Start;
+  // Not FreeOnTerminate: DataModuleDestroy needs a live reference to WaitFor.
+  FAuditThread.FreeOnTerminate := False;
+  FAuditThread.Priority := tpLowest;
+  FAuditThread.Start;
 end;
 
 procedure TDM.BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
