@@ -339,8 +339,8 @@ object frmClients: TfrmClients
           Hint = 'F5'
           Anchors = [akTop, akRight]
           Caption = 'Customer'#13#10'Picture ID'
-          ImageIndex = 50
-          ImageName = 'TakePictureID'
+          ImageIndex = 56
+          ImageName = 'driver-license_Color'
           Images = DM.vilMain
           ParentShowHint = False
           ShowHint = True
@@ -1848,8 +1848,8 @@ object frmClients: TfrmClients
   end
   object dsInvItems: TDataSource
     DataSet = qryInvItems
-    Left = 1000
-    Top = 518
+    Left = 1005
+    Top = 544
   end
   object PDBPoliceRep: TppDBPipeline
     DataSource = dsPoliceRepCust
@@ -14907,8 +14907,8 @@ object frmClients: TfrmClients
       '  INVENTORY_ITEMS.*'
       'FROM INVENTORY_ITEMS'
       'WHERE TRANSACTION_NO = :TRANSACTION_NO')
-    Left = 998
-    Top = 466
+    Left = 1003
+    Top = 492
     ParamData = <
       item
         Name = 'TRANSACTION_NO'
@@ -15121,8 +15121,8 @@ object frmClients: TfrmClients
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 1170
-    Top = 465
+    Left = 1175
+    Top = 491
     object qryStylesJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
       Required = True
@@ -15142,8 +15142,8 @@ object frmClients: TfrmClients
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 1170
-    Top = 521
+    Left = 1175
+    Top = 547
     object qryTypesJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
       Required = True
@@ -15163,8 +15163,8 @@ object frmClients: TfrmClients
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 1170
-    Top = 578
+    Left = 1175
+    Top = 604
     object qryMetalJ_METAL: TWideStringField
       FieldName = 'J_METAL'
       Required = True
