@@ -179,7 +179,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
       Width = 121
       Height = 29
       TabOrder = 4
-      Text = 'localhost'
+      Text = '127.0.0.1'
     end
     object edFBDBName: TEdit
       Left = 315
