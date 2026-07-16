@@ -125,7 +125,7 @@ object frmPawnProSetupMain: TfrmPawnProSetupMain
       Width = 410
       Height = 28
       TabOrder = 1
-      Text = 'localhost'
+      Text = '127.0.0.1'
     end
     object edPort: TEdit
       Left = 442

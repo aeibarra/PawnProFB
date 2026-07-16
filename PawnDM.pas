@@ -895,7 +895,9 @@ var
 begin
   IniFile := TIniFile.Create(GlobalIniFile);
   try
-    Server      := IniFile.ReadString (IniSecConnFB, IniKeyConnFBHost,     'localhost');
+    // Default 127.0.0.1, not 'localhost' -- avoids getaddrinfo(localhost) name
+    // resolution, which failed intermittently at a store (WSANO_DATA).
+    Server      := IniFile.ReadString (IniSecConnFB, IniKeyConnFBHost,     '127.0.0.1');
     Database    := IniFile.ReadString (IniSecConnFB, IniKeyConnFBDatabase, '');
     User        := IniFile.ReadString (IniSecConnFB, IniKeyConnFBUser,     'sysdba');
     PasswordEnc := IniFile.ReadString (IniSecConnFB, IniKeyPasswordEnc,    '');

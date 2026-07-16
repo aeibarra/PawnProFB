@@ -67,7 +67,9 @@ begin
 
   Ini := TIniFile.Create(IniPath);
   try
-    Host := Ini.ReadString('CONNECTION_FB', 'host', 'localhost');
+    // 127.0.0.1, not 'localhost': avoids getaddrinfo name resolution that failed
+    // intermittently at a store (WSANO_DATA).
+    Host := Ini.ReadString('CONNECTION_FB', 'host', '127.0.0.1');
     DatabasePath := Ini.ReadString('CONNECTION_FB', 'database', '');
     PasswordEnc := Ini.ReadString('CONNECTION_FB', 'password_enc', '');
     Password := Ini.ReadString('CONNECTION_FB', 'password', '');

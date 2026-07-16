@@ -71,7 +71,11 @@ begin
     // override `database` by hand. Passwords are intentionally not defaulted
     // here; PawnDM prompts for the DB password and writes password_enc via
     // Windows DPAPI when needed.
-    EnsureKey(Ini, 'CONNECTION_FB', 'host',     'localhost');
+    // 127.0.0.1, not 'localhost': a store hit intermittent getaddrinfo(localhost)
+    // failures (WSANO_DATA) where Windows could not resolve the name; a literal IP
+    // needs no name lookup. The server binds IPv4 (RemoteBindAddress=0.0.0.0), so
+    // loopback IPv4 is always the right target for a local DB.
+    EnsureKey(Ini, 'CONNECTION_FB', 'host',     '127.0.0.1');
     EnsureKey(Ini, 'CONNECTION_FB', 'database', 'C:\Pawn\PAWNDATA.FDB');
     EnsureKey(Ini, 'CONNECTION_FB', 'user',     'sysdba');
     EnsureKey(Ini, 'CONNECTION_FB', 'port',     '3050');
