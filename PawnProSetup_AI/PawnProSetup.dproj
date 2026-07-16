@@ -1,13 +1,13 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{FC24E09F-5367-4A4B-9C2A-0F3EE9DC20BB}</ProjectGuid>
+        <ProjectGuid>{B758985C-73D6-4EC1-A3C3-A9F9E6F82616}</ProjectGuid>
         <ProjectVersion>20.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">PawnProSetup</ProjectName>
-        <TargetedPlatforms>2097155</TargetedPlatforms>
+        <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
         <MainSource>PawnProSetup.dpr</MainSource>
     </PropertyGroup>
@@ -77,7 +77,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_ExeOutput>.\</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
@@ -96,7 +96,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>PawnProSetup.manifest</Manifest_File>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>soapserver;vclwinx;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;FireDACCommonODBC;IndyProtocols;vclx;dbxcds;vcledge;FmxTeeUI;FireDACSqliteDriver;DbxClientDriver;soapmidas;TeeUI;dbexpress;inet;vcltouch;fmxdae;SysToolsDR;CustomIPTransport;EssentialsDR;rbIBE2337;rbCIDE2337;IndySystem;rbBDE2337;ibxbindings;rbUSERDesign2337;dclRBIBE2337;vclFireDAC;FireDACCommon;bindcompdbx;rtl;FireDACMySQLDriver;DBXSqliteDriver;vclimg;FireDAC;inetdbxpress;xmlrtl;ibxpress;rbCloudSC2337;dsnap;vclib;fmxobj;bindcompvclsmp;SVGIconImageList;EditUtilsD;rbDB2337;rbDAD2337;SVGIconImageListRestClient;FireDACCommonDriver;rbFireDAC2337;IndyIPClient;bindcompvclwinx;dclRBDBE2337;dclRBADO2337;bindcompfmx;SysToolsDBDR;inetdb;ibmonitor;rbRIDE2337;Tee;SVGIconImageListFMX;OrpheusDBDR;vclactnband;fmxFireDAC;rbDIDE2337;DBXMySQLDriver;rbIDE2337;VclSmp;fmxase;dbrtl;rbADO2337;TeeDB;FireDACMSAccDriver;rbRTL2337;rbUSER2337;vcldsnap;DBXInterBaseDriver;OrpheusDR;Skia.Package.VCL;vcldb;rbDBE2337;bindcomp;rbRest2337;inetstn;IndyCore;RESTBackendComponents;FireDACADSDriver;RaizeComponentsVclDb;RESTComponents;vcl;IndyIPServer;dsnapxml;dsnapcon;adortl;LockBoxDR;FireDACPgDriver;tethering;EditorLocalMenuDemo;bindcompvcl;rbRCL2337;CloudService;FMXTee;soaprtl;rbRAP2337;RaizeComponentsVcl;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -105,13 +105,9 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.37.1.1;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>PawnProSetup.manifest</Manifest_File>
-        <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
-        <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_DcuOutput>.\Units\</DCC_DcuOutput>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-        <Icon_MainIcon>PawnProSetup_Icon3.ico</Icon_MainIcon>
-        <DCC_ExeOutput>.\</DCC_ExeOutput>
-        <DCC_DcuOutput>.\Units</DCC_DcuOutput>
         <VerInfo_MinorVer>37</VerInfo_MinorVer>
         <VerInfo_Release>1</VerInfo_Release>
         <VerInfo_Build>1</VerInfo_Build>
@@ -123,7 +119,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>PawnProSetup.manifest</Manifest_File>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -143,15 +139,12 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_ExeOutput>.\</DCC_ExeOutput>
-        <DCC_DcuOutput>.\Units</DCC_DcuOutput>
-        <Icon_MainIcon>PawnProSetup_Icon4.ico</Icon_MainIcon>
+        <VerInfo_MinorVer>37</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Build>1</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_WinARM64EC)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <Icon_MainIcon>PawnProSetup_Icon2.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -164,13 +157,9 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <DCC_DcuOutput>.\Units\</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Icon_MainIcon>PawnProSetup_icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>37</VerInfo_MinorVer>
-        <VerInfo_Release>1</VerInfo_Release>
-        <VerInfo_Build>3</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.37.1.3;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_WinARM64EC)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -179,16 +168,30 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="PawnProSetupMain.pas">
-            <Form>frmPawnProSetupMain</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="SetupMain.pas">
+            <Form>frmSetupMain</Form>
         </DCCReference>
+        <DCCReference Include="SetupNewInstall.pas">
+            <Form>frmSetupNewInstall</Form>
+        </DCCReference>
+        <DCCReference Include="SetupAddWorkstation.pas">
+            <Form>frmSetupAddWorkstation</Form>
+        </DCCReference>
+        <DCCReference Include="SetupRotatePassword.pas">
+            <Form>frmSetupRotatePassword</Form>
+        </DCCReference>
+        <DCCReference Include="SetupEditStore.pas">
+            <Form>frmSetupEditStore</Form>
+        </DCCReference>
+        <DCCReference Include="SetupConnection.pas"/>
+        <DCCReference Include="SetupStoreFields.pas"/>
+        <DCCReference Include="..\..\COMMON\DPAPIUtils.pas"/>
+        <DCCReference Include="..\..\COMMON\SealedBox.pas"/>
         <DCCReference Include="PawnProSetupDM.pas">
             <Form>DM</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\..\COMMON\DPAPIUtils.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -211,13 +214,13 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="5">
-                <DeployFile LocalName="Win64\Debug\PawnProSetup.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="PawnProSetup.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>PawnProSetup.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\PawnProSetup.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="PawnProSetup.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>PawnProSetup.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -1189,7 +1192,7 @@
             <Platforms>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
-                <Platform value="WinARM64EC">True</Platform>
+                <Platform value="WinARM64EC">False</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
