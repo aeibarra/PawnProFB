@@ -723,10 +723,14 @@ end;
 
 procedure TfrmPawnProSetupMain.SetFirebirdRemoteAccess(AllowRemoteAccess: Boolean);
 // Standalone lockdown is done via RemoteBindAddress, NOT RemoteAccess. Firebird
-// treats every TCP/IP connection -- including localhost -- as "remote", so
-// RemoteAccess=false would also reject PawnPro's own localhost:3050 connection.
-// RemoteBindAddress=localhost binds the listener to loopback only: other machines
-// on the LAN cannot reach the server, but the local app still connects over TCP.
+// treats every TCP/IP connection -- including loopback -- as "remote", so
+// RemoteAccess=false would also reject PawnPro's own 127.0.0.1:3050 connection.
+// RemoteBindAddress=127.0.0.1 binds the listener to IPv4 loopback only: other
+// machines on the LAN cannot reach the server, but the local app still connects
+// over TCP. Use the literal IP, not 'localhost': binding to the name can resolve
+// to ::1 (IPv6) while the client connects to 127.0.0.1 (IPv4), leaving the
+// standalone store unable to reach its own DB -- the same getaddrinfo/family
+// mismatch that made us drop 'localhost' as the client host default.
 var
   ConfPath, Trimmed: string;
   Lines: TStringList;
@@ -782,10 +786,10 @@ begin
       end
       else
       begin
-        // Standalone: restrict the listener to loopback only.
+        // Standalone: restrict the listener to IPv4 loopback only.
         if not Found then
         begin
-          Lines[I] := 'RemoteBindAddress = localhost';
+          Lines[I] := 'RemoteBindAddress = 127.0.0.1';
           Found := True;
         end
         else if (Trimmed <> '') and (Trimmed[1] <> '#') then
@@ -803,8 +807,8 @@ begin
       end
       else
       begin
-        Lines.Add('# Set by PawnProSetup (standalone store: loopback only).');
-        Lines.Add('RemoteBindAddress = localhost');
+        Lines.Add('# Set by PawnProSetup (standalone store: IPv4 loopback only).');
+        Lines.Add('RemoteBindAddress = 127.0.0.1');
       end;
     end;
 
@@ -816,7 +820,7 @@ begin
   if AllowRemoteAccess then
     Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = 0.0.0.0 (listen on all interfaces).')
   else
-    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = localhost (loopback only).');
+    Log('Updated Firebird in ' + ConfPath + ': RemoteBindAddress = 127.0.0.1 (IPv4 loopback only).');
   Log('Restart the Firebird Server service for this setting to take effect.');
 end;
 
