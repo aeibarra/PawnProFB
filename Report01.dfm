@@ -12,6 +12,7 @@ object frmReport01: TfrmReport01
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
+  OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 21
   object GroupBox1: TGroupBox
@@ -89,6 +90,13 @@ object frmReport01: TfrmReport01
       Width = 89
       Height = 21
       Caption = 'Months Late:'
+    end
+    object lblProgress: TLabel
+      Left = 230
+      Top = 51
+      Width = 78
+      Height = 21
+      Caption = 'lblProgress'
     end
     object edMonths: TRzSpinEdit
       Left = 137
@@ -248,6 +256,26 @@ object frmReport01: TfrmReport01
       DataType = dtNotKnown
       DisplayWidth = 0
       Position = 13
+      Searchable = False
+      Sortable = False
+    end
+    object DBPLatePawnppField15: TppField
+      FieldAlias = 'InterestOwed'
+      FieldName = 'InterestOwed'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 14
+      Searchable = False
+      Sortable = False
+    end
+    object DBPLatePawnppField16: TppField
+      FieldAlias = 'NextDueDate'
+      FieldName = 'NextDueDate'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 15
       Searchable = False
       Sortable = False
     end
@@ -673,6 +701,7 @@ object frmReport01: TfrmReport01
       object ppDBText7: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText7'
+        AutoSize = True
         Border.mmPadding = 0
         DataField = 'TranPawnAmount'
         DataPipeline = DBPLatePawn
@@ -686,9 +715,9 @@ object frmReport01: TfrmReport01
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 77078
+        mmLeft = 67469
         mmTop = 0
-        mmWidth = 14288
+        mmWidth = 23812
         BandType = 4
         LayerName = Foreground
       end
@@ -711,6 +740,74 @@ object frmReport01: TfrmReport01
         mmLeft = 46038
         mmTop = 0
         mmWidth = 17198
+        BandType = 4
+        LayerName = Foreground
+      end
+      object ppDBText5: TppDBText
+        DesignLayer = ppDesignLayer1
+        UserName = 'DBText5'
+        AutoSize = True
+        Border.mmPadding = 0
+        DataField = 'LatePayment'
+        DataPipeline = DBPLatePawn
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'DBPLatePawn'
+        mmHeight = 3969
+        mmLeft = 100025
+        mmTop = 0
+        mmWidth = 16934
+        BandType = 4
+        LayerName = Foreground
+      end
+      object ppDBText9: TppDBText
+        DesignLayer = ppDesignLayer1
+        UserName = 'DBText9'
+        AutoSize = True
+        Border.mmPadding = 0
+        DataField = 'InterestOwed'
+        DataPipeline = DBPLatePawn
+        DisplayFormat = '$#,0.00;($#,0.00)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'DBPLatePawn'
+        mmHeight = 3969
+        mmLeft = 129714
+        mmTop = 0
+        mmWidth = 17462
+        BandType = 4
+        LayerName = Foreground
+      end
+      object ppDBText10: TppDBText
+        DesignLayer = ppDesignLayer1
+        UserName = 'DBText10'
+        AutoSize = True
+        Border.mmPadding = 0
+        DataField = 'NextDueDate'
+        DataPipeline = DBPLatePawn
+        DisplayFormat = 'mm/dd/yyyy'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taCentered
+        Transparent = True
+        DataPipelineName = 'DBPLatePawn'
+        mmHeight = 3969
+        mmLeft = 162826
+        mmTop = 0
+        mmWidth = 17463
         BandType = 4
         LayerName = Foreground
       end
@@ -770,9 +867,9 @@ object frmReport01: TfrmReport01
           Transparent = True
           DataPipelineName = 'DBPLatePawn'
           mmHeight = 3969
-          mmLeft = 75488
+          mmLeft = 75406
           mmTop = 0
-          mmWidth = 10583
+          mmWidth = 10584
           BandType = 3
           GroupNo = 0
           LayerName = Foreground
@@ -840,6 +937,69 @@ object frmReport01: TfrmReport01
           GroupNo = 0
           LayerName = Foreground
         end
+        object ppLabel1: TppLabel
+          DesignLayer = ppDesignLayer1
+          UserName = 'Label1'
+          Border.mmPadding = 0
+          Caption = 'Next Due Date'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 10
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 162032
+          mmTop = 4233
+          mmWidth = 20638
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground
+        end
+        object ppLabel6: TppLabel
+          DesignLayer = ppDesignLayer1
+          UserName = 'Label6'
+          Border.mmPadding = 0
+          Caption = 'Interest Owed'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 10
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3968
+          mmLeft = 131234
+          mmTop = 4763
+          mmWidth = 20108
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground
+        end
+        object ppLabel9: TppLabel
+          DesignLayer = ppDesignLayer1
+          UserName = 'Label9'
+          Border.mmPadding = 0
+          Caption = 'Months Late'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 10
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3968
+          mmLeft = 104511
+          mmTop = 4763
+          mmWidth = 17991
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground
+        end
       end
       object ppGroupFooterBand1: TppGroupFooterBand
         Border.mmPadding = 0
@@ -898,19 +1058,12 @@ object frmReport01: TfrmReport01
   end
   object clnLatePawn: TClientDataSet
     Aggregates = <>
-    Filter = 'LatePayment=1'
-    Params = <
-      item
-        DataType = ftInteger
-        Name = 'Mons'
-        ParamType = ptInput
-        Value = 1
-      end>
+    Params = <>
     ProviderName = 'prvLatePawn'
     AfterScroll = clnLatePawnAfterScroll
     OnCalcFields = clnLatePawnCalcFields
     Left = 683
-    Top = 11
+    Top = 10
     object clnLatePawncFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -925,47 +1078,73 @@ object frmReport01: TfrmReport01
     end
     object clnLatePawnTransactionNo: TIntegerField
       FieldName = 'TransactionNo'
+      Origin = '"TransactionNo"'
     end
     object clnLatePawnTranTicketNo: TWideStringField
       FieldName = 'TranTicketNo'
+      Origin = '"TranTicketNo"'
       Size = 30
     end
     object clnLatePawnTranDate: TDateField
       FieldName = 'TranDate'
+      Origin = '"TranDate"'
       DisplayFormat = 'mm/dd/yyyy'
     end
     object clnLatePawnCustno: TIntegerField
       FieldName = 'Custno'
+      Origin = '"Custno"'
     end
     object clnLatePawnLatePayment: TIntegerField
       FieldName = 'LatePayment'
+      Origin = '"LatePayment"'
     end
     object clnLatePawnCustLast: TWideStringField
       FieldName = 'CustLast'
+      Origin = '"CustLast"'
       Size = 35
     end
     object clnLatePawnCustFirst: TWideStringField
       FieldName = 'CustFirst'
+      Origin = '"CustFirst"'
       Size = 35
     end
     object clnLatePawnCustMid: TWideStringField
       FieldName = 'CustMid'
+      Origin = '"CustMid"'
       Size = 1
     end
     object clnLatePawnTranPawnAmount: TFloatField
       FieldName = 'TranPawnAmount'
+      Origin = '"TranPawnAmount"'
+    end
+    object clnLatePawnTranInterest: TFloatField
+      FieldName = 'TranInterest'
+      Origin = '"TranInterest"'
     end
     object clnLatePawnCustPhCell: TWideStringField
       FieldName = 'CustPhCell'
+      Origin = '"CustPhCell"'
       Size = 14
     end
     object clnLatePawnCustPhHome: TWideStringField
       FieldName = 'CustPhHome'
+      Origin = '"CustPhHome"'
       Size = 14
     end
     object clnLatePawnCustPhBussiness: TWideStringField
       FieldName = 'CustPhBussiness'
+      Origin = '"CustPhBussiness"'
       Size = 14
+    end
+    object clnLatePawnInterestOwed: TFloatField
+      FieldName = 'InterestOwed'
+      Origin = '"InterestOwed"'
+      DisplayFormat = '$#,##0.00'
+    end
+    object clnLatePawnNextDueDate: TDateField
+      FieldName = 'NextDueDate'
+      Origin = '"NextDueDate"'
+      DisplayFormat = 'mm/dd/yyyy'
     end
   end
   object DBPPayments: TppDBPipeline
@@ -974,132 +1153,31 @@ object frmReport01: TfrmReport01
     UserName = 'DBPPayments'
     Left = 504
     Top = 11
-    object DBPPaymentsppField1: TppField
-      FieldAlias = 'PaymentNo'
-      FieldName = 'PaymentNo'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 0
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField2: TppField
-      FieldAlias = 'TransactionNo'
-      FieldName = 'TransactionNo'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 1
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField3: TppField
-      FieldAlias = 'PayDate'
-      FieldName = 'PayDate'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 2
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField4: TppField
-      FieldAlias = 'PayAmount'
-      FieldName = 'PayAmount'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 3
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField5: TppField
-      FieldAlias = 'PayComment'
-      FieldName = 'PayComment'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 4
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField6: TppField
-      FieldAlias = 'PayMethod'
-      FieldName = 'PayMethod'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 5
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField7: TppField
-      FieldAlias = 'PayInterest'
-      FieldName = 'PayInterest'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 6
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField8: TppField
-      FieldAlias = 'PayPrincipal'
-      FieldName = 'PayPrincipal'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 7
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField9: TppField
-      FieldAlias = 'PrincBalance'
-      FieldName = 'PrincBalance'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 8
-      Searchable = False
-      Sortable = False
-    end
-    object DBPPaymentsppField10: TppField
-      FieldAlias = 'InsterestBalance'
-      FieldName = 'InsterestBalance'
-      FieldLength = 0
-      DataType = dtNotKnown
-      DisplayWidth = 0
-      Position = 9
-      Searchable = False
-      Sortable = False
-    end
   end
   object spLatePawn: TFDQuery
     Connection = DM.ConnFB
     SQL.Strings = (
       'select'
-      '  TRANSACTION_NO as "TransactionNo",'
-      '  TRAN_TICKET_NO as "TranTicketNo",'
-      '  CAST(TRAN_DATE AS DATE) as "TranDate",'
-      '  CAST(LATE_PAYMENT AS INTEGER) as "LatePayment",'
-      '  CUST_NO as "Custno",'
-      '  CUST_LAST as "CustLast",'
-      '  CUST_FIRST as "CustFirst",'
-      '  CUST_MID as "CustMid",'
-      '  TRAN_PAWN_AMOUNT as "TranPawnAmount",'
-      '  CUST_PH_CELL as "CustPhCell",'
-      '  CUST_PH_HOME as "CustPhHome",'
-      '  CUST_PH_BUSINESS as "CustPhBussiness"'
-      'from REP_CUSTOMER_WITH_LATE_PAYMENTS(:Mons)')
-    Left = 603
+      '  T2.TRANSACTION_NO as "TransactionNo",'
+      '  T2.TRAN_TICKET_NO as "TranTicketNo",'
+      '  CAST(T2.TRAN_DATE AS DATE) as "TranDate",'
+      '  CAST(0 AS INTEGER) as "LatePayment",'
+      '  T1.CUST_NO as "Custno",'
+      '  T1.CUST_LAST as "CustLast",'
+      '  T1.CUST_FIRST as "CustFirst",'
+      '  T1.CUST_MID as "CustMid",'
+      '  T2.TRAN_PAWN_AMOUNT as "TranPawnAmount",'
+      '  T2.TRAN_INTEREST as "TranInterest",'
+      '  T1.CUST_PH_CELL as "CustPhCell",'
+      '  T1.CUST_PH_HOME as "CustPhHome",'
+      '  T1.CUST_PH_BUSINESS as "CustPhBussiness",'
+      '  CAST(0 AS DOUBLE PRECISION) as "InterestOwed",'
+      '  CAST(NULL AS DATE) as "NextDueDate"'
+      'from CUSTOMER T1'
+      '  join TRANSACTIONS T2 on T1.CUST_NO = T2.CUST_NO'
+      '  where T2.TRAN_TYPE = '#39'P'#39' and T2.TRAN_STATUS = '#39'A'#39
+      '  order by T1.CUST_FIRST, T1.CUST_LAST, T1.CUST_NO')
+    Left = 604
     Top = 11
-    ParamData = <
-      item
-        Name = 'Mons'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
   end
 end
