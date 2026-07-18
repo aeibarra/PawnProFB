@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 2;
+  CURRENT_DB_VERSION = 3;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -79,6 +79,38 @@ begin
     Qry.Connection := Conn;
     Qry.SQL.Text := 'SELECT 1 FROM RDB$RELATIONS WHERE RDB$RELATION_NAME = :N';
     Qry.Params.ParamByName('N').AsString := ARelationName;
+    Qry.Open;
+    Result := not Qry.Eof;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function ProcedureExists(Conn: TFDConnection; const AName: string): Boolean;
+var
+  Qry: TFDQuery;
+begin
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Conn;
+    Qry.SQL.Text := 'SELECT 1 FROM RDB$PROCEDURES WHERE RDB$PROCEDURE_NAME = :N';
+    Qry.Params.ParamByName('N').AsString := AName;
+    Qry.Open;
+    Result := not Qry.Eof;
+  finally
+    Qry.Free;
+  end;
+end;
+
+function FunctionExists(Conn: TFDConnection; const AName: string): Boolean;
+var
+  Qry: TFDQuery;
+begin
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Conn;
+    Qry.SQL.Text := 'SELECT 1 FROM RDB$FUNCTIONS WHERE RDB$FUNCTION_NAME = :N';
+    Qry.Params.ParamByName('N').AsString := AName;
     Qry.Open;
     Result := not Qry.Eof;
   finally
@@ -200,6 +232,20 @@ begin
     '  CONSTRAINT PK_EXPORT_IMAGE_PENDING PRIMARY KEY (TRANSACTION_NO))');
 end;
 
+// v3 - drop the retired late-payment report objects. Report01 now computes
+// lateness in Pascal (DM.GetInterestAndNextPaymentInfo), so neither the proc nor
+// its helper function is referenced anywhere. Mirror of
+// PawnPro_FB5_DropLatePaymentReportProc.sql. Drop the procedure first: it depends
+// on the function, and Firebird refuses to drop a function still in use.
+procedure Step3_DropLatePaymentReportProc(Conn: TFDConnection);
+begin
+  if ProcedureExists(Conn, 'REP_CUSTOMER_WITH_LATE_PAYMENTS') then
+    ExecDDL(Conn, 'DROP PROCEDURE REP_CUSTOMER_WITH_LATE_PAYMENTS');
+
+  if FunctionExists(Conn, 'FN_TRAN_WITH_LATE_PAYMENT') then
+    ExecDDL(Conn, 'DROP FUNCTION FN_TRAN_WITH_LATE_PAYMENT');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
@@ -224,7 +270,13 @@ begin
     SetDbVersion(Conn, 2);
   end;
 
-  // Future steps: if V < 3 then begin Step3_...(Conn); SetDbVersion(Conn, 3); end;
+  if V < 3 then
+  begin
+    Step3_DropLatePaymentReportProc(Conn);
+    SetDbVersion(Conn, 3);
+  end;
+
+  // Future steps: if V < 4 then begin Step4_...(Conn); SetDbVersion(Conn, 4); end;
 end;
 
 end.

@@ -433,25 +433,6 @@ SET TERM ^^ ;
  * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
 
-CREATE PROCEDURE REP_CUSTOMER_WITH_LATE_PAYMENTS (
-  MONS Integer DEFAULT 1)
- returns (
-  TRANSACTION_NO Integer, 
-  TRAN_TICKET_NO VarChar(30), 
-  TRAN_DATE Timestamp, 
-  LATE_PAYMENT SmallInt, 
-  CUST_NO Integer, 
-  CUST_LAST VarChar(35), 
-  CUST_FIRST VarChar(35), 
-  CUST_MID Char(1), 
-  CUST_PH_CELL VarChar(14), 
-  CUST_PH_HOME VarChar(14), 
-  CUST_PH_BUSINESS VarChar(14), 
-  TRAN_PAWN_AMOUNT Double Precision) AS
-BEGIN
-  EXIT;
-END ^^
-
 CREATE PROCEDURE SPI_GOLD_PRICE (
   PRICE_PER_OUNCE Decimal(10,2), 
   CURRENCY VarChar(3))
@@ -502,15 +483,6 @@ END ^^
  * -----------------------
  * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
-
-CREATE FUNCTION FN_TRAN_WITH_LATE_PAYMENT (
-  TRANSACTION_NO Integer, 
-  MONS Integer DEFAULT 1)
- RETURNS SmallInt
-AS
-BEGIN
-  RETURN NULL;
-END ^^
 
 SET TERM ; ^^
 /*******************************************************************************
@@ -579,61 +551,6 @@ SET TERM ^^ ;
  * -----------------------
  * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
-
-CREATE OR ALTER PROCEDURE REP_CUSTOMER_WITH_LATE_PAYMENTS (
-  MONS Integer DEFAULT 1)
- returns (
-  TRANSACTION_NO Integer, 
-  TRAN_TICKET_NO VarChar(30), 
-  TRAN_DATE Timestamp, 
-  LATE_PAYMENT SmallInt, 
-  CUST_NO Integer, 
-  CUST_LAST VarChar(35), 
-  CUST_FIRST VarChar(35), 
-  CUST_MID Char(1), 
-  CUST_PH_CELL VarChar(14), 
-  CUST_PH_HOME VarChar(14), 
-  CUST_PH_BUSINESS VarChar(14), 
-  TRAN_PAWN_AMOUNT Double Precision)
-SQL SECURITY INVOKER
-AS
-BEGIN
-  FOR
-    SELECT FIRST 1000
-      T2.TRANSACTION_NO,
-      T2.TRAN_TICKET_NO,
-      CAST(T2.TRAN_DATE AS TIMESTAMP),
-      1,
-      T1.CUST_NO,
-      T1.CUST_LAST,
-      T1.CUST_FIRST,
-      T1.CUST_MID,
-      T1.CUST_PH_CELL,
-      T1.CUST_PH_HOME,
-      T1.CUST_PH_BUSINESS,
-      T2.TRAN_PAWN_AMOUNT
-    FROM CUSTOMER T1
-      JOIN TRANSACTIONS T2 ON T1.CUST_NO = T2.CUST_NO
-    WHERE T2.TRAN_TYPE   = 'P'
-      AND T2.TRAN_STATUS = 'A'
-      AND FN_TRAN_WITH_LATE_PAYMENT(T2.TRANSACTION_NO, :MONS) = 1
-    ORDER BY T1.CUST_FIRST ASC, T1.CUST_LAST ASC, T1.CUST_NO ASC
-    INTO
-      :TRANSACTION_NO,
-      :TRAN_TICKET_NO,
-      :TRAN_DATE,
-      :LATE_PAYMENT,
-      :CUST_NO,
-      :CUST_LAST,
-      :CUST_FIRST,
-      :CUST_MID,
-      :CUST_PH_CELL,
-      :CUST_PH_HOME,
-      :CUST_PH_BUSINESS,
-      :TRAN_PAWN_AMOUNT
-  DO
-    SUSPEND;
-END ^^
 
 CREATE OR ALTER PROCEDURE SPI_GOLD_PRICE (
   PRICE_PER_OUNCE Decimal(10,2), 
@@ -749,29 +666,6 @@ END ^^
  * ----------------------
  * Extracted at 5/5/2026 11:58:56 AM
  ******************************************************************************/
-
-CREATE OR ALTER FUNCTION FN_TRAN_WITH_LATE_PAYMENT  (
-  TRANSACTION_NO Integer, 
-  MONS Integer DEFAULT 1)
- RETURNS SmallInt
-SQL SECURITY INVOKER
-AS
-DECLARE VARIABLE PAWN_DATE     DATE;
-  DECLARE VARIABLE LAST_PAY_DAY  DATE;
-  DECLARE VARIABLE CMP_DATE      DATE;
-BEGIN
-  SELECT TRAN_DATE       FROM TRANSACTIONS WHERE TRANSACTION_NO = :TRANSACTION_NO INTO :PAWN_DATE;
-  SELECT MAX(PAY_DATE)   FROM PAYMENTS     WHERE TRANSACTION_NO = :TRANSACTION_NO INTO :LAST_PAY_DAY;
-
-  CMP_DATE = COALESCE(:LAST_PAY_DAY, :PAWN_DATE);
-  IF (:CMP_DATE IS NULL) THEN
-    RETURN 0;
-
-  IF (ABS(DATEDIFF(MONTH FROM :CMP_DATE TO CURRENT_DATE)) > :MONS) THEN
-    RETURN 1;
-  ELSE
-    RETURN 0;
-END ^^
 
 SET TERM ; ^^
 SET TERM ^^ ;
