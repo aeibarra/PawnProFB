@@ -14,6 +14,7 @@ object frmReport02: TfrmReport02
   PopupMode = pmAuto
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 21
   object GroupBox2: TGroupBox
@@ -32,9 +33,9 @@ object frmReport02: TfrmReport02
       object rbPawnList: TRadioButton
         Left = 19
         Top = 13
-        Width = 161
+        Width = 240
         Height = 26
-        Caption = 'List of New Pawns'
+        Caption = 'List of Pawns and Purchases'
         Checked = True
         TabOrder = 0
         TabStop = True
@@ -106,10 +107,10 @@ object frmReport02: TfrmReport02
     object rbDateRange: TRzRadioButton
       Left = 59
       Top = 58
-      Width = 243
-      Height = 44
+      Width = 301
+      Height = 23
       AlignmentVertical = avCenter
-      AutoSizeWidth = 243
+      AutoSizeWidth = 301
       Caption = 'All Pawns and Purchase in Date Range.'
       Checked = True
       TabOrder = 1
@@ -185,7 +186,7 @@ object frmReport02: TfrmReport02
       '  T2.TRAN_PAWN_AMOUNT as "TranPawnAmount",'
       '  T2.TRAN_INTEREST as "TranInterest",'
       '  T2.PRINC_BALANCE as "PrincBalance",'
-      '  T2.INTEREST_BALANCE as "InsterestBalance",'
+      '  T2.TRANSACTION_NO as "TransactionNo",'
       '  T2.TRAN_DATE as "TranDate",'
       '  T2.TRAN_TIME as "TranTime",'
       '  T2.TRAN_MATURITY as "TranMaturity",'
@@ -244,8 +245,13 @@ object frmReport02: TfrmReport02
       currency = True
     end
     object qryPawnAndPurchasesInsterestBalance: TFloatField
+      FieldKind = fkCalculated
       FieldName = 'InsterestBalance'
       currency = True
+      Calculated = True
+    end
+    object qryPawnAndPurchasesTransactionNo: TIntegerField
+      FieldName = 'TransactionNo'
     end
     object qryPawnAndPurchasesTranDate: TDateField
       FieldName = 'TranDate'

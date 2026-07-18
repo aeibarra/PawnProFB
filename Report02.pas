@@ -10,7 +10,7 @@ uses
   ppCache, ppDesignLayer, ppParameter, RzLabel, RzPanel, RzRadChk,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, System.Generics.Collections;
 
 type
   TfrmReport02 = class(TForm)
@@ -33,6 +33,7 @@ type
     qryPawnAndPurchasesTranInterest: TFloatField;
     qryPawnAndPurchasesPrincBalance: TFloatField;
     qryPawnAndPurchasesInsterestBalance: TFloatField;
+    qryPawnAndPurchasesTransactionNo: TIntegerField;
     qryPawnAndPurchasesTranDate: TDateField;
     qryPawnAndPurchasesTranTime: TTimeField;
     qryPawnAndPurchasesTranMaturity: TDateField;
@@ -145,10 +146,19 @@ type
     procedure btnPrintClick(Sender: TObject);
     procedure qryTranPaymentsCalcFields(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure rbDateRangeClick(Sender: TObject);
   private
     Param_LineNo_qryPawnAndPurchases: integer;
     Param_LineNo_qryTranPayments: integer;
+    // Live interest balance is computed via the interest engine (not the stored,
+    // point-in-time TRANSACTIONS.INTEREST_BALANCE, which goes stale as interest
+    // accrues between payments). Cached per transaction: interest is "as of today"
+    // so each pawn is computed once and reused across the two-pass render.
+    FInterestByTran: TDictionary<Integer, Currency>;
+    FqryPay: TFDQuery;
+    function LiveInterestBalance(TranNo: Integer; PawnDate: TDateTime;
+      Amount, Rate: Currency): Currency;
     procedure Report_1(Preview: boolean);
     procedure Report_2(Preview: boolean);
     procedure ExecReport(Preview: boolean);
@@ -174,6 +184,35 @@ procedure TfrmReport02.FormCreate(Sender: TObject);
 begin
   Param_LineNo_qryPawnAndPurchases := qryPawnAndPurchases.SQL.IndexOf(' --<PARAMS>');
   Param_LineNo_qryTranPayments := qryTranPayments.SQL.IndexOf(' --<PARAMS>');
+
+  FInterestByTran := TDictionary<Integer, Currency>.Create;
+  FqryPay := TFDQuery.Create(Self);
+  FqryPay.Connection := DM.ConnFB;
+  FqryPay.SQL.Text :=
+    'select PAY_DATE, PAY_INTEREST, PRINC_BALANCE ' +
+    'from PAYMENTS where TRANSACTION_NO = :t order by PAY_DATE, PAYMENT_NO';
+end;
+
+procedure TfrmReport02.FormDestroy(Sender: TObject);
+begin
+  FInterestByTran.Free;
+  // FqryPay is owned by the form (Self) and freed with it.
+end;
+
+// Interest owed as of today, from the same engine the payment screen uses.
+// Cached: "as of today" is constant for this form instance, so each transaction
+// is queried once regardless of how many report rows/passes reference it.
+function TfrmReport02.LiveInterestBalance(TranNo: Integer; PawnDate: TDateTime;
+  Amount, Rate: Currency): Currency;
+begin
+  if FInterestByTran.TryGetValue(TranNo, Result) then
+    Exit;
+
+  FqryPay.Close;
+  FqryPay.ParamByName('t').AsInteger := TranNo;
+  FqryPay.Open;
+  Result := DM.GetCurrentInterestBalance(Date, PawnDate, Amount, Rate, FqryPay);
+  FInterestByTran.Add(TranNo, Result);
 end;
 
 procedure TfrmReport02.FormShow(Sender: TObject);
@@ -200,6 +239,14 @@ end;
 procedure TfrmReport02.qryPawnAndPurchasesCalcFields(DataSet: TDataSet);
 begin
   qryPawnAndPurchasescFullName.AsString := GetFullName(qryPawnAndPurchasesCustFirst.AsString,qryPawnAndPurchasesCustMid.AsString, qryPawnAndPurchasesCustLast.AsString);
+
+  // Live interest owed (engine-computed), replacing the stale stored column.
+  // Purchases carry no interest rate, so the engine returns 0 for them.
+  qryPawnAndPurchasesInsterestBalance.AsCurrency :=
+    LiveInterestBalance(qryPawnAndPurchasesTransactionNo.AsInteger,
+                        qryPawnAndPurchasesTranDate.AsDateTime,
+                        qryPawnAndPurchasesTranPawnAmount.AsCurrency,
+                        qryPawnAndPurchasesTranInterest.AsCurrency);
 end;
 
 procedure TfrmReport02.qryTranPaymentsCalcFields(DataSet: TDataSet);
@@ -216,7 +263,9 @@ begin
       begin
         lblRep1PawnAndPurchaseTitle.Caption := 'Pawn and Purchases';
         lblFromToDates.Visible := true;
-        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_DATE between ''' + FormatDateTime('yyyy-mm-dd', edFrom.Date) + ''' and ''' + FormatDateTime('yyyy-mm-dd', edTo.Date) + '''';
+        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_DATE between :FromDate and :ToDate ';
+        qryPawnAndPurchases.Params.ParamByName('FromDate').AsDate := edFrom.Date;
+        qryPawnAndPurchases.Params.ParamByName('ToDate').AsDate := edTo.Date;
       end
     else
       begin
@@ -230,7 +279,7 @@ begin
     Screen.Cursor := crDefault;
   end;
 
-  RepPawnAndPurchases.DeviceType := PrnPreview[true];
+  RepPawnAndPurchases.DeviceType := PrnPreview[Preview];
   RepPawnAndPurchases.Print;
 end;
 
@@ -256,7 +305,7 @@ begin
     Screen.Cursor := crDefault;
   end;
 
-  RepTranPayments.DeviceType := PrnPreview[true];
+  RepTranPayments.DeviceType := PrnPreview[Preview];
   RepTranPayments.Print;
 end;
 
