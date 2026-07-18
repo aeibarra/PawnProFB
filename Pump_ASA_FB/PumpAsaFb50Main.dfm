@@ -3,7 +3,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   Top = 0
   Caption = 'Pump DB From Pawn ASA to Pawn FB5'
   ClientHeight = 655
-  ClientWidth = 851
+  ClientWidth = 1038
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    851
+    1038
     655)
   TextHeight = 21
   object lblCurrentProcess: TLabel
@@ -31,7 +31,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     ParentFont = False
   end
   object btnClose: TButton
-    Left = 746
+    Left = 933
     Top = 605
     Width = 97
     Height = 42
@@ -39,6 +39,7 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
     Caption = 'Close'
     TabOrder = 0
     OnClick = btnCloseClick
+    ExplicitLeft = 746
   end
   object btnGo: TButton
     Left = 8
@@ -52,21 +53,23 @@ object frmPumpAsaFb50Main: TfrmPumpAsaFb50Main
   object MemoErrors: TMemo
     Left = 165
     Top = 247
-    Width = 678
+    Width = 865
     Height = 341
     Anchors = [akLeft, akTop, akRight, akBottom]
     Lines.Strings = (
       'MemoErrors')
     ScrollBars = ssBoth
     TabOrder = 2
+    ExplicitWidth = 678
   end
   object pnConnections: TPanel
     Left = 0
     Top = 0
-    Width = 851
+    Width = 1038
     Height = 221
     Align = alTop
     TabOrder = 3
+    ExplicitWidth = 851
     object lblAsaServer: TLabel
       Left = 179
       Top = 9

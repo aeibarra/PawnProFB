@@ -85,3 +85,4 @@ CLAUDE.md
 Tools/vendor_public.key
 Tools/vendor_secret.key
 *.key
+plugins.conf

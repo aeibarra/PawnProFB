@@ -230,8 +230,8 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
     object DBPLatePawnppField12: TppField
-      FieldAlias = 'CustPhCell'
-      FieldName = 'CustPhCell'
+      FieldAlias = 'TranInterest'
+      FieldName = 'TranInterest'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -240,8 +240,8 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
     object DBPLatePawnppField13: TppField
-      FieldAlias = 'CustPhHome'
-      FieldName = 'CustPhHome'
+      FieldAlias = 'CustPhCell'
+      FieldName = 'CustPhCell'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -250,8 +250,8 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
     object DBPLatePawnppField14: TppField
-      FieldAlias = 'CustPhBussiness'
-      FieldName = 'CustPhBussiness'
+      FieldAlias = 'CustPhHome'
+      FieldName = 'CustPhHome'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -260,8 +260,8 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
     object DBPLatePawnppField15: TppField
-      FieldAlias = 'InterestOwed'
-      FieldName = 'InterestOwed'
+      FieldAlias = 'CustPhBussiness'
+      FieldName = 'CustPhBussiness'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -270,12 +270,22 @@ object frmReport01: TfrmReport01
       Sortable = False
     end
     object DBPLatePawnppField16: TppField
+      FieldAlias = 'InterestOwed'
+      FieldName = 'InterestOwed'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 15
+      Searchable = False
+      Sortable = False
+    end
+    object DBPLatePawnppField17: TppField
       FieldAlias = 'NextDueDate'
       FieldName = 'NextDueDate'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
-      Position = 15
+      Position = 16
       Searchable = False
       Sortable = False
     end
@@ -509,7 +519,6 @@ object frmReport01: TfrmReport01
       object ppDBText2: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText2'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'TranTicketNo'
         DataPipeline = DBPLatePawn
@@ -518,10 +527,11 @@ object frmReport01: TfrmReport01
         Font.Name = 'Times New Roman'
         Font.Size = 9
         Font.Style = []
+        TextAlignment = taCentered
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 21960
+        mmLeft = 19680
         mmTop = 0
         mmWidth = 18257
         BandType = 4
@@ -701,7 +711,6 @@ object frmReport01: TfrmReport01
       object ppDBText7: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText7'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'TranPawnAmount'
         DataPipeline = DBPLatePawn
@@ -715,9 +724,9 @@ object frmReport01: TfrmReport01
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 67469
+        mmLeft = 75631
         mmTop = 0
-        mmWidth = 23812
+        mmWidth = 19903
         BandType = 4
         LayerName = Foreground
       end
@@ -739,14 +748,13 @@ object frmReport01: TfrmReport01
         mmHeight = 4498
         mmLeft = 46038
         mmTop = 0
-        mmWidth = 17198
+        mmWidth = 18766
         BandType = 4
         LayerName = Foreground
       end
       object ppDBText5: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText5'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'LatePayment'
         DataPipeline = DBPLatePawn
@@ -755,20 +763,19 @@ object frmReport01: TfrmReport01
         Font.Name = 'Times New Roman'
         Font.Size = 9
         Font.Style = []
-        TextAlignment = taRightJustified
+        TextAlignment = taCentered
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 100025
+        mmLeft = 104823
         mmTop = 0
-        mmWidth = 16934
+        mmWidth = 18007
         BandType = 4
         LayerName = Foreground
       end
       object ppDBText9: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText9'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'InterestOwed'
         DataPipeline = DBPLatePawn
@@ -782,16 +789,15 @@ object frmReport01: TfrmReport01
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 129714
+        mmLeft = 131234
         mmTop = 0
-        mmWidth = 17462
+        mmWidth = 20093
         BandType = 4
         LayerName = Foreground
       end
       object ppDBText10: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText10'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'NextDueDate'
         DataPipeline = DBPLatePawn
@@ -805,9 +811,9 @@ object frmReport01: TfrmReport01
         Transparent = True
         DataPipelineName = 'DBPLatePawn'
         mmHeight = 3969
-        mmLeft = 162826
+        mmLeft = 162257
         mmTop = 0
-        mmWidth = 17463
+        mmWidth = 20282
         BandType = 4
         LayerName = Foreground
       end

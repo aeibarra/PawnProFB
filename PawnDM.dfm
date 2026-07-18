@@ -7889,7 +7889,7 @@ object DM: TDM
     Params.Strings = (
       'Database=C:\DB\PAWNDATA.FDB'
       'User_Name=sysdba'
-      'Password=masterkey'
+      'Password=@PepitoKAKITA'
       'DriverID=FB')
     LoginPrompt = False
     Left = 35

@@ -3,7 +3,7 @@
         <ProjectGuid>{7F901A4F-048F-4BE9-BB5E-0B8ABF30B89E}</ProjectGuid>
         <MainSource>PawnProFB.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>1027</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
