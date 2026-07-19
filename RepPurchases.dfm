@@ -117,6 +117,11 @@ object frmRepPurchases: TfrmRepPurchases
         'TION_NO = T.TRANSACTION_NO) as "TotalPNWt"'
       'from TRANSACTIONS T'
       'where TRAN_TYPE = '#39'U'#39' and TRAN_DATE between :FDate and :TDate'
+
+        '  and COALESCE(TRAN_STATUS, '#39'A'#39') <> '#39'V'#39'      -- exclude voided pur' +
+        'chases'
+      '  and COALESCE(TRAN_CLOSE_REASON, 0) <> 1'
+      '  and TRAN_VOID_DATE IS NULL'
       'order by TRAN_DATE, TRANSACTION_NO')
     Left = 398
     Top = 15

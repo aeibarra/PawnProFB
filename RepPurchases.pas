@@ -73,7 +73,7 @@ implementation
 
 {$R *.dfm}
 
-uses PawnDM, GLbUtils, PawnGlobal;
+uses PawnDM, GLbUtils, PawnGlobal, uPawnDialogs;
 
 procedure TfrmRepPurchases.btnExitClick(Sender: TObject);
 begin
@@ -92,6 +92,15 @@ end;
 
 procedure TfrmRepPurchases.ExecReport(Preview: boolean);
 begin
+  // An inverted range silently produced an empty report; say so instead.
+  if edFrom.Date > edTo.Date then
+  begin
+    PawnWarn('The "From" date is after the "To" date. Please correct the date range.',
+             'Purchases Report', Self);
+    edFrom.SetFocus;
+    Exit;
+  end;
+
   Screen.Cursor := crHourGlass;
   try
     qryPruchases.Close;
@@ -102,7 +111,7 @@ begin
     Screen.Cursor := crDefault;
   end;
 
-  RepPruchases.DeviceType := PrnPreview[true];
+  RepPruchases.DeviceType := PrnPreview[Preview];
   RepPruchases.Print;
 end;
 
