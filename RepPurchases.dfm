@@ -3,8 +3,8 @@ object frmRepPurchases: TfrmRepPurchases
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Report Purchases'
-  ClientHeight = 181
-  ClientWidth = 666
+  ClientHeight = 232
+  ClientWidth = 816
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object frmRepPurchases: TfrmRepPurchases
     Left = 3
     Top = 3
     Width = 373
-    Height = 90
+    Height = 145
     TabOrder = 0
     object Label1: TLabel
       Left = 50
@@ -35,9 +35,16 @@ object frmRepPurchases: TfrmRepPurchases
       Height = 20
       Caption = 'To:'
     end
+    object Label3: TLabel
+      Left = 53
+      Top = 80
+      Width = 76
+      Height = 20
+      Caption = 'Weight unit'
+    end
     object edFrom: TRzDateTimeEdit
       Left = 50
-      Top = 40
+      Top = 43
       Width = 114
       Height = 28
       EditType = etDate
@@ -45,17 +52,24 @@ object frmRepPurchases: TfrmRepPurchases
     end
     object edTo: TRzDateTimeEdit
       Left = 193
-      Top = 40
+      Top = 43
       Width = 114
       Height = 28
       EditType = etDate
       TabOrder = 1
     end
+    object cbWeightUnit: TRzComboBox
+      Left = 50
+      Top = 103
+      Width = 145
+      Height = 28
+      TabOrder = 2
+    end
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 99
+    Top = 152
     Width = 373
     Height = 74
     TabOrder = 1
@@ -79,7 +93,7 @@ object frmRepPurchases: TfrmRepPurchases
     end
     object btnPreview: TRzBitBtn
       Left = 15
-      Top = 13
+      Top = 14
       Width = 105
       Height = 45
       Caption = 'Preview'
@@ -90,7 +104,7 @@ object frmRepPurchases: TfrmRepPurchases
       Spacing = 0
     end
     object btnPrint: TRzBitBtn
-      Left = 144
+      Left = 148
       Top = 14
       Width = 105
       Height = 45
@@ -112,19 +126,25 @@ object frmRepPurchases: TfrmRepPurchases
       '  TRAN_DATE as "TranDate",'
       '  TRAN_TICKET_NO as "TranTicketNo",'
       '  TRAN_PAWN_AMOUNT as "PurchaseAmount",'
+      '  (select SUM('
       
-        '  (select SUM(WEIGHT) from INVENTORY_ITEMS T01 where T01.TRANSAC' +
-        'TION_NO = T.TRANSACTION_NO) as "TotalPNWt"'
+        '           CASE COALESCE(T01.WEIGHT_UNIT, CAST(:DefUnit AS CHAR(' +
+        '1)))'
+      '             WHEN '#39'G'#39' THEN T01.WEIGHT / 1.55517384'
+      '             ELSE T01.WEIGHT'
+      '           END * CAST(:UnitFactor AS DOUBLE PRECISION))'
+      '   from INVENTORY_ITEMS T01'
+      '   where T01.TRANSACTION_NO = T.TRANSACTION_NO) as "TotalPNWt"'
       'from TRANSACTIONS T'
       'where TRAN_TYPE = '#39'U'#39' and TRAN_DATE between :FDate and :TDate'
-
-        '  and COALESCE(TRAN_STATUS, '#39'A'#39') <> '#39'V'#39'      -- exclude voided pur' +
-        'chases'
+      
+        '  and COALESCE(TRAN_STATUS, '#39'A'#39') <> '#39'V'#39'      -- exclude voided p' +
+        'urchases'
       '  and COALESCE(TRAN_CLOSE_REASON, 0) <> 1'
       '  and TRAN_VOID_DATE IS NULL'
       'order by TRAN_DATE, TRANSACTION_NO')
-    Left = 398
-    Top = 15
+    Left = 450
+    Top = 18
     ParamData = <
       item
         Name = 'FDate'
@@ -137,6 +157,19 @@ object frmRepPurchases: TfrmRepPurchases
         DataType = ftDate
         ParamType = ptInput
         Value = 42005d
+      end
+      item
+        Name = 'DefUnit'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 1
+        Value = 'P'
+      end
+      item
+        Name = 'UnitFactor'
+        DataType = ftFloat
+        ParamType = ptInput
+        Value = 1.00000000000000000
       end>
     object qryPruchasesTranDate: TDateField
       FieldName = 'TranDate'
@@ -154,16 +187,16 @@ object frmRepPurchases: TfrmRepPurchases
   end
   object dsPruchases: TDataSource
     DataSet = qryPruchases
-    Left = 398
-    Top = 63
+    Left = 450
+    Top = 81
   end
-  object DBPPruchases: TppDBPipeline
+  object DBPPurchases: TppDBPipeline
     DataSource = dsPruchases
     OpenDataSource = False
-    UserName = 'DBPPruchases'
-    Left = 484
-    Top = 17
-    object DBPPruchasesppField1: TppField
+    UserName = 'DBPPurchases'
+    Left = 548
+    Top = 19
+    object DBPPurchasesppField1: TppField
       FieldAlias = 'TranDate'
       FieldName = 'TranDate'
       FieldLength = 0
@@ -173,7 +206,7 @@ object frmRepPurchases: TfrmRepPurchases
       Searchable = False
       Sortable = False
     end
-    object DBPPruchasesppField2: TppField
+    object DBPPurchasesppField2: TppField
       FieldAlias = 'TranTicketNo'
       FieldName = 'TranTicketNo'
       FieldLength = 0
@@ -183,7 +216,7 @@ object frmRepPurchases: TfrmRepPurchases
       Searchable = False
       Sortable = False
     end
-    object DBPPruchasesppField3: TppField
+    object DBPPurchasesppField3: TppField
       FieldAlias = 'PurchaseAmount'
       FieldName = 'PurchaseAmount'
       FieldLength = 0
@@ -193,7 +226,7 @@ object frmRepPurchases: TfrmRepPurchases
       Searchable = False
       Sortable = False
     end
-    object DBPPruchasesppField4: TppField
+    object DBPPurchasesppField4: TppField
       FieldAlias = 'TotalPNWt'
       FieldName = 'TotalPNWt'
       FieldLength = 0
@@ -206,8 +239,7 @@ object frmRepPurchases: TfrmRepPurchases
   end
   object RepPruchases: TppReport
     AutoStop = False
-    DataPipeline = DBPPruchases
-    PassSetting = psTwoPass
+    DataPipeline = DBPPurchases
     PrinterSetup.BinName = 'Default'
     PrinterSetup.DocumentName = 'Report'
     PrinterSetup.Duplex = dpNone
@@ -302,11 +334,11 @@ object frmRepPurchases: TfrmRepPurchases
     CloudDriveSettings.OneDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
-    Left = 484
-    Top = 66
+    Left = 548
+    Top = 80
     Version = '23.02'
     mmColumnWidth = 0
-    DataPipelineName = 'DBPPruchases'
+    DataPipelineName = 'DBPPurchases'
     object ppHeaderBand1: TppHeaderBand
       Border.mmPadding = 0
       mmBottomOffset = 0
@@ -421,7 +453,7 @@ object frmRepPurchases: TfrmRepPurchases
         Transparent = True
         mmHeight = 3969
         mmLeft = 17727
-        mmTop = 21696
+        mmTop = 22266
         mmWidth = 6615
         BandType = 0
         LayerName = Foreground
@@ -441,7 +473,7 @@ object frmRepPurchases: TfrmRepPurchases
         Transparent = True
         mmHeight = 3969
         mmLeft = 45508
-        mmTop = 21696
+        mmTop = 22266
         mmWidth = 15081
         BandType = 0
         LayerName = Foreground
@@ -461,7 +493,7 @@ object frmRepPurchases: TfrmRepPurchases
         Transparent = True
         mmHeight = 3969
         mmLeft = 85196
-        mmTop = 21696
+        mmTop = 22266
         mmWidth = 11377
         BandType = 0
         LayerName = Foreground
@@ -469,6 +501,7 @@ object frmRepPurchases: TfrmRepPurchases
       object ppLabel5: TppLabel
         DesignLayer = ppDesignLayer1
         UserName = 'Label5'
+        OnGetText = ppLabel5GetText
         Border.mmPadding = 0
         Caption = 'PNWt.'
         Font.Charset = DEFAULT_CHARSET
@@ -478,10 +511,11 @@ object frmRepPurchases: TfrmRepPurchases
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
         Transparent = True
         mmHeight = 3969
         mmLeft = 116681
-        mmTop = 21696
+        mmTop = 22225
         mmWidth = 9790
         BandType = 0
         LayerName = Foreground
@@ -497,7 +531,7 @@ object frmRepPurchases: TfrmRepPurchases
         UserName = 'DBText1'
         Border.mmPadding = 0
         DataField = 'TranDate'
-        DataPipeline = DBPPruchases
+        DataPipeline = DBPPurchases
         DisplayFormat = 'mm/dd/yyyy'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -506,7 +540,7 @@ object frmRepPurchases: TfrmRepPurchases
         Font.Style = []
         TextAlignment = taCentered
         Transparent = True
-        DataPipelineName = 'DBPPruchases'
+        DataPipelineName = 'DBPPurchases'
         mmHeight = 4498
         mmLeft = 13494
         mmTop = 0
@@ -519,7 +553,7 @@ object frmRepPurchases: TfrmRepPurchases
         UserName = 'DBText2'
         Border.mmPadding = 0
         DataField = 'TranTicketNo'
-        DataPipeline = DBPPruchases
+        DataPipeline = DBPPurchases
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Name = 'Times New Roman'
@@ -527,7 +561,7 @@ object frmRepPurchases: TfrmRepPurchases
         Font.Style = []
         TextAlignment = taCentered
         Transparent = True
-        DataPipelineName = 'DBPPruchases'
+        DataPipelineName = 'DBPPurchases'
         mmHeight = 4498
         mmLeft = 41804
         mmTop = 0
@@ -540,7 +574,7 @@ object frmRepPurchases: TfrmRepPurchases
         UserName = 'DBText3'
         Border.mmPadding = 0
         DataField = 'PurchaseAmount'
-        DataPipeline = DBPPruchases
+        DataPipeline = DBPPurchases
         DisplayFormat = '$#,0.00;($#,0.00)'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -549,7 +583,7 @@ object frmRepPurchases: TfrmRepPurchases
         Font.Style = []
         TextAlignment = taRightJustified
         Transparent = True
-        DataPipelineName = 'DBPPruchases'
+        DataPipelineName = 'DBPPurchases'
         mmHeight = 4498
         mmLeft = 71967
         mmTop = 0
@@ -562,7 +596,7 @@ object frmRepPurchases: TfrmRepPurchases
         UserName = 'DBText4'
         Border.mmPadding = 0
         DataField = 'TotalPNWt'
-        DataPipeline = DBPPruchases
+        DataPipeline = DBPPurchases
         DisplayFormat = '#,0.00;-#,0.00'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -571,7 +605,7 @@ object frmRepPurchases: TfrmRepPurchases
         Font.Style = []
         TextAlignment = taRightJustified
         Transparent = True
-        DataPipelineName = 'DBPPruchases'
+        DataPipelineName = 'DBPPurchases'
         mmHeight = 4498
         mmLeft = 104246
         mmTop = 0
@@ -583,8 +617,31 @@ object frmRepPurchases: TfrmRepPurchases
     object ppSummaryBand1: TppSummaryBand
       Border.mmPadding = 0
       mmBottomOffset = 0
-      mmHeight = 14817
+      mmHeight = 4233
       mmPrintPosition = 0
+      object lblPrnTotalAmount: TppLabel
+        DesignLayer = ppDesignLayer1
+        UserName = 'lblPrnTotalAmount'
+        OnGetText = lblPrnTotalAmountGetText
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'lblPrnTotalAmount'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 3968
+        mmLeft = 71702
+        mmTop = 265
+        mmWidth = 24606
+        BandType = 7
+        LayerName = Foreground
+      end
       object ppLine2: TppLine
         DesignLayer = ppDesignLayer1
         UserName = 'Line2'
@@ -593,74 +650,31 @@ object frmRepPurchases: TfrmRepPurchases
         Weight = 0.75000000000000000
         mmHeight = 3969
         mmLeft = 0
-        mmTop = 0
+        mmTop = 264
         mmWidth = 203200
         BandType = 7
         LayerName = Foreground
       end
-      object DBCalcTotalAmount: TppDBCalc
+      object lblPrmTotalWt: TppLabel
         DesignLayer = ppDesignLayer1
-        UserName = 'DBCalcTotalAmount'
-        AutoSize = True
+        UserName = 'lblPrmTotalWt'
+        OnGetText = lblPrmTotalWtGetText
+        AutoSize = False
         Border.mmPadding = 0
-        DataField = 'PurchaseAmount'
-        DataPipeline = DBPPruchases
-        DisplayFormat = '$#,0.00;($#,0.00)'
+        Caption = 'lblPrmTotalWt'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Name = 'Times New Roman'
         Font.Size = 10
-        Font.Style = []
-        TextAlignment = taRightJustified
-        Transparent = True
-        DataPipelineName = 'DBPPruchases'
-        mmHeight = 3969
-        mmLeft = 63765
-        mmTop = 1852
-        mmWidth = 32808
-        BandType = 7
-        LayerName = Foreground
-      end
-      object DBCalcTotalPNWt: TppDBCalc
-        DesignLayer = ppDesignLayer1
-        UserName = 'DBCalcTotalPNWt'
-        Border.mmPadding = 0
-        DataField = 'TotalPNWt'
-        DataPipeline = DBPPruchases
-        DisplayFormat = '#,0.00;-#,0.00'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Times New Roman'
-        Font.Size = 10
-        Font.Style = []
-        TextAlignment = taRightJustified
-        Transparent = True
-        DataPipelineName = 'DBPPruchases'
-        mmHeight = 4498
-        mmLeft = 99748
-        mmTop = 1852
-        mmWidth = 25665
-        BandType = 7
-        LayerName = Foreground
-      end
-      object ppLabel6: TppLabel
-        DesignLayer = ppDesignLayer1
-        UserName = 'Label6'
-        OnGetText = ppLabel6GetText
-        Border.mmPadding = 0
-        Caption = 'Label6'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Times New Roman'
-        Font.Size = 10
-        Font.Style = []
+        Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
         Transparent = True
-        mmHeight = 3969
-        mmLeft = 133879
-        mmTop = 1852
-        mmWidth = 9260
+        mmHeight = 3968
+        mmLeft = 104246
+        mmTop = 265
+        mmWidth = 21167
         BandType = 7
         LayerName = Foreground
       end
