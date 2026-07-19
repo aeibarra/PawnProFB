@@ -552,13 +552,13 @@ object frmClients: TfrmClients
       Width = 807
       Height = 358
       Hint = ''
-      ActivePage = TabPawnTran
+      ActivePage = TabPurchaseTran
       Align = alLeft
       BoldCurrentTab = True
       HotTrackStyle = htsTabBar
       Images = DM.ImageListBtn
       TabHeight = 35
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 0
       OnChange = pgTransactionsChange
       FixedDimension = 35

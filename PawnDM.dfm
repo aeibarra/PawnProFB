@@ -1,8 +1,8 @@
 object DM: TDM
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Height = 788
-  Width = 1736
+  Height = 635
+  Width = 1494
   object DSCustomers: TDataSource
     DataSet = qryCustomers
     Left = 635
@@ -7893,7 +7893,7 @@ object DM: TDM
       'DriverID=FB')
     LoginPrompt = False
     Left = 35
-    Top = 32
+    Top = 31
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
     Left = 34

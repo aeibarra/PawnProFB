@@ -501,9 +501,8 @@ object frmRepPurchases: TfrmRepPurchases
       object ppLabel5: TppLabel
         DesignLayer = ppDesignLayer1
         UserName = 'Label5'
-        OnGetText = ppLabel5GetText
         Border.mmPadding = 0
-        Caption = 'PNWt.'
+        Caption = 'Weight'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Name = 'Times New Roman'
@@ -517,6 +516,27 @@ object frmRepPurchases: TfrmRepPurchases
         mmLeft = 116681
         mmTop = 22225
         mmWidth = 9790
+        BandType = 0
+        LayerName = Foreground
+      end
+      object lblCapWUnit: TppLabel
+        DesignLayer = ppDesignLayer1
+        UserName = 'lblCapWUnit'
+        OnGetText = lblCapWUnitGetText
+        Border.mmPadding = 0
+        Caption = 'lblCapWUnit'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 127854
+        mmTop = 22225
+        mmWidth = 18786
         BandType = 0
         LayerName = Foreground
       end
@@ -607,7 +627,7 @@ object frmRepPurchases: TfrmRepPurchases
         Transparent = True
         DataPipelineName = 'DBPPurchases'
         mmHeight = 4498
-        mmLeft = 104246
+        mmLeft = 105304
         mmTop = 0
         mmWidth = 21167
         BandType = 4
@@ -672,9 +692,30 @@ object frmRepPurchases: TfrmRepPurchases
         TextAlignment = taRightJustified
         Transparent = True
         mmHeight = 3968
-        mmLeft = 104246
+        mmLeft = 105304
         mmTop = 265
         mmWidth = 21167
+        BandType = 7
+        LayerName = Foreground
+      end
+      object lbllblSummaryWUnit: TppLabel
+        DesignLayer = ppDesignLayer1
+        UserName = 'lblSummaryWUnit1'
+        OnGetText = lbllblSummaryWUnitGetText
+        Border.mmPadding = 0
+        Caption = 'lblCapWUnit'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 127854
+        mmTop = 265
+        mmWidth = 18785
         BandType = 7
         LayerName = Foreground
       end

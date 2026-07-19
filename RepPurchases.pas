@@ -54,6 +54,8 @@ type
     ppSummaryBand1: TppSummaryBand;
     Label3: TLabel;
     cbWeightUnit: TRzComboBox;
+    lblCapWUnit: TppLabel;
+    lbllblSummaryWUnit: TppLabel;
     procedure FormShow(Sender: TObject);
     procedure lblFromToDates1GetText(Sender: TObject; var Text: string);
     procedure btnPreviewClick(Sender: TObject);
@@ -61,7 +63,8 @@ type
     procedure btnExitClick(Sender: TObject);
     procedure lblPrnTotalAmountGetText(Sender: TObject; var Text: string);
     procedure lblPrmTotalWtGetText(Sender: TObject; var Text: string);
-    procedure ppLabel5GetText(Sender: TObject; var Text: string);
+    procedure lblCapWUnitGetText(Sender: TObject; var Text: string);
+    procedure lbllblSummaryWUnitGetText(Sender: TObject; var Text: string);
   private
     // Totals are summed in Pascal after the query opens rather than by TppDBCalc.
     // A purchase with no inventory items yields a NULL weight; AsFloat reads that
@@ -162,15 +165,20 @@ end;
 
 procedure TfrmRepPurchases.lblPrmTotalWtGetText(Sender: TObject; var Text: string);
 begin
-  Text := FormatFloat('#,0.00;-#,0.00', FTotalWeight) + ' ' +
-          DM.GetWeightUnitAbbr(SelectedWeightUnit);
+  Text := FormatFloat('#,0.00;-#,0.00', FTotalWeight);
 end;
 
-// Weight column header follows the selected unit, so a gram figure can never be
-// misread as pennyweight.
-procedure TfrmRepPurchases.ppLabel5GetText(Sender: TObject; var Text: string);
+// The selected weight unit is shown in its own labels -- beside the column
+// heading and beside the summary total -- so a gram figure can never be misread
+// as pennyweight.
+procedure TfrmRepPurchases.lblCapWUnitGetText(Sender: TObject; var Text: string);
 begin
-  Text := 'Weight (' + DM.GetWeightUnitAbbr(SelectedWeightUnit) + ')';
+  Text := DM.GetWeightUnitAbbr(SelectedWeightUnit);
+end;
+
+procedure TfrmRepPurchases.lbllblSummaryWUnitGetText(Sender: TObject; var Text: string);
+begin
+  Text := DM.GetWeightUnitAbbr(SelectedWeightUnit);
 end;
 
 procedure TfrmRepPurchases.ExecReport(Preview: boolean);
