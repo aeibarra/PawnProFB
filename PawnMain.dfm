@@ -24,17 +24,17 @@ object frmPawnMain: TfrmPawnMain
     Left = 0
     Top = 0
     Width = 1536
-    Height = 46
+    Height = 43
     Align = alTop
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
     DesignSize = (
       1536
-      27)
+      43)
     object btnTabHome: TSpeedButton
       Left = 15
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       GroupIndex = 1
@@ -53,7 +53,7 @@ object frmPawnMain: TfrmPawnMain
     end
     object btnTabReports: TSpeedButton
       Left = 157
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       GroupIndex = 1
@@ -71,7 +71,7 @@ object frmPawnMain: TfrmPawnMain
     end
     object btnTabSettings: TSpeedButton
       Left = 228
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       GroupIndex = 1
@@ -89,14 +89,14 @@ object frmPawnMain: TfrmPawnMain
     end
     object pbUnderTabs: TPaintBox
       Left = 0
-      Top = 22
+      Top = 34
       Width = 417
       Height = 4
       OnPaint = pbUnderTabsPaint
     end
     object btnTabClient: TSpeedButton
       Left = 86
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       GroupIndex = 1
@@ -115,7 +115,7 @@ object frmPawnMain: TfrmPawnMain
     end
     object btnTabAbout: TSpeedButton
       Left = 299
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       Caption = 'About'
@@ -132,7 +132,7 @@ object frmPawnMain: TfrmPawnMain
     end
     object btnExit: TSpeedButton
       Left = 363
-      Top = 3
+      Top = 15
       Width = 56
       Height = 20
       Caption = 'E&xit'
@@ -151,14 +151,14 @@ object frmPawnMain: TfrmPawnMain
       Left = 807
       Top = 2
       Width = 654
-      Height = 42
+      Height = 39
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 0
       Margins.Bottom = 0
       TabStop = False
       Alignment = taRightJustify
-      Anchors = [akLeft, akTop, akRight]
+      Anchors = [akLeft, akTop, akRight, akBottom]
       BorderStyle = bsNone
       HideSelection = False
       Lines.Strings = (
@@ -168,16 +168,18 @@ object frmPawnMain: TfrmPawnMain
       TabOrder = 0
       Transparent = True
       Visible = False
+      ExplicitHeight = 42
     end
   end
   object pnHome: TRzPanel
     Left = 0
-    Top = 27
+    Top = 43
     Width = 1536
     Height = 78
     Align = alTop
     BorderOuter = fsNone
     TabOrder = 1
+    ExplicitTop = 46
     object btnClose: TRzToolButton
       Left = 1461
       Top = 0
@@ -208,6 +210,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoResize = False
       AutoStyle = False
@@ -320,13 +323,14 @@ object frmPawnMain: TfrmPawnMain
   end
   object pnClients: TRzPanel
     Left = 0
-    Top = 105
+    Top = 121
     Width = 1536
     Height = 78
     Align = alTop
     BorderOuter = fsNone
     TabOrder = 2
     Visible = False
+    ExplicitTop = 124
     object RzToolButton1: TRzToolButton
       Left = 1461
       Top = 0
@@ -357,6 +361,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -483,13 +488,14 @@ object frmPawnMain: TfrmPawnMain
   end
   object pnReports: TRzPanel
     Left = 0
-    Top = 183
+    Top = 199
     Width = 1536
     Height = 78
     Align = alTop
     BorderOuter = fsNone
     TabOrder = 3
     Visible = False
+    ExplicitTop = 202
     object RzToolButton2: TRzToolButton
       Left = 1461
       Top = 0
@@ -520,6 +526,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -631,13 +638,14 @@ object frmPawnMain: TfrmPawnMain
   end
   object pnSettings: TRzPanel
     Left = 0
-    Top = 261
+    Top = 277
     Width = 1536
     Height = 78
     Align = alTop
     BorderOuter = fsNone
     TabOrder = 4
     Visible = False
+    ExplicitTop = 280
     object RzToolButton3: TRzToolButton
       Left = 1461
       Top = 0
@@ -668,6 +676,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
+      Height = 78
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain

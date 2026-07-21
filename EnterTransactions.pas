@@ -429,6 +429,13 @@ begin
                   qryInsItems.Params.ParamByName('DESCRIPTION').Value := clnItemsToSelectDescription.Value;
                   qryInsItems.Params.ParamByName('GENDER').Value := clnItemsToSelectGender.Value;
                   qryInsItems.Params.ParamByName('WEIGHT_UNIT').AsString := DefaultWeightMeasureUnit;
+                  // Items copied into a new pawn are newly pawned as of this
+                  // ticket. Without this the row carries INV_ITEM_STATUS='P' but
+                  // no date, and GetPawnItemStatus - which derives the status
+                  // from the dates, not from INV_ITEM_STATUS - falls through
+                  // every branch and reports the item as blank.
+                  qryInsItems.Params.ParamByName('PAWNED_DATE').AsDate :=
+                    DM.qryTransactionsTRAN_DATE.AsDateTime;
 
                   qryInsItems.Open;
                   NewInvItemNo := qryInsItems.FieldByName('INV_ITEM_NO').AsInteger;

@@ -839,7 +839,7 @@ object frmEnterTransaction: TfrmEnterTransaction
         'ITEM_STATUS, INV_ITEM_BRAND, SERIAL_NUMBER,'
       
         '                             OWNER_APP_NUMBER, MODEL_NUMBER, DES' +
-        'CRIPTION, GENDER, WEIGHT_UNIT)'
+        'CRIPTION, GENDER, WEIGHT_UNIT, PAWNED_DATE)'
       '                     VALUES (:TRANSACTION_NO, :INV_CAT_NO,'
       
         '                             :J_TYPE, :J_STYLE, :J_METAL, :INV_I' +
@@ -849,7 +849,7 @@ object frmEnterTransaction: TfrmEnterTransaction
         ':INV_ITEM_STATUS, :INV_ITEM_BRAND, :SERIAL_NUMBER,'
       
         '                             :OWNER_APP_NUMBER, :MODEL_NUMBER, :' +
-        'DESCRIPTION, :GENDER, :WEIGHT_UNIT)'
+        'DESCRIPTION, :GENDER, :WEIGHT_UNIT, :PAWNED_DATE)'
       '                     RETURNING INV_ITEM_NO')
     Left = 813
     Top = 381

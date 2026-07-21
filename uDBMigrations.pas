@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 4;
+  CURRENT_DB_VERSION = 5;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -265,6 +265,32 @@ begin
     'ALTER TABLE STORE ALTER COLUMN DEFAULT_WEIGHT_MEASURE_UNIT SET DEFAULT ''P''');
 end;
 
+{ v5: backfill PAWNED_DATE on pawn items copied into a new ticket.
+
+  The copy-items path inserted INV_ITEM_STATUS='P' with no PAWNED_DATE, and
+  GetPawnItemStatus reads the dates rather than INV_ITEM_STATUS, so those rows
+  showed a blank status. The insert is fixed; this repairs what it already
+  wrote, dating each row to its own ticket rather than to today so back-dated
+  tickets stay honest. Guarded to rows carrying no entry date at all, so no
+  existing date is ever overwritten, and idempotent by the same condition. }
+procedure Step5_BackfillPawnedDate(Conn: TFDConnection);
+begin
+  ExecDDL(Conn,
+    'UPDATE INVENTORY_ITEMS ii ' +
+    '   SET ii.PAWNED_DATE = (SELECT t.TRAN_DATE ' +
+    '                           FROM TRANSACTIONS t ' +
+    '                          WHERE t.TRANSACTION_NO = ii.TRANSACTION_NO) ' +
+    ' WHERE ii.INV_ITEM_STATUS = ''P'' ' +
+    '   AND ii.PAWNED_DATE    IS NULL ' +
+    '   AND ii.PURCHASE_DATE  IS NULL ' +
+    '   AND ii.LAYAWAY_DATE   IS NULL ' +
+    '   AND ii.SOLD_DATE      IS NULL ' +
+    '   AND EXISTS (SELECT 1 ' +
+    '                 FROM TRANSACTIONS t ' +
+    '                WHERE t.TRANSACTION_NO = ii.TRANSACTION_NO ' +
+    '                  AND t.TRAN_DATE IS NOT NULL)');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
@@ -301,7 +327,13 @@ begin
     SetDbVersion(Conn, 4);
   end;
 
-  // Future steps: if V < 5 then begin Step5_...(Conn); SetDbVersion(Conn, 5); end;
+  if V < 5 then
+  begin
+    Step5_BackfillPawnedDate(Conn);
+    SetDbVersion(Conn, 5);
+  end;
+
+  // Future steps: if V < 6 then begin Step6_...(Conn); SetDbVersion(Conn, 6); end;
 end;
 
 end.
