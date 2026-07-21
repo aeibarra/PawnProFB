@@ -8,7 +8,7 @@ object frmPawnMain: TfrmPawnMain
   ClientHeight = 412
   ClientWidth = 1536
   Color = clBtnFace
-  Constraints.MinHeight = 114
+  Constraints.MinHeight = 133
   Constraints.MinWidth = 786
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -24,7 +24,7 @@ object frmPawnMain: TfrmPawnMain
     Left = 0
     Top = 0
     Width = 1536
-    Height = 27
+    Height = 46
     Align = alTop
     BevelOuter = bvNone
     ParentBackground = False
@@ -151,7 +151,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 807
       Top = 2
       Width = 654
-      Height = 24
+      Height = 42
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 0

@@ -99,6 +99,8 @@ const
 
   IniSecGoldPrice = 'GOLD_PRICE';
   IniKeyGoldPriceUrl = 'Url';
+  IniKeyGoldPriceKarats = 'Karats';   // e.g. 10,14,18 - blank hides the karat line
+  IniKeyGoldPriceWeightUnit = 'WeightUnit';   // G or P - blank follows the store's default
 
   IniSecImageStorage = 'IMAGE_STORAGE';
   IniKeyStorageMode = 'StorageMode';
@@ -140,6 +142,9 @@ const
 
   WeightUnitPennyweight ='P';
   WeightUnitGram        ='G';
+
+  GramsPerTroyOunce     = 31.1034768;
+  GramsPerPennyweight   = 1.55517384;   // 1 dwt = 1/20 troy oz
 
   TranStatusActive      = 'A';
   TranStatusInactive    = 'I';

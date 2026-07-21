@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 3;
+  CURRENT_DB_VERSION = 4;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -246,6 +246,25 @@ begin
     ExecDDL(Conn, 'DROP FUNCTION FN_TRAN_WITH_LATE_PAYMENT');
 end;
 
+{ v4: STORE.DEFAULT_WEIGHT_MEASURE_UNIT must hold 'P' or 'G'.
+
+  The column was created nullable with no DEFAULT, so a store that never opened
+  the settings screen can sit on NULL. That value now drives the gold price bar
+  as well as new item/stone weights, so repair the row and give the column a
+  DEFAULT so it cannot come back. A CHAR(1) written as '' reads back as a single
+  space, which the NOT IN test catches along with NULL. }
+procedure Step4_DefaultWeightMeasureUnit(Conn: TFDConnection);
+begin
+  ExecDDL(Conn,
+    'UPDATE STORE ' +
+    '   SET DEFAULT_WEIGHT_MEASURE_UNIT = ''P'' ' +
+    ' WHERE DEFAULT_WEIGHT_MEASURE_UNIT IS NULL ' +
+    '    OR DEFAULT_WEIGHT_MEASURE_UNIT NOT IN (''G'', ''P'')');
+
+  ExecDDL(Conn,
+    'ALTER TABLE STORE ALTER COLUMN DEFAULT_WEIGHT_MEASURE_UNIT SET DEFAULT ''P''');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
@@ -276,7 +295,13 @@ begin
     SetDbVersion(Conn, 3);
   end;
 
-  // Future steps: if V < 4 then begin Step4_...(Conn); SetDbVersion(Conn, 4); end;
+  if V < 4 then
+  begin
+    Step4_DefaultWeightMeasureUnit(Conn);
+    SetDbVersion(Conn, 4);
+  end;
+
+  // Future steps: if V < 5 then begin Step5_...(Conn); SetDbVersion(Conn, 5); end;
 end;
 
 end.

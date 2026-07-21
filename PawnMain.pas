@@ -785,7 +785,85 @@ begin
    end
 end;
 
-procedure DisplayFormattedText(RichEdit: TRichEdit; YellowText: string; ColoredText: string; IsRed: Boolean);
+// Resolves the unit gold prices are quoted in: [GOLD_PRICE] WeightUnit ('G' or
+// 'P'), falling back to the store's own DefaultWeightMeasureUnit when the key is
+// blank - so a pennyweight shop sees pennyweight without touching the ini.
+procedure GetGoldPriceUnit(out AGramsPerUnit: Double; out ALongName, AShortName: string);
+var
+  WeightUnit: string;
+begin
+  WeightUnit := Trim(ReadIniFile(IniSecGoldPrice, IniKeyGoldPriceWeightUnit));
+  if WeightUnit = '' then
+    WeightUnit := DefaultWeightMeasureUnit;
+
+  if SameText(WeightUnit, WeightUnitPennyweight) then
+    begin
+      AGramsPerUnit := GramsPerPennyweight;
+      ALongName := 'pennyweight';
+      AShortName := 'dwt';
+    end
+  else
+    begin
+      AGramsPerUnit := 1;
+      ALongName := 'gram';
+      AShortName := 'g';
+    end;
+end;
+
+// Builds the karat melt line, e.g. "18K $72.34/g   14K $56.26/g   10K $40.19/g".
+// Karats come from [GOLD_PRICE] Karats in PawnPro.ini so each store picks its
+// own; blank or unparseable entries yield '' and the line is simply omitted.
+// Value is pure melt - spot scaled by k/24 - with no buy percentage applied.
+function BuildKaratPriceLine(APricePerOunce: Double): string;
+var
+  KaratList: TArray<string>;
+  i, j, Karat: integer;
+  Karats: TArray<integer>;
+  Tmp: integer;
+  PricePerUnit, GramsPerUnit: Double;
+  UnitLongName, UnitShortName: string;
+begin
+  Result := '';
+
+  KaratList := Trim(ReadIniFile(IniSecGoldPrice, IniKeyGoldPriceKarats)).Split([',']);
+  SetLength(Karats, 0);
+  for i := 0 to High(KaratList) do
+    if TryStrToInt(Trim(KaratList[i]), Karat) and (Karat > 0) and (Karat <= 24) then
+      begin
+        SetLength(Karats, Length(Karats) + 1);
+        Karats[High(Karats)] := Karat;
+      end;
+
+  if Length(Karats) = 0 then
+    Exit;
+
+  // highest karat first, so the line reads down from the 24K spot above it
+  for i := 1 to High(Karats) do
+    begin
+      Tmp := Karats[i];
+      j := i - 1;
+      while (j >= 0) and (Karats[j] < Tmp) do
+        begin
+          Karats[j + 1] := Karats[j];
+          Dec(j);
+        end;
+      Karats[j + 1] := Tmp;
+    end;
+
+  GetGoldPriceUnit(GramsPerUnit, UnitLongName, UnitShortName);
+  PricePerUnit := APricePerOunce / GramsPerTroyOunce * GramsPerUnit;
+
+  for i := 0 to High(Karats) do
+    begin
+      if Result <> '' then
+        Result := Result + '   ';
+      Result := Result + Format('%dK %m/%s',
+        [Karats[i], PricePerUnit * Karats[i] / 24, UnitShortName]);
+    end;
+end;
+
+procedure DisplayFormattedText(RichEdit: TRichEdit; YellowText: string; ColoredText: string;
+  IsRed: Boolean; KaratText: string = '');
 begin
   RichEdit.Clear;
 
@@ -801,6 +879,14 @@ begin
     RichEdit.SelAttributes.Color := clGreen;
   RichEdit.SelAttributes.Style := [fsBold];
   RichEdit.SelText := ColoredText;
+
+  // Second line: karat melt values, quieter than the spot price above them
+  if KaratText <> '' then
+    begin
+      RichEdit.SelAttributes.Color := RGB(184, 134, 11);
+      RichEdit.SelAttributes.Style := [];
+      RichEdit.SelText := sLineBreak + KaratText + ' ';
+    end;
 
   RichEdit.ReadOnly := True;
 end;
@@ -845,6 +931,11 @@ const
   // still in flight long after the user has closed the app.
   GoldPriceConnectTimeoutMs  = 5000;
   GoldPriceResponseTimeoutMs = 10000;
+  // Yahoo rejects the RTL's default agent outright (400/429 depending on the
+  // edge node) and answers 200 to anything that looks like a browser. Without
+  // this the price bar shows "Error: Bad Request" and never recovers.
+  GoldPriceUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+                       '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 begin
   if AppShuttingDown then
     Exit;
@@ -862,14 +953,17 @@ begin
       LResponse: IHTTPResponse;
       LJSON: TJSONObject;
       PricePerOunce: Double;
-      TitleStatusMessage, StatusMessage: string;
+      TitleStatusMessage, StatusMessage, KaratMessage: string;
       lblColorRed: boolean;
       GoldPriceUrl: string;
       LAsyncConn: TFDConnection;
       LSaveQuery: TFDQuery;
+      GramsPerUnit: Double;
+      UnitLongName, UnitShortName: string;
     begin
       TitleStatusMessage := ' 24K Gold Price:';
       StatusMessage := 'Unable to load price.';
+      KaratMessage := '';
       lblColorRed := True;
 //      LAsyncConn := nil;
 
@@ -884,6 +978,8 @@ begin
         try
           LClient.ConnectionTimeout := GoldPriceConnectTimeoutMs;
           LClient.ResponseTimeout   := GoldPriceResponseTimeoutMs;
+          LClient.UserAgent         := GoldPriceUserAgent;
+          LClient.AcceptEncoding    := 'identity';   // no gzip: ContentAsString parses the body directly
 
           GoldPriceUrl := Trim(ReadIniFile(IniSecGoldPrice, IniKeyGoldPriceUrl));
           if GoldPriceUrl = '' then
@@ -912,7 +1008,10 @@ begin
 
               PricePerOunce := MetaObj.GetValue<Double>('regularMarketPrice');
               TitleStatusMessage := ' 24K Gold Price:';
-              StatusMessage := Format(' %m per Ounce. %m per gram. ', [PricePerOunce, (PricePerOunce / 31.1034768)]);
+              GetGoldPriceUnit(GramsPerUnit, UnitLongName, UnitShortName);
+              StatusMessage := Format(' %m per Ounce. %m per %s. ',
+                [PricePerOunce, PricePerOunce / GramsPerTroyOunce * GramsPerUnit, UnitLongName]);
+              KaratMessage := BuildKaratPriceLine(PricePerOunce);
 
               try
                 LSaveQuery := TFDQuery.Create(nil);
@@ -954,7 +1053,7 @@ begin
             end;
           end
           else
-            StatusMessage := 'Error: ' + LResponse.StatusText;
+            StatusMessage := Format(' Error %d: %s ', [LResponse.StatusCode, LResponse.StatusText]);
         finally
           LClient.Free;
         end;
@@ -980,7 +1079,7 @@ begin
       begin
         if AppShuttingDown then
           Exit;
-        DisplayFormattedText(RichEditGLdPrice, TitleStatusMessage, StatusMessage, lblColorRed);
+        DisplayFormattedText(RichEditGLdPrice, TitleStatusMessage, StatusMessage, lblColorRed, KaratMessage);
       end);
     end);
 end;

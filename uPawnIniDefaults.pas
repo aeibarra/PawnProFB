@@ -62,6 +62,10 @@ begin
     // ----- [GOLD_PRICE] -----
     EnsureKey(Ini, 'GOLD_PRICE', 'Url',
       'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d');
+    // Karats shown under the spot price, highest first. Blank hides the line.
+    EnsureKey(Ini, 'GOLD_PRICE', 'Karats', '10,14,18');
+    // G (gram) or P (pennyweight). Blank follows the store's own weight unit.
+    EnsureKey(Ini, 'GOLD_PRICE', 'WeightUnit', '');
 
     // ----- [SETTINGS] -----
     EnsureKey(Ini, 'SETTINGS', 'SHOWGOLDPRICE', 'Y');
