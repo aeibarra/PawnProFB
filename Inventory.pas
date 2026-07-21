@@ -80,6 +80,16 @@ type
     qryInvItemsJMetalDesc: TWideStringField;
     qryInvItemsStatusDesc: TWideStringField;
     qryInvItemsTotalWeight: TFloatField;
+    qryInvItemsStatusDate: TDateField;
+    qryInvItemsDaysInStatus: TIntegerField;
+    qryInvItemsPawnedDate: TDateField;
+    qryInvItemsPurchaseDate: TDateField;
+    qryInvItemsLayawayDate: TDateField;
+    qryInvItemsForSaleDate: TDateField;
+    qryInvItemsRedeemedDate: TDateField;
+    qryInvItemsDefaultedDate: TDateField;
+    qryInvItemsMeltedDate: TDateField;
+    qryInvItemsSoldDate: TDateField;
     CheckBox1: TCheckBox;
     qryStones: TFDQuery;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -104,9 +114,11 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
+    procedure dsInvItemsDataChange(Sender: TObject; Field: TField);
   private
     Param_LineNo_qryInvItems: integer;
     function GetSelectedTreeCategories: string;
+    function BuildStatusTrailHint: string;
   public
     { Public declarations }
 //    CategorySelected: integer;
@@ -120,7 +132,7 @@ var
 implementation
 
 uses PawnMain, PawnDM, EditInvCategory, EditInvItem, PawnGlobal,
-  EnterStoneInfo;
+  EnterStoneInfo, ItemHistory;
 
 {$R *.dfm}
 
@@ -371,6 +383,43 @@ begin
 //
 //  if qryStatus.Locate('Status', qryInvItemsInvItemStatus.AsString, []) then
 //    qryInvItemscStatus.AsString := qryStatusStatusDesc.AsString;
+end;
+
+// Formats the current row's status history for the grid hint. The ordering rule
+// lives in ItemHistory so the hint and the Item History form always agree; the
+// dates already loaded in the grid are reused, so hovering costs no round trip.
+function TfrmInventory.BuildStatusTrailHint: string;
+
+  function DateOf(AField: TDateField): TDateTime;
+  begin
+    if AField.IsNull then
+      Result := 0
+    else
+      Result := AField.AsDateTime;
+  end;
+
+begin
+  Result := ItemStatusTrailToText(
+    BuildItemStatusTrail(DateOf(qryInvItemsPawnedDate),
+                         DateOf(qryInvItemsPurchaseDate),
+                         DateOf(qryInvItemsLayawayDate),
+                         DateOf(qryInvItemsForSaleDate),
+                         DateOf(qryInvItemsRedeemedDate),
+                         DateOf(qryInvItemsDefaultedDate),
+                         DateOf(qryInvItemsMeltedDate),
+                         DateOf(qryInvItemsSoldDate)));
+end;
+
+procedure TfrmInventory.dsInvItemsDataChange(Sender: TObject; Field: TField);
+begin
+  // Field <> nil means a single field changed, not a row move - trail is unchanged.
+  if Field <> nil then
+    Exit;
+
+  if qryInvItems.Active and not qryInvItems.IsEmpty then
+    DBGrid1.Hint := BuildStatusTrailHint
+  else
+    DBGrid1.Hint := '';
 end;
 
 procedure TfrmInventory.qryInvItemsFilterRecord(DataSet: TDataSet;

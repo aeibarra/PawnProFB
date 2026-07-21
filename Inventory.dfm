@@ -166,7 +166,9 @@ object frmInventory: TfrmInventory
         Align = alClient
         DataSource = dsInvItems
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+        ParentShowHint = False
         ReadOnly = True
+        ShowHint = True
         TabOrder = 0
         TitleFont.Charset = ANSI_CHARSET
         TitleFont.Color = clWindowText
@@ -242,6 +244,22 @@ object frmInventory: TfrmInventory
             FieldName = 'StatusDesc'
             Title.Caption = 'Status'
             Width = 72
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'StatusDate'
+            Title.Caption = 'Status Date'
+            Width = 80
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DaysInStatus'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Days'
+            Width = 48
             Visible = True
           end
           item
@@ -595,6 +613,7 @@ object frmInventory: TfrmInventory
   end
   object dsInvItems: TDataSource
     DataSet = qryInvItems
+    OnDataChange = dsInvItemsDataChange
     Left = 259
     Top = 184
   end
@@ -672,7 +691,36 @@ object frmInventory: TfrmInventory
       '    jt.J_TYPE_DESC AS "JTypeDesc",'
       '    js.J_STYLE_DESC AS "JStyleDesc",'
       '    jm.J_METAL_DESC AS "JMetalDesc",'
-      '    ist.STATUS_DESC AS "StatusDesc"'
+      '    ist.STATUS_DESC AS "StatusDesc",'
+      '    CASE ii.INV_ITEM_STATUS'
+      '      WHEN '#39'P'#39' THEN ii.PAWNED_DATE'
+      '      WHEN '#39'L'#39' THEN ii.LAYAWAY_DATE'
+      '      WHEN '#39'D'#39' THEN ii.SOLD_DATE'
+      '      WHEN '#39'R'#39' THEN ii.REDEEMED_DATE'
+      '      WHEN '#39'C'#39' THEN ii.MELTED_DATE'
+
+        '      WHEN '#39'S'#39' THEN COALESCE(ii.FORSALE_DATE, ii.PURCHASE_' +
+        'DATE)'
+      '    END AS "StatusDate",'
+      '    CAST(DATEDIFF(DAY FROM'
+      '      CASE ii.INV_ITEM_STATUS'
+      '        WHEN '#39'P'#39' THEN ii.PAWNED_DATE'
+      '        WHEN '#39'L'#39' THEN ii.LAYAWAY_DATE'
+      '        WHEN '#39'D'#39' THEN ii.SOLD_DATE'
+      '        WHEN '#39'R'#39' THEN ii.REDEEMED_DATE'
+      '        WHEN '#39'C'#39' THEN ii.MELTED_DATE'
+
+        '        WHEN '#39'S'#39' THEN COALESCE(ii.FORSALE_DATE, ii.PURCHAS' +
+        'E_DATE)'
+      '      END TO CURRENT_DATE) AS INTEGER) AS "DaysInStatus",'
+      '    ii.PAWNED_DATE AS "PawnedDate",'
+      '    ii.PURCHASE_DATE AS "PurchaseDate",'
+      '    ii.LAYAWAY_DATE AS "LayawayDate",'
+      '    ii.FORSALE_DATE AS "ForSaleDate",'
+      '    ii.REDEEMED_DATE AS "RedeemedDate",'
+      '    ii.DEFAULTED_DATE AS "DefaultedDate",'
+      '    ii.MELTED_DATE AS "MeltedDate",'
+      '    ii.SOLD_DATE AS "SoldDate"'
       'FROM INVENTORY_ITEMS ii'
       'LEFT JOIN J_TYPES jt ON ii.J_TYPE = jt.J_TYPE'
       'LEFT JOIN J_STYLES js ON ii.J_STYLE = js.J_STYLE'
@@ -825,6 +873,56 @@ object frmInventory: TfrmInventory
     end
     object qryInvItemsTotalWeight: TFloatField
       FieldName = 'TotalWeight'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsStatusDate: TDateField
+      FieldName = 'StatusDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsDaysInStatus: TIntegerField
+      FieldName = 'DaysInStatus'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsPawnedDate: TDateField
+      FieldName = 'PawnedDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsPurchaseDate: TDateField
+      FieldName = 'PurchaseDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsLayawayDate: TDateField
+      FieldName = 'LayawayDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsForSaleDate: TDateField
+      FieldName = 'ForSaleDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsRedeemedDate: TDateField
+      FieldName = 'RedeemedDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsDefaultedDate: TDateField
+      FieldName = 'DefaultedDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsMeltedDate: TDateField
+      FieldName = 'MeltedDate'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object qryInvItemsSoldDate: TDateField
+      FieldName = 'SoldDate'
       ProviderFlags = []
       ReadOnly = True
     end

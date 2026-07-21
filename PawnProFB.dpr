@@ -65,7 +65,8 @@ uses
   ImagesStorageSettings in 'ImagesStorageSettings.pas' {frmImagesStorageSettings},
   uPawnDialogs in 'uPawnDialogs.pas',
   BackupInProgress in 'BackupInProgress.pas' {frmBackupInProgress},
-  PawnChangeStatus in 'PawnChangeStatus.pas' {frmPawnChangeStatus};
+  PawnChangeStatus in 'PawnChangeStatus.pas' {frmPawnChangeStatus},
+  ItemHistory in 'ItemHistory.pas' {frmItemHistory};
 
 {$R *.RES}
 

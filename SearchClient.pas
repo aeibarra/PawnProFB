@@ -825,6 +825,7 @@ type
     qryInvItemscMetal: TWideStringField;
     qryInvItemscTotalWeight: TFloatField;
     qryInvItemscStatus: TWideStringField;
+    qryInvItemscStatusDate: TDateField;
     qryInvItemscHasPics: TWideStringField;
     qryStyles: TFDMemTable;
     qryTypes: TFDMemTable;
@@ -838,6 +839,8 @@ type
     btnCustPicID: TBitBtn;
     btnReactivate: TBitBtn;
     btnChangePawnStatus: TBitBtn;
+    N4: TMenuItem;
+    popItemHistory: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -929,6 +932,7 @@ type
     procedure mnuReOpenLayawayClick(Sender: TObject);
     procedure btnReactivateClick(Sender: TObject);
     procedure btnChangePawnStatusClick(Sender: TObject);
+    procedure popItemHistoryClick(Sender: TObject);
   private
     LastThreeKeys: TKeyQueue;
     ScanningCard, PreHeaderDetected: boolean;
@@ -945,8 +949,8 @@ type
     procedure PopulateFieldsWithDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);
     procedure ProcessAndShowBarcodeData;
     procedure AddEditTransaction(NewTransaction: boolean);
-    function GetPawnItemStatus: string;
-    function GetItemAction: string;
+    function GetPawnItemStatus(out AStatusDate: TDateTime): string;
+    function GetItemAction(out AActionDate: TDateTime): string;
     procedure UpdateStatusOnSelectedItemInPopUp(TransactionNo, ItemNo: integer;
       const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     procedure GetPaymentDueDateBalanceMessage;
@@ -971,7 +975,8 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPayment, CardReader, EditInvItem, Entertems,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
-  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, uPawnDialogs;
+  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, uPawnDialogs,
+  ItemHistory;
 
 {$R *.DFM}
 
@@ -1641,52 +1646,85 @@ begin
   AddEditLayaway(false);
 end;
 
-function TfrmClients.GetItemAction: string;
+// AActionDate returns the date belonging to the action reported, 0 when none.
+function TfrmClients.GetItemAction(out AActionDate: TDateTime): string;
 begin
   Result := '';
+  AActionDate := 0;
   if not qryInvItemsMELTED_DATE.IsNull then
-    Result := PawnItemStatus_Melted
+    begin
+      Result := PawnItemStatus_Melted;
+      AActionDate := qryInvItemsMELTED_DATE.AsDateTime;
+    end
   else if not qryInvItemsFORSALE_DATE.IsNull then
-    Result := PawnItemStatus_ForSale;
+    begin
+      Result := PawnItemStatus_ForSale;
+      AActionDate := qryInvItemsFORSALE_DATE.AsDateTime;
+    end;
 end;
 
-function TfrmClients.GetPawnItemStatus: string;
+// AStatusDate returns the date column that produced the status reported, so the
+// two always agree. 0 when the item carries no date for its status.
+function TfrmClients.GetPawnItemStatus(out AStatusDate: TDateTime): string;
 begin
+  AStatusDate := 0;
+
   if qryInvItemsINV_ITEM_STATUS.AsString = TranForSale then
     begin
       Result := PawnItemStatus_ForSale;
+      if not qryInvItemsFORSALE_DATE.IsNull then
+        AStatusDate := qryInvItemsFORSALE_DATE.AsDateTime
+      else if not qryInvItemsPURCHASE_DATE.IsNull then
+        AStatusDate := qryInvItemsPURCHASE_DATE.AsDateTime;
     end
   else if not qryInvItemsPAWNED_DATE.IsNull then
     begin
       if not qryInvItemsREDEEMED_DATE.IsNull then
         begin
           Result := PawnItemStatus_Redeemed;
+          AStatusDate := qryInvItemsREDEEMED_DATE.AsDateTime;
         end
       else if not qryInvItemsDEFAULTED_DATE.IsNull then
         begin
-          Result := GetItemAction;
+          Result := GetItemAction(AStatusDate);
           if Result = '' then
-            Result := PawnItemStatus_Defaulted;
+            begin
+              Result := PawnItemStatus_Defaulted;
+              AStatusDate := qryInvItemsDEFAULTED_DATE.AsDateTime;
+            end;
         end
       else
-        Result := PawnItemStatus_Pawned;
+        begin
+          Result := PawnItemStatus_Pawned;
+          AStatusDate := qryInvItemsPAWNED_DATE.AsDateTime;
+        end;
     end
   else if not qryInvItemsPURCHASE_DATE.IsNull then
     begin
-      Result := GetItemAction;
+      Result := GetItemAction(AStatusDate);
       if Result = '' then
-        Result := 'Purchased';
+        begin
+          Result := 'Purchased';
+          AStatusDate := qryInvItemsPURCHASE_DATE.AsDateTime;
+        end;
     end
   else if not qryInvItemsLAYAWAY_DATE.IsNull then
     begin
       if not qryInvItemsSOLD_DATE.IsNull then
-        Result := PawnItemStatus_Sold
+        begin
+          Result := PawnItemStatus_Sold;
+          AStatusDate := qryInvItemsSOLD_DATE.AsDateTime;
+        end
       else
-        Result := PawnItemStatus_Layaway;
+        begin
+          Result := PawnItemStatus_Layaway;
+          AStatusDate := qryInvItemsLAYAWAY_DATE.AsDateTime;
+        end;
     end
   else if not qryInvItemsSOLD_DATE.IsNull then
     begin
       Result := PawnItemStatus_Sold;
+      AStatusDate := qryInvItemsSOLD_DATE.AsDateTime;
     end;
 end;
 
@@ -1829,6 +1867,8 @@ begin
 end;
 
 procedure TfrmClients.qryInvItemsCalcFields(DataSet: TDataSet);
+var
+  StatusDate: TDateTime;
 begin
   qryInvItemscTotalWeight.AsFloat := qryInvItemsINV_ITEM_COUNT.AsInteger * qryInvItemsWEIGHT.AsFloat;
 
@@ -1841,7 +1881,11 @@ begin
   if qryMetal.Locate('J_METAL', qryInvItemsJ_METAL.AsString, []) then
     qryInvItemscMetal.AsString := qryMetalJ_METAL_DESC.AsString;
 
-  qryInvItemscStatus.AsString := GetPawnItemStatus;
+  qryInvItemscStatus.AsString := GetPawnItemStatus(StatusDate);
+  if StatusDate = 0 then
+    qryInvItemscStatusDate.Clear
+  else
+    qryInvItemscStatusDate.AsDateTime := StatusDate;
 
   if qryInvItemsHAS_PICS.AsBoolean then
     qryInvItemscHasPics.AsString := 'X'
@@ -2408,6 +2452,12 @@ begin
 //  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, null, null, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshFBQry(qryInvItems);
+end;
+
+procedure TfrmClients.popItemHistoryClick(Sender: TObject);
+begin
+  if qryInvItems.Active and not qryInvItems.IsEmpty then
+    ShowItemHistory(qryInvItemsINV_ITEM_NO.AsInteger, gridItems);
 end;
 
 procedure TfrmClients.popmnuItemDefaultedClick(Sender: TObject);

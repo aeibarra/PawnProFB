@@ -552,13 +552,13 @@ object frmClients: TfrmClients
       Width = 807
       Height = 358
       Hint = ''
-      ActivePage = TabPurchaseTran
+      ActivePage = TabPawnTran
       Align = alLeft
       BoldCurrentTab = True
       HotTrackStyle = htsTabBar
       Images = DM.ImageListBtn
       TabHeight = 35
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 0
       OnChange = pgTransactionsChange
       FixedDimension = 35
@@ -1514,6 +1514,15 @@ object frmClients: TfrmClients
               Visible = True
             end
             item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'cStatusDate'
+              Title.Alignment = taCenter
+              Title.Caption = 'Status Date'
+              Width = 75
+              Visible = True
+            end
+            item
               Expanded = False
               FieldName = 'INV_ITEM_COUNT'
               Title.Caption = 'Quantity'
@@ -1523,7 +1532,9 @@ object frmClients: TfrmClients
             item
               Expanded = False
               FieldName = 'UNIT_COST'
+              Title.Alignment = taCenter
               Title.Caption = 'Cost'
+              Width = 71
               Visible = True
             end
             item
@@ -1551,7 +1562,7 @@ object frmClients: TfrmClients
               Expanded = False
               FieldName = 'DESCRIPTION'
               Title.Caption = 'Description'
-              Width = 191
+              Width = 144
               Visible = True
             end
             item
@@ -1585,21 +1596,12 @@ object frmClients: TfrmClients
             item
               Expanded = False
               FieldName = 'NOTE'
+              Width = 480
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'CREATED'
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'INV_ITEM_STATUS'
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'INV_ITEM_NO'
               Visible = True
             end>
         end
@@ -14839,8 +14841,8 @@ object frmClients: TfrmClients
   end
   object PopMnuPawnItems: TPopupMenu
     OnPopup = PopMnuPawnItemsPopup
-    Left = 636
-    Top = 499
+    Left = 1445
+    Top = 497
     object popmnuItemPawned: TMenuItem
       Caption = 'Pawned'
       OnClick = popmnuItemPawnedClick
@@ -14866,6 +14868,13 @@ object frmClients: TfrmClients
     object popmnuItemForSale: TMenuItem
       Caption = 'For Sale'
       OnClick = popmnuItemForSaleClick
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object popItemHistory: TMenuItem
+      Caption = 'View Item status History'
+      OnClick = popItemHistoryClick
     end
   end
   object PopMnuLayaway: TPopupMenu
@@ -14942,6 +14951,11 @@ object frmClients: TfrmClients
       FieldKind = fkCalculated
       FieldName = 'cStatus'
       Size = 50
+      Calculated = True
+    end
+    object qryInvItemscStatusDate: TDateField
+      FieldKind = fkCalculated
+      FieldName = 'cStatusDate'
       Calculated = True
     end
     object qryInvItemscHasPics: TWideStringField

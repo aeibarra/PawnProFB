@@ -217,6 +217,7 @@
         <VerInfo_Build>1</VerInfo_Build>
         <UWP_DelphiLogo44>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo150>
+        <Icon_MainIcon>PawnPro.Artwork\Windows\AppIcon.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_WinARM64EC)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -375,6 +376,10 @@
             <Form>frmPawnChangeStatus</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="ItemHistory.pas">
+            <Form>frmItemHistory</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -429,13 +434,13 @@
                 </DeployFile>
                 <DeployFile LocalName="PawnPro.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="PawnPro.exe" Configuration="Release" Class="ProjectOutput"/>
-                <DeployFile LocalName="PawnProFB.exe" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="PawnProFB.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>PawnProFB.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="\PawnProFB.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="PawnProFB.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>PawnProFB.exe</RemoteName>
                         <Overwrite>true</Overwrite>
