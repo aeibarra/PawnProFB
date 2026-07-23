@@ -521,7 +521,17 @@ begin
 
   DM.ReCalcMaturity := true;
 
-  PropertyStore.Load;
+  // PropertyStore persists to DM.RegIniFile (%LOCALAPPDATA%\PawnPro). On a
+  // machine where that write occasionally fails (roaming profile, AV lock),
+  // a raise here would abort the constructor -> auto-destruct -> and the
+  // half-built form is left registered under its owner, so the NEXT open dies
+  // with "A component named frmEnterTransaction already exists". The remembered
+  // checkbox state is cosmetic; never let it take the form down.
+  try
+    PropertyStore.Load;
+  except
+    // ignore - open with default state rather than fail to open at all
+  end;
 
   SelectedItemList := TStringList.Create;
 end;
@@ -531,7 +541,16 @@ begin
   DM.ReCalcMaturity := false;
 
   SelectedItemList.Free;
-  PropertyStore.Save;
+
+  // Must not raise: OnDestroy runs before the form is unlinked from its owner,
+  // so an exception here leaves an orphan named frmEnterTransaction registered
+  // under frmClients, and the next open fails with "already exists". See the
+  // matching guard in FormCreate.
+  try
+    PropertyStore.Save;
+  except
+    // losing the persisted checkbox state is harmless; orphaning the form isn't
+  end;
 end;
 
 procedure TfrmEnterTransaction.dbGridItemsDrawColumnCell(Sender: TObject;
