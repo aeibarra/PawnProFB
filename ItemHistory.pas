@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, RzLabel,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, FireDAC.Stan.Param, Data.DB;
 
 type
   // One step of an item's life: the status it reached and when.
