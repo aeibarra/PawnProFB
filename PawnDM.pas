@@ -1023,6 +1023,14 @@ begin
 
   CheckForMissingDBChanges;
 
+  // Record which build is running this store. Written every startup (single
+  // upsert) so support can answer "what version is this store on?" from the DB
+  // instead of guessing. Never let version bookkeeping block startup.
+  try
+    SetAppStateText(AppStateKeyAppVersion, GetBuildStamp);
+  except
+  end;
+
   QryStates.Open;
   QryStates.Last;
   QryStates.First;

@@ -735,8 +735,7 @@ begin
     frmSplash.lblStorePhone.Visible := true;
     frmSplash.lblClientsCount.Visible := true;
     frmSplash.lblCaptionClientsCount.Visible := true;
-//    frmSplash.StVersionInfo.FileName := ''; //////////ParamStr(0);
-//    frmSplash.st_Msg.Caption := 'Version ' + frmSplash.StVersionInfo.FileVersion;
+    frmSplash.st_Msg.Caption := GetBuildStamp;
     frmSplash.ShowCustomersCount;
     frmSplash.ShowModal;
   finally

@@ -76,6 +76,12 @@ images/
 # Firebird client log written to the working dir on connection errors
 firebird.log
 
+# Generated at build time by GenerateBuildInfo.ps1 (project pre-build step).
+# Not committed: it changes every build, and committing it would make even a
+# clean release build stamp a false "+" dirty marker. Fresh checkouts get it
+# from the pre-build step before the compiler needs it.
+BuildInfo.inc
+
 # Claude Code / AI assistant local files
 .claude/
 CLAUDE.md
