@@ -195,8 +195,12 @@ type
     procedure pbUnderTabsPaint(Sender: TObject);
   private
     SaveOriPaintboxColor: TColor;
+    // Latest fire-and-forget gold-price fetch. Held so shutdown can join it
+    // before DM/FireDAC are torn down -- see WaitForGoldPriceTaskShutdown.
+    FGoldPriceTask: ITask;
     procedure SelectTab(const ATab: string);    { design-time actions }
     procedure RefreshGoldPrice(var Msg: TMessage); Message sx_RefreshGoldPrice;
+    procedure WaitForGoldPriceTaskShutdown;
     procedure WMSettingChange(var Msg: TMessage); Message WM_SETTINGCHANGE;
     procedure InitializeImageStorage;
   protected
@@ -392,7 +396,33 @@ procedure TfrmPawnMain.DoClose(var Action: TCloseAction);
 begin
   AppShuttingDown := True;
   Timer15Min.Enabled := False;
+  // Join the in-flight gold-price worker here, while DM and FireDAC are still
+  // alive. Once this returns the app falls out of its message loop and Forms
+  // finalization frees DM; a worker still running then would be a use-after-free
+  // and could wedge FireDAC/thread-pool finalization into a windowless ghost.
+  WaitForGoldPriceTaskShutdown;
   inherited;
+end;
+
+procedure TfrmPawnMain.WaitForGoldPriceTaskShutdown;
+const
+  // Bounded so closing never stalls indefinitely. AppShuttingDown is already
+  // set, so a worker that is between operations or past its HTTP call bails
+  // almost immediately; this cap only matters if it is wedged inside the socket
+  // call, which is itself capped by the client's connect/response timeouts. The
+  // worker touches DM only before its HTTP call, so any worker still alive when
+  // this times out is already past the DM-dependent phase.
+  GoldPriceShutdownWaitMs = 5000;
+begin
+  if not Assigned(FGoldPriceTask) then
+    Exit;
+  try
+    FGoldPriceTask.Wait(GoldPriceShutdownWaitMs);
+  except
+    // Wait re-raises a faulted task's exception; a background price fetch
+    // failing as the app closes is irrelevant.
+  end;
+  FGoldPriceTask := nil;
 end;
 
 procedure TfrmPawnMain.FormCreate(Sender: TObject);
@@ -946,7 +976,7 @@ begin
 
   Application.ProcessMessages;
 
-  TTask.Run(
+  FGoldPriceTask := TTask.Run(
     procedure
     var
       LClient: TNetHTTPClient;
@@ -961,6 +991,12 @@ begin
       GramsPerUnit: Double;
       UnitLongName, UnitShortName: string;
     begin
+      // Bail before touching DM: if close already began, DM may be torn down
+      // any moment. DM is only referenced up to ConfigureFBConnectionFor below;
+      // after that the worker is self-contained (own connection, globals, ini).
+      if AppShuttingDown then
+        Exit;
+
       TitleStatusMessage := ' 24K Gold Price:';
       StatusMessage := 'Unable to load price.';
       KaratMessage := '';
@@ -986,6 +1022,12 @@ begin
             GoldPriceUrl := 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d';
 
           LResponse := LClient.Get(GoldPriceUrl);
+
+          // The HTTP call is the long pole. If close began while it ran, skip
+          // the DB write and get out; the finally blocks still free the client
+          // and connection. Exiting here keeps the shutdown join short.
+          if AppShuttingDown then
+            Exit;
 
           if LResponse.StatusCode = 200 then
           begin

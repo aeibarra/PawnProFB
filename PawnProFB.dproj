@@ -172,10 +172,10 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.11;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.14;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_Release>1</VerInfo_Release>
-        <VerInfo_Build>11</VerInfo_Build>
+        <VerInfo_Build>14</VerInfo_Build>
         <VerInfo_MinorVer>37</VerInfo_MinorVer>
         <UWP_DelphiLogo150>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo150>
         <UWP_DelphiLogo44>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo44>
