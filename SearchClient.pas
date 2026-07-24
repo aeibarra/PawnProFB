@@ -842,6 +842,7 @@ type
     N4: TMenuItem;
     popItemHistory: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure btnClientEditClick(Sender: TObject);
@@ -1025,9 +1026,29 @@ begin
   end;
 end;
 
+procedure TfrmClients.FormDestroy(Sender: TObject);
+begin
+  // caFree releases a modeless form after OnClose returns.  Keep the global
+  // reference valid until destruction actually starts; clearing it in
+  // FormClose opens a window in which PawnMain can try to create a second
+  // owner-named frmClients while this instance is still registered.
+  if frmClients = Self then
+    frmClients := nil;
+
+  // ScanData was created in FormCreate and never freed -- a leak on every
+  // open/close of this screen. FreeAndNil so it's released exactly once and a
+  // re-entry can't double-free it.
+  FreeAndNil(ScanData);
+end;
+
 procedure TfrmClients.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  PropertyStore.Save;
+  // The persisted layout is cosmetic; a failure saving it must not prevent
+  // caFree from starting the form's destruction.
+  try
+    PropertyStore.Save;
+  except
+  end;
   DM.qryTransactions.Filter := '';
 
 //  frmPawnMain.ClientsMnu.Visible := false;
@@ -1041,7 +1062,6 @@ begin
   SaveTopMarginPolRep;
 
   Action := caFree;
-  frmClients := nil;
 
 end;
 
@@ -1294,7 +1314,7 @@ begin
     frmEnterTransaction.ShowModal;
     GetPaymentDueDateBalanceMessage;
   finally
-    frmEnterTransaction.Free;
+    FreeAndNil(frmEnterTransaction);
   end;
 
 end;
@@ -2061,7 +2081,9 @@ begin
       exit;
     end;
 }
-  frmEnterTransaction := TfrmEnterTransaction.Create(Self);
+  // This modal form is always explicitly freed below, so it does not need to
+  // be registered as an owned, named component under frmClients.
+  frmEnterTransaction := TfrmEnterTransaction.Create(nil);
   try
     if OpenSQLStatementFB('select count(*) from TRANSACTIONS T1 JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_NO where T1.CUST_NO = ' + DM.qryCustomersCUST_NO.AsString) <= 0 then
       begin
@@ -2082,7 +2104,7 @@ begin
       DM.qryTransactions.RecNo := SavePos;
 
   finally
-    frmEnterTransaction.Free;
+    FreeAndNil(frmEnterTransaction);
   end;
 
 end;
@@ -2352,7 +2374,11 @@ begin
 
   ScanningPDF417Barcode := false;
 
-  PropertyStore.Load;
+  try
+    PropertyStore.Load;
+  except
+    // open with default layout rather than fail to open the screen at all
+  end;
 end;
 
 procedure TfrmClients.lblAmountGetText(Sender: TObject; var Text: String);

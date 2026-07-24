@@ -9,7 +9,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Vcl.Menus,
   Buttons, ExtCtrls, ImgList, ComCtrls, ToolWin, Data.DB, System.Threading,
   System.ImageList, RzCommon, Vcl.ActnList, Vcl.ActnCtrls, System.Generics.Collections,
-  System.Actions, RzButton, RzPanel, Vcl.StdCtrls,
+  System.Actions, System.DateUtils, RzButton, RzPanel, Vcl.StdCtrls,
   // FireDAC (gold-price background task uses a thread-local FB connection)
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
@@ -21,7 +21,8 @@ uses
   System.Net.URLClient,
 
   // JSON Parsing
-  System.JSON, RzLabel, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.Comp.DataSet
+  System.JSON, RzLabel, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
+  uImageAuditController
 ;
 
 const
@@ -198,6 +199,7 @@ type
     // Latest fire-and-forget gold-price fetch. Held so shutdown can join it
     // before DM/FireDAC are torn down -- see WaitForGoldPriceTaskShutdown.
     FGoldPriceTask: ITask;
+    FImageAuditController: TImageAuditController;
     procedure SelectTab(const ATab: string);    { design-time actions }
     procedure RefreshGoldPrice(var Msg: TMessage); Message sx_RefreshGoldPrice;
     procedure WaitForGoldPriceTaskShutdown;
@@ -206,6 +208,8 @@ type
   protected
     procedure DoClose(var Action: TCloseAction); override;
   public
+    destructor Destroy; override;
+    procedure StartImageAuditIfDue;
     { Public declarations }
   end;
 
@@ -396,6 +400,14 @@ procedure TfrmPawnMain.DoClose(var Action: TCloseAction);
 begin
   AppShuttingDown := True;
   Timer15Min.Enabled := False;
+  if Assigned(FImageAuditController) then
+  begin
+    FImageAuditController.RequestStop;
+    // This is a diagnostic bound, not a forced thread termination. The
+    // controller logs a timeout; its destructor still preserves memory safety
+    // by not freeing objects underneath a live worker.
+    FImageAuditController.WaitForStop(5000);
+  end;
   // Join the in-flight gold-price worker here, while DM and FireDAC are still
   // alive. Once this returns the app falls out of its message loop and Forms
   // finalization frees DM; a worker still running then would be a use-after-free
@@ -427,8 +439,52 @@ end;
 
 procedure TfrmPawnMain.FormCreate(Sender: TObject);
 begin
+  FImageAuditController := TImageAuditController.Create(
+    IncludeTrailingPathDelimiter(AppPath) + 'ImageBackupAudit.log');
   RichEditGLdPrice.Lines.Clear;
   SaveOriPaintboxColor := pbUnderTabs.Color;
+end;
+
+destructor TfrmPawnMain.Destroy;
+begin
+  FreeAndNil(FImageAuditController);
+  inherited;
+end;
+
+procedure TfrmPawnMain.StartImageAuditIfDue;
+var
+  SettingsQuery: TFDQuery;
+  BackupImagesPath, LastAuditWeek, CurrentAuditWeek: string;
+  DayNo, WeekYear, WeekNo: Word;
+begin
+  if not Assigned(FImageAuditController) or
+     (ImageStorageMode <> ImageStorageMode_File) then
+    Exit;
+
+  DayNo := DayOfWeek(Date);
+  if (DayNo <> 3) and (DayNo <> 4) then
+    Exit;
+
+  WeekNo := WeekOfTheYear(Date, WeekYear);
+  CurrentAuditWeek := Format('%.4d-%.2d', [WeekYear, WeekNo]);
+  LastAuditWeek := ReadIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek);
+
+  BackupImagesPath := '';
+  SettingsQuery := TFDQuery.Create(nil);
+  try
+    SettingsQuery.Connection := DM.ConnFB;
+    SettingsQuery.SQL.Text :=
+      'SELECT BACKUP_IMAGES_PATH FROM BACKUP_SETTINGS';
+    SettingsQuery.Open;
+    if not SettingsQuery.Eof then
+      BackupImagesPath :=
+        Trim(SettingsQuery.FieldByName('BACKUP_IMAGES_PATH').AsString);
+  finally
+    SettingsQuery.Free;
+  end;
+
+  FImageAuditController.TryStartIfDue(DM.ConnFB, ImagesStoragePath,
+    BackupImagesPath, LastAuditWeek, CurrentAuditWeek);
 end;
 
 procedure TfrmPawnMain.FormShow(Sender: TObject);
@@ -480,7 +536,13 @@ begin
     end;
 
   InitializeImageStorage;
-  DM.StartImageBackupAuditIfDue;
+  // TEMPORARILY DISABLED FOR STORE TESTING:
+  // The weekly image-backup audit creates a long-running background thread.
+  // Leave it disabled while diagnosing the windowless PawnProFB.exe process
+  // reported during shutdown. Normal manual and close-on-exit backups are not
+  // affected. The implementation now lives outside TDM and is ready for either
+  // a controlled in-process retest or reuse by a separate audit executable.
+  // StartImageAuditIfDue;
 end;
 
 procedure TfrmPawnMain.ListofnewPawns1Click(Sender: TObject);
@@ -582,10 +644,13 @@ end;
 
 procedure TfrmPawnMain.actClientPawnAndPurchaseExecute(Sender: TObject);
 begin
-  if frmClients <> nil then
+  if Assigned(frmClients) then
     begin
-     frmClients.BringToFront;
-     exit;
+      // caFree is deferred for a modeless form.  While it is closing, leave
+      // the existing owner-named component alone and let its release finish.
+      if not (csDestroying in frmClients.ComponentState) then
+        frmClients.BringToFront;
+      exit;
     end;
 
   frmClients := TfrmClients.Create(Self);
@@ -969,11 +1034,18 @@ begin
   if AppShuttingDown then
     Exit;
 
+  // All refresh requests (startup, timer, and button) arrive here on the main
+  // thread.  Do not start another thread-pool task while the preceding fetch is
+  // queued or running.
+  if Assigned(FGoldPriceTask) and
+     not (FGoldPriceTask.Status in [TTaskStatus.Completed,
+                                    TTaskStatus.Canceled,
+                                    TTaskStatus.Exception]) then
+    Exit;
+
   RichEditGLdPrice.Clear;
   RichEditGLdPrice.SelAttributes.Color := clGray;
   RichEditGLdPrice.SelText := 'Loading price...';
-
-  Application.ProcessMessages;
 
   FGoldPriceTask := TTask.Run(
     procedure

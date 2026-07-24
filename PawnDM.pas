@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB, FireDAC.DApt,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
   FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, System.SyncObjs;
+  FireDAC.Comp.DataSet;
 
 type
   TBackupPhase = (bpStarting, bpDatabase, bpImages, bpLogging, bpDone);
@@ -211,12 +211,6 @@ type
   private
     FPendingFBPasswordForIni: string;
     FDeleteLegacyFBPasswordFromIni: Boolean;
-    // Weekly image-backup audit worker. Held (not fire-and-forget) so shutdown
-    // can signal it and wait: it can run for many minutes on a store with a
-    // large image set, and it must not still be touching FireDAC or the DM's
-    // captured state while the process is tearing down.
-    FAuditThread: TThread;
-    FAuditStop: TEvent;
     procedure CheckForMissingDBChanges;
     procedure PopulateWeightUnits;
     procedure LoadLookupMemTables;
@@ -253,7 +247,6 @@ type
     function BackupDatabaseToFileWithConnection(AConn: TFDConnection; BackupPath: string): string;
     function ShouldBackupImages: Boolean;
     procedure BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);
-    procedure StartImageBackupAuditIfDue;
     procedure ExportAllImagesToFolder(var ExportCount: integer; var ErrorMessage: string; ProgressLabel: TLabel = nil);
     procedure RunBackup(const ABackupPath, AImageTargetPath: string; ADoImageBackup: Boolean; out AResult: TBackupResult; AOnPhase: TBackupPhaseProc = nil);
     procedure SaveImageToFile(ImagesDataNo: integer; FileName: string);
@@ -310,7 +303,7 @@ var
 implementation
 
 Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA,
-  SealedBox, Nvv.Crypto.FileEnvelope, IdHashSHA, uDBMigrations;
+  SealedBox, Nvv.Crypto.FileEnvelope, uDBMigrations, uImageMaintenanceGate;
 
 {$R *.DFM}
 
@@ -370,19 +363,6 @@ begin
     // Overwrite is best-effort; still attempt the delete below.
   end;
   System.SysUtils.DeleteFile(FileName);
-end;
-
-function SHA256OfStream(AStream: TStream): string;
-var
-  Hasher: TIdHashSHA256;
-begin
-  Hasher := TIdHashSHA256.Create;
-  try
-    AStream.Position := 0;
-    Result := Hasher.HashStreamAsHex(AStream);
-  finally
-    Hasher.Free;
-  end;
 end;
 
 procedure TDM.RefreshStoreQry;
@@ -974,11 +954,6 @@ end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
-  // Created first: if anything below raises, the destructor still runs and must
-  // find a usable stop event. Manual-reset -- once shutdown is signalled it stays
-  // signalled for every wait in the audit worker.
-  FAuditStop := TEvent.Create(nil, True, False, '');
-
   SaveCustQry := DM.qryCustomers.SQL.Text;
 
   RegIniFile.Path := LocalIniFile;
@@ -1071,22 +1046,6 @@ end;
 
 procedure TDM.DataModuleDestroy(Sender: TObject);
 begin
-  // Stop the audit worker before anything else. It captures Self and owns its
-  // own TFDConnection, so it has to be fully finished before the DM's state goes
-  // away or the connection is closed underneath it. Signalling the event breaks
-  // it out of its waits promptly rather than after the full 15s/100ms sleeps.
-  if Assigned(FAuditStop) then
-    FAuditStop.SetEvent;
-
-  if Assigned(FAuditThread) then
-  begin
-    FAuditThread.Terminate;
-    FAuditThread.WaitFor;
-    FreeAndNil(FAuditThread);
-  end;
-
-  FreeAndNil(FAuditStop);
-
   // Close FB connection cleanly. Mirrors implicit ADO close.
   if ConnFB.Connected then
     ConnFB.Connected := False;
@@ -2514,9 +2473,17 @@ begin
       if ADoImageBackup then
       begin
         NotifyPhase(bpImages);
-        Conn.Connected := True;
-        BackupImagesToFolderWithConnection(Conn, ImagesStoragePath, AImageTargetPath,
-          AResult.CopiedCount, AResult.SkippedCount, AResult.ImageError);
+        if not TryBeginImageMaintenance(imoBackup) then
+          AResult.ImageError :=
+            'Another image maintenance operation is running. Try the image backup again after it stops.'
+        else
+          try
+            Conn.Connected := True;
+            BackupImagesToFolderWithConnection(Conn, ImagesStoragePath, AImageTargetPath,
+              AResult.CopiedCount, AResult.SkippedCount, AResult.ImageError);
+          finally
+            EndImageMaintenance(imoBackup);
+          end;
       end;
 
       NotifyPhase(bpLogging);
@@ -2587,199 +2554,6 @@ begin
     Result := True;
     Exit;
   end;
-end;
-
-procedure TDM.StartImageBackupAuditIfDue;
-const
-  AuditDelayMs = 15000;
-  AuditThrottleMs = 100;
-var
-  AuditWeekStr, CurrentAuditWeek: string;
-  BackupImagesPath, SourceRoot, TargetRoot: string;
-  DayNo, WeekYear, WeekNo: Word;
-  SettingsQuery: TFDQuery;
-
-  function ReadBackupImagesPath: string;
-  begin
-    Result := '';
-    SettingsQuery := TFDQuery.Create(nil);
-    try
-      SettingsQuery.Connection := ConnFB;
-      SettingsQuery.SQL.Text := 'SELECT BACKUP_IMAGES_PATH FROM BACKUP_SETTINGS';
-      SettingsQuery.Open;
-      if not SettingsQuery.Eof then
-        Result := Trim(SettingsQuery.FieldByName('BACKUP_IMAGES_PATH').AsString);
-    finally
-      SettingsQuery.Free;
-    end;
-  end;
-
-begin
-  if Assigned(FAuditThread) then
-    Exit;
-
-  if ImageStorageMode <> ImageStorageMode_File then
-    Exit;
-
-  if (Trim(ImagesStoragePath) = '') or not DirectoryExists(ImagesStoragePath) then
-    Exit;
-
-  DayNo := DayOfWeek(Date);
-  if (DayNo <> 3) and (DayNo <> 4) then
-    Exit;
-
-  WeekNo := WeekOfTheYear(Date, WeekYear);
-  CurrentAuditWeek := Format('%.4d-%.2d', [WeekYear, WeekNo]);
-  AuditWeekStr := ReadIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek);
-  if SameText(Trim(AuditWeekStr), CurrentAuditWeek) then
-    Exit;
-
-  BackupImagesPath := ReadBackupImagesPath;
-  if (BackupImagesPath = '') or not DirectoryExists(BackupImagesPath) then
-    Exit;
-
-  SourceRoot := IncludeTrailingPathDelimiter(ImagesStoragePath);
-  TargetRoot := IncludeTrailingPathDelimiter(BackupImagesPath);
-
-  FAuditThread := TThread.CreateAnonymousThread(
-    procedure
-    var
-      Conn: TFDConnection;
-      ImageQuery, MarkQuery: TFDQuery;
-      ImagesDataNo: integer;
-      ImageDate: TDateTime;
-      SourcePath, BackupPath: string;
-      SourceStream, BackupStream: TFileStream;
-      SourceBytes, BackupBytes: Int64;
-      SourceHash, BackupHash: string;
-
-      // Every wait in this worker goes through here, so shutdown never has to sit
-      // through the remaining delay. Returns True when the app wants us gone --
-      // callers must bail out immediately.
-      function StopRequested(TimeoutMs: Cardinal): Boolean;
-      begin
-        Result := FAuditStop.WaitFor(TimeoutMs) = wrSignaled;
-      end;
-
-      function BuildImagePathForRoot(const RootPath: string; AImagesDataNo: integer; AImageDate: TDateTime): string;
-      begin
-        Result := IncludeTrailingPathDelimiter(RootPath) +
-                  FormatDateTime('yyyymm', AImageDate) + PathDelim +
-                  IntToStr(AImagesDataNo) + '.jpg';
-      end;
-
-      procedure MarkForBackup;
-      begin
-        try
-          MarkQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImagesDataNo;
-          MarkQuery.ExecSQL;
-        except
-          { Background audit is best-effort. Normal backup still handles new images. }
-        end;
-      end;
-
-      function FileSizeOf(const FileName: string): Int64;
-      var
-        FS: TFileStream;
-      begin
-        FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-        try
-          Result := FS.Size;
-        finally
-          FS.Free;
-        end;
-      end;
-
-    begin
-      if StopRequested(AuditDelayMs) then
-        Exit;
-
-      Conn := nil;
-      ImageQuery := nil;
-      MarkQuery := nil;
-      try
-        Conn := TFDConnection.Create(nil);
-        ConfigureFBConnectionFor(Conn);
-        Conn.Connected := True;
-
-        ImageQuery := TFDQuery.Create(nil);
-        MarkQuery := TFDQuery.Create(nil);
-        ImageQuery.Connection := Conn;
-        MarkQuery.Connection := Conn;
-
-        ImageQuery.SQL.Text :=
-          'SELECT IMAGES_DATA_NO, CREATED ' +
-          'FROM IMAGES_DATA ' +
-          'WHERE CREATED IS NOT NULL ' +
-          'ORDER BY IMAGES_DATA_NO';
-
-        MarkQuery.SQL.Text :=
-          'DELETE FROM IMAGES_DATA_BACKUP WHERE IMAGES_DATA_NO = :IMAGES_DATA_NO';
-
-        ImageQuery.Open;
-        while not ImageQuery.Eof do
-        begin
-          ImagesDataNo := ImageQuery.FieldByName('IMAGES_DATA_NO').AsInteger;
-          ImageDate := ImageQuery.FieldByName('CREATED').AsDateTime;
-          SourcePath := BuildImagePathForRoot(SourceRoot, ImagesDataNo, ImageDate);
-          BackupPath := BuildImagePathForRoot(TargetRoot, ImagesDataNo, ImageDate);
-
-          try
-            if FileExists(SourcePath) then
-            begin
-              if not FileExists(BackupPath) then
-                MarkForBackup
-              else
-              begin
-                SourceBytes := FileSizeOf(SourcePath);
-                BackupBytes := FileSizeOf(BackupPath);
-
-                if SourceBytes <> BackupBytes then
-                  MarkForBackup
-                else
-                begin
-                  SourceStream := TFileStream.Create(SourcePath, fmOpenRead or fmShareDenyNone);
-                  try
-                    BackupStream := TFileStream.Create(BackupPath, fmOpenRead or fmShareDenyNone);
-                    try
-                      SourceHash := SHA256OfStream(SourceStream);
-                      BackupHash := SHA256OfStream(BackupStream);
-                    finally
-                      BackupStream.Free;
-                    end;
-                  finally
-                    SourceStream.Free;
-                  end;
-
-                  if not SameText(SourceHash, BackupHash) then
-                    MarkForBackup;
-                end;
-              end;
-            end;
-          except
-            MarkForBackup;
-          end;
-
-          // Doubles as the throttle and the shutdown check: bailing out here
-          // skips the week marker below, so a partial pass is retried on the next
-          // launch instead of being recorded as done.
-          if StopRequested(AuditThrottleMs) then
-            Exit;
-          ImageQuery.Next;
-        end;
-
-        WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditDate, FormatDateTime('yyyy-mm-dd', Date));
-        WriteIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek, CurrentAuditWeek);
-      finally
-        MarkQuery.Free;
-        ImageQuery.Free;
-        Conn.Free;
-      end;
-    end);
-  // Not FreeOnTerminate: DataModuleDestroy needs a live reference to WaitFor.
-  FAuditThread.FreeOnTerminate := False;
-  FAuditThread.Priority := tpLowest;
-  FAuditThread.Start;
 end;
 
 procedure TDM.BackupImagesToFolderWithConnection(AConn: TFDConnection; const SourceFolder, TargetFolder: string; out CopiedCount, SkippedCount: integer; out ErrorMessage: string);

@@ -540,7 +540,7 @@ procedure TfrmEnterTransaction.FormDestroy(Sender: TObject);
 begin
   DM.ReCalcMaturity := false;
 
-  SelectedItemList.Free;
+  FreeAndNil(SelectedItemList);
 
   // Must not raise: OnDestroy runs before the form is unlinked from its owner,
   // so an exception here leaves an orphan named frmEnterTransaction registered
@@ -628,8 +628,7 @@ end;
 
 procedure TfrmEnterTransaction.ClearAllItems;
 begin
-  SelectedItemList.Free;
-  SelectedItemList := TStringList.Create;
+  SelectedItemList.Clear;
   dbGridItems.Invalidate;
 end;
 

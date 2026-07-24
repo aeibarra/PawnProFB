@@ -80,7 +80,8 @@ implementation
 
 {$R *.dfm}
 
-uses PawnDM, CapturePicFromCamera, PawnGlobal;
+uses PawnDM, CapturePicFromCamera, PawnGlobal, uImageMaintenanceGate,
+  uPawnDialogs;
 
 const
   { Custom cursor slots for the PDF-viewer style pan hand. }
@@ -198,58 +199,71 @@ begin
     AdEditPicture(false);
 end;
 
- procedure TfrmItemPictures.AdEditPicture(NewPic: boolean);
+procedure TfrmItemPictures.AdEditPicture(NewPic: boolean);
 var
   CaptureForm: TfrmCapturePicFromCamera;
 begin
+  // Camera capture and the subsequent source-image write are one protected
+  // operation. The background audit and image backup cannot start until this
+  // finally block releases the gate.
+  if not TryBeginImageMaintenance(imoImageCapture) then
+  begin
+    PawnWarn(
+      'Another image maintenance operation is currently running. Please try taking the picture again shortly.',
+      'Capture Picture', Self);
+    Exit;
+  end;
+
   { Create with no owner (not Self): if the camera teardown ever faults inside
     Free, an owned form would be left registered under this one and the next
     open would raise "A component named ... already exists". A nil owner + local
     var keeps the failure contained to this call. }
-  CaptureForm := TfrmCapturePicFromCamera.Create(nil);
   try
-    DoNoLoadImage := true;
-    if NewPic then
-      qryItemImages.Append
-    else
-      qryItemImages.Edit;
+    CaptureForm := TfrmCapturePicFromCamera.Create(nil);
+    try
+      DoNoLoadImage := true;
+      if NewPic then
+        qryItemImages.Append
+      else
+        qryItemImages.Edit;
 
-    CaptureForm.ImageDesc := qryItemImagesIMAGE_DESC.AsString;
-    Screen.Cursor := crHourGlass;
-    if CaptureForm.ShowModal = mrOk then
-      begin
-        qryItemImagesIMAGE_DESC.AsString := CaptureForm.ImageDesc;
-        qryItemImagesIMAGE_DATA.LoadFromFile(CaptureForm.SavePicFileName);
-        qryItemImages.Post;
-        PictureTaken := true;
+      CaptureForm.ImageDesc := qryItemImagesIMAGE_DESC.AsString;
+      Screen.Cursor := crHourGlass;
+      if CaptureForm.ShowModal = mrOk then
+        begin
+          qryItemImagesIMAGE_DESC.AsString := CaptureForm.ImageDesc;
+          qryItemImagesIMAGE_DATA.LoadFromFile(CaptureForm.SavePicFileName);
+          qryItemImages.Post;
+          PictureTaken := true;
 
-        if NewPic then
-          begin
-            qryItemImages.DisableControls;
-            try
-              qryItemImages.Close;
-              qryItemImages.Open;
-              qryItemImages.Last;
-            finally
-              qryItemImages.EnableControls;
+          if NewPic then
+            begin
+              qryItemImages.DisableControls;
+              try
+                qryItemImages.Close;
+                qryItemImages.Open;
+                qryItemImages.Last;
+              finally
+                qryItemImages.EnableControls;
+              end;
             end;
-          end;
 
-        SaveImageProc(qryItemImagesIMAGES_DATA_NO.AsInteger, CaptureForm.SavePicFileName, qryItemImagesCREATED.AsDateTime);
+          SaveImageProc(qryItemImagesIMAGES_DATA_NO.AsInteger,
+            CaptureForm.SavePicFileName, qryItemImagesCREATED.AsDateTime);
 
-        DeleteFile(CaptureForm.SavePicFileName);
+          DeleteFile(CaptureForm.SavePicFileName);
 
-        DoNoLoadImage := false;
-        DisplayImage(qryItemImagesIMAGES_DATA_NO.AsInteger);
-      end
-    else
-      begin
+          DoNoLoadImage := false;
+          DisplayImage(qryItemImagesIMAGES_DATA_NO.AsInteger);
+        end
+      else
         qryItemImages.Cancel;
-      end;
-
+    finally
+      DoNoLoadImage := false;
+      CaptureForm.Free;
+    end;
   finally
-    DoNoLoadImage := false;
-    CaptureForm.Free;
+    EndImageMaintenance(imoImageCapture);
   end;
 end;
 

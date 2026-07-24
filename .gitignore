@@ -76,6 +76,14 @@ images/
 # Firebird client log written to the working dir on connection errors
 firebird.log
 
+# FastMM4 diagnostic memory manager (temporary bad-free hunt, not shipped).
+# Sources + the FullDebugMode DLL live in the tree only while chasing the crash.
+FastMM4.pas
+FastMM4Messages.pas
+FastMM4Options.inc
+FastMM_FullDebugMode*.dll
+*_MemoryManager_EventLog.txt
+
 # Generated at build time by GenerateBuildInfo.ps1 (project pre-build step).
 # Not committed: it changes every build, and committing it would make even a
 # clean release build stamp a false "+" dirty marker. Fresh checkouts get it

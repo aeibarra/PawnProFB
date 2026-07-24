@@ -955,6 +955,11 @@ object frmEnterTransaction: TfrmEnterTransaction
         DataType = ftFixedChar
         ParamType = ptInput
         Size = 1
+      end
+      item
+        Name = 'PAWNED_DATE'
+        DataType = ftDate
+        ParamType = ptInput
       end>
   end
 end

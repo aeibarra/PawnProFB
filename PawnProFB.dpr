@@ -1,8 +1,19 @@
 program PawnProFB;
 
-
+// Diagnostic memory-manager hunt for the intermittent EInvalidPointer / ghost
+// process. Flip to {$DEFINE MMDEBUG} to build the FastMM4 FullDebugMode EXE:
+// it wraps every allocation with guard blocks + a stack trace and catches any
+// double-free / use-after-free / overrun AT THE MOMENT it happens, logging both
+// the allocation and free stacks to PawnProFB_MemoryManager_EventLog.txt next
+// to the EXE. Requires FastMM_FullDebugMode64.dll (and PawnProFB.map for line
+// numbers) beside the EXE. Leave this OFF for the real build -- with it off
+// FastMM4 is not linked and the binary is unaffected.
+{$DEFINE MMDEBUG}
 
 uses
+  {$IFDEF MMDEBUG}
+  FastMM4,   // MUST be first: installs the memory manager before any allocation
+  {$ENDIF}
   Forms,
   MidasLib,
   StFirst,
@@ -66,7 +77,10 @@ uses
   uPawnDialogs in 'uPawnDialogs.pas',
   BackupInProgress in 'BackupInProgress.pas' {frmBackupInProgress},
   PawnChangeStatus in 'PawnChangeStatus.pas' {frmPawnChangeStatus},
-  ItemHistory in 'ItemHistory.pas' {frmItemHistory};
+  ItemHistory in 'ItemHistory.pas' {frmItemHistory},
+  uImageMaintenanceGate in 'uImageMaintenanceGate.pas',
+  uImageBackupAudit in 'uImageBackupAudit.pas',
+  uImageAuditController in 'uImageAuditController.pas';
 
 {$R *.RES}
 
