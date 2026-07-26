@@ -1,0 +1,340 @@
+
+--------------------------------2026/7/26 16:10:15--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D126 [FastMM4.pas][FastMM4][DebugGetMem][9670]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+00007FF6A7E50170 [System][System][@AfterConstruction]
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 322706
+
+The block was previously freed by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D38D [FastMM4.pas][FastMM4][DebugFreeMem][9828]
+00007FF6A7E49B34 [System][System][@FreeMem]
+00007FF6A7E4F508 [System][System][TObject.FreeInstance]
+00007FF6A7E50141 [System][System][@ClassDestroy]
+00007FF6A8D8351E [VFrames.pas][VFrames][TVideoImage.Destroy][332]
+00007FF6A7E4F738 [System][System][TObject.Free]
+00007FF6A8D86FD9 [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormDestroy][449]
+00007FF6A821968A [Vcl.Forms][Vcl.Forms][TCustomForm.DoDestroy]
+00007FF6A821932D [Vcl.Forms][Vcl.Forms][TCustomForm.BeforeDestruction]
+00007FF6A7E501C5 [System][System][@BeforeDestruction]
+00007FF6A8219371 [Vcl.Forms][Vcl.Forms][TCustomForm.Destroy]
+
+The current thread ID is 0x2AA4, and the stack trace (return addresses) leading to this error is:
+00007FF6A7E6D087 [FastMM4.pas][FastMM4][CheckFreeBlockUnmodified][9639]
+00007FF6A7E6D106 [FastMM4.pas][FastMM4][DebugGetMem][9666]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+
+Current memory dump of 256 bytes starting at pointer address 2A2F41AC8F0:
+3C 39 0E A9 F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 55 4A 72 1B 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  9  .  ©  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  U  J  r  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/26 16:10:36--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D126 [FastMM4.pas][FastMM4][DebugGetMem][9670]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+00007FF6A7E50170 [System][System][@AfterConstruction]
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 368040
+
+The block was previously freed by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D38D [FastMM4.pas][FastMM4][DebugFreeMem][9828]
+00007FF6A7E49B34 [System][System][@FreeMem]
+00007FF6A7E4F508 [System][System][TObject.FreeInstance]
+00007FF6A7E50141 [System][System][@ClassDestroy]
+00007FF6A8D8351E [VFrames.pas][VFrames][TVideoImage.Destroy][332]
+00007FF6A7E4F738 [System][System][TObject.Free]
+00007FF6A8D86FD9 [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormDestroy][449]
+00007FF6A821968A [Vcl.Forms][Vcl.Forms][TCustomForm.DoDestroy]
+00007FF6A821932D [Vcl.Forms][Vcl.Forms][TCustomForm.BeforeDestruction]
+00007FF6A7E501C5 [System][System][@BeforeDestruction]
+00007FF6A8219371 [Vcl.Forms][Vcl.Forms][TCustomForm.Destroy]
+
+The current thread ID is 0x2AA4, and the stack trace (return addresses) leading to this error is:
+00007FF6A7E6D087 [FastMM4.pas][FastMM4][CheckFreeBlockUnmodified][9639]
+00007FF6A7E6D106 [FastMM4.pas][FastMM4][DebugGetMem][9666]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+
+Current memory dump of 256 bytes starting at pointer address 2A2F41A5D00:
+3C 39 0E A9 F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 7D 9F 72 1B 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  9  .  ©  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  }  Ÿ  r  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/26 16:11:13--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D126 [FastMM4.pas][FastMM4][DebugGetMem][9670]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+00007FF6A7E50170 [System][System][@AfterConstruction]
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 381512
+
+The block was previously freed by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D38D [FastMM4.pas][FastMM4][DebugFreeMem][9828]
+00007FF6A7E49B34 [System][System][@FreeMem]
+00007FF6A7E4F508 [System][System][TObject.FreeInstance]
+00007FF6A7E50141 [System][System][@ClassDestroy]
+00007FF6A8D8351E [VFrames.pas][VFrames][TVideoImage.Destroy][332]
+00007FF6A7E4F738 [System][System][TObject.Free]
+00007FF6A8D86FD9 [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormDestroy][449]
+00007FF6A821968A [Vcl.Forms][Vcl.Forms][TCustomForm.DoDestroy]
+00007FF6A821932D [Vcl.Forms][Vcl.Forms][TCustomForm.BeforeDestruction]
+00007FF6A7E501C5 [System][System][@BeforeDestruction]
+00007FF6A8219371 [Vcl.Forms][Vcl.Forms][TCustomForm.Destroy]
+
+The current thread ID is 0x2AA4, and the stack trace (return addresses) leading to this error is:
+00007FF6A7E6D087 [FastMM4.pas][FastMM4][CheckFreeBlockUnmodified][9639]
+00007FF6A7E6D106 [FastMM4.pas][FastMM4][DebugGetMem][9666]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7F77F11 [System.Classes][System.Classes][TMemoryStream.Realloc]
+00007FF6A7F77E1E [System.Classes][System.Classes][TMemoryStream.SetCapacity]
+00007FF6A7F77FA7 [System.Classes][System.Classes][TMemoryStream.Write]
+00007FF6A7F77FF4 [System.Classes][System.Classes][TMemoryStream.Write]
+00007FF6A89532BE [Vcl.Imaging.jpeg][Vcl.Imaging.jpeg][jfwrite]
+00007FF6A8965A3B [Vcl.Imaging.jpeg][Vcl.Imaging.jpeg][jdatadst.empty_output_buffer]
+00007FF6A897091D [Vcl.Imaging.jpeg][Vcl.Imaging.jpeg][jchuff.encode_mcu_huff]
+00007FF6A896B30C [Vcl.Imaging.jpeg][Vcl.Imaging.jpeg][jccoefct.compress_data]
+
+Current memory dump of 256 bytes starting at pointer address 2A2F343C840:
+3C 39 0E A9 F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 C0 2D 73 1B 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  9  .  ©  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  À  -  s  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/26 16:11:20--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D126 [FastMM4.pas][FastMM4][DebugGetMem][9670]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+00007FF6A7E50170 [System][System][@AfterConstruction]
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 396474
+
+The block was previously freed by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D38D [FastMM4.pas][FastMM4][DebugFreeMem][9828]
+00007FF6A7E49B34 [System][System][@FreeMem]
+00007FF6A7E4F508 [System][System][TObject.FreeInstance]
+00007FF6A7E50141 [System][System][@ClassDestroy]
+00007FF6A8D8351E [VFrames.pas][VFrames][TVideoImage.Destroy][332]
+00007FF6A7E4F738 [System][System][TObject.Free]
+00007FF6A8D86FD9 [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormDestroy][449]
+00007FF6A821968A [Vcl.Forms][Vcl.Forms][TCustomForm.DoDestroy]
+00007FF6A821932D [Vcl.Forms][Vcl.Forms][TCustomForm.BeforeDestruction]
+00007FF6A7E501C5 [System][System][@BeforeDestruction]
+00007FF6A8219371 [Vcl.Forms][Vcl.Forms][TCustomForm.Destroy]
+
+The current thread ID is 0x2AA4, and the stack trace (return addresses) leading to this error is:
+00007FF6A7E6D087 [FastMM4.pas][FastMM4][CheckFreeBlockUnmodified][9639]
+00007FF6A7E6D106 [FastMM4.pas][FastMM4][DebugGetMem][9666]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+
+Current memory dump of 256 bytes starting at pointer address 2A2F659A7A0:
+3C 39 0E A9 F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 D8 49 73 1B 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  9  .  ©  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  Ø  I  s  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/26 16:11:36--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D126 [FastMM4.pas][FastMM4][DebugGetMem][9670]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+00007FF6A7E50170 [System][System][@AfterConstruction]
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 407849
+
+The block was previously freed by thread 0x2AA4, and the stack trace (return addresses) at the time was:
+00007FF6A7E6D38D [FastMM4.pas][FastMM4][DebugFreeMem][9828]
+00007FF6A7E49B34 [System][System][@FreeMem]
+00007FF6A7E4F508 [System][System][TObject.FreeInstance]
+00007FF6A7E50141 [System][System][@ClassDestroy]
+00007FF6A8D8351E [VFrames.pas][VFrames][TVideoImage.Destroy][332]
+00007FF6A7E4F738 [System][System][TObject.Free]
+00007FF6A8D86FD9 [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormDestroy][449]
+00007FF6A821968A [Vcl.Forms][Vcl.Forms][TCustomForm.DoDestroy]
+00007FF6A821932D [Vcl.Forms][Vcl.Forms][TCustomForm.BeforeDestruction]
+00007FF6A7E501C5 [System][System][@BeforeDestruction]
+00007FF6A8219371 [Vcl.Forms][Vcl.Forms][TCustomForm.Destroy]
+
+The current thread ID is 0x2AA4, and the stack trace (return addresses) leading to this error is:
+00007FF6A7E6D087 [FastMM4.pas][FastMM4][CheckFreeBlockUnmodified][9639]
+00007FF6A7E6D106 [FastMM4.pas][FastMM4][DebugGetMem][9666]
+00007FF6A7E49B04 [System][System][@GetMem]
+00007FF6A7E4F4D1 [System][System][TObject.NewInstance]
+00007FF6A7E50121 [System][System][@ClassCreate]
+00007FF6A8D832A8 [VFrames.pas][VFrames][TVideoImage.Create][284]
+00007FF6A8D86A4B [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.InitFrame][361]
+00007FF6A8D86F8D [CapturePicFromCamera.pas][CapturePicFromCamera][TfrmCapturePicFromCamera.FormCreate][439]
+00007FF6A8D03EEC [RzForms][RzForms][TRzFormState.FormCreateHandler]
+00007FF6A82195EA [Vcl.Forms][Vcl.Forms][TCustomForm.DoCreate]
+00007FF6A8218E05 [Vcl.Forms][Vcl.Forms][TCustomForm.AfterConstruction]
+
+Current memory dump of 256 bytes starting at pointer address 2A2F6581010:
+3C 39 0E A9 F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 0B 8A 73 1B 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  9  .  ©  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  Š  s  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €

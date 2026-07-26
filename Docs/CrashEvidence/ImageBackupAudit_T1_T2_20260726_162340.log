@@ -1,0 +1,10 @@
+2026-07-26 16:04:17.001 [thread 10916] TEST MODE build: Ctrl+Shift+A runs an audit, Ctrl+Shift+W arms the shutdown wedge.
+2026-07-26 16:04:17.041 [thread 19944] Image audit started.
+2026-07-26 16:04:19.224 [thread 19944] Image audit work list loaded: 6596 images to check.
+2026-07-26 16:05:17.094 [thread 19944] Image audit progress: 530/6596 checked, missing=0 different=0 errors=0 last=530
+2026-07-26 16:06:17.141 [thread 19944] Image audit progress: 1079/6596 checked, missing=0 different=0 errors=0 last=1079
+2026-07-26 16:07:17.189 [thread 19944] Image audit progress: 1628/6596 checked, missing=0 different=0 errors=0 last=1628
+2026-07-26 16:08:17.234 [thread 19944] Image audit progress: 2177/6596 checked, missing=0 different=0 errors=0 last=2177
+2026-07-26 16:09:17.284 [thread 19944] Image audit progress: 2726/6596 checked, missing=0 different=0 errors=0 last=2726
+2026-07-26 16:09:51.077 [thread 19944] Image audit finished: completed=False canceled=True checked=3034 missing=0 different=0 errors=0 last=3034 error="Yielded to an interactive image operation; will retry on the next eligible day because the weekly marker was not advanced."
+2026-07-26 16:22:25.447 [thread 10916] Application closing cleanly; no audit worker is still running.
