@@ -227,6 +227,7 @@ type
     SaveCustQry: string;
     ReCalcMaturity: boolean;
     function RoutineExists(const Conn: TFDConnection; const Name, RoutineType: string): Boolean;
+    procedure BindFBClientLibrary;
     procedure ConfigureFBConnection;
     procedure ConfigureFBConnectionFor(AConn: TFDConnection);
     function TestFBConnection(out ErrorMsg: string): Boolean;
@@ -306,6 +307,11 @@ Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient
   SealedBox, Nvv.Crypto.FileEnvelope, uDBMigrations, uImageMaintenanceGate;
 
 {$R *.DFM}
+
+const
+  { How long an image backup waits for the image gate before giving up. Covers a
+    weekly audit standing down (fast) or a camera capture finishing (seconds). }
+  ImageGateWaitMs = 10000;
 
 // 32-byte Curve25519 vendor PUBLIC key (VENDOR_PUBLIC_KEY). Backups are sealed
 // to it; only the vendor's offline secret key can decrypt. Public -> harmless
@@ -890,7 +896,14 @@ begin
 
   Password := GetFBPasswordFromIni(PasswordEnc, Password, AConn = ConnFB);
 
-  FDPhysFBDriverLink1.VendorLib := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
+  // NOTE: FDPhysFBDriverLink1.VendorLib is deliberately NOT set here. This
+  // routine is called from background threads (the backup worker via RunBackup,
+  // and the gold-price worker), and writing a shared VCL component's property
+  // from a worker is a data race on main-thread-owned state -- the same class of
+  // bug that the image audit was carrying. It is a set-once value, so it is
+  // applied on the main thread in BindFBClientLibrary during DataModuleCreate,
+  // before any worker can exist. Everything below only touches AConn, which the
+  // caller owns.
 
   AConn.Connected := False;
   AConn.Params.Clear;
@@ -903,6 +916,16 @@ begin
   AConn.Params.Values['Port']         := IntToStr(Port);
   AConn.Params.Values['CharacterSet'] := CharSet;
   AConn.LoginPrompt := False;
+end;
+
+// Points FireDAC's FB driver at the fbclient.dll shipped beside the EXE rather
+// than whatever happens to be on PATH. Main thread only, set-once: call it
+// during DataModuleCreate before any background worker can exist. Kept out of
+// ConfigureFBConnectionFor precisely because that routine IS called from
+// workers -- see the note there.
+procedure TDM.BindFBClientLibrary;
+begin
+  FDPhysFBDriverLink1.VendorLib := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
 end;
 
 // Convenience wrapper that targets the data module's own ConnFB. Used at
@@ -954,6 +977,11 @@ end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
+  // First, on the main thread, before anything can spawn a worker: bind the FB
+  // driver to our own fbclient.dll. Background workers configure their own
+  // connections later and must never write this shared component property.
+  BindFBClientLibrary;
+
   SaveCustQry := DM.qryCustomers.SQL.Text;
 
   RegIniFile.Path := LocalIniFile;
@@ -2473,9 +2501,12 @@ begin
       if ADoImageBackup then
       begin
         NotifyPhase(bpImages);
-        if not TryBeginImageMaintenance(imoBackup) then
+        // Waits rather than failing: a backup preempts the weekly audit, which
+        // stands down within a slice or two. Only a camera capture in progress
+        // can still refuse us, and that is measured in seconds.
+        if not TryBeginImageMaintenance(imoBackup, ImageGateWaitMs) then
           AResult.ImageError :=
-            'Another image maintenance operation is running. Try the image backup again after it stops.'
+            'A picture is being taken right now. Try the image backup again in a moment.'
         else
           try
             Conn.Connected := True;

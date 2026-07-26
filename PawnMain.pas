@@ -1,5 +1,7 @@
 ﻿unit PawnMain;
 
+{$I AuditTestMode.inc}
+
 {$WARN SYMBOL_PLATFORM OFF}
 {$WARN UNIT_PLATFORM OFF}
 
@@ -23,6 +25,10 @@ uses
   // JSON Parsing
   System.JSON, RzLabel, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   uImageAuditController
+{$IFDEF AUDIT_TESTMODE}
+  , uImageBackupAudit      // TEST ONLY: AuditTestWedgeNextRun
+  , uImageMaintenanceGate  // TEST ONLY: stand a running audit down
+{$ENDIF}
 ;
 
 const
@@ -207,6 +213,10 @@ type
     procedure InitializeImageStorage;
   protected
     procedure DoClose(var Action: TCloseAction); override;
+{$IFDEF AUDIT_TESTMODE}
+    // TEST ONLY -- see AuditTestMode.inc.
+    procedure AuditTestKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+{$ENDIF}
   public
     destructor Destroy; override;
     procedure StartImageAuditIfDue;
@@ -402,11 +412,17 @@ begin
   Timer15Min.Enabled := False;
   if Assigned(FImageAuditController) then
   begin
-    FImageAuditController.RequestStop;
-    // This is a diagnostic bound, not a forced thread termination. The
-    // controller logs a timeout; its destructor still preserves memory safety
-    // by not freeing objects underneath a live worker.
-    FImageAuditController.WaitForStop(5000);
+    // Bounded on purpose. WaitForStop waits on the OS thread handle, so a True
+    // result means the worker is genuinely gone; on timeout the controller's
+    // destructor abandons it rather than blocking. Either way shutdown
+    // continues -- an audit that outlives the app cannot corrupt anything,
+    // because it shares no state with the UI (see uImageAuditController).
+    if FImageAuditController.WaitForStop(5000) then
+      FImageAuditController.Note('Application closing cleanly; no audit worker ' +
+        'is still running.')
+    else
+      FImageAuditController.Note('Application closing with an audit worker ' +
+        'still active; it will be abandoned.');
   end;
   // Join the in-flight gold-price worker here, while DM and FireDAC are still
   // alive. Once this returns the app falls out of its message loop and Forms
@@ -441,6 +457,12 @@ procedure TfrmPawnMain.FormCreate(Sender: TObject);
 begin
   FImageAuditController := TImageAuditController.Create(
     IncludeTrailingPathDelimiter(AppPath) + 'ImageBackupAudit.log');
+{$IFDEF AUDIT_TESTMODE}
+  KeyPreview := True;
+  OnKeyDown := AuditTestKeyDown;
+  FImageAuditController.Note('TEST MODE build: Ctrl+Shift+A runs an audit, ' +
+    'Ctrl+Shift+W arms the shutdown wedge.');
+{$ENDIF}
   RichEditGLdPrice.Lines.Clear;
   SaveOriPaintboxColor := pbUnderTabs.Color;
 end;
@@ -451,23 +473,52 @@ begin
   inherited;
 end;
 
+{$IFDEF AUDIT_TESTMODE}
+var
+  // TEST ONLY -- see AuditTestMode.inc. Set by Ctrl+Shift+L.
+  AuditTestFastRun: Boolean = False;
+{$ENDIF}
+
 procedure TfrmPawnMain.StartImageAuditIfDue;
+const
+{$IFDEF AUDIT_TESTMODE}
+  // TEST ONLY: start quickly. The throttle deliberately MATCHES production --
+  // on a real store image set (~6.6k images) that is already ~11 minutes of
+  // runtime, so there is no need to slow it further, and keeping it identical
+  // means the test measures the timing a store will actually see.
+  AuditInitialDelayMs = 2000;
+  AuditItemThrottleMs = 100;
+{$ELSE}
+  AuditInitialDelayMs = 15000;
+  AuditItemThrottleMs = 100;
+{$ENDIF}
 var
   SettingsQuery: TFDQuery;
   BackupImagesPath, LastAuditWeek, CurrentAuditWeek: string;
-  DayNo, WeekYear, WeekNo: Word;
+  WeekYear, WeekNo: Word;
+{$IFNDEF AUDIT_TESTMODE}
+  DayNo: Word;
+{$ENDIF}
 begin
   if not Assigned(FImageAuditController) or
      (ImageStorageMode <> ImageStorageMode_File) then
     Exit;
 
+{$IFNDEF AUDIT_TESTMODE}
   DayNo := DayOfWeek(Date);
   if (DayNo <> 3) and (DayNo <> 4) then
     Exit;
+{$ENDIF}
 
   WeekNo := WeekOfTheYear(Date, WeekYear);
   CurrentAuditWeek := Format('%.4d-%.2d', [WeekYear, WeekNo]);
+{$IFDEF AUDIT_TESTMODE}
+  // TEST ONLY: an empty marker never matches, so a test run is never suppressed
+  // by an audit that already happened this week.
+  LastAuditWeek := '';
+{$ELSE}
   LastAuditWeek := ReadIniFile(IniSecImageBackup, IniKeyImageBackupLastAuditWeek);
+{$ENDIF}
 
   BackupImagesPath := '';
   SettingsQuery := TFDQuery.Create(nil);
@@ -483,9 +534,88 @@ begin
     SettingsQuery.Free;
   end;
 
+{$IFDEF AUDIT_TESTMODE}
+  { TEST ONLY: drop the throttle so a run can COMPLETE in ~90s instead of ~17
+    minutes. Completion matters because the weekly marker is only written by a
+    completed run, and that marker is what T10 inspects. }
+  if AuditTestFastRun then
+    FImageAuditController.TryStartIfDue(DM.ConnFB, ImagesStoragePath,
+      BackupImagesPath, LastAuditWeek, CurrentAuditWeek, AuditInitialDelayMs, 0)
+  else
+{$ENDIF}
   FImageAuditController.TryStartIfDue(DM.ConnFB, ImagesStoragePath,
-    BackupImagesPath, LastAuditWeek, CurrentAuditWeek);
+    BackupImagesPath, LastAuditWeek, CurrentAuditWeek,
+    AuditInitialDelayMs, AuditItemThrottleMs);
 end;
+
+{$IFDEF AUDIT_TESTMODE}
+// TEST ONLY -- see AuditTestMode.inc. Wired up at runtime in FormCreate so no
+// DFM change has to be reverted later.
+procedure TfrmPawnMain.AuditTestKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if not ((ssCtrl in Shift) and (ssShift in Shift)) then
+    Exit;
+  if not Assigned(FImageAuditController) then
+    Exit;
+
+  case Key of
+    Ord('A'):
+      begin
+        Key := 0;
+        { Report the refusal explicitly. Silently doing nothing here is what
+          made a wedge test look like it had run when it had not. }
+        if FImageAuditController.State = iasRunning then
+          FImageAuditController.Note('TEST: Ctrl+Shift+A IGNORED -- an audit is ' +
+            'already running. Press Ctrl+Shift+W first to stand it down.')
+        else
+        begin
+          FImageAuditController.Note('TEST: manual audit trigger (Ctrl+Shift+A).');
+          StartImageAuditIfDue;
+        end;
+      end;
+    Ord('L'):
+      begin
+        Key := 0;
+        { Mangle the GLOBAL format settings the way a report or grid unit might
+          at runtime, then immediately run an audit. Everything the audit writes
+          must stay ISO, because it formats through its own invariant
+          TFormatSettings. Note that ':' and '/' in a Delphi format string are
+          the Time/DateSeparator PLACEHOLDERS, not literals -- which is why the
+          log timestamps are exposed to this too, not just the ini marker. }
+        FormatSettings.DateSeparator   := '.';
+        FormatSettings.TimeSeparator   := '-';
+        FormatSettings.ShortDateFormat := 'dd.mm.yyyy';
+        FormatSettings.LongTimeFormat  := 'hh-nn-ss';
+        AuditTestFastRun := True;
+        if TryBeginImageMaintenance(imoImageCapture, 5000) then
+          EndImageMaintenance(imoImageCapture);
+        { Written AFTER the mangling on purpose: this line's own timestamp is
+          the first piece of evidence. }
+        FImageAuditController.Note('TEST: global FormatSettings mangled ' +
+          '(DateSeparator=''.'' TimeSeparator=''-''). Fast run armed. This ' +
+          'line''s timestamp and the ini marker must both stay ISO.');
+        StartImageAuditIfDue;
+      end;
+    Ord('W'):
+      begin
+        Key := 0;
+        AuditTestWedgeNextRun := True;
+        { Stand down any audit already in flight, using exactly the path a
+          camera capture uses -- claim the gate (which preempts the audit and
+          waits for it to release) then let it go again. Deliberately NOT
+          RequestStop: that latches the controller's sticky shutdown flag and no
+          further run could ever start. A yield leaves it restartable, which is
+          what T4 demonstrated. }
+        if TryBeginImageMaintenance(imoImageCapture, 5000) then
+          EndImageMaintenance(imoImageCapture);
+        FImageAuditController.Note('TEST: wedge armed (next run ignores the ' +
+          'stop event for 30s); any running audit asked to stand down. Press ' +
+          'Ctrl+Shift+A now.');
+      end;
+  end;
+end;
+{$ENDIF}
 
 procedure TfrmPawnMain.FormShow(Sender: TObject);
 var
@@ -536,13 +666,28 @@ begin
     end;
 
   InitializeImageStorage;
-  // TEMPORARILY DISABLED FOR STORE TESTING:
-  // The weekly image-backup audit creates a long-running background thread.
-  // Leave it disabled while diagnosing the windowless PawnProFB.exe process
-  // reported during shutdown. Normal manual and close-on-exit backups are not
-  // affected. The implementation now lives outside TDM and is ready for either
-  // a controlled in-process retest or reuse by a separate audit executable.
+  // PHASE 1 -- DISABLED ON PURPOSE. Do not re-enable without reading this.
+  //
+  // The weekly image-backup audit is the prime suspect for the intermittent
+  // "component already exists" error and the windowless ghost process. It is
+  // held off for one week across the two heavy-traffic stores to establish a
+  // clean baseline, because the commit that isolated it also fixed three other
+  // candidates (the frmClients csDestroying guard, the nil-owner camera form,
+  // and the gold-price task re-entrancy guard).
+  //
+  // PHASE 2: uncomment this line. The audit only runs Tue/Wed, so each store
+  // produces one data point per week -- allow two or three weeks before
+  // concluding anything. Evidence to collect afterwards:
+  //   ImageBackupAudit.log                     did it start, finish, or get abandoned
+  //   PawnProFB_MemoryManager_EventLog.txt     FastMM4 catching a bad free
+  // Normal manual and close-on-exit image backups are unaffected either way.
   // StartImageAuditIfDue;
+{$IFDEF AUDIT_TESTMODE}
+  // TEST ONLY -- see AuditTestMode.inc. Deliberately a SEPARATE call rather
+  // than uncommenting the line above, so flipping the define off restores
+  // phase-1 behaviour exactly and cannot be confused with starting phase 2.
+  StartImageAuditIfDue;
+{$ENDIF}
 end;
 
 procedure TfrmPawnMain.ListofnewPawns1Click(Sender: TObject);
@@ -1075,7 +1220,10 @@ begin
 //      LAsyncConn := nil;
 
       // Thread-local FB connection, configured from the same
-      // [CONNECTION_FB] params as DM.ConnFB. No shared DM components touched.
+      // [CONNECTION_FB] params as DM.ConnFB. ConfigureFBConnectionFor writes
+      // only into LAsyncConn -- the driver-link binding it used to perform was
+      // moved to DM.BindFBClientLibrary (main thread, set-once) so this worker
+      // no longer mutates any shared DM component.
       LAsyncConn := TFDConnection.Create(nil);
       try
         DM.ConfigureFBConnectionFor(LAsyncConn);

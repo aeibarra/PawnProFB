@@ -1317,6 +1317,14 @@ initialization
   ImagesStoragePath := ReadIniFile(IniSecImageStorage, IniKeyImageDirectory);
 
 finalization
-  IniAccessLock.Free;
+  { IniAccessLock is deliberately NOT freed.
+
+    PawnGlobal uses Forms, so it initializes after Forms and therefore finalizes
+    BEFORE it -- i.e. before Forms tears down Application and destroys the main
+    form. Background workers (the image-backup audit writes the weekly marker on
+    completion) can still call ReadIniFile/WriteIniFile in that window, and a
+    freed critical section there is an access violation during shutdown: exactly
+    the kind of windowless-ghost failure we are chasing. One critical section at
+    process exit costs nothing; the OS reclaims it. }
 
 end.

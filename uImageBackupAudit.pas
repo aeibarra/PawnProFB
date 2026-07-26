@@ -1,5 +1,7 @@
 unit uImageBackupAudit;
 
+{$I AuditTestMode.inc}
+
 interface
 
 uses
@@ -30,67 +32,56 @@ type
     CheckedCount: Integer;
     MissingCount: Integer;
     DifferentCount: Integer;
+    { Images that could not be READ (locked, permissions, bad media) as opposed
+      to images that genuinely differ. Both are re-queued for backup, but they
+      mean very different things and must not be reported as one number. }
+    ErrorCount: Integer;
     LastImageNo: Integer;
     ErrorMessage: string;
   end;
 
+  { Progress/diagnostic sink. Called from the worker thread only. }
+  TAuditLogProc = reference to procedure(const AMessage: string);
+
 procedure RunImageBackupAudit(const AConfig: TImageAuditConfig;
-  AStopEvent: TEvent; out AResult: TImageAuditResult);
+  AStopEvent: TEvent; ALog: TAuditLogProc; out AResult: TImageAuditResult);
+
+{$IFDEF AUDIT_TESTMODE}
+{ TEST ONLY. When set, the next run stalls for AuditTestWedgeMs in a way that
+  deliberately ignores the stop event -- the only practical way to exercise the
+  controller's shutdown abandon path. Armed with Ctrl+Shift+W. }
+var
+  AuditTestWedgeNextRun: Boolean = False;
+
+const
+  AuditTestWedgeMs = 30000;
+{$ENDIF}
 
 implementation
 
 uses
-  System.SysUtils, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, IdHashSHA,
-  uImageMaintenanceGate;
+  { System.Hash, NOT IdHashSHA -- see SHA256OfFile. }
+  System.SysUtils, System.Hash, Data.DB, FireDAC.Comp.Client,
+  FireDAC.Stan.Param, FireDAC.Stan.Option, uImageMaintenanceGate;
 
 type
-  TCancellableReadStream = class(TStream)
-  private
-    FSource: TStream;
-    FStopEvent: TEvent;
-    procedure CheckCanceled;
-  public
-    constructor Create(ASource: TStream; AStopEvent: TEvent);
-    function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
+  TImageAuditRow = record
+    ImageNo: Integer;
+    ImageDate: TDateTime;
   end;
 
-constructor TCancellableReadStream.Create(ASource: TStream; AStopEvent: TEvent);
-begin
-  inherited Create;
-  FSource := ASource;
-  FStopEvent := AStopEvent;
-end;
-
-procedure TCancellableReadStream.CheckCanceled;
-begin
-  if Assigned(FStopEvent) and (FStopEvent.WaitFor(0) = wrSignaled) then
-    Abort;
-end;
-
-function TCancellableReadStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  CheckCanceled;
-  Result := FSource.Read(Buffer, Count);
-  CheckCanceled;
-end;
-
-function TCancellableReadStream.Write(const Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('The audit hash stream is read-only.');
-end;
-
-function TCancellableReadStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
-begin
-  CheckCanceled;
-  Result := FSource.Seek(Offset, Origin);
-end;
-
+{ Single checkpoint for every reason the audit might have to stop: application
+  shutdown (the controller's event) or an interactive image operation waiting on
+  the gate. Doubles as the throttle -- callers pass the delay they wanted to
+  sleep, and a stop cuts it short. }
 function StopRequested(AStopEvent: TEvent; ATimeoutMs: Cardinal): Boolean;
 begin
+  if ImageMaintenanceYieldRequested then
+    Exit(True);
   Result := Assigned(AStopEvent) and
             (AStopEvent.WaitFor(ATimeoutMs) = wrSignaled);
+  if not Result then
+    Result := ImageMaintenanceYieldRequested;
 end;
 
 procedure ConfigureConnection(AConnection: TFDConnection;
@@ -131,53 +122,148 @@ begin
   end;
 end;
 
+{ Uses System.Hash (THashSHA2), NOT Indy's TIdHashSHA256.
+
+  Indy's SHA-256 is routed through IdFIPS and is only available when OpenSSL is
+  loaded. In this application it is not: TIdHashSHA256.IsAvailable returns False
+  and HashStreamAsHex then returns an EMPTY STRING for every file -- no
+  exception, no error. Two empty strings compare equal, so every content
+  comparison the audit performed silently reported "identical", and a corrupted
+  backup image of the correct size was never detected. Verified 2026-07-26 with
+  a byte-flipped test image the audit failed to flag.
+
+  THashSHA2 is part of the RTL, always available, and has no external
+  dependency. Reading in chunks also lets cancellation be checked directly,
+  which is why the old TCancellableReadStream wrapper is gone. }
 function SHA256OfFile(const AFileName: string; AStopEvent: TEvent): string;
+const
+  ChunkSize = 64 * 1024;
 var
   FileStream: TFileStream;
-  CancelStream: TCancellableReadStream;
-  Hasher: TIdHashSHA256;
+  Hash: THashSHA2;
+  Buffer: TBytes;
+  BytesRead: Integer;
 begin
+  Hash := THashSHA2.Create(THashSHA2.TSHA2Version.SHA256);
+  SetLength(Buffer, ChunkSize);
   FileStream := TFileStream.Create(AFileName, fmOpenRead or fmShareDenyNone);
   try
-    CancelStream := TCancellableReadStream.Create(FileStream, AStopEvent);
-    try
-      Hasher := TIdHashSHA256.Create;
-      try
-        Result := Hasher.HashStreamAsHex(CancelStream);
-      finally
-        Hasher.Free;
-      end;
-    finally
-      CancelStream.Free;
-    end;
+    repeat
+      { Hashing is the longest uninterruptible stretch in the audit, so shutdown
+        and an interactive yield are both honoured mid-file, per chunk. }
+      if StopRequested(AStopEvent, 0) then
+        Abort;
+      BytesRead := FileStream.Read(Buffer[0], ChunkSize);
+      if BytesRead > 0 then
+        Hash.Update(Buffer[0], BytesRead);
+    until BytesRead <= 0;
   finally
     FileStream.Free;
   end;
+  Result := Hash.HashAsString;
+end;
+
+{ Reads the whole work list up front so the SELECT's read transaction lives for
+  one round trip instead of for the entire audit. A transaction left open for
+  the many minutes of a full walk pins Firebird's oldest active transaction and
+  blocks garbage collection for the whole store. Two integers per image is cheap
+  even at six figures of images. }
+function LoadImageList(AQuery: TFDQuery; AStopEvent: TEvent;
+  out ARows: TArray<TImageAuditRow>): Boolean;
+const
+  StopCheckInterval = 500;
+var
+  Count: Integer;
+begin
+  Count := 0;
+  SetLength(ARows, 0);
+  // fmAll: the rowset is fetched in one go, which lets us close the query -- and
+  // with it the read transaction -- before the long file-comparison walk starts.
+  AQuery.FetchOptions.Mode := fmAll;
+  AQuery.Open;
+  try
+    // Exact after a full fetch, so this is a presize rather than a guess.
+    if AQuery.RecordCount > 0 then
+      SetLength(ARows, AQuery.RecordCount);
+    while not AQuery.Eof do
+    begin
+      if (Count mod StopCheckInterval = 0) and StopRequested(AStopEvent, 0) then
+        Exit(False);
+      if Count = Length(ARows) then
+        SetLength(ARows, Count + 4096);
+      ARows[Count].ImageNo := AQuery.Fields[0].AsInteger;
+      ARows[Count].ImageDate := AQuery.Fields[1].AsDateTime;
+      Inc(Count);
+      AQuery.Next;
+    end;
+  finally
+    SetLength(ARows, Count);
+    AQuery.Close;
+  end;
+  Result := True;
 end;
 
 procedure RunImageBackupAudit(const AConfig: TImageAuditConfig;
-  AStopEvent: TEvent; out AResult: TImageAuditResult);
+  AStopEvent: TEvent; ALog: TAuditLogProc; out AResult: TImageAuditResult);
+const
+  { A full run on a store-sized image set takes ~17 minutes. Without a heartbeat
+    the log cannot distinguish "still working" from "died silently", which is
+    exactly the question the phase-2 logs have to answer after the fact. }
+  ProgressIntervalMs = 60000;
+  { Enough to identify a pattern (one bad folder, one bad drive) without letting
+    a systemic failure flood the log. }
+  MaxLoggedErrors = 20;
 var
   Connection: TFDConnection;
   ImageQuery, MarkQuery: TFDQuery;
-  ImageNo: Integer;
-  ImageDate: TDateTime;
+  Rows: TArray<TImageAuditRow>;
+  Row: TImageAuditRow;
   SourcePath, BackupPath: string;
   SourceSize, BackupSize: Int64;
   SourceHash, BackupHash: string;
+  NextProgressAt: UInt64;
+  LoggedErrors: Integer;
+
+  procedure Note(const AMessage: string);
+  begin
+    if Assigned(ALog) then
+      ALog(AMessage);
+  end;
+
+  procedure ReportProgress;
+  begin
+    if TThread.GetTickCount64 < NextProgressAt then
+      Exit;
+    NextProgressAt := TThread.GetTickCount64 + ProgressIntervalMs;
+    Note(Format('Image audit progress: %d/%d checked, missing=%d different=%d ' +
+      'errors=%d last=%d',
+      [AResult.CheckedCount, Length(Rows), AResult.MissingCount,
+       AResult.DifferentCount, AResult.ErrorCount, AResult.LastImageNo]));
+  end;
 
   procedure MarkForBackup;
   begin
     try
-      MarkQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := ImageNo;
+      MarkQuery.Params.ParamByName('IMAGES_DATA_NO').AsInteger := Row.ImageNo;
       MarkQuery.ExecSQL;
     except
       // Best effort: a normal image backup will retry the row.
     end;
   end;
 
+  procedure NoteStopReason;
+  begin
+    AResult.Canceled := True;
+    if ImageMaintenanceYieldRequested then
+      AResult.ErrorMessage :=
+        'Yielded to an interactive image operation; will retry on the next ' +
+        'eligible day because the weekly marker was not advanced.';
+  end;
+
 begin
   AResult := Default(TImageAuditResult);
+  LoggedErrors := 0;
+  NextProgressAt := TThread.GetTickCount64 + ProgressIntervalMs;
 
   // Delay before claiming the operation gate so an interactive camera session
   // opened during application startup always gets priority over the audit.
@@ -195,6 +281,17 @@ begin
     Exit;
   end;
   try
+
+{$IFDEF AUDIT_TESTMODE}
+    { TEST ONLY -- see AuditTestMode.inc. Plain Sleep on purpose: it does NOT
+      watch the stop event, so closing the app during it forces the controller
+      to hit its abandon-and-leak path instead of the clean join. }
+    if AuditTestWedgeNextRun then
+    begin
+      AuditTestWedgeNextRun := False;
+      Sleep(AuditTestWedgeMs);
+    end;
+{$ENDIF}
 
     Connection := nil;
     ImageQuery := nil;
@@ -219,21 +316,26 @@ begin
           'DELETE FROM IMAGES_DATA_BACKUP ' +
           'WHERE IMAGES_DATA_NO = :IMAGES_DATA_NO';
 
-        ImageQuery.Open;
-        while not ImageQuery.Eof do
+        if not LoadImageList(ImageQuery, AStopEvent, Rows) then
+        begin
+          NoteStopReason;
+          Exit;
+        end;
+        Note(Format('Image audit work list loaded: %d images to check.',
+          [Length(Rows)]));
+
+        for Row in Rows do
         begin
           if StopRequested(AStopEvent, 0) then
           begin
-            AResult.Canceled := True;
+            NoteStopReason;
             Exit;
           end;
 
-          ImageNo := ImageQuery.FieldByName('IMAGES_DATA_NO').AsInteger;
-          ImageDate := ImageQuery.FieldByName('CREATED').AsDateTime;
-          AResult.LastImageNo := ImageNo;
+          AResult.LastImageNo := Row.ImageNo;
           Inc(AResult.CheckedCount);
-          SourcePath := BuildImagePath(AConfig.SourceRoot, ImageNo, ImageDate);
-          BackupPath := BuildImagePath(AConfig.BackupRoot, ImageNo, ImageDate);
+          SourcePath := BuildImagePath(AConfig.SourceRoot, Row.ImageNo, Row.ImageDate);
+          BackupPath := BuildImagePath(AConfig.BackupRoot, Row.ImageNo, Row.ImageDate);
 
           try
             if FileExists(SourcePath) then
@@ -248,7 +350,7 @@ begin
                 SourceSize := FileSizeOf(SourcePath);
                 if StopRequested(AStopEvent, 0) then
                 begin
-                  AResult.Canceled := True;
+                  NoteStopReason;
                   Exit;
                 end;
                 BackupSize := FileSizeOf(BackupPath);
@@ -262,6 +364,15 @@ begin
                 begin
                   SourceHash := SHA256OfFile(SourcePath, AStopEvent);
                   BackupHash := SHA256OfFile(BackupPath, AStopEvent);
+                  { An empty hash must never read as "these match". That is
+                    exactly how the previous Indy-based implementation failed
+                    silently for the life of this feature -- it returned '' for
+                    every file and every comparison passed. Treat it as an
+                    error, which is both counted and logged. }
+                  if (SourceHash = '') or (BackupHash = '') then
+                    raise Exception.CreateFmt(
+                      'SHA-256 unavailable: empty digest for image %d.',
+                      [Row.ImageNo]);
                   if not SameText(SourceHash, BackupHash) then
                   begin
                     Inc(AResult.DifferentCount);
@@ -273,22 +384,36 @@ begin
           except
             on E: EAbort do
             begin
-              AResult.Canceled := True;
+              // Raised by TCancellableReadStream mid-hash on stop or yield.
+              NoteStopReason;
               Exit;
             end;
             on E: Exception do
             begin
-              Inc(AResult.DifferentCount);
+              // Unreadable, not different. Still re-queued for backup, but
+              // counted and reported separately -- conflating the two hides
+              // a failing drive behind what looks like ordinary drift.
+              Inc(AResult.ErrorCount);
+              if LoggedErrors < MaxLoggedErrors then
+              begin
+                Inc(LoggedErrors);
+                Note(Format('Image audit could not read image %d (%s): %s: %s',
+                  [Row.ImageNo, SourcePath, E.ClassName, E.Message]));
+                if LoggedErrors = MaxLoggedErrors then
+                  Note('Image audit: further read errors will not be logged ' +
+                    'individually; see the errors= total on the finish line.');
+              end;
               MarkForBackup;
             end;
           end;
 
+          ReportProgress;
+
           if StopRequested(AStopEvent, AConfig.ItemThrottleMs) then
           begin
-            AResult.Canceled := True;
+            NoteStopReason;
             Exit;
           end;
-          ImageQuery.Next;
         end;
 
         AResult.Completed := True;

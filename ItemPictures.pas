@@ -88,6 +88,11 @@ const
   crPanOpen = 2101;   // open hand: image can be grabbed
   crPanGrab = 2102;   // closed fist: currently dragging
 
+  { How long a camera capture waits for the image gate. Long enough to ride out
+    a running audit standing down, short enough that a clerk blocked by a real
+    backup gets a clear message instead of a frozen window. }
+  CaptureGateWaitMs = 3000;
+
 var
   PanCursorsRegistered: Boolean = False;
 
@@ -206,12 +211,27 @@ begin
   // Camera capture and the subsequent source-image write are one protected
   // operation. The background audit and image backup cannot start until this
   // finally block releases the gate.
-  if not TryBeginImageMaintenance(imoImageCapture) then
-  begin
-    PawnWarn(
-      'Another image maintenance operation is currently running. Please try taking the picture again shortly.',
-      'Capture Picture', Self);
-    Exit;
+  //
+  // The clerk always wins: a running audit is asked to stand down and normally
+  // releases within a slice or two, so this wait is imperceptible. The timeout
+  // only matters against a backup, which is not interruptible -- an audit will
+  // never hold the register up for the minutes a full run can take.
+  Screen.Cursor := crHourGlass;
+  try
+    if not TryBeginImageMaintenance(imoImageCapture, CaptureGateWaitMs) then
+    begin
+      if CurrentImageMaintenanceOperation = imoBackup then
+        PawnWarn(
+          'An image backup is currently running. Please try taking the picture again shortly.',
+          'Capture Picture', Self)
+      else
+        PawnWarn(
+          'Image maintenance is finishing up. Please try taking the picture again in a moment.',
+          'Capture Picture', Self);
+      Exit;
+    end;
+  finally
+    Screen.Cursor := crDefault;
   end;
 
   { Create with no owner (not Self): if the camera teardown ever faults inside
