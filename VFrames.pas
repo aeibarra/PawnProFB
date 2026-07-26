@@ -64,7 +64,7 @@ interface
 
 
 USES Windows, Messages, Controls, Forms, SysUtils, Graphics, Classes,
-     AppEvnts, MMSystem, DirectShow9, JPEG, VSample;
+     AppEvnts, MMSystem, DirectShow9, JPEG, VSample, SyncObjs;
 
 CONST
   CBufferCnt = 3;
@@ -114,6 +114,16 @@ TYPE
                     JPG           : TJPEGImage;
                     MemStream     : TMemoryStream;
                     fImageUnpacked: boolean;
+                    { PawnPro fix -- teardown barrier for the driver-thread
+                      callback. CallBack is invoked by DirectShow on the capture
+                      thread and writes object fields, GetMem/FreeMems the frame
+                      buffers and memcpys into them. Nothing used to stop a frame
+                      already in flight from doing all that to a half-destroyed
+                      object, which is an access violation whenever the camera is
+                      closed while frames are still streaming. }
+                    fCallbackLock : TCriticalSection;
+                    fCallbacksOff : boolean;
+                    procedure     StopCallbacks;
                     procedure     PaintFrame;
                     procedure     UnpackFrame(Size: integer; pData: pointer);
                     procedure     WndProc(var Msg: TMessage);
@@ -127,7 +137,8 @@ TYPE
                   public
                     constructor   Create;
                     destructor    Destroy; override;
-                    procedure     Free;
+                    { NOTE: no "procedure Free" here on purpose -- see the long
+                      comment in the implementation where it used to be. }
                     property      IsPaused: boolean read VideoSampleIsPaused;
                     property      VideoRunning : boolean read fVideoRunning;
                     property      VideoWidth: integer read fWidth;
@@ -209,6 +220,17 @@ var
   i  : integer;
   T1 : cardinal;
 begin
+  { PawnPro fix. This runs on the DirectShow capture thread. The lock, plus the
+    fCallbacksOff flag, is what lets StopCallbacks guarantee that no frame is
+    still inside this routine before the object or its buffers are freed.
+    Cheap pre-check first so a torn-down object costs a flag read, not a lock. }
+  if fCallbacksOff then
+    Exit;
+  fCallbackLock.Acquire;
+  try
+    if fCallbacksOff then
+      Exit;
+
   Inc(fFrameCnt);
 
   // Calculate "Frames per second"...
@@ -246,6 +268,12 @@ begin
   // This routine is called by the video software and therefore runs within their thread.
   // Posting a message to our own HWND will transport the information to the main thread.
   PostMessage(fMessageHWND, fMsgNewFrame, Size, integer(fImagePtr[i]));
+
+  finally
+    fCallbackLock.Release;
+  end;
+  { Outside the lock: yielding while holding it would make teardown wait on this
+    thread's scheduling slice for no reason. }
   sleep(0);
 end;
 
@@ -298,6 +326,8 @@ begin
   fMsgNewFrame    := wm_user+662;
   fOnNewFrame     := nil;
   fBusy           := false;
+  fCallbackLock   := TCriticalSection.Create;
+  fCallbacksOff   := false;
   // Create a HWND that can capture some messages for us...
   fMessageHWND    := AllocateHWND(WndProc);
   AppEvent        := TApplicationEvents.Create(Application.MainForm);
@@ -316,10 +346,48 @@ begin
 end;
 
 
+{ PawnPro fix. Guarantees that no capture-thread callback is executing, and that
+  none can start, before the caller frees anything the callback touches. Ordered
+  deliberately: the flag goes up FIRST so new frames bail without needing the
+  lock, then we take and immediately release the lock purely as a barrier to
+  wait out a frame already inside CallBack. The graph itself is stopped by the
+  caller AFTER this returns and while we hold no lock -- freeing the DirectShow
+  filter can block on the capture thread, and that thread must never be waiting
+  on us at the same time or the two deadlock. }
+procedure TVideoImage.StopCallbacks;
+begin
+  fCallbacksOff := true;
+  if Assigned(fCallbackLock) then
+  begin
+    fCallbackLock.Acquire;
+    fCallbackLock.Release;
+  end;
+end;
+
+
 destructor  TVideoImage.Destroy;
 VAR
   i : integer;
 begin
+  { PawnPro fix. Everything below used to live in the non-virtual Free (see the
+    note where that method used to be); it never ran when the object was
+    released through FreeAndNil, leaving AppEvent alive with OnIdle still bound
+    to this instance -- a permanent 4-byte write into freed memory on every VCL
+    idle. Doing it in the virtual destructor makes every release path correct. }
+  StopCallbacks;
+
+  if Assigned(AppEvent) then
+    begin
+      AppEvent.OnIdle := nil;
+      FreeAndNil(AppEvent);
+    end;
+
+  fDisplayCanvas := nil;
+  FreeAndNil(fBitmap);
+  { Created in the constructor and previously never released at all. }
+  FreeAndNil(JPG);
+  FreeAndNil(MemStream);
+
   FOR i := CBufferCnt-1 DOWNTO 0 DO
     IF fImagePtrSize[i] <> 0 then
       begin
@@ -328,20 +396,21 @@ begin
         fImagePtrSize[i] := 0;
       end;
   DeallocateHWnd(fMessageHWND);
+  FreeAndNil(fCallbackLock);
   inherited Destroy;
 end;
 
+{ PawnPro fix: "procedure TVideoImage.Free" was REMOVED from here.
 
+  TObject.Free is not virtual, so that method only hid it -- it ran when the
+  compiler statically saw a TVideoImage, and was silently skipped whenever the
+  object was released as a TObject. FreeAndNil does exactly that (it calls
+  TObject(Temp).Free), which is how the camera form released it, so the cleanup
+  never happened. FastMM4 caught the consequence directly: five identical
+  "block modified after being freed" reports, 4 bytes at offset 168, the offset
+  of IdleEventTick, written by the orphaned AppEvent.OnIdle handler.
 
-procedure TVideoImage.Free;
-begin
-  fDisplayCanvas := nil;
-  fBitmap.Free;
-  AppEvent.OnIdle := nil;
-  AppEvent.Free;
-  AppEvent := nil;
-  inherited Free;
-end;
+  Do not reintroduce it. Cleanup belongs in the virtual destructor above. }
 
 
 // For Properties see also http://msdn.microsoft.com/en-us/library/ms786938(VS.85).aspx
@@ -445,6 +514,14 @@ begin
   if not assigned(VideoSample) then
     exit;
 
+  { PawnPro fix. Shut the callback down and wait out any frame already in flight
+    BEFORE tearing the graph down. Previously VideoSample was freed while the
+    capture thread could still be inside CallBack writing to this object's
+    fields and frame buffers -- the access violation seen when the camera is
+    opened and closed in quick succession, which went away if you waited a few
+    seconds because the stream had gone quiet by then. }
+  StopCallbacks;
+
   try
     VideoSample.Free;
     VideoSample := nil;
@@ -500,6 +577,9 @@ begin
           FBitmap.PixelFormat := pf24bit;
           FBitmap.Width := W;
           FBitmap.Height := H;
+          { PawnPro fix: re-arm the callback gate. VideoStart calls VideoStop
+            first, which latches it shut. }
+          fCallbacksOff := false;
           VideoSample.SetCallBack(CallBack);  // Do not call GDI routines in Callback!
         END;
     end;
@@ -775,6 +855,8 @@ begin
       FBitmap.PixelFormat := pf24bit;
       FBitmap.Width := W;
       FBitmap.Height := H;
+      { PawnPro fix: re-arm the callback gate -- see the note in VideoStart. }
+      fCallbacksOff := false;
       VideoSample.SetCallBack(CallBack);
     END;
 end;
