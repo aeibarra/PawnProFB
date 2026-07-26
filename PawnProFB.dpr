@@ -1,13 +1,30 @@
 program PawnProFB;
 
-// Diagnostic memory-manager hunt for the intermittent EInvalidPointer / ghost
-// process. Flip to {$DEFINE MMDEBUG} to build the FastMM4 FullDebugMode EXE:
-// it wraps every allocation with guard blocks + a stack trace and catches any
-// double-free / use-after-free / overrun AT THE MOMENT it happens, logging both
-// the allocation and free stacks to PawnProFB_MemoryManager_EventLog.txt next
-// to the EXE. Requires FastMM_FullDebugMode64.dll (and PawnProFB.map for line
-// numbers) beside the EXE. Leave this OFF for the real build -- with it off
-// FastMM4 is not linked and the binary is unaffected.
+// Diagnostic memory-manager build for the intermittent EInvalidPointer /
+// "component already exists" / windowless-ghost-process hunt.
+//
+// With MMDEBUG defined, FastMM4 FullDebugMode wraps every allocation in guard
+// blocks and records a stack trace, so a double-free, use-after-free or buffer
+// overrun is caught AT THE MOMENT IT HAPPENS -- not later, somewhere unrelated.
+// Both the allocation and the free stack are appended to
+// PawnProFB_MemoryManager_EventLog.txt next to the EXE.
+//
+// Deployment requirements when this is ON -- all three must sit beside the EXE:
+//   FastMM_FullDebugMode64.dll   stack capture (app will not start without it)
+//   PawnProFB.map                resolves traces to unit + line number
+//   (the event log is created on first error; nothing to pre-deploy)
+//
+// Store-safety settings live in FastMM4Options.inc: NoMessageBoxes is ON so a
+// detected error is logged instead of popping a modal dialog at the register,
+// and RawStackTraces / AlwaysAllocateTopDown are OFF so the build stays fast
+// enough to run all day. See the PawnPro notes in that file before changing it.
+//
+// NOTE: FastMM4.pas / FastMM4Options.inc / FastMM_FullDebugMode64.dll are
+// .gitignored, so a fresh clone will NOT compile with MMDEBUG defined until
+// those files are copied in. Comment the define out for a clean-checkout build.
+//
+// Turn this OFF once the hunt is over: with it undefined FastMM4 is not linked
+// at all and the binary is byte-for-byte unaffected.
 {$DEFINE MMDEBUG}
 
 uses

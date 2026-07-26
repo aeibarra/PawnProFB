@@ -3,7 +3,7 @@
         <ProjectGuid>{7F901A4F-048F-4BE9-BB5E-0B8ABF30B89E}</ProjectGuid>
         <MainSource>PawnProFB.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1027</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -151,8 +151,22 @@ $(PreBuildEvent)]]></PreBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-        <DCC_DebugInformation>0</DCC_DebugInformation>
-        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <!-- The four settings below exist to make the MMDEBUG diagnostic build
+             produce READABLE FastMM4 stack traces. Revert them (DebugInformation
+             0, LocalDebugSymbols false, GenerateStackFrames unset, MapFile
+             removed) when {$DEFINE MMDEBUG} comes out of PawnProFB.dpr.
+               DebugInformation + MapFile 3 -> detailed .map WITH line numbers,
+                 which is what the FullDebugMode DLL resolves addresses against.
+                 Deploy PawnProFB.map beside the EXE or the memory event log
+                 shows raw addresses only.
+               GenerateStackFrames -> required because RawStackTraces is off in
+                 FastMM4Options.inc; frame-based tracing needs real stack frames,
+                 which an optimised Release build otherwise omits.
+             None of this changes program behaviour, only diagnosability. -->
+        <DCC_DebugInformation>2</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_MapFile>3</DCC_MapFile>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_iOSDevice64)'!=''">
@@ -174,10 +188,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.16;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.17;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_Release>1</VerInfo_Release>
-        <VerInfo_Build>16</VerInfo_Build>
+        <VerInfo_Build>17</VerInfo_Build>
         <VerInfo_MinorVer>37</VerInfo_MinorVer>
         <UWP_DelphiLogo150>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo150>
         <UWP_DelphiLogo44>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo44>
@@ -382,6 +396,9 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <Form>frmItemHistory</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="uImageMaintenanceGate.pas"/>
+        <DCCReference Include="uImageBackupAudit.pas"/>
+        <DCCReference Include="uImageAuditController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
