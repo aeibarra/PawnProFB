@@ -1,7 +1,5 @@
 unit uImageBackupAudit;
 
-{$I AuditTestMode.inc}
-
 interface
 
 uses
@@ -45,17 +43,6 @@ type
 
 procedure RunImageBackupAudit(const AConfig: TImageAuditConfig;
   AStopEvent: TEvent; ALog: TAuditLogProc; out AResult: TImageAuditResult);
-
-{$IFDEF AUDIT_TESTMODE}
-{ TEST ONLY. When set, the next run stalls for AuditTestWedgeMs in a way that
-  deliberately ignores the stop event -- the only practical way to exercise the
-  controller's shutdown abandon path. Armed with Ctrl+Shift+W. }
-var
-  AuditTestWedgeNextRun: Boolean = False;
-
-const
-  AuditTestWedgeMs = 30000;
-{$ENDIF}
 
 implementation
 
@@ -281,17 +268,6 @@ begin
     Exit;
   end;
   try
-
-{$IFDEF AUDIT_TESTMODE}
-    { TEST ONLY -- see AuditTestMode.inc. Plain Sleep on purpose: it does NOT
-      watch the stop event, so closing the app during it forces the controller
-      to hit its abandon-and-leak path instead of the clean join. }
-    if AuditTestWedgeNextRun then
-    begin
-      AuditTestWedgeNextRun := False;
-      Sleep(AuditTestWedgeMs);
-    end;
-{$ENDIF}
 
     Connection := nil;
     ImageQuery := nil;
