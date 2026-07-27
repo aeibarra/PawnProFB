@@ -19,7 +19,63 @@ procedure EnsureIniDefaults(const AFileName: string);
 implementation
 
 uses
-  IniFiles;
+  System.SysUtils, System.Classes, IniFiles;
+
+{ A UTF-8 BOM at the start of the INI silently breaks the FIRST section header.
+  TIniFile goes through the Windows profile API, which sees the three BOM bytes
+  as part of the line and therefore never matches "[CONNECTION_FB]". Every key
+  in that section then falls back to its per-call default, so the app quietly
+  connects to a different database -- or to none -- with no error anywhere.
+  Worse, a later WriteString cannot find the section either and APPENDS a second
+  copy of it at the end of the file, which then wins on the next startup.
+
+  A BOM gets here easily: Notepad's "Save as UTF-8", a deployment script, or any
+  editor used to set the per-store host and database path. Since PawnPro.ini is
+  pure ASCII configuration, a BOM is never legitimate -- strip it and carry on.
+  Failing to start would be a worse outcome than repairing it silently, but the
+  repair is recorded so it is not invisible.
+
+  Returns True if a BOM was found and removed. }
+function StripUtf8BomIfPresent(const AFileName: string): Boolean;
+const
+  Bom: array[0..2] of Byte = ($EF, $BB, $BF);
+var
+  Stream: TFileStream;
+  Head: array[0..2] of Byte;
+  Body: TBytes;
+begin
+  Result := False;
+  if not FileExists(AFileName) then
+    Exit;
+  try
+    Stream := TFileStream.Create(AFileName, fmOpenRead or fmShareDenyWrite);
+    try
+      if Stream.Size < Length(Bom) then
+        Exit;
+      Stream.ReadBuffer(Head, Length(Head));
+      if not CompareMem(@Head, @Bom, Length(Bom)) then
+        Exit;
+      SetLength(Body, Stream.Size - Length(Bom));
+      if Length(Body) > 0 then
+        Stream.ReadBuffer(Body[0], Length(Body));
+    finally
+      Stream.Free;
+    end;
+
+    Stream := TFileStream.Create(AFileName, fmCreate);
+    try
+      if Length(Body) > 0 then
+        Stream.WriteBuffer(Body[0], Length(Body));
+    finally
+      Stream.Free;
+    end;
+    Result := True;
+  except
+    // A settings file we cannot repair must not stop the app from starting.
+    // The original symptom (defaults being used) is what the caller will see.
+    Result := False;
+  end;
+end;
 
 procedure EnsureKey(Ini: TIniFile; const Section, Key, DefaultValue: string);
 begin
@@ -30,9 +86,17 @@ end;
 procedure EnsureIniDefaults(const AFileName: string);
 var
   Ini: TIniFile;
+  BomRemoved: Boolean;
 begin
+  // Before anything reads a key: a BOM here makes the first section invisible.
+  BomRemoved := StripUtf8BomIfPresent(AFileName);
+
   Ini := TIniFile.Create(AFileName);
   try
+    if BomRemoved then
+      Ini.WriteString('DIAGNOSTICS', 'LastBomRepair',
+        FormatDateTime('yyyy-mm-dd hh:nn:ss', Now, TFormatSettings.Invariant));
+
     // ----- [PRINTERS] -----
     // Police-report printer is the only one shown by default; the rest are
     // opt-in via these flags. Their respective buttons stay hidden until the
