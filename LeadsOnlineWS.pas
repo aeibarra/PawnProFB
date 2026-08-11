@@ -1,22 +1,23 @@
 ﻿// ************************************************************************ //
 // The types declared in this file were generated from data read from the
 // WSDL File described below:
-// WSDL     : C:\Courses\Delphi\SOAP_Calculator\leadsonline.wsdl
-//  >Import : C:\Courses\Delphi\SOAP_Calculator\leadsonline.wsdl>0
+// WSDL     : C:\ProjectsGIT\PawnProFB\PawnDocs\LeadsOnlineDocs\LeadsOnlineWS.wsdl
+//  >Import : C:\ProjectsGIT\PawnProFB\PawnDocs\LeadsOnlineDocs\LeadsOnlineWS.wsdl>0
 // Encoding : utf-8
 // Version  : 1.0
-// (7/9/2025 2:17:19 PM - - $Rev: 116709 $)
+// (8/11/2026 11:14:49 AM - - $Rev: 125242 $)
 // ************************************************************************ //
 
-unit leadsonline;
+unit LeadsOnlineWS;
 
 interface
 
-uses System.SysUtils, Soap.InvokeRegistry, Soap.SOAPHTTPClient, System.Types, Soap.XSBuiltIns;
+uses Soap.InvokeRegistry, Soap.SOAPHTTPClient, System.Types, Soap.XSBuiltIns;
 
 const
   IS_OPTN = $0001;
   IS_UNBD = $0002;
+  IS_NLBL = $0004;
   IS_REF  = $0080;
 
 
@@ -50,7 +51,7 @@ type
   ItemType = (Other, Jewelry, Firearm);
 
   { "http://www.leadsonline.com/"[GblSmpl] }
-  ImageType = (Jpeg, Png, Gif);
+  ImageType = (Jpeg, Png, Gif, Pdf);
 
   { "http://www.leadsonline.com/"[GblSmpl] }
   TicketType = (
@@ -68,7 +69,19 @@ type
   );
 
   { "http://www.leadsonline.com/"[GblSmpl] }
-  ImageCategory = (Customer, CustomerID, Thumbprint, Signature, Item);
+  ImageCategory = (
+      Customer, 
+      CustomerID, 
+      Thumbprint, 
+      Signature, 
+      Item, 
+      Vehicle, 
+      VehicleLicense, 
+      Document, 
+      Check, 
+      CashCard, 
+      ProfessionalLicense
+  );
 
   {$SCOPEDENUMS OFF}
 
@@ -432,14 +445,14 @@ type
   private
     FimageCategory: ImageCategory;
     FimageType: ImageType;
-    FimageData: TBytes;
+    FimageData: TByteSOAPArray;
     FimageData_Specified: boolean;
-    procedure SetimageData(Index: Integer; const ATByteArray: TBytes);
+    procedure SetimageData(Index: Integer; const ATByteSOAPArray: TByteSOAPArray);
     function  imageData_Specified(Index: Integer): boolean;
   published
     property imageCategory: ImageCategory   read FimageCategory write FimageCategory;
     property imageType:     ImageType       read FimageType write FimageType;
-    property imageData:     TBytes  Index (IS_OPTN) read FimageData write SetimageData stored imageData_Specified;
+    property imageData:     TByteSOAPArray  Index (IS_OPTN) read FimageData write SetimageData stored imageData_Specified;
   end;
 
 
@@ -449,21 +462,24 @@ type
   // transport : http://schemas.xmlsoap.org/soap/http
   // style     : document
   // use       : literal
-  // binding   : ticketWSSoap
-  // service   : ticketWS
-  // port      : ticketWSSoap
-  // URL       : https://sandbox.leadsonline.com/leads/ws/pawn/ticketWS.asmx
+  // binding   : ticketWSSoap_ticketWSSoap
+  // service   : PawnContract
+  // port      : ticketWSSoap_ticketWSSoap
+  // URL       : https://w3apisandbox.leadsonline.com/ticketWS.asmx
   // ************************************************************************ //
   ticketWSSoap = interface(IInvokable)
-  ['{B10B1414-68EA-7EC2-E906-0050DA4E695C}']
-    function  CheckLogin(const login: LoginInfo): Response; stdcall;
-    function  SubmitTransaction(const login: LoginInfo; const ticket: Ticket): Response; stdcall;
-    function  UpdateTransaction(const login: LoginInfo; const oldTicket: TicketKey; const ticket: Ticket): Response; stdcall;
-    function  CheckDoNotBuy(const login: LoginInfo; const state: string; const ID: string): ArrayOfDoNotBuyInfo; stdcall;
-    function  CheckDoNotBuy2(const login: LoginInfo; const ID: string; const Name_: string; const BirthDate: string): ArrayOfDoNotBuyInfo; stdcall;
-    function  UploadImage(const login: LoginInfo; const ticketKey: TicketKey; const img: Image; const itemIndex: Integer): Response; stdcall;
-    function  DeleteImage(const login: LoginInfo; const ticketKey: TicketKey; const imageCategory: ImageCategory; const itemIndex: Integer; const filename: string): Response; stdcall;
-    function  SetNoTransactionDayForStore(const login: LoginInfo; const TransactionDate: string): Response; stdcall;
+  ['{DAC93A0E-C308-D113-A22D-5F4289BC7CB8}']
+    function  CheckLogin(const ApiVersion: Integer; const IpAddress: string; const login: LoginInfo): Response; stdcall;
+    function  SubmitTransaction(const ApiVersion: Integer; const IpAddress: string; const login: LoginInfo; const ticket: Ticket): Response; stdcall;
+    function  UpdateTransaction(const ApiVersion: Integer; const IpAddress: string; const login: LoginInfo; const oldTicket: TicketKey; const ticket: Ticket): Response; stdcall;
+    function  CheckDoNotBuy(const ApiVersion: Integer; const ID: string; const IpAddress: string; const login: LoginInfo; const state: string): ArrayOfDoNotBuyInfo; stdcall;
+    function  CheckDoNotBuy2(const ApiVersion: Integer; const BirthDate: string; const ID: string; const IpAddress: string; const Name_: string; const login: LoginInfo
+                             ): ArrayOfDoNotBuyInfo; stdcall;
+    function  UploadImage(const ApiVersion: Integer; const IpAddress: string; const img: Image; const itemIndex: Integer; const login: LoginInfo; const ticketKey: TicketKey
+                          ): Response; stdcall;
+    function  DeleteImage(const ApiVersion: Integer; const IpAddress: string; const filename: string; const imageCategory: ImageCategory; const itemIndex: Integer; const login: LoginInfo; 
+                          const ticketKey: TicketKey): Response; stdcall;
+    function  SetNoTransactionDayForStore(const ApiVersion: Integer; const IpAddress: string; const TransactionDate: string; const login: LoginInfo): Response; stdcall;
   end;
 
 function GetticketWSSoap(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO: THTTPRIO = nil): ticketWSSoap;
@@ -471,12 +487,14 @@ function GetticketWSSoap(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO
 
 implementation
 
+uses System.SysUtils, System.Generics.Collections;
+
 function GetticketWSSoap(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): ticketWSSoap;
 const
-  defWSDL = 'C:\Courses\Delphi\SOAP_Calculator\leadsonline.wsdl';
-  defURL  = 'https://sandbox.leadsonline.com/leads/ws/pawn/ticketWS.asmx';
-  defSvc  = 'ticketWS';
-  defPrt  = 'ticketWSSoap';
+  defWSDL = 'C:\ProjectsGIT\PawnProFB\PawnDocs\LeadsOnlineDocs\LeadsOnlineWS.wsdl';
+  defURL  = 'https://w3apisandbox.leadsonline.com/ticketWS.asmx';
+  defSvc  = 'PawnContract';
+  defPrt  = 'ticketWSSoap_ticketWSSoap';
 var
   RIO: THTTPRIO;
 begin
@@ -619,14 +637,10 @@ begin
 end;
 
 destructor Ticket.Destroy;
-var
-  I: Integer;
 begin
-  for I := 0 to System.Length(Fitems)-1 do
-    System.SysUtils.FreeAndNil(Fitems[I]);
+  TArray.FreeValues<LeadsOnlineWS.Item2>(Fitems);
   System.SetLength(Fitems, 0);
-  for I := 0 to System.Length(FextraTicket)-1 do
-    System.SysUtils.FreeAndNil(FextraTicket[I]);
+  TArray.FreeValues<LeadsOnlineWS.PropertyValue>(FextraTicket);
   System.SetLength(FextraTicket, 0);
   System.SysUtils.FreeAndNil(Fkey);
   System.SysUtils.FreeAndNil(Fcustomer);
@@ -711,14 +725,10 @@ begin
 end;
 
 destructor Item2.Destroy;
-var
-  I: Integer;
 begin
-  for I := 0 to System.Length(Fimages)-1 do
-    System.SysUtils.FreeAndNil(Fimages[I]);
+  TArray.FreeValues<LeadsOnlineWS.Image>(Fimages);
   System.SetLength(Fimages, 0);
-  for I := 0 to System.Length(FextraItem)-1 do
-    System.SysUtils.FreeAndNil(FextraItem[I]);
+  TArray.FreeValues<LeadsOnlineWS.PropertyValue>(FextraItem);
   System.SetLength(FextraItem, 0);
   inherited Destroy;
 end;
@@ -812,14 +822,10 @@ begin
 end;
 
 destructor Customer2.Destroy;
-var
-  I: Integer;
 begin
-  for I := 0 to System.Length(Fimages)-1 do
-    System.SysUtils.FreeAndNil(Fimages[I]);
+  TArray.FreeValues<LeadsOnlineWS.Image>(Fimages);
   System.SetLength(Fimages, 0);
-  for I := 0 to System.Length(FextraCustomer)-1 do
-    System.SysUtils.FreeAndNil(FextraCustomer[I]);
+  TArray.FreeValues<LeadsOnlineWS.PropertyValue>(FextraCustomer);
   System.SetLength(FextraCustomer, 0);
   inherited Destroy;
 end;
@@ -1055,9 +1061,9 @@ begin
   Result := FextraCustomer_Specified;
 end;
 
-procedure Image.SetimageData(Index: Integer; const ATByteArray: TBytes);
+procedure Image.SetimageData(Index: Integer; const ATByteSOAPArray: TByteSOAPArray);
 begin
-  FimageData := ATByteArray;
+  FimageData := ATByteSOAPArray;
   FimageData_Specified := True;
 end;
 
@@ -1074,32 +1080,48 @@ initialization
   { ticketWSSoap.CheckLogin }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'CheckLogin', '',
                                  '[ReturnName="CheckLoginResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckLogin', 'ApiVersion', '',
+                                '', IS_NLBL);
   { ticketWSSoap.SubmitTransaction }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'SubmitTransaction', '',
                                  '[ReturnName="SubmitTransactionResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'SubmitTransaction', 'ApiVersion', '',
+                                '', IS_NLBL);
   { ticketWSSoap.UpdateTransaction }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'UpdateTransaction', '',
                                  '[ReturnName="UpdateTransactionResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'UpdateTransaction', 'ApiVersion', '',
+                                '', IS_NLBL);
   { ticketWSSoap.CheckDoNotBuy }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy', '',
                                  '[ReturnName="CheckDoNotBuyResult"]', IS_OPTN);
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy', 'ApiVersion', '',
+                                '', IS_NLBL);
   InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy', 'CheckDoNotBuyResult', '',
                                 '[ArrayItemName="DoNotBuyInfo"]');
   { ticketWSSoap.CheckDoNotBuy2 }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy2', '',
                                  '[ReturnName="CheckDoNotBuy2Result"]', IS_OPTN);
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy2', 'ApiVersion', '',
+                                '', IS_NLBL);
   InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy2', 'Name_', 'Name', '');
   InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'CheckDoNotBuy2', 'CheckDoNotBuy2Result', '',
                                 '[ArrayItemName="DoNotBuyInfo"]');
   { ticketWSSoap.UploadImage }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'UploadImage', '',
                                  '[ReturnName="UploadImageResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'UploadImage', 'ApiVersion', '',
+                                '', IS_NLBL);
   { ticketWSSoap.DeleteImage }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'DeleteImage', '',
                                  '[ReturnName="DeleteImageResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'DeleteImage', 'ApiVersion', '',
+                                '', IS_NLBL);
   { ticketWSSoap.SetNoTransactionDayForStore }
   InvRegistry.RegisterMethodInfo(TypeInfo(ticketWSSoap), 'SetNoTransactionDayForStore', '',
                                  '[ReturnName="SetNoTransactionDayForStoreResult"]');
+  InvRegistry.RegisterParamInfo(TypeInfo(ticketWSSoap), 'SetNoTransactionDayForStore', 'ApiVersion', '',
+                                '', IS_NLBL);
   RemClassRegistry.RegisterXSInfo(TypeInfo(ItemType), 'http://www.leadsonline.com/', 'ItemType');
   RemClassRegistry.RegisterXSInfo(TypeInfo(ArrayOfDoNotBuyInfo), 'http://www.leadsonline.com/', 'ArrayOfDoNotBuyInfo');
   RemClassRegistry.RegisterXSInfo(TypeInfo(ArrayOfItem), 'http://www.leadsonline.com/', 'ArrayOfItem');

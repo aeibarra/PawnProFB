@@ -1,4 +1,4 @@
-program PawnProFB;
+﻿program PawnProFB;
 
 // Diagnostic memory-manager build for the intermittent EInvalidPointer /
 // "component already exists" / windowless-ghost-process hunt.
@@ -83,7 +83,8 @@ uses
   DrvLic_PDF417Parsing in 'DrvLic_PDF417Parsing.pas',
   SelectedItemsInGridClass in '..\COMMON\SelectedItemsInGridClass.pas',
   CheckBoxDrawer in 'CheckBoxDrawer.pas',
-  leadsonline in 'leadsonline.pas',
+  LeadsOnlineWS in 'LeadsOnlineWS.pas',
+  uLeadsOnlineClient in 'uLeadsOnlineClient.pas',
   ReportsDM in 'ReportsDM.pas' {DMReports: TDataModule},
   uPawnProIniPrinters in 'uPawnProIniPrinters.pas',
   uPawnIniDefaults in 'uPawnIniDefaults.pas',

@@ -3,7 +3,7 @@
         <ProjectGuid>{7F901A4F-048F-4BE9-BB5E-0B8ABF30B89E}</ProjectGuid>
         <MainSource>PawnProFB.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>1027</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -347,7 +347,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="DrvLic_PDF417Parsing.pas"/>
         <DCCReference Include="..\COMMON\SelectedItemsInGridClass.pas"/>
         <DCCReference Include="CheckBoxDrawer.pas"/>
-        <DCCReference Include="leadsonline.pas"/>
+        <DCCReference Include="LeadsOnlineWS.pas"/>
+        <DCCReference Include="uLeadsOnlineClient.pas"/>
         <DCCReference Include="ReportsDM.pas">
             <Form>DMReports</Form>
             <FormType>dfm</FormType>
