@@ -6,8 +6,16 @@ including reliable customer-ID retry behavior.
 Screen: `TfrmExportPoliceInformation`
 ([ExportPoliceInformation.pas](../../ExportPoliceInformation.pas)), **Send Images**
 tab. Transport is FTP through Indy `TIdFTP`; credentials come from
-`DM.qryStore.LEADS_ONLINE_*`. The SOAP unit `uLeadsOnlineUpload.pas` is not wired
-into this process.
+`DM.qryStore.LEADS_ONLINE_FTP_ADDRESS` / `_USER_NAME` / `_PASSWORD`.
+
+This FTP path is unaffected by the LeadsOnline SOAP channel. That channel is a
+separate, opt-in export ([uLeadsOnlineClient.pas](../../uLeadsOnlineClient.pas)
+over the generated proxy [LeadsOnlineWS.pas](../../LeadsOnlineWS.pas)) with its
+own credentials in `STORE.LEADS_ONLINE_API_USER` / `_API_PASSWORD`, selected per
+store by `STORE.LEADS_ONLINE_EXPORT_METHOD` (`'C'` = this CSV/FTP path, the
+default; `'S'` = SOAP). Nothing dispatches on that column yet. The old
+placeholder unit `uLeadsOnlineUpload.pas` was never wired in and has been
+deleted.
 
 ## Image types and filenames
 

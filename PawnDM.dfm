@@ -8109,6 +8109,10 @@ object DM: TDM
         '       LEADS_ONLINE_USER_NAME, LEADS_ONLINE_PASSWORD, FTP_PASSIV' +
         'E, PAWN_DATE_CALCULATION_BASE,'
       
+        '       LEADS_ONLINE_API_USER, LEADS_ONLINE_API_PASSWORD, LEADS_O' +
+        'NLINE_EXPORT_METHOD,'
+      '       LEADS_ONLINE_USE_SANDBOX,'
+      
         '       DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC, DEFAULT_PAWN' +
         '_INTERESTRATE'
       'FROM STORE'
@@ -8224,6 +8228,26 @@ object DM: TDM
       FieldName = 'FTP_PASSIVE'
       Origin = 'FTP_PASSIVE'
       Required = True
+    end
+    object qryStoreLEADS_ONLINE_API_USER: TWideStringField
+      FieldName = 'LEADS_ONLINE_API_USER'
+      Origin = 'LEADS_ONLINE_API_USER'
+      Size = 50
+    end
+    object qryStoreLEADS_ONLINE_API_PASSWORD: TWideStringField
+      FieldName = 'LEADS_ONLINE_API_PASSWORD'
+      Origin = 'LEADS_ONLINE_API_PASSWORD'
+      Size = 255
+    end
+    object qryStoreLEADS_ONLINE_EXPORT_METHOD: TWideStringField
+      FieldName = 'LEADS_ONLINE_EXPORT_METHOD'
+      Origin = 'LEADS_ONLINE_EXPORT_METHOD'
+      FixedChar = True
+      Size = 1
+    end
+    object qryStoreLEADS_ONLINE_USE_SANDBOX: TBooleanField
+      FieldName = 'LEADS_ONLINE_USE_SANDBOX'
+      Origin = 'LEADS_ONLINE_USE_SANDBOX'
     end
     object qryStorePAWN_DATE_CALCULATION_BASE: TWideStringField
       FieldName = 'PAWN_DATE_CALCULATION_BASE'

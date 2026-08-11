@@ -111,6 +111,10 @@ type
     qryStoreLEADS_ONLINE_USER_NAME: TWideStringField;
     qryStoreLEADS_ONLINE_PASSWORD: TWideStringField;
     qryStoreFTP_PASSIVE: TBooleanField;
+    qryStoreLEADS_ONLINE_API_USER: TWideStringField;
+    qryStoreLEADS_ONLINE_API_PASSWORD: TWideStringField;
+    qryStoreLEADS_ONLINE_EXPORT_METHOD: TWideStringField;
+    qryStoreLEADS_ONLINE_USE_SANDBOX: TBooleanField;
     qryStorePAWN_DATE_CALCULATION_BASE: TWideStringField;
     qryStoreDEFAULT_WEIGHT_MEASURE_UNIT: TWideStringField;
     qryStoreSALES_TAX_PERC: TFloatField;

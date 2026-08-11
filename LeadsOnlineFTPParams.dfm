@@ -2,9 +2,9 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'LeadsOnline FTP Params'
-  ClientHeight = 283
-  ClientWidth = 362
+  Caption = 'LeadsOnline Settings'
+  ClientHeight = 532
+  ClientWidth = 365
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -18,11 +18,13 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 215
-    Width = 356
+    Top = 464
+    Width = 359
     Height = 65
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 492
+    ExplicitWidth = 356
     object RzBitBtn1: TRzBitBtn
       Left = 59
       Top = 12
@@ -56,10 +58,12 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 356
-    Height = 206
+    Width = 359
+    Height = 455
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 356
+    ExplicitHeight = 483
     object RzLabel1: TRzLabel
       Left = 31
       Top = 18
@@ -90,7 +94,7 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       Width = 139
       Height = 20
       Caption = 'LeadsOnline Store ID'
-      FocusControl = edLeadsOnlineFTPAddress
+      FocusControl = RzDBEdit1
     end
     object edLeadsOnlineFTPAddress: TRzDBEdit
       Left = 31
@@ -138,6 +142,84 @@ object frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams
       DataField = 'FTP_PASSIVE'
       DataSource = DM.DSStore
       TabOrder = 2
+    end
+    object gbApi: TGroupBox
+      Left = 16
+      Top = 196
+      Width = 324
+      Height = 148
+      Caption = 'LeadsOnline Web Service (SOAP)'
+      TabOrder = 5
+      object lblApiUser: TRzLabel
+        Left = 15
+        Top = 26
+        Width = 76
+        Height = 20
+        Caption = 'User Name:'
+        FocusControl = edApiUser
+      end
+      object lblApiPassword: TRzLabel
+        Left = 156
+        Top = 26
+        Width = 64
+        Height = 20
+        Caption = 'Password:'
+        FocusControl = edApiPassword
+      end
+      object edApiUser: TRzDBEdit
+        Left = 15
+        Top = 46
+        Width = 135
+        Height = 28
+        DataSource = DM.DSStore
+        DataField = 'LEADS_ONLINE_API_USER'
+        TabOrder = 0
+      end
+      object edApiPassword: TRzDBEdit
+        Left = 156
+        Top = 46
+        Width = 151
+        Height = 28
+        DataSource = DM.DSStore
+        DataField = 'LEADS_ONLINE_API_PASSWORD'
+        PasswordChar = '*'
+        TabOrder = 1
+      end
+      object chkUseSandbox: TDBCheckBox
+        Left = 17
+        Top = 86
+        Width = 307
+        Height = 17
+        Caption = 'Use LeadsOnline SANDBOX - testing only'
+        DataField = 'LEADS_ONLINE_USE_SANDBOX'
+        DataSource = DM.DSStore
+        TabOrder = 2
+      end
+      object btnTestConnection: TRzBitBtn
+        Left = 15
+        Top = 110
+        Width = 152
+        Height = 30
+        Caption = 'Test Connection'
+        TabOrder = 3
+        OnClick = btnTestConnectionClick
+      end
+    end
+    object rgExportMethod: TDBRadioGroup
+      Left = 16
+      Top = 356
+      Width = 324
+      Height = 84
+      Caption = 'Send transactions to LeadsOnline using'
+      DataField = 'LEADS_ONLINE_EXPORT_METHOD'
+      DataSource = DM.DSStore
+      Items.Strings = (
+        'CSV file over FTP'
+        'Web Service (SOAP)')
+      TabOrder = 6
+      Values.Strings = (
+        'C'
+        'S')
     end
   end
 end
