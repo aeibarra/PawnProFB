@@ -2085,7 +2085,14 @@ begin
   // be registered as an owned, named component under frmClients.
   frmEnterTransaction := TfrmEnterTransaction.Create(nil);
   try
-    if OpenSQLStatementFB('select count(*) from TRANSACTIONS T1 JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_NO where T1.CUST_NO = ' + DM.qryCustomersCUST_NO.AsString) <= 0 then
+    if OpenSQLStatementFB(
+         'select count(*) from TRANSACTIONS T1 ' +
+         'JOIN INVENTORY_ITEMS T2 ON T1.TRANSACTION_NO = T2.TRANSACTION_NO ' +
+         'where T1.CUST_NO = ' + DM.qryCustomersCUST_NO.AsString +
+         ' and T1.TRAN_TYPE = ''P''' +
+         ' and T2.SOLD_DATE is null' +
+         ' and T2.MELTED_DATE is null' +
+         ' and T2.FORSALE_DATE is null') <= 0 then
       begin
         MessageDlg('No Existing transaction to copy items from.', mtInformation, [mbOK], 0);
         exit;

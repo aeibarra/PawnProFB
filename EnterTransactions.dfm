@@ -631,8 +631,10 @@ object frmEnterTransaction: TfrmEnterTransaction
       '  LEFT OUTER JOIN J_TYPES T5 ON T5.J_TYPE = T2.J_TYPE'
       '  LEFT OUTER JOIN J_METALS T6 ON T6.J_METAL = T2.J_METAL'
       'WHERE T1.CUST_NO = :CUST_NO'
-      '  AND T1.TRAN_STATUS = '#39'A'#39
       '  AND T1.TRAN_TYPE = '#39'P'#39
+      '  AND T2.SOLD_DATE IS NULL'
+      '  AND T2.MELTED_DATE IS NULL'
+      '  AND T2.FORSALE_DATE IS NULL'
       
         '  AND T2.TRANSACTION_NO = COALESCE(:TRANSACTION_NO, T2.TRANSACTI' +
         'ON_NO)'
