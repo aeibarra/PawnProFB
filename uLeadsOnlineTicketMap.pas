@@ -93,7 +93,7 @@ type
     class procedure AddProp(var AList: ArrayOfPropertyValue;
       const AName, AValue: string);
     class function BuildCustomer(AHeader: TDataSet): Customer2;
-    class function BuildItem(AItems, AStones: TDataSet): Item2;
+    class function BuildItem(AItems, AStones: TDataSet; AFallbackAmount: Double): Item2;
     class procedure AddStoneProps(var AList: ArrayOfPropertyValue; AStones: TDataSet;
       AItemNo: Integer);
   public
@@ -371,6 +371,23 @@ begin
   if S = '' then
     Exit;
 
+  // PawnPro's own format is FEET.INCHES, and it is by far the commonest: 5.08
+  // is five feet eight, 5.10 is five feet TEN (not five point one feet), 6.00
+  // is six feet. Handled first, because "5.10" would otherwise fall through to
+  // the integer branch or be read as a decimal number of feet -- which is how
+  // every ticket ended up reporting "Height: N/A" to LeadsOnline.
+  SepPos := Pos('.', S);
+  if SepPos > 0 then
+  begin
+    if TryStrToInt(Trim(Copy(S, 1, SepPos - 1)), Feet) and
+       TryStrToInt(Trim(Copy(S, SepPos + 1, MaxInt)), Inches) and
+       (Feet >= 0) and (Inches >= 0) and (Inches <= 11) then
+      Result := Feet * 12 + Inches;
+    // Anything else with a dot is not a height we recognise; 0 means "not
+    // recorded", which is better than a confident wrong number.
+    Exit;
+  end;
+
   // Plain inches, the common case.
   if TryStrToInt(S, I) then
   begin
@@ -537,7 +554,8 @@ begin
   end;
 end;
 
-class function TLeadsOnlineTicketMapper.BuildItem(AItems, AStones: TDataSet): Item2;
+class function TLeadsOnlineTicketMapper.BuildItem(AItems, AStones: TDataSet;
+  AFallbackAmount: Double): Item2;
 var
   Extras: ArrayOfPropertyValue;
   Desc, V: string;
@@ -560,7 +578,17 @@ begin
     if Desc <> '' then
       Result.description := Desc;
 
+    // The money on a pawn lives on the TRANSACTION (TRAN_PAWN_AMOUNT); the
+    // per-item UNIT_COST is usually filled in too, but not always. LeadsOnline
+    // compute the ticket TOTAL by summing item amounts, so an item with no unit
+    // cost makes the whole ticket read $0.00 to law enforcement.
+    //
+    // AFallbackAmount is the ticket's loan amount, and the caller passes it
+    // ONLY when the ticket has a single item -- where the whole loan is against
+    // that item and the substitution is exact rather than a guess.
     Result.amount := Num(AItems, 'UNIT_COST');
+    if (Result.amount = 0) and (AFallbackAmount > 0) then
+      Result.amount := AFallbackAmount;
     Result.itemType := DecodeItemType(AItems);
     Result.isVoid := False;
     // itemStatus is set by BuildTicket, which knows the ticket type.
@@ -601,6 +629,7 @@ var
   It: Item2;
   TT: TicketType;
   Maturity, CloseReason: TField;
+  FallbackAmount: Double;
 begin
   if (AHeader = nil) or (not AHeader.Active) or AHeader.IsEmpty then
     raise ELeadsOnlineMapping.Create('No transaction row to map.');
@@ -645,10 +674,19 @@ begin
     Items := nil;
     if (AItems <> nil) and AItems.Active then
     begin
+      // Only offered when the ticket has exactly one item: then the loan is
+      // wholly against it and using the ticket amount is exact. With several
+      // items we genuinely do not know the split, and inventing one would put
+      // fabricated per-item values on a law-enforcement record.
+      if AItems.RecordCount = 1 then
+        FallbackAmount := Num(AHeader, 'TRAN_PAWN_AMOUNT')
+      else
+        FallbackAmount := 0;
+
       AItems.First;
       while not AItems.Eof do
       begin
-        It := BuildItem(AItems, AStones);
+        It := BuildItem(AItems, AStones, FallbackAmount);
         It.itemStatus := DecodeItemStatus(Str(AItems, 'INV_ITEM_STATUS'), TT);
         It.isVoid := Result.isVoid;
         SetLength(Items, Length(Items) + 1);

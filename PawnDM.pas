@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB, FireDAC.DApt,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
   FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.UI;
+  FireDAC.Comp.DataSet, FireDAC.Comp.UI, System.IOUtils;
 
 type
   TBackupPhase = (bpStarting, bpDatabase, bpImages, bpLogging, bpDone);
@@ -269,6 +269,10 @@ type
     procedure SaveImageToDatabase(ImagesDataNo: integer; ImageData: TStream; ImageDate: TDateTime);
     procedure GetImageFromDatabase(ImagesDataNo: integer; ImageComponent: TImage);
     procedure GetImageFromFile(ImagesDataNo: integer; ImageComponent: TImage);
+    /// Original bytes, for transmitting rather than displaying -- see
+    /// TGetImageBytesProc in PawnGlobal. Both return nil when absent.
+    function GetImageBytesFromDatabase(ImagesDataNo: integer): TBytes;
+    function GetImageBytesFromFile(ImagesDataNo: integer): TBytes;
     procedure SaveImageToFile_Method(ImagesDataNo: integer; ImageData: TStream; ImageDate: TDateTime);
     procedure SaveImageToFile_FromPath(ImagesDataNo: integer; FileName: string; ImageDate: TDateTime);
     procedure SaveImageToDatabase_FromPath(ImagesDataNo: integer; FileName: string; ImageDate: TDateTime);
@@ -2369,6 +2373,67 @@ begin
     end;
   end;
   qryImage.Close;
+end;
+
+function TDM.GetImageBytesFromDatabase(ImagesDataNo: integer): TBytes;
+var
+  BlobStream: TStream;
+begin
+  Result := nil;
+  qryImage.Close;
+  qryImage.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+  qryImage.Open;
+  try
+    if qryImage.Eof or qryImageImageData.IsNull then
+      Exit;
+
+    BlobStream := qryImage.CreateBlobStream(qryImageImageData, bmRead);
+    try
+      SetLength(Result, BlobStream.Size);
+      if Length(Result) > 0 then
+        BlobStream.ReadBuffer(Result[0], Length(Result));
+    finally
+      BlobStream.Free;
+    end;
+  finally
+    qryImage.Close;
+  end;
+end;
+
+function TDM.GetImageBytesFromFile(ImagesDataNo: integer): TBytes;
+var
+  SelectQuery: TFDQuery;
+  FilePath: string;
+  ImageDate: TDateTime;
+begin
+  Result := nil;
+  SelectQuery := TFDQuery.Create(nil);
+  try
+    SelectQuery.Connection := ConnFB;
+    SelectQuery.SQL.Text :=
+      'SELECT CREATED ' +
+      'FROM IMAGES_DATA ' +
+      'WHERE IMAGES_DATA_NO = :ImagesDataNo';
+    SelectQuery.Params.ParamByName('ImagesDataNo').Value := ImagesDataNo;
+    SelectQuery.Open;
+
+    if SelectQuery.Eof then
+      Exit;
+
+    // The path is derived from CREATED (yyyymm folder), so a NULL date has to
+    // resolve the same way GetImageFromFile resolves it or the two would look
+    // in different folders for the same image.
+    if SelectQuery.FieldByName('CREATED').IsNull then
+      ImageDate := 0
+    else
+      ImageDate := SelectQuery.FieldByName('CREATED').AsDateTime;
+
+    FilePath := GetImageFilePath(ImagesDataNo, ImageDate);
+    if FileExists(FilePath) then
+      Result := TFile.ReadAllBytes(FilePath);
+  finally
+    SelectQuery.Free;
+  end;
 end;
 
 procedure TDM.GetImageFromFile(ImagesDataNo: integer; ImageComponent: TImage);

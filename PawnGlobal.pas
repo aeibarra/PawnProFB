@@ -28,6 +28,12 @@ type
 
   { Image Storage Procedure Types }
   TGetImageProc = procedure(ImagesDataNo: integer; ImageComponent: TImage) of object;
+  /// Returns the image's ORIGINAL bytes, exactly as stored. Needed wherever an
+  /// image is transmitted rather than displayed: loading into a TImage and
+  /// saving it back re-encodes it, producing a different (usually much larger)
+  /// file. For evidence going to law enforcement the bytes must be the ones the
+  /// camera produced. Returns nil when the image is missing.
+  TGetImageBytesProc = function(ImagesDataNo: integer): TBytes of object;
   TSaveImageProc = procedure(ImagesDataNo: integer; FileName: string; ImageDate: TDateTime) of object;
   TDeleteImageProc = procedure(ImagesDataNo: integer) of object;
 
@@ -196,6 +202,7 @@ var
                                       // left its message loop by then, so the form and
                                       // its controls may already be gone.
   GetImageProc: TGetImageProc;        // Procedure pointer for getting images
+  GetImageBytesProc: TGetImageBytesProc; // ...and for getting them un-re-encoded
   SaveImageProc: TSaveImageProc;      // Procedure pointer for saving images
   DeleteImageProc: TDeleteImageProc;  // Procedure pointer for deleting images
 

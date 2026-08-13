@@ -4,7 +4,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'LeadsOnline'
   ClientHeight = 814
-  ClientWidth = 1065
+  ClientWidth = 1215
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,12 +20,13 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     AlignWithMargins = True
     Left = 3
     Top = 742
-    Width = 1059
+    Width = 1209
     Height = 69
     Align = alBottom
     TabOrder = 0
+    ExplicitWidth = 1059
     DesignSize = (
-      1059
+      1209
       69)
     object lblProgress: TLabel
       Left = 208
@@ -34,7 +35,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Height = 20
     end
     object btnExit: TBitBtn
-      Left = 947
+      Left = 1097
       Top = 11
       Width = 96
       Height = 48
@@ -47,6 +48,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       ModalResult = 2
       TabOrder = 0
       OnClick = btnExitClick
+      ExplicitLeft = 947
     end
     object btnSubmit: TBitBtn
       Left = 16
@@ -61,23 +63,25 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     object pbSubmit: TProgressBar
       Left = 208
       Top = 46
-      Width = 723
+      Width = 873
       Height = 12
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
+      ExplicitWidth = 723
     end
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1059
+    Width = 1209
     Height = 733
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 1059
     DesignSize = (
-      1059
+      1209
       733)
     object lblSandbox: TLabel
       Left = 503
@@ -94,7 +98,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Visible = False
     end
     object lblCount: TLabel
-      Left = 937
+      Left = 1087
       Top = 60
       Width = 4
       Height = 20
@@ -114,7 +118,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       AlignWithMargins = True
       Left = 5
       Top = 173
-      Width = 1049
+      Width = 1199
       Height = 491
       Anchors = [akLeft, akTop, akRight, akBottom]
       DataSource = dsTickets
@@ -178,6 +182,24 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
           Visible = True
         end
         item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'ITEM_IMAGE_COUNT'
+          Title.Alignment = taCenter
+          Title.Caption = 'Photos'
+          Width = 56
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'ID_IMAGE_COUNT'
+          Title.Alignment = taCenter
+          Title.Caption = 'IDs'
+          Width = 44
+          Visible = True
+        end
+        item
           Expanded = False
           FieldName = 'OUTCOME'
           Title.Caption = 'Result'
@@ -188,7 +210,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
           Expanded = False
           FieldName = 'DETAIL'
           Title.Caption = 'Detail'
-          Width = 288
+          Width = 339
           Visible = True
         end
         item
@@ -302,10 +324,11 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       AlignWithMargins = True
       Left = 5
       Top = 669
-      Width = 1049
+      Width = 1199
       Height = 59
       Align = alBottom
       TabOrder = 3
+      ExplicitWidth = 1049
       object btnCheckAll: TButton
         Left = 23
         Top = 14

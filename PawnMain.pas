@@ -1301,12 +1301,14 @@ begin
   if ImageStorageMode = ImageStorageMode_File then
   begin
     GetImageProc := DM.GetImageFromFile;
+    GetImageBytesProc := DM.GetImageBytesFromFile;
     SaveImageProc := DM.SaveImageToFile_FromPath;
     DeleteImageProc := DM.DeleteImageFromFile;
   end
   else
   begin
     GetImageProc := DM.GetImageFromDatabase;
+    GetImageBytesProc := DM.GetImageBytesFromDatabase;
     SaveImageProc := DM.SaveImageToDatabase_FromPath;
     DeleteImageProc := DM.DeleteImageFromDatabase;
   end;

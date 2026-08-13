@@ -35,7 +35,8 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client,
-  uLeadsOnlineClient;   // TLeadsOnlineClient appears in SubmitOne's signature
+  // TLeadsOnlineClient and TicketKey both appear in method signatures below.
+  uLeadsOnlineClient, LeadsOnlineWS;
 
 type
   /// What happened to one ticket. "Unreachable" is kept separate from
@@ -111,6 +112,15 @@ type
     /// One ticket. AClient is owned by the caller and reused across the whole
     /// run -- building one per ticket would open a fresh connection per row.
     function SubmitOne(AClient: TLeadsOnlineClient; ATransactionNo: Integer; out ATransportError: string): TSubmitOutcome;
+    /// Uploads this ticket's photos immediately after it is accepted, using the
+    /// key that was actually sent. An image failure never turns an accepted
+    /// ticket into a failed one: the transaction is reported either way, and
+    /// that is the part that matters legally.
+    procedure UploadImagesFor(AClient: TLeadsOnlineClient; ATransactionNo: Integer;
+      AKey: TicketKey; out ASent, AFailed: Integer);
+    procedure RecordImageSent(ATransactionNo, AImagesDataNo: Integer;
+      const ACategory: string; AItemIndex: Integer; AItemIndexNull: Boolean;
+      const AServerFilename: string; AErrorCode: Integer; const AErrorResponse: string);
   public
     { Public declarations }
   end;
@@ -125,12 +135,14 @@ implementation
 uses
   System.StrUtils, System.DateUtils,
   PawnDM, LeadsOnlineDM, PawnGlobal, uPawnDialogs, CheckBoxDrawer,
-  LeadsOnlineWS, uLeadsOnlineTicketMap;
+  uLeadsOnlineTicketMap;
 
 const
-  ColSelected = 'SELECTED';
-  ColOutcome  = 'OUTCOME';
-  ColDetail   = 'DETAIL';
+  ColSelected   = 'SELECTED';
+  ColOutcome    = 'OUTCOME';
+  ColDetail     = 'DETAIL';
+  ColItemImages = 'ITEM_IMAGE_COUNT';
+  ColIdImages   = 'ID_IMAGE_COUNT';
 
   OutcomePending  = '';
   OutcomeSent     = 'Sent';
@@ -183,6 +195,20 @@ const
     '       COALESCE(T2.CUST_LAST, '''') || '', '' || COALESCE(T2.CUST_FIRST, '''') AS CUSTOMER,' +
     '       (SELECT COUNT(*) FROM INVENTORY_ITEMS I' +
     '         WHERE I.TRANSACTION_NO = T1.TRANSACTION_NO) AS ITEM_COUNT,' +
+    // Item photos hang off the items (IMAGE_TYPE_NO 2, keyed by INV_ITEM_NO);
+    // ID photos hang off the customer (type 1, keyed by CUST_NO). Both are
+    // shown so the operator can see what is about to go with the ticket -- and
+    // notice when something is missing BEFORE sending rather than afterwards.
+    '       (SELECT COUNT(*) FROM IMAGES_DATA IM' +
+    '         JOIN INVENTORY_ITEMS I2 ON I2.INV_ITEM_NO = IM.IMAG_REF_TO_ROW_NO' +
+    '        WHERE IM.IMAGE_TYPE_NO = 2' +
+    '          AND I2.TRANSACTION_NO = T1.TRANSACTION_NO) AS ITEM_IMAGE_COUNT,' +
+    // Normally 1. More than one means the customer has been photographed again
+    // over the years; only the most recent is sent, so a 3 here is information,
+    // not a problem.
+    '       (SELECT COUNT(*) FROM IMAGES_DATA IM2' +
+    '        WHERE IM2.IMAGE_TYPE_NO = 1' +
+    '          AND IM2.IMAG_REF_TO_ROW_NO = T1.CUST_NO) AS ID_IMAGE_COUNT,' +
     '       S.ERROR_CODE AS LAST_ERROR_CODE, S.ERROR_RESPONSE AS LAST_ERROR_RESPONSE' +
     '  FROM TRANSACTIONS T1' +
     '  JOIN CUSTOMER T2 ON T2.CUST_NO = T1.CUST_NO' +
@@ -191,6 +217,57 @@ const
     '   AND COALESCE(T1.TRAN_CLOSE_REASON, 0) <> 1' +
     '   AND (S.ID IS NULL OR S.ERROR_CODE IS NULL' +
     '        OR S.ERROR_CODE NOT IN (0, 6, 7, 13))';
+
+  { Every image belonging to one ticket, in one pass.
+
+    ITEM_INDEX is computed here, not in Pascal, and it is the whole reason this
+    query exists in this shape: LeadsOnline address an item photo by the item's
+    0-BASED POSITION WITHIN THE TICKET AS SENT. The mapper builds its items with
+    ORDER BY INV_ITEM_NO, so ROW_NUMBER() over that same ordering reproduces the
+    index exactly. Deriving it any other way would eventually put a photo on the
+    wrong item.
+
+    Customer ID photos take the LAST one on file (highest IMAGES_DATA_NO): a
+    customer photographed again over the years has several, and the current one
+    is the one worth reporting. NULL item index -- it does not apply to them.
+
+    Already-uploaded images are excluded by LEADS_SOAP_IMAGE_SENT, per
+    transaction, because one customer ID photo is shared across all of that
+    customer's tickets. }
+  SQLTicketImages =
+    'SELECT IM.IMAGES_DATA_NO, ''Item'' AS IMAGE_CATEGORY,' +
+    '       (SELECT COUNT(*) FROM INVENTORY_ITEMS I3' +
+    '         WHERE I3.TRANSACTION_NO = I2.TRANSACTION_NO' +
+    '           AND I3.INV_ITEM_NO < I2.INV_ITEM_NO) AS ITEM_INDEX' +
+    '  FROM IMAGES_DATA IM' +
+    '  JOIN INVENTORY_ITEMS I2 ON I2.INV_ITEM_NO = IM.IMAG_REF_TO_ROW_NO' +
+    ' WHERE IM.IMAGE_TYPE_NO = 2' +
+    '   AND I2.TRANSACTION_NO = :TransactionNo' +
+    '   AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_IMAGE_SENT S' +
+    '                    WHERE S.TRANSACTION_NO = :TransactionNo' +
+    '                      AND S.IMAGES_DATA_NO = IM.IMAGES_DATA_NO' +
+    '                      AND S.ERROR_CODE = 0)' +
+    ' UNION ALL ' +
+    'SELECT IM2.IMAGES_DATA_NO, ''CustomerID'' AS IMAGE_CATEGORY, NULL AS ITEM_INDEX' +
+    '  FROM IMAGES_DATA IM2' +
+    ' WHERE IM2.IMAGE_TYPE_NO = 1' +
+    '   AND IM2.IMAG_REF_TO_ROW_NO = (SELECT T.CUST_NO FROM TRANSACTIONS T' +
+    '                                  WHERE T.TRANSACTION_NO = :TransactionNo)' +
+    '   AND IM2.IMAGES_DATA_NO = (SELECT MAX(IM3.IMAGES_DATA_NO) FROM IMAGES_DATA IM3' +
+    '                              WHERE IM3.IMAGE_TYPE_NO = 1' +
+    '                                AND IM3.IMAG_REF_TO_ROW_NO = IM2.IMAG_REF_TO_ROW_NO)' +
+    '   AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_IMAGE_SENT S2' +
+    '                    WHERE S2.TRANSACTION_NO = :TransactionNo' +
+    '                      AND S2.IMAGES_DATA_NO = IM2.IMAGES_DATA_NO' +
+    '                      AND S2.ERROR_CODE = 0)';
+
+  SQLRecordImageSent =
+    'UPDATE OR INSERT INTO LEADS_SOAP_IMAGE_SENT' +
+    '  (TRANSACTION_NO, IMAGES_DATA_NO, IMAGE_CATEGORY, ITEM_INDEX,' +
+    '   SERVER_FILENAME, UPLOADED_AT, ERROR_CODE, ERROR_RESPONSE)' +
+    '  VALUES (:TransactionNo, :ImagesDataNo, :ImageCategory, :ItemIndex,' +
+    '          :ServerFilename, CURRENT_TIMESTAMP, :ErrorCode, :ErrorResponse)' +
+    '  MATCHING (TRANSACTION_NO, IMAGES_DATA_NO)';
 
   SQLCandidatesDateFilter = '   AND T1.TRAN_DATE BETWEEN :DateFrom AND :DateTo';
 
@@ -239,6 +316,23 @@ begin
   Result := TFDQuery.Create(nil);
   Result.Connection := DM.ConnFB;
   Result.SQL.Text := ASQL;
+end;
+
+/// Row detail for an accepted ticket: says what happened to its photos, because
+/// "Sent" alone leaves the operator unable to tell a ticket with no images from
+/// one whose images silently failed.
+function DescribeImages(ASent, AFailed: Integer; const APrefix: string): string;
+begin
+  Result := APrefix;
+  if (ASent = 0) and (AFailed = 0) then
+    Exit;
+
+  if Result <> '' then
+    Result := Result + ' — ';
+  if AFailed = 0 then
+    Result := Result + Format('%d image(s) sent', [ASent])
+  else
+    Result := Result + Format('%d image(s) sent, %d failed', [ASent, AFailed]);
 end;
 
 function OpenSQL(const ASQL: string): TFDQuery;
@@ -377,6 +471,8 @@ begin
   clnTickets.FieldDefs.Add('TRAN_TICKET_NO', ftString, 30);
   clnTickets.FieldDefs.Add('CUSTOMER', ftString, 80);
   clnTickets.FieldDefs.Add('ITEM_COUNT', ftInteger);
+  clnTickets.FieldDefs.Add(ColItemImages, ftInteger);
+  clnTickets.FieldDefs.Add(ColIdImages, ftInteger);
   clnTickets.FieldDefs.Add(ColOutcome, ftString, 20);
   clnTickets.FieldDefs.Add(ColDetail, ftString, 250);
   clnTickets.CreateDataSet;
@@ -429,6 +525,8 @@ begin
           clnTickets.FieldByName('TRAN_TICKET_NO').AsString := Q.FieldByName('TRAN_TICKET_NO').AsString;
           clnTickets.FieldByName('CUSTOMER').AsString := Q.FieldByName('CUSTOMER').AsString;
           clnTickets.FieldByName('ITEM_COUNT').AsInteger := Q.FieldByName('ITEM_COUNT').AsInteger;
+          clnTickets.FieldByName(ColItemImages).AsInteger := Q.FieldByName(ColItemImages).AsInteger;
+          clnTickets.FieldByName(ColIdImages).AsInteger := Q.FieldByName(ColIdImages).AsInteger;
 
           // Carry a previous failure forward so the operator can see WHY this
           // row is still here rather than having to submit it to find out.
@@ -676,6 +774,118 @@ begin
   end;
 end;
 
+procedure TfrmLeadsOnlineSoapExport.RecordImageSent(ATransactionNo, AImagesDataNo: Integer;
+  const ACategory: string; AItemIndex: Integer; AItemIndexNull: Boolean;
+  const AServerFilename: string; AErrorCode: Integer; const AErrorResponse: string);
+var
+  Q: TFDQuery;
+begin
+  Q := NewQuery(SQLRecordImageSent);
+  try
+    Q.ParamByName('TransactionNo').AsInteger := ATransactionNo;
+    Q.ParamByName('ImagesDataNo').AsInteger := AImagesDataNo;
+    Q.ParamByName('ImageCategory').AsString := ACategory;
+    if AItemIndexNull then
+      Q.ParamByName('ItemIndex').Clear
+    else
+      Q.ParamByName('ItemIndex').AsInteger := AItemIndex;
+    Q.ParamByName('ServerFilename').AsString := Copy(Trim(AServerFilename), 1, 255);
+    Q.ParamByName('ErrorCode').AsInteger := AErrorCode;
+    Q.ParamByName('ErrorResponse').AsString := Copy(Trim(AErrorResponse), 1, 500);
+    Q.ExecSQL;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TfrmLeadsOnlineSoapExport.UploadImagesFor(AClient: TLeadsOnlineClient;
+  ATransactionNo: Integer; AKey: TicketKey; out ASent, AFailed: Integer);
+var
+  Q: TFDQuery;
+  Bytes: TBytes;
+  Category: string;
+  Cat: ImageCategory;
+  ItemIndex, SentIndex, ImagesDataNo: Integer;
+  IndexIsNull: Boolean;
+  Res: TLeadsOnlineResult;
+  Err: string;
+begin
+  ASent := 0;
+  AFailed := 0;
+
+  if not Assigned(GetImageBytesProc) then
+    Exit;   // storage layer not bound; nothing sensible to do
+
+  Q := NewQuery(SQLTicketImages);
+  try
+    Q.ParamByName('TransactionNo').DataType := ftInteger;
+    Q.ParamByName('TransactionNo').AsInteger := ATransactionNo;
+    Q.Open;
+
+    while not Q.Eof do
+    begin
+      ImagesDataNo := Q.FieldByName('IMAGES_DATA_NO').AsInteger;
+      Category := Q.FieldByName('IMAGE_CATEGORY').AsString;
+      IndexIsNull := Q.FieldByName('ITEM_INDEX').IsNull;
+      ItemIndex := Q.FieldByName('ITEM_INDEX').AsInteger;
+      // itemIndex is meaningless for a customer photo; their spec says it
+      // applies only to ImageCategory.Item, so send a definite 0 rather than
+      // whatever a NULL field happens to read back as.
+      if IndexIsNull then
+        SentIndex := 0
+      else
+        SentIndex := ItemIndex;
+
+      if SameText(Category, 'CustomerID') then
+        Cat := ImageCategory.CustomerID
+      else
+        Cat := ImageCategory.Item;
+
+      // Original bytes through the pluggable layer, so this works the same
+      // whether the store keeps images in the database or on disk -- and
+      // without re-encoding what the camera produced.
+      Bytes := GetImageBytesProc(ImagesDataNo);
+
+      if Length(Bytes) = 0 then
+      begin
+        // The row exists but the file does not. Recorded so it is visible
+        // rather than silently skipped on every future run.
+        Inc(AFailed);
+        RecordImageSent(ATransactionNo, ImagesDataNo, Category, ItemIndex, IndexIsNull,
+                        '', -1, 'The image file could not be found or is empty.');
+      end
+      else if AClient.TryUploadImage(AKey, Bytes, Cat, SentIndex, Res, Err) then
+      begin
+        if Res.Succeeded then
+        begin
+          // On success their errorResponse carries the server's filename for
+          // the image -- the only handle DeleteImage will accept later.
+          Inc(ASent);
+          RecordImageSent(ATransactionNo, ImagesDataNo, Category, ItemIndex, IndexIsNull,
+                          Res.ErrorResponse, 0, '');
+        end
+        else
+        begin
+          Inc(AFailed);
+          RecordImageSent(ATransactionNo, ImagesDataNo, Category, ItemIndex, IndexIsNull,
+                          '', Res.ErrorCode, Res.Text);
+        end;
+      end
+      else
+      begin
+        // Never reached the service. Nothing recorded, for the same reason a
+        // ticket is not: we do not know whether they got it, and leaving no row
+        // means the next run offers it again.
+        Inc(AFailed);
+      end;
+
+      Q.Next;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
 function TfrmLeadsOnlineSoapExport.SubmitOne(AClient: TLeadsOnlineClient;
   ATransactionNo: Integer; out ATransportError: string): TSubmitOutcome;
 var
@@ -684,6 +894,7 @@ var
   Res: TLeadsOnlineResult;
   Err, TicketTypeName, TicketNumber, TicketDateTime: string;
   Reached, IsVoid: Boolean;
+  ImgSent, ImgFailed: Integer;
 begin
   Result := soRejected;
   ATransportError := '';
@@ -747,16 +958,18 @@ begin
     RecordSubmission(ATransactionNo, TicketTypeName, TicketNumber, TicketDateTime,
                      Res.ErrorCode, Res.ErrorResponse, IsVoid);
 
-    if Res.Succeeded then
+    if Res.Succeeded or ResultIsAlreadyAccepted(Res) then
     begin
-      SetRowOutcome(OutcomeSent, '');
-      Result := soAccepted;
-    end
-    else if ResultIsAlreadyAccepted(Res) then
-    begin
-      // LeadsOnline already hold this ticket. For a resend that is confirmation
-      // it landed, not a failure -- see the retry note in the unit header.
-      SetRowOutcome(OutcomeAlready, Res.Text);
+      // Images go up in the same run, immediately, using the key just sent --
+      // one operator action for the whole job. They are attempted for an
+      // already-held ticket too: the ticket exists on their side either way,
+      // and its photos may never have made it.
+      UploadImagesFor(AClient, ATransactionNo, T.key, ImgSent, ImgFailed);
+
+      if ResultIsAlreadyAccepted(Res) then
+        SetRowOutcome(OutcomeAlready, DescribeImages(ImgSent, ImgFailed, Res.Text))
+      else
+        SetRowOutcome(OutcomeSent, DescribeImages(ImgSent, ImgFailed, ''));
       Result := soAccepted;
     end
     else if Res.ErrorCode = LeadsErrTicketDateOutOfRange then

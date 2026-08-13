@@ -19,7 +19,8 @@
 interface
 
 uses
-  System.SysUtils, System.Classes, Soap.SOAPHTTPClient, LeadsOnlineWS;
+  System.SysUtils, System.Classes, Soap.SOAPHTTPClient, Soap.InvokeRegistry,
+  LeadsOnlineWS;
 
 const
   /// Sent as the ApiVersion element on every operation. The element is
@@ -108,6 +109,23 @@ type
     /// Non-raising form: returns False and fills AError on transport failure.
     function TrySubmitTransaction(ATicket: Ticket; out AResult: TLeadsOnlineResult;
       out AError: string): Boolean;
+
+    /// Attaches one image to a ticket. AItemIndex is LeadsOnline's 0-based
+    /// position of the item WITHIN THE TICKET AS SENT, and applies only when
+    /// ACategory is Item; pass 0 otherwise.
+    ///
+    /// The ticket need not exist yet -- their spec allows an image to be
+    /// uploaded first and the ticket added afterwards.
+    ///
+    /// On success the server's unique name for the image comes back in
+    /// Result.ErrorResponse (not an error, despite the field name). Store it:
+    /// it is the only handle DeleteImage accepts.
+    function UploadImage(AKey: TicketKey; const ABytes: TBytes;
+      ACategory: ImageCategory; AItemIndex: Integer): TLeadsOnlineResult;
+    /// Non-raising form: returns False and fills AError on transport failure.
+    function TryUploadImage(AKey: TicketKey; const ABytes: TBytes;
+      ACategory: ImageCategory; AItemIndex: Integer;
+      out AResult: TLeadsOnlineResult; out AError: string): Boolean;
 
     property StoreId: Integer read FStoreId;
     property UserName: string read FUserName;
@@ -533,6 +551,79 @@ begin
   AError := '';
   try
     AResult := SubmitTransaction(ATicket);
+    Result := True;             // reached the service; AResult says what it said
+  except
+    on E: Exception do
+    begin
+      AResult := Default(TLeadsOnlineResult);
+      AError := E.Message;
+      Result := False;          // never reached the service
+    end;
+  end;
+end;
+
+function DetectImageType(const ABytes: TBytes): ImageType;
+begin
+  // Sniffed from the content, never assumed from a file extension. PawnPro
+  // names every stored image .jpg regardless of what the camera or the operator
+  // actually produced, so a PNG saved through that path would otherwise be
+  // announced to LeadsOnline as a JPEG.
+  Result := ImageType.Jpeg;
+  if Length(ABytes) < 8 then
+    Exit;
+
+  if (ABytes[0] = $89) and (ABytes[1] = Ord('P')) and (ABytes[2] = Ord('N')) and
+     (ABytes[3] = Ord('G')) then
+    Result := ImageType.Png
+  else if (ABytes[0] = Ord('G')) and (ABytes[1] = Ord('I')) and (ABytes[2] = Ord('F')) then
+    Result := ImageType.Gif
+  else if (ABytes[0] = Ord('%')) and (ABytes[1] = Ord('P')) and (ABytes[2] = Ord('D')) and
+          (ABytes[3] = Ord('F')) then
+    Result := ImageType.Pdf;
+end;
+
+function TLeadsOnlineClient.UploadImage(AKey: TicketKey; const ABytes: TBytes;
+  ACategory: ImageCategory; AItemIndex: Integer): TLeadsOnlineResult;
+var
+  Login: LoginInfo;
+  Img: Image;
+begin
+  if AKey = nil then
+    raise ELeadsOnlineTransport.Create('UploadImage', GetEndpointURL,
+      'no ticket key was supplied');
+  if Length(ABytes) = 0 then
+    raise ELeadsOnlineTransport.Create('UploadImage', GetEndpointURL,
+      'the image is empty');
+
+  Login := NewLoginInfo;
+  try
+    Img := Image.Create;
+    try
+      Img.imageCategory := ACategory;
+      Img.imageType := DetectImageType(ABytes);
+      Img.imageData := TByteSOAPArray(ABytes);
+
+      Result := Execute('UploadImage',
+        function: Response
+        begin
+          Result := GetService.UploadImage(FApiVersion, ResolveIpAddress, Img,
+                                           AItemIndex, Login, AKey);
+        end);
+    finally
+      Img.Free;
+    end;
+  finally
+    Login.Free;
+  end;
+end;
+
+function TLeadsOnlineClient.TryUploadImage(AKey: TicketKey; const ABytes: TBytes;
+  ACategory: ImageCategory; AItemIndex: Integer;
+  out AResult: TLeadsOnlineResult; out AError: string): Boolean;
+begin
+  AError := '';
+  try
+    AResult := UploadImage(AKey, ABytes, ACategory, AItemIndex);
     Result := True;             // reached the service; AResult says what it said
   except
     on E: Exception do
