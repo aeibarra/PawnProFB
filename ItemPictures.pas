@@ -204,6 +204,35 @@ begin
     AdEditPicture(false);
 end;
 
+{ The camera form is deliberately created with a nil owner (see AdEditPicture),
+  which means the DFM's Position = poOwnerFormCenter cannot do what it says: with
+  no owning TCustomForm the VCL quietly falls back to screen centre, and on a
+  multi-monitor till that can put the capture window on a different screen from
+  the one the clerk is working on. Place it over the calling form explicitly,
+  clamped to that form's monitor so it can never open partly off-screen. }
+procedure CenterOverForm(AForm: TForm; AOverForm: TForm);
+var
+  WorkArea: TRect;
+  L, T: Integer;
+begin
+  if not Assigned(AForm) or not Assigned(AOverForm) then
+    Exit;
+  AForm.Position := poDesigned;
+  L := AOverForm.Left + (AOverForm.Width  - AForm.Width)  div 2;
+  T := AOverForm.Top  + (AOverForm.Height - AForm.Height) div 2;
+
+  WorkArea := AOverForm.Monitor.WorkareaRect;
+  if L + AForm.Width  > WorkArea.Right  then L := WorkArea.Right  - AForm.Width;
+  if T + AForm.Height > WorkArea.Bottom then T := WorkArea.Bottom - AForm.Height;
+  // Applied last so a window larger than the work area still shows its
+  // top-left corner (and therefore its title bar) rather than its middle.
+  if L < WorkArea.Left then L := WorkArea.Left;
+  if T < WorkArea.Top  then T := WorkArea.Top;
+
+  AForm.Left := L;
+  AForm.Top  := T;
+end;
+
 procedure TfrmItemPictures.AdEditPicture(NewPic: boolean);
 var
   CaptureForm: TfrmCapturePicFromCamera;
@@ -241,6 +270,10 @@ begin
   try
     CaptureForm := TfrmCapturePicFromCamera.Create(nil);
     try
+      { Owner is nil, so poOwnerFormCenter in the DFM would land it on the
+        screen centre instead of over this form. Do it explicitly. }
+      CenterOverForm(CaptureForm, Self);
+
       DoNoLoadImage := true;
       if NewPic then
         qryItemImages.Append
