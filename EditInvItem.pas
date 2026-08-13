@@ -110,6 +110,7 @@ end;
 procedure TfrmEditInvItem.btnSaveClick(Sender: TObject);
 begin
   dsInvItems.DataSet.Post;
+  DM.AddInventoryBrand(dsInvItems.DataSet.FieldByName('InvItemBrand').AsString);
   if trim(dsInvItems.DataSet.FieldByName('InvItemBarcode').AsString) = '' then
     begin
       dsInvItems.DataSet.Edit;

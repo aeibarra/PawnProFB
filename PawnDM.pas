@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB, FireDAC.DApt,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
   FireDAC.Phys.IBBase, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, FireDAC.Comp.UI;
 
 type
   TBackupPhase = (bpStarting, bpDatabase, bpImages, bpLogging, bpDone);
@@ -197,7 +197,15 @@ type
     clnJStylesJ_STYLE_DESC: TWideStringField;
     clnJTypesJ_TYPE: TWideStringField;
     clnJTypesJ_TYPE_DESC: TWideStringField;
+    clnStoneTypes: TFDMemTable;
+    clnStoneTypesSTONE_TYPE: TWideStringField;
+    clnInventoryCategories: TFDMemTable;
+    clnInventoryCategoriesINV_CAT_NO: TIntegerField;
+    clnInventoryCategoriesINV_CATEGORY: TWideStringField;
+    clnInventoryBrands: TFDMemTable;
+    clnInventoryBrandsINV_ITEM_BRAND: TWideStringField;
     qryCalcUnitCostFromWeight: TFDQuery;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -276,6 +284,9 @@ type
     procedure GetJStoneShapes(MemTable: TFDMemTable);
     procedure GetJStyles(MemTable: TFDMemTable);
     procedure GetJTypes(MemTable: TFDMemTable);
+    procedure AddStoneType(const AStoneType: string);
+    procedure AddInventoryBrand(const ABrand: string);
+    procedure RefreshInventoryCategories;
     procedure RefreshLookupMemTables;
     function GetWeightUnitAbbr(WeightUnit: string): string;
     procedure FillPawnStatusCombobox(cb: TRzComboBox; StatusToSelect: String);
@@ -726,6 +737,69 @@ begin
 
   LoadLookupMemTable(clnJTypes,
     'SELECT J_TYPE, J_TYPE_DESC FROM J_TYPES ORDER BY J_TYPE_DESC');
+
+  LoadLookupMemTable(clnStoneTypes,
+    'SELECT DISTINCT TRIM(STONE_TYPE) AS STONE_TYPE FROM STONES ' +
+    'WHERE TRIM(STONE_TYPE) <> '''' ORDER BY STONE_TYPE');
+
+  RefreshInventoryCategories;
+
+  LoadLookupMemTable(clnInventoryBrands,
+    'SELECT DISTINCT TRIM(INV_ITEM_BRAND) AS INV_ITEM_BRAND FROM INVENTORY_ITEMS ' +
+    'WHERE CHAR_LENGTH(TRIM(INV_ITEM_BRAND)) >= 3 ' +
+    'AND TRIM(INV_ITEM_BRAND) NOT SIMILAR TO ''[[:DIGIT:]]+'' ' +
+    'ORDER BY INV_ITEM_BRAND');
+end;
+
+procedure TDM.AddStoneType(const AStoneType: string);
+var
+  StoneType: string;
+begin
+  StoneType := Trim(AStoneType);
+  if (StoneType = '') or
+     clnStoneTypes.Locate('STONE_TYPE', StoneType, [loCaseInsensitive]) then
+    Exit;
+
+  clnStoneTypes.Append;
+  clnStoneTypesSTONE_TYPE.AsString := StoneType;
+  clnStoneTypes.Post;
+end;
+
+function IsValidInventoryBrand(const ABrand: string): Boolean;
+var
+  I: Integer;
+begin
+  Result := Length(ABrand) >= 3;
+  if not Result then
+    Exit;
+
+  Result := False;
+  for I := 1 to Length(ABrand) do
+    if not CharInSet(ABrand[I], ['0'..'9']) then
+    begin
+      Result := True;
+      Break;
+    end;
+end;
+
+procedure TDM.AddInventoryBrand(const ABrand: string);
+var
+  Brand: string;
+begin
+  Brand := Trim(ABrand);
+  if not IsValidInventoryBrand(Brand) or
+     clnInventoryBrands.Locate('INV_ITEM_BRAND', Brand, [loCaseInsensitive]) then
+    Exit;
+
+  clnInventoryBrands.Append;
+  clnInventoryBrandsINV_ITEM_BRAND.AsString := Brand;
+  clnInventoryBrands.Post;
+end;
+
+procedure TDM.RefreshInventoryCategories;
+begin
+  LoadLookupMemTable(clnInventoryCategories,
+    'SELECT INV_CAT_NO, INV_CATEGORY FROM INV_CATEGORIES ORDER BY INV_CATEGORY');
 end;
 
 procedure TDM.RefreshLookupMemTables;

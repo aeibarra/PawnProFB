@@ -8,23 +8,23 @@ object frmEnterItems: TfrmEnterItems
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -15
   Font.Name = 'Segoe UI'
   Font.Style = []
   PopupMode = pmAuto
   Position = poOwnerFormCenter
   OnClose = FormClose
   OnShow = FormShow
-  TextHeight = 17
+  TextHeight = 20
   object GroupBox1: TGroupBox
     AlignWithMargins = True
-    Left = 3
-    Top = 585
-    Width = 547
+    Left = 8
+    Top = 631
+    Width = 591
     Height = 70
     TabOrder = 2
     object btnCancel: TBitBtn
-      Left = 413
+      Left = 455
       Top = 11
       Width = 106
       Height = 48
@@ -62,7 +62,7 @@ object frmEnterItems: TfrmEnterItems
       OnClick = btnCancelClick
     end
     object btnSave: TRzBitBtn
-      Left = 280
+      Left = 322
       Top = 11
       Width = 106
       Height = 48
@@ -79,229 +79,241 @@ object frmEnterItems: TfrmEnterItems
     AlignWithMargins = True
     Left = 3
     Top = -2
-    Width = 547
-    Height = 355
+    Width = 596
+    Height = 378
     Caption = 'Item'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -15
     Font.Name = 'Segoe UI'
     Font.Style = []
     ParentFont = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 30
-      Top = 81
-      Width = 77
-      Height = 17
+      Left = 33
+      Top = 83
+      Width = 89
+      Height = 20
       Caption = 'Item Barcode'
     end
     object Label2: TLabel
-      Left = 30
-      Top = 131
-      Width = 63
-      Height = 17
+      Left = 33
+      Top = 139
+      Width = 74
+      Height = 20
       Caption = 'Item Type:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 203
-      Top = 131
-      Width = 32
-      Height = 17
+      Left = 220
+      Top = 139
+      Width = 38
+      Height = 20
       Caption = 'Style:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 371
-      Top = 131
-      Width = 37
-      Height = 17
+      Left = 396
+      Top = 139
+      Width = 44
+      Height = 20
       Caption = 'Metal:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label7: TLabel
-      Left = 248
-      Top = 285
-      Width = 38
-      Height = 17
+      Left = 246
+      Top = 311
+      Width = 42
+      Height = 20
       Caption = 'Notes:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
     end
     object Label5: TLabel
-      Left = 183
-      Top = 81
-      Width = 44
-      Height = 17
+      Left = 202
+      Top = 84
+      Width = 51
+      Height = 20
       Caption = 'Weight'
       FocusControl = DBEdit4
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 371
-      Top = 81
-      Width = 15
-      Height = 17
+      Left = 402
+      Top = 83
+      Width = 19
+      Height = 20
       Caption = 'KT'
       FocusControl = DBEdit5
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label8: TLabel
-      Left = 452
-      Top = 81
-      Width = 69
-      Height = 17
+      Left = 474
+      Top = 83
+      Width = 80
+      Height = 20
       Caption = 'Size Length'
       FocusControl = DBEdit6
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label9: TLabel
-      Left = 120
-      Top = 81
-      Width = 51
-      Height = 17
+      Left = 131
+      Top = 83
+      Width = 59
+      Height = 20
       Caption = 'Quantity:'
       FocusControl = edItemCount
     end
     object Label10: TLabel
       Left = 30
-      Top = 285
-      Width = 59
-      Height = 17
+      Top = 311
+      Width = 69
+      Height = 20
       Caption = 'Unit Cost:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label11: TLabel
-      Left = 136
-      Top = 285
-      Width = 58
-      Height = 17
+      Left = 139
+      Top = 311
+      Width = 66
+      Height = 20
       Caption = 'Unit Price:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
     end
     object Label12: TLabel
-      Left = 30
+      Left = 33
       Top = 27
-      Width = 56
-      Height = 17
+      Width = 63
+      Height = 20
       Caption = 'Category:'
     end
     object Label13: TLabel
-      Left = 30
-      Top = 182
-      Width = 36
-      Height = 17
+      Left = 33
+      Top = 196
+      Width = 42
+      Height = 20
       Caption = 'Brand'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label14: TLabel
-      Left = 203
-      Top = 182
-      Width = 86
-      Height = 17
+      Left = 220
+      Top = 196
+      Width = 100
+      Height = 20
       Caption = 'Serial Number'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label15: TLabel
-      Left = 263
+      Left = 289
       Top = 27
-      Width = 103
-      Height = 17
+      Width = 121
+      Height = 20
       Caption = 'Item Description:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label16: TLabel
       Left = 30
-      Top = 233
-      Width = 148
-      Height = 17
+      Top = 254
+      Width = 171
+      Height = 20
       Caption = 'Owner Applied Number:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label17: TLabel
-      Left = 203
-      Top = 233
-      Width = 96
-      Height = 17
+      Left = 220
+      Top = 254
+      Width = 111
+      Height = 20
       Caption = 'Model Number:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label18: TLabel
-      Left = 255
-      Top = 81
-      Width = 73
-      Height = 17
+      Left = 280
+      Top = 83
+      Width = 85
+      Height = 20
       Caption = 'Weight Unit'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object DBEdit1: TDBEdit
-      Left = 33
-      Top = 100
-      Width = 81
-      Height = 25
+      Left = 30
+      Top = 105
+      Width = 94
+      Height = 28
       TabStop = False
       DataField = 'INV_ITEM_BARCODE'
       DataSource = dsInvItems
@@ -309,10 +321,10 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 2
     end
     object DBLookupComboBox1: TDBLookupComboBox
-      Left = 36
-      Top = 151
-      Width = 161
-      Height = 25
+      Left = 33
+      Top = 162
+      Width = 176
+      Height = 28
       DataField = 'J_TYPE'
       DataSource = dsInvItems
       KeyField = 'J_TYPE'
@@ -321,10 +333,10 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 8
     end
     object DBLookupComboBox2: TDBLookupComboBox
-      Left = 203
-      Top = 150
-      Width = 157
-      Height = 25
+      Left = 215
+      Top = 160
+      Width = 166
+      Height = 28
       DataField = 'J_STYLE'
       DataSource = dsInvItems
       KeyField = 'J_STYLE'
@@ -333,10 +345,10 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 9
     end
     object DBLookupComboBox3: TDBLookupComboBox
-      Left = 366
-      Top = 151
-      Width = 153
-      Height = 25
+      Left = 387
+      Top = 161
+      Width = 169
+      Height = 28
       DataField = 'J_METAL'
       DataSource = dsInvItems
       KeyField = 'J_METAL'
@@ -345,73 +357,73 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 10
     end
     object DBMemo1: TDBMemo
-      Left = 241
-      Top = 305
-      Width = 276
-      Height = 25
+      Left = 240
+      Top = 333
+      Width = 314
+      Height = 28
       DataField = 'NOTE'
       DataSource = dsInvItems
       TabOrder = 18
     end
     object DBEdit4: TDBEdit
-      Left = 183
-      Top = 100
-      Width = 64
-      Height = 25
+      Left = 198
+      Top = 105
+      Width = 70
+      Height = 28
       DataField = 'WEIGHT'
       DataSource = dsInvItems
       TabOrder = 4
     end
     object DBEdit5: TDBEdit
-      Left = 371
-      Top = 100
-      Width = 70
-      Height = 25
+      Left = 397
+      Top = 105
+      Width = 67
+      Height = 28
       DataField = 'KT'
       DataSource = dsInvItems
       TabOrder = 6
     end
     object DBEdit6: TDBEdit
-      Left = 451
-      Top = 100
-      Width = 73
-      Height = 25
+      Left = 471
+      Top = 105
+      Width = 85
+      Height = 28
       DataField = 'SIZE_LENGTH'
       DataSource = dsInvItems
       TabOrder = 7
     end
     object edItemCount: TDBEdit
-      Left = 120
-      Top = 100
-      Width = 52
-      Height = 25
+      Left = 131
+      Top = 105
+      Width = 60
+      Height = 28
       DataField = 'INV_ITEM_COUNT'
       DataSource = dsInvItems
       TabOrder = 3
     end
     object DBEdit2: TDBEdit
       Left = 30
-      Top = 305
-      Width = 97
-      Height = 25
+      Top = 333
+      Width = 99
+      Height = 28
       DataField = 'UNIT_COST'
       DataSource = dsInvItems
       TabOrder = 16
     end
     object DBEdit3: TDBEdit
-      Left = 136
-      Top = 305
-      Width = 97
-      Height = 25
+      Left = 135
+      Top = 333
+      Width = 99
+      Height = 28
       DataField = 'UNIT_PRICE'
       DataSource = dsInvItems
       TabOrder = 17
     end
     object DBLookupComboBox4: TDBLookupComboBox
       Left = 30
-      Top = 48
-      Width = 227
-      Height = 25
+      Top = 50
+      Width = 244
+      Height = 28
       DataField = 'INV_CAT_NO'
       DataSource = dsInvItems
       KeyField = 'INV_CAT_NO'
@@ -421,55 +433,55 @@ object frmEnterItems: TfrmEnterItems
       TabStop = False
     end
     object cbBrand: TDBComboBox
-      Left = 30
-      Top = 202
-      Width = 161
-      Height = 25
+      Left = 33
+      Top = 219
+      Width = 176
+      Height = 28
       DataField = 'INV_ITEM_BRAND'
       DataSource = dsInvItems
       TabOrder = 11
     end
     object DBEdit7: TDBEdit
-      Left = 203
-      Top = 202
-      Width = 157
-      Height = 25
+      Left = 215
+      Top = 219
+      Width = 166
+      Height = 28
       DataField = 'SERIAL_NUMBER'
       DataSource = dsInvItems
       TabOrder = 12
     end
     object edItemDesc: TDBEdit
-      Left = 263
-      Top = 48
-      Width = 261
-      Height = 25
+      Left = 285
+      Top = 50
+      Width = 271
+      Height = 28
       DataField = 'DESCRIPTION'
       DataSource = dsInvItems
       TabOrder = 1
     end
     object DBEdit9: TDBEdit
       Left = 30
-      Top = 253
-      Width = 161
-      Height = 25
+      Top = 276
+      Width = 176
+      Height = 28
       DataField = 'OWNER_APP_NUMBER'
       DataSource = dsInvItems
       TabOrder = 14
     end
     object DBEdit10: TDBEdit
-      Left = 203
-      Top = 253
-      Width = 153
-      Height = 25
+      Left = 215
+      Top = 276
+      Width = 166
+      Height = 28
       DataField = 'MODEL_NUMBER'
       DataSource = dsInvItems
       TabOrder = 15
     end
     object RzDBRadioGroup1: TRzDBRadioGroup
-      Left = 371
-      Top = 182
-      Width = 153
-      Height = 98
+      Left = 387
+      Top = 194
+      Width = 169
+      Height = 113
       DataField = 'GENDER'
       DataSource = dsInvItems
       Items.Strings = (
@@ -484,8 +496,8 @@ object frmEnterItems: TfrmEnterItems
       Color = 15987699
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI Semibold'
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       StartXPos = 20
@@ -495,10 +507,10 @@ object frmEnterItems: TfrmEnterItems
       VisualStyle = vsClassic
     end
     object cbWeightUnit: TDBLookupComboBox
-      Left = 255
-      Top = 100
-      Width = 105
-      Height = 25
+      Left = 275
+      Top = 105
+      Width = 116
+      Height = 28
       DataField = 'WEIGHT_UNIT'
       DataSource = dsInvItems
       KeyField = 'WeigthUnitValue'
@@ -510,13 +522,13 @@ object frmEnterItems: TfrmEnterItems
   object GroupBox3: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 358
-    Width = 547
-    Height = 225
+    Top = 379
+    Width = 596
+    Height = 246
     Caption = 'Stones'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -15
     Font.Name = 'Segoe UI'
     Font.Style = []
     ParentFont = False
@@ -524,17 +536,19 @@ object frmEnterItems: TfrmEnterItems
     object Panel9: TPanel
       AlignWithMargins = True
       Left = 5
-      Top = 168
-      Width = 537
-      Height = 52
+      Top = 180
+      Width = 586
+      Height = 61
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitTop = 181
+      ExplicitWidth = 603
       object btnAddStone: TBitBtn
-        Left = 16
-        Top = 2
-        Width = 93
-        Height = 47
+        Left = 18
+        Top = 5
+        Width = 100
+        Height = 48
         Caption = '&Add'
         ImageIndex = 21
         ImageName = 'actItems'
@@ -543,10 +557,10 @@ object frmEnterItems: TfrmEnterItems
         OnClick = btnAddStoneClick
       end
       object btnEditStone: TBitBtn
-        Left = 126
-        Top = 2
-        Width = 93
-        Height = 47
+        Left = 128
+        Top = 5
+        Width = 100
+        Height = 48
         Caption = '&Edit'
         ImageIndex = 14
         ImageName = 'actEdit02'
@@ -555,10 +569,10 @@ object frmEnterItems: TfrmEnterItems
         OnClick = btnEditStoneClick
       end
       object btnRemoveStone: TRzBitBtn
-        Left = 395
-        Top = 2
-        Width = 119
-        Height = 47
+        Left = 431
+        Top = 5
+        Width = 126
+        Height = 48
         Caption = 'Remove'
         TabOrder = 2
         OnClick = btnRemoveStoneClick
@@ -571,9 +585,9 @@ object frmEnterItems: TfrmEnterItems
     object DBGrid2: TDBGrid
       AlignWithMargins = True
       Left = 5
-      Top = 22
-      Width = 537
-      Height = 140
+      Top = 25
+      Width = 586
+      Height = 149
       Align = alClient
       DataSource = dsStones
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -581,7 +595,7 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 1
       TitleFont.Charset = ANSI_CHARSET
       TitleFont.Color = clWindowText
-      TitleFont.Height = -13
+      TitleFont.Height = -15
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
       Columns = <
@@ -593,10 +607,10 @@ object frmEnterItems: TfrmEnterItems
           Title.Caption = 'Stone Number'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Height = -15
+          Title.Font.Name = 'Segoe UI'
           Title.Font.Style = [fsBold]
-          Width = 96
+          Width = 120
           Visible = True
         end
         item
@@ -607,10 +621,10 @@ object frmEnterItems: TfrmEnterItems
           Title.Caption = 'Shape'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Height = -15
+          Title.Font.Name = 'Segoe UI'
           Title.Font.Style = [fsBold]
-          Width = 84
+          Width = 113
           Visible = True
         end
         item
@@ -621,10 +635,10 @@ object frmEnterItems: TfrmEnterItems
           Title.Caption = 'Color'
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Height = -15
+          Title.Font.Name = 'Segoe UI'
           Title.Font.Style = [fsBold]
-          Width = 89
+          Width = 125
           Visible = True
         end
         item
@@ -634,10 +648,10 @@ object frmEnterItems: TfrmEnterItems
           Title.Alignment = taCenter
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Height = -15
+          Title.Font.Name = 'Segoe UI'
           Title.Font.Style = [fsBold]
-          Width = 61
+          Width = 81
           Visible = True
         end
         item
@@ -647,109 +661,48 @@ object frmEnterItems: TfrmEnterItems
           Title.Alignment = taCenter
           Title.Font.Charset = ANSI_CHARSET
           Title.Font.Color = clWindowText
-          Title.Font.Height = -13
-          Title.Font.Name = 'Segoe UI Semibold'
+          Title.Font.Height = -15
+          Title.Font.Name = 'Segoe UI'
           Title.Font.Style = [fsBold]
-          Width = 66
+          Width = 93
           Visible = True
         end>
     end
   end
   object dsTypes: TDataSource
     DataSet = DM.clnJTypes
-    Left = 715
-    Top = 28
+    Left = 796
+    Top = 27
   end
   object dsStyles: TDataSource
     DataSet = DM.clnJStyles
-    Left = 771
-    Top = 28
+    Left = 852
+    Top = 27
   end
   object dsMetal: TDataSource
     DataSet = DM.clnJMetals
-    Left = 827
-    Top = 28
-  end
-  object qryCategories: TFDQuery
-    Connection = DM.ConnFB
-    SQL.Strings = (
-      'SELECT INV_CAT_NO, INV_CATEGORY'
-      'FROM INV_CATEGORIES'
-      'ORDER BY INV_CATEGORY')
-    Left = 716
-    Top = 145
-    object qryCategoriesINV_CAT_NO: TIntegerField
-      FieldName = 'INV_CAT_NO'
-      Origin = 'INV_CAT_NO'
-      Required = True
-    end
-    object qryCategoriesINV_CATEGORY: TWideStringField
-      FieldName = 'INV_CATEGORY'
-      Origin = 'INV_CATEGORY'
-      Size = 40
-    end
+    Left = 908
+    Top = 27
   end
   object dsInvItems: TDataSource
     DataSet = frmClients.qryInvItems
-    Left = 636
-    Top = 25
+    Left = 717
+    Top = 27
   end
   object dsCategories: TDataSource
-    DataSet = qryCategories
-    Left = 716
-    Top = 193
-  end
-  object qryBrands: TFDQuery
-    Connection = DM.ConnFB
-    SQL.Strings = (
-      'SELECT DISTINCT INV_ITEM_BRAND'
-      'FROM INVENTORY_ITEMS'
-      'WHERE INV_ITEM_BRAND IS NOT NULL'
-      'ORDER BY INV_ITEM_BRAND')
-    Left = 716
-    Top = 249
-    object qryBrandsINV_ITEM_BRAND: TWideStringField
-      FieldName = 'INV_ITEM_BRAND'
-      Origin = 'INV_ITEM_BRAND'
-      Size = 30
-    end
+    DataSet = DM.clnInventoryCategories
+    Left = 717
+    Top = 105
   end
   object dsStones: TDataSource
     DataSet = qryStones
-    Left = 594
-    Top = 490
-  end
-  object clnWeigthUnits: TClientDataSet
-    Aggregates = <>
-    FieldDefs = <
-      item
-        Name = 'WeigthUnitValue'
-        DataType = ftWideString
-        Size = 1
-      end
-      item
-        Name = 'WeightUnit'
-        DataType = ftWideString
-        Size = 50
-      end>
-    IndexDefs = <>
-    Params = <>
-    StoreDefs = True
-    Left = 716
-    Top = 320
-    object clnWeigthUnitsWeigthUnitValue: TWideStringField
-      FieldName = 'WeigthUnitValue'
-      Size = 1
-    end
-    object clnWeigthUnitsWeightUnit: TWideStringField
-      FieldName = 'WeightUnit'
-      Size = 50
-    end
+    Left = 722
+    Top = 262
   end
   object dsWeigthUnits: TDataSource
-    DataSet = clnWeigthUnits
-    Left = 714
-    Top = 378
+    DataSet = DM.clnWeigthUnits
+    Left = 803
+    Top = 105
   end
   object updStones: TFDUpdateSQL
     Connection = DM.ConnFB
@@ -815,8 +768,8 @@ object frmEnterItems: TfrmEnterItems
         '  CT = :OLD_CT AND WT = :OLD_WT AND STONE_TYPE = :OLD_STONE_TYPE' +
         ' AND '
       '  STONE_WEIGHT_UNIT = :OLD_STONE_WEIGHT_UNIT')
-    Left = 592
-    Top = 556
+    Left = 720
+    Top = 328
   end
   object qryStones: TFDQuery
     OnCalcFields = clnStonesCalcFields
@@ -828,8 +781,8 @@ object frmEnterItems: TfrmEnterItems
       'SELECT *'
       'FROM STONES'
       'WHERE INV_ITEM_NO = :INV_ITEM_NO')
-    Left = 589
-    Top = 432
+    Left = 717
+    Top = 204
     ParamData = <
       item
         Name = 'INV_ITEM_NO'

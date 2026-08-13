@@ -168,7 +168,6 @@ object frmPawnMain: TfrmPawnMain
       TabOrder = 0
       Transparent = True
       Visible = False
-      ExplicitHeight = 42
     end
   end
   object pnHome: TRzPanel
@@ -179,7 +178,6 @@ object frmPawnMain: TfrmPawnMain
     Align = alTop
     BorderOuter = fsNone
     TabOrder = 1
-    ExplicitTop = 46
     object btnClose: TRzToolButton
       Left = 1461
       Top = 0
@@ -330,7 +328,6 @@ object frmPawnMain: TfrmPawnMain
     BorderOuter = fsNone
     TabOrder = 2
     Visible = False
-    ExplicitTop = 124
     object RzToolButton1: TRzToolButton
       Left = 1461
       Top = 0
@@ -495,7 +492,6 @@ object frmPawnMain: TfrmPawnMain
     BorderOuter = fsNone
     TabOrder = 3
     Visible = False
-    ExplicitTop = 202
     object RzToolButton2: TRzToolButton
       Left = 1461
       Top = 0
@@ -645,7 +641,6 @@ object frmPawnMain: TfrmPawnMain
     BorderOuter = fsNone
     TabOrder = 4
     Visible = False
-    ExplicitTop = 280
     object RzToolButton3: TRzToolButton
       Left = 1461
       Top = 0
@@ -744,7 +739,7 @@ object frmPawnMain: TfrmPawnMain
         Layout = blGlyphTop
         Spacing = 1
         UseToolbarButtonSize = False
-        Caption = 'LeadsOnline FTP Parameter'
+        Caption = 'LeadsOnline Parameters'
         OnClick = btnLeadsOnlineFTPParamsClick
       end
       object btnDefaultMaturityMonth: TRzToolButton

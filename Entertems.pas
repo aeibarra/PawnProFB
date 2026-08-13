@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, DBCtrls, ExtCtrls, Mask, DB, Grids,
-  DBGrids, DBClient, Provider, RzButton, System.UITypes, RzCmboBx, RzDBCmbo,
+  DBGrids, RzButton, System.UITypes, RzCmboBx, RzDBCmbo,
   RzPanel, RzRadGrp, RzDBRGrp, FireDAC.Stan.Intf, FireDAC.Stan.Param,
   FireDAC.Phys.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
@@ -18,13 +18,8 @@ type
     dsTypes: TDataSource;
     dsStyles: TDataSource;
     dsMetal: TDataSource;
-    qryCategories: TFDQuery;
-    qryCategoriesINV_CAT_NO: TIntegerField;
-    qryCategoriesINV_CATEGORY: TWideStringField;
     dsInvItems: TDataSource;
     dsCategories: TDataSource;
-    qryBrands: TFDQuery;
-    qryBrandsINV_ITEM_BRAND: TWideStringField;
     dsStones: TDataSource;
     btnSave: TRzBitBtn;
     GroupBox2: TGroupBox;
@@ -70,11 +65,8 @@ type
     btnRemoveStone: TRzBitBtn;
     Label18: TLabel;
     RzDBRadioGroup1: TRzDBRadioGroup;
-    clnWeigthUnits: TClientDataSet;
     dsWeigthUnits: TDataSource;
     cbWeightUnit: TDBLookupComboBox;
-    clnWeigthUnitsWeigthUnitValue: TWideStringField;
-    clnWeigthUnitsWeightUnit: TWideStringField;
     updStones: TFDUpdateSQL;
     qryStones: TFDQuery;
     qryStonesSTONE_NO: TIntegerField;
@@ -121,23 +113,7 @@ begin
 
   edItemDesc.SetFocus;
 
-  dsTypes.DataSet := DM.clnJTypes;
-  dsStyles.DataSet := DM.clnJStyles;
-  dsMetal.DataSet := DM.clnJMetals;
-
-  qryBrands.Close;
-  qryBrands.Open;
-  cbBrand.Items.Clear;
-  while not qryBrands.Eof do
-    begin
-      if trim(qryBrandsINV_ITEM_BRAND.AsString) <> '' then
-        cbBrand.Items.Add(qryBrandsINV_ITEM_BRAND.AsString);
-      qryBrands.Next;
-    end;
-  qryBrands.Close;
-
-  qryCategories.Close;
-  qryCategories.Open;
+  FillCombo(cbBrand, DM.clnInventoryBrands, 'INV_ITEM_BRAND', '', '');
 
   if NewRow then
     begin
@@ -150,8 +126,6 @@ begin
 
   qryStones.Params.ParamByName('INV_ITEM_NO').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
   qryStones.Open;
-
-  DM.GetWeightUnits(clnWeigthUnits);
 end;
 
 procedure TfrmEnterItems.clnStonesCalcFields(DataSet: TDataSet);
@@ -209,6 +183,7 @@ begin
     exit;
 
   frmClients.qryInvItems.Post;
+  DM.AddInventoryBrand(frmClients.qryInvItemsINV_ITEM_BRAND.AsString);
 
   StoneNeedPosting := (NewRow and (qryStones.RecordCount > 0)) or (not NewRow and qryStones.UpdatesPending);
 

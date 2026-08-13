@@ -2083,7 +2083,7 @@ begin
 }
   // This modal form is always explicitly freed below, so it does not need to
   // be registered as an owned, named component under frmClients.
-  frmEnterTransaction := TfrmEnterTransaction.Create(nil);
+  frmEnterTransaction := TfrmEnterTransaction.Create(self);
   try
     if OpenSQLStatementFB(
          'select count(*) from TRANSACTIONS T1 ' +
@@ -2145,7 +2145,10 @@ begin
       qryPawnItemscStone1Shape.AsString := qryPawnStonesStoneShape.AsString;
       qryPawnItemscStone1Color.AsString := qryPawnStonesStoneColor.AsString;
       qryPawnItemscStone1CT.AsFloat := qryPawnStonesCT.AsFloat;
-      qryPawnItemscStone1WT.AsString := qryPawnStonesWT.AsString + DM.GetWeightUnitAbbr(qryPawnStonesStoneWeightUnit.AsString);
+      if not qryPawnStonesWT.IsNull and (qryPawnStonesWT.AsFloat > 0) then
+        qryPawnItemscStone1WT.AsString := qryPawnStonesWT.AsString + DM.GetWeightUnitAbbr(qryPawnStonesStoneWeightUnit.AsString)
+      else
+        qryPawnItemscStone1WT.Clear;
       qryPawnItemscStone1Qty.AsInteger := qryPawnStonesStoneNumber.AsInteger;
     end;
   if StonesCount >= 2 then
@@ -2154,7 +2157,10 @@ begin
       qryPawnItemscStone2Shape.AsString := qryPawnStonesStoneShape.AsString;
       qryPawnItemscStone2Color.AsString := qryPawnStonesStoneColor.AsString;
       qryPawnItemscStone2CT.AsFloat := qryPawnStonesCT.AsFloat;
-      qryPawnItemscStone2WT.AsString := qryPawnStonesWT.AsString + DM.GetWeightUnitAbbr(qryPawnStonesStoneWeightUnit.AsString);
+      if not qryPawnStonesWT.IsNull and (qryPawnStonesWT.AsFloat > 0) then
+        qryPawnItemscStone2WT.AsString := qryPawnStonesWT.AsString + DM.GetWeightUnitAbbr(qryPawnStonesStoneWeightUnit.AsString)
+      else
+        qryPawnItemscStone2WT.Clear;
       qryPawnItemscStone2Qty.AsInteger := qryPawnStonesStoneNumber.AsInteger;
     end;
     
@@ -2318,7 +2324,7 @@ begin
   { nil owner + local var: a fault during the picture form's teardown cannot
     leave it registered under frmClients and break the next open with
     "A component named frmItemPictures already exists". }
-  PicForm := TfrmItemPictures.Create(nil);
+  PicForm := TfrmItemPictures.Create(Self);
   try
     PicForm.ImageTypeNo := ImageType_ItemPicture;
     PicForm.ImagRefToRowNo := qryInvItemsINV_ITEM_NO.AsInteger;
@@ -2350,7 +2356,7 @@ begin
     end;
 
   { nil owner + local var -- see btnItemPicturesClick. }
-  PicForm := TfrmItemPictures.Create(nil);
+  PicForm := TfrmItemPictures.Create(Self);
   try
     PicForm.ImageTypeNo := ImageType_CustomerID;
     PicForm.ImagRefToRowNo := DM.qryCustomersCUST_NO.AsInteger;

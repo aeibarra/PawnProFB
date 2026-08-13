@@ -602,8 +602,8 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     Top = 210
   end
   object qryImagesNotExp: TFDQuery
-    Connection = DM.ConnFB
     AfterOpen = qryImagesNotExpAfterOpen
+    Connection = DM.ConnFB
     SQL.Strings = (
       'select'
       '  T1.TRANSACTION_NO as "TransactionNo",'
@@ -616,8 +616,8 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
       '  T4.TRAN_DATE as "TranDate"'
       'from EXPORT_LOG_FILE_DETAIL T1'
       
-        '  join INVENTORY_ITEMS T2 on T1.TRANSACTION_NO = T2.TRANSACTION' +
-        '_NO AND T1.INV_ITEM_NO = T2.INV_ITEM_NO'
+        '  join INVENTORY_ITEMS T2 on T1.TRANSACTION_NO = T2.TRANSACTION_' +
+        'NO AND T1.INV_ITEM_NO = T2.INV_ITEM_NO'
       '  join IMAGES_DATA T3 on T2.INV_ITEM_NO = T3.IMAG_REF_TO_ROW_NO'
       '  join TRANSACTIONS T4 on T4.TRANSACTION_NO = T1.TRANSACTION_NO'
       'where T3.IMAGE_TYPE_NO = 2 and T3.UPLOAD_TIME is null'
@@ -658,8 +658,8 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     Top = 87
   end
   object popMnu: TPopupMenu
-    Left = 80
-    Top = 158
+    Left = 89
+    Top = 254
     object ViewImages1: TMenuItem
       Caption = 'View Images'
       OnClick = ViewImages1Click
@@ -723,8 +723,8 @@ object frmExportPoliceInformation: TfrmExportPoliceInformation
     Top = 217
   end
   object popMnu2: TPopupMenu
-    Left = 154
-    Top = 175
+    Left = 256
+    Top = 247
     object MenuItem1: TMenuItem
       Caption = 'View Images'
       OnClick = MenuItem1Click

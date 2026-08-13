@@ -497,9 +497,7 @@ begin
     SettingsQuery.Free;
   end;
 
-  FImageAuditController.TryStartIfDue(DM.ConnFB, ImagesStoragePath,
-    BackupImagesPath, LastAuditWeek, CurrentAuditWeek,
-    AuditInitialDelayMs, AuditItemThrottleMs);
+  FImageAuditController.TryStartIfDue(DM.ConnFB, ImagesStoragePath, BackupImagesPath, LastAuditWeek, CurrentAuditWeek, AuditInitialDelayMs, AuditItemThrottleMs);
 end;
 
 procedure TfrmPawnMain.FormShow(Sender: TObject);
@@ -568,7 +566,7 @@ begin
   //   ImageBackupAudit.log                     did it start, finish, or get abandoned
   //   PawnProFB_MemoryManager_EventLog.txt     FastMM4 catching a bad free
   // Normal manual and close-on-exit image backups are unaffected either way.
-  // StartImageAuditIfDue;
+   StartImageAuditIfDue;
 end;
 
 procedure TfrmPawnMain.ListofnewPawns1Click(Sender: TObject);

@@ -8789,4 +8789,62 @@ object DM: TDM
       Size = 30
     end
   end
+  object clnStoneTypes: TFDMemTable
+    IndexFieldNames = 'STONE_TYPE'
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 560
+    Top = 295
+    object clnStoneTypesSTONE_TYPE: TWideStringField
+      FieldName = 'STONE_TYPE'
+      Size = 30
+    end
+  end
+  object clnInventoryCategories: TFDMemTable
+    IndexFieldNames = 'INV_CATEGORY'
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 666
+    Top = 242
+    object clnInventoryCategoriesINV_CAT_NO: TIntegerField
+      FieldName = 'INV_CAT_NO'
+      Required = True
+    end
+    object clnInventoryCategoriesINV_CATEGORY: TWideStringField
+      FieldName = 'INV_CATEGORY'
+      Size = 40
+    end
+  end
+  object clnInventoryBrands: TFDMemTable
+    IndexFieldNames = 'INV_ITEM_BRAND'
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 666
+    Top = 295
+    object clnInventoryBrandsINV_ITEM_BRAND: TWideStringField
+      FieldName = 'INV_ITEM_BRAND'
+      Size = 30
+    end
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    ScreenCursor = gcrHourGlass
+    Left = 37
+    Top = 184
+  end
 end

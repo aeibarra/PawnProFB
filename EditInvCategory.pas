@@ -29,7 +29,7 @@ var
 
 implementation
 
-Uses Inventory;
+Uses Inventory, PawnDM;
 
 {$R *.dfm}
 
@@ -54,6 +54,7 @@ end;
 procedure TfrmEditInvCat.btnSaveClick(Sender: TObject);
 begin
   frmInventory.qryCategories.Post;
+  DM.RefreshInventoryCategories;
 //  frmInventory.qryCategories.ApplyUpdates;
   ModalResult := mrOk;
 end;

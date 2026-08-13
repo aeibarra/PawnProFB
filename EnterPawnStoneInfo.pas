@@ -4,17 +4,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, DBCtrls, Mask, DB, RzButton,
-  Datasnap.DBClient, Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  Dialogs, StdCtrls, Buttons, DBCtrls, Mask, DB, RzButton, Vcl.ExtCtrls, RzLabel;
 
 type
   TfrmEnterPawnStoneInfo = class(TForm)
     dsStoneShapes: TDataSource;
-    qryStoneTypes: TFDQuery;
-    qryStoneTypesSTONE_TYPE: TWideStringField;
     dsStoneColors: TDataSource;
     GroupBox2: TGroupBox;
     Label5: TLabel;
@@ -31,18 +25,16 @@ type
     cbStoneType: TDBComboBox;
     GroupBox1: TGroupBox;
     btnCancel: TBitBtn;
-    btnSave: TRzBitBtn;
-    clnWeigthUnits: TClientDataSet;
-    clnWeigthUnitsWeigthUnitValue: TWideStringField;
-    clnWeigthUnitsWeightUnit: TWideStringField;
     dsWeigthUnits: TDataSource;
     Label18: TLabel;
     cbWeightUnit: TDBLookupComboBox;
+    btnSabve: TRzBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure DBEdit3Change(Sender: TObject);
   private
-    { Private declarations }
+    procedure UpdateWeightUnitState;
   public
     { Public declarations }
     NewRow: boolean;
@@ -53,7 +45,7 @@ var
 
 implementation
 
-Uses Entertems, GLbUtils, PawnDM;
+Uses Entertems, GLbUtils, PawnDM, PawnGlobal;
 
 {$R *.dfm}
 
@@ -64,19 +56,9 @@ begin
 
   dsStoneShapes.DataSet := DM.clnJStoneShapes;
   dsStoneColors.DataSet := DM.clnJStoneColors;
+  dsWeigthUnits.DataSet := DM.clnWeigthUnits;
 
-  qryStoneTypes.Close;
-  qryStoneTypes.Open;
-  cbStoneType.Items.Clear;
-  while not qryStoneTypes.Eof do
-   begin
-     if trim(qryStoneTypesSTONE_TYPE.AsString) <> '' then
-       cbStoneType.Items.Add(trim(qryStoneTypesSTONE_TYPE.AsString));
-     qryStoneTypes.Next;
-   end;
-  qryStoneTypes.Close;
-
-  DM.GetWeightUnits(clnWeigthUnits);
+  FillCombo(cbStoneType, DM.clnStoneTypes, 'STONE_TYPE', '', '');
 
   if NewRow then
     begin
@@ -86,6 +68,36 @@ begin
     begin
       frmEnterItems.qryStones.Edit;
     end;
+
+  UpdateWeightUnitState;
+end;
+
+procedure TfrmEnterPawnStoneInfo.DBEdit3Change(Sender: TObject);
+begin
+  UpdateWeightUnitState;
+end;
+
+procedure TfrmEnterPawnStoneInfo.UpdateWeightUnitState;
+var
+  ReportedWeight: Double;
+  HasReportedWeight: Boolean;
+begin
+  HasReportedWeight := TryStrToFloat(Trim(DBEdit3.Text), ReportedWeight) and
+    (ReportedWeight > 0);
+
+  cbWeightUnit.Enabled := HasReportedWeight;
+
+  if not (frmEnterItems.qryStones.State in dsEditModes) then
+    Exit;
+
+  if HasReportedWeight then
+  begin
+    if frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.IsNull then
+      frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.AsString :=
+        DefaultWeightMeasureUnit;
+  end
+  else if not frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.IsNull then
+    frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.Clear;
 end;
 
 procedure TfrmEnterPawnStoneInfo.btnSaveClick(Sender: TObject);
@@ -116,6 +128,8 @@ begin
 
   if frmEnterItems.qryStonesCT.IsNull then
     frmEnterItems.qryStonesCT.AsFloat := 0;
+
+  DM.AddStoneType(frmEnterItems.qryStonesSTONE_TYPE.AsString);
 
   frmEnterItems.qryStones.Post;
 

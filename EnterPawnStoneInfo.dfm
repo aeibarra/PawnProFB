@@ -3,8 +3,8 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
   Top = 97
   BorderStyle = bsDialog
   Caption = 'Pawn Stone Information'
-  ClientHeight = 252
-  ClientWidth = 957
+  ClientHeight = 350
+  ClientWidth = 699
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -18,13 +18,13 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 8
-    Top = 4
-    Width = 505
-    Height = 152
+    Top = 6
+    Width = 558
+    Height = 216
     TabOrder = 0
     object Label5: TLabel
       Left = 22
-      Top = 80
+      Top = 79
       Width = 99
       Height = 21
       Caption = 'Stone Shape:'
@@ -36,8 +36,8 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 176
-      Top = 80
+      Left = 179
+      Top = 79
       Width = 94
       Height = 21
       Caption = 'Stone Color:'
@@ -51,9 +51,9 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
     object Label1: TLabel
       Left = 22
       Top = 17
-      Width = 138
+      Width = 119
       Height = 21
-      Caption = 'Number of Stones'
+      Caption = 'Stone Quantity:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -62,34 +62,34 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 176
-      Top = 17
-      Width = 23
-      Height = 21
-      Caption = 'CT:'
+      Left = 179
+      Top = 20
+      Width = 159
+      Height = 17
+      Caption = 'Total Carat Weight (CTW)'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -13
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 264
-      Top = 17
-      Width = 29
-      Height = 21
-      Caption = 'WT:'
+      Left = 23
+      Top = 142
+      Width = 193
+      Height = 20
+      Caption = 'Reported Weight (Optional) '
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Segoe UI'
+      Font.Height = -15
+      Font.Name = 'Segoe UI Semibold'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 316
-      Top = 80
+      Left = 366
+      Top = 75
       Width = 78
       Height = 21
       Caption = 'Stone Type:'
@@ -101,22 +101,22 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       ParentFont = False
     end
     object Label18: TLabel
-      Left = 362
-      Top = 17
-      Width = 93
-      Height = 21
+      Left = 226
+      Top = 142
+      Width = 82
+      Height = 20
       Caption = 'Weight Unit'
       FocusControl = cbWeightUnit
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Segoe UI'
+      Font.Height = -15
+      Font.Name = 'Segoe UI Semibold'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object lkStoneShape: TDBLookupComboBox
       Left = 22
-      Top = 104
+      Top = 102
       Width = 138
       Height = 29
       DataField = 'STONE_SHAPE'
@@ -124,19 +124,19 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       KeyField = 'J_SHAPE'
       ListField = 'J_SHAPE_DESC'
       ListSource = dsStoneShapes
-      TabOrder = 4
+      TabOrder = 2
     end
     object lkStoneColor: TDBLookupComboBox
-      Left = 176
-      Top = 104
-      Width = 127
+      Left = 179
+      Top = 102
+      Width = 173
       Height = 29
       DataField = 'STONE_COLOR'
       DataSource = frmEnterItems.dsStones
       KeyField = 'J_STONE_COLOR'
       ListField = 'J_STONE_DESC'
       ListSource = dsStoneColors
-      TabOrder = 5
+      TabOrder = 3
     end
     object edStoneNumber: TDBEdit
       Left = 22
@@ -148,57 +148,59 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       TabOrder = 0
     end
     object DBEdit2: TDBEdit
-      Left = 176
+      Left = 179
       Top = 40
-      Width = 72
+      Width = 173
       Height = 29
       DataField = 'CT'
       DataSource = frmEnterItems.dsStones
       TabOrder = 1
     end
     object DBEdit3: TDBEdit
-      Left = 262
-      Top = 40
-      Width = 88
+      Left = 22
+      Top = 166
+      Width = 191
       Height = 29
       DataField = 'WT'
       DataSource = frmEnterItems.dsStones
-      TabOrder = 2
+      TabOrder = 5
+      OnChange = DBEdit3Change
     end
     object cbStoneType: TDBComboBox
-      Left = 316
-      Top = 104
+      Left = 366
+      Top = 102
       Width = 167
       Height = 29
       DataField = 'STONE_TYPE'
       DataSource = frmEnterItems.dsStones
-      TabOrder = 6
+      Sorted = True
+      TabOrder = 4
     end
     object cbWeightUnit: TDBLookupComboBox
-      Left = 362
-      Top = 40
-      Width = 121
+      Left = 225
+      Top = 166
+      Width = 127
       Height = 29
       DataField = 'STONE_WEIGHT_UNIT'
       DataSource = frmEnterItems.dsStones
       KeyField = 'WeigthUnitValue'
       ListField = 'WeightUnit'
       ListSource = dsWeigthUnits
-      TabOrder = 3
+      TabOrder = 6
     end
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 8
-    Top = 161
-    Width = 505
-    Height = 77
+    Top = 228
+    Width = 558
+    Height = 74
     TabOrder = 1
     object btnCancel: TBitBtn
-      Left = 269
+      Left = 383
       Top = 12
       Width = 106
-      Height = 51
+      Height = 48
       Cancel = True
       Caption = '  &Cancel'
       Glyph.Data = {
@@ -232,72 +234,30 @@ object frmEnterPawnStoneInfo: TfrmEnterPawnStoneInfo
       TabOrder = 1
       OnClick = btnCancelClick
     end
-    object btnSave: TRzBitBtn
-      Left = 138
+    object btnSabve: TRzBitBtn
+      Left = 248
       Top = 12
       Width = 106
-      Height = 51
+      Height = 48
       Caption = '&Save'
       TabOrder = 0
       OnClick = btnSaveClick
       ImageIndex = 19
       Images = DM.vilMain24
-      Spacing = 0
+      Margin = 10
+      Spacing = -5
     end
   end
   object dsStoneShapes: TDataSource
-    Left = 731
-    Top = 87
-  end
-  object qryStoneTypes: TFDQuery
-    Connection = DM.ConnFB
-    SQL.Strings = (
-      'SELECT DISTINCT STONE_TYPE'
-      'FROM STONES'
-      'WHERE STONE_TYPE IS NOT NULL'
-      'ORDER BY STONE_TYPE')
-    Left = 522
-    Top = 100
-    object qryStoneTypesSTONE_TYPE: TWideStringField
-      FieldName = 'STONE_TYPE'
-      Origin = 'STONE_TYPE'
-      Size = 30
-    end
+    Left = 607
+    Top = 76
   end
   object dsStoneColors: TDataSource
-    Left = 819
-    Top = 87
-  end
-  object clnWeigthUnits: TClientDataSet
-    Aggregates = <>
-    FieldDefs = <
-      item
-        Name = 'WeigthUnitValue'
-        DataType = ftWideString
-        Size = 1
-      end
-      item
-        Name = 'WeightUnit'
-        DataType = ftWideString
-        Size = 50
-      end>
-    IndexDefs = <>
-    Params = <>
-    StoreDefs = True
-    Left = 631
-    Top = 33
-    object clnWeigthUnitsWeigthUnitValue: TWideStringField
-      FieldName = 'WeigthUnitValue'
-      Size = 1
-    end
-    object clnWeigthUnitsWeightUnit: TWideStringField
-      FieldName = 'WeightUnit'
-      Size = 50
-    end
+    Left = 607
+    Top = 132
   end
   object dsWeigthUnits: TDataSource
-    DataSet = clnWeigthUnits
-    Left = 631
-    Top = 87
+    Left = 607
+    Top = 19
   end
 end
