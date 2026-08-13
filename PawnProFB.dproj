@@ -176,10 +176,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.18;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.19;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=64 Bit Version</VerInfo_Keys>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_Release>1</VerInfo_Release>
-        <VerInfo_Build>18</VerInfo_Build>
+        <VerInfo_Build>19</VerInfo_Build>
         <VerInfo_MinorVer>37</VerInfo_MinorVer>
         <UWP_DelphiLogo150>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo150>
         <UWP_DelphiLogo44>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo44>
@@ -213,12 +213,12 @@ $(PreBuildEvent)]]></PreBuildEvent>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.18;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=3.37.1.19;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Debugger_RunParams>UPDB</Debugger_RunParams>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_MinorVer>37</VerInfo_MinorVer>
         <VerInfo_Release>1</VerInfo_Release>
-        <VerInfo_Build>18</VerInfo_Build>
+        <VerInfo_Build>19</VerInfo_Build>
         <UWP_DelphiLogo44>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>PawnPro.Artwork\Windows\Uwp_150.png</UWP_DelphiLogo150>
         <Icon_MainIcon>PawnPro.Artwork\Windows\AppIcon.ico</Icon_MainIcon>
@@ -336,8 +336,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="ViewImage.pas">
             <Form>frmViewImage</Form>
         </DCCReference>
-        <DCCReference Include="LeadsOnlineFTPParams.pas">
-            <Form>frmLeadsOnlineFTPParams</Form>
+        <DCCReference Include="LeadsOnlineSettings.pas">
+            <Form>frmLeadsOnlineSettings</Form>
         </DCCReference>
         <DCCReference Include="..\COMMON\Nvv.IO.CSV.Delphi.NvvCSVClasses.pas"/>
         <DCCReference Include="..\COMMON\Nvv.FB5.DBA.pas"/>
@@ -349,6 +349,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="CheckBoxDrawer.pas"/>
         <DCCReference Include="LeadsOnlineWS.pas"/>
         <DCCReference Include="uLeadsOnlineClient.pas"/>
+        <DCCReference Include="uLeadsOnlineTicketMap.pas"/>
         <DCCReference Include="ReportsDM.pas">
             <Form>DMReports</Form>
             <FormType>dfm</FormType>
@@ -388,6 +389,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="uImageMaintenanceGate.pas"/>
         <DCCReference Include="uImageBackupAudit.pas"/>
         <DCCReference Include="uImageAuditController.pas"/>
+        <DCCReference Include="LeadsOnlineSoapExport.pas">
+            <Form>frmLeadsOnlineSoapExport</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

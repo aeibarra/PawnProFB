@@ -74,7 +74,7 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   ViewImage in 'ViewImage.pas' {frmViewImage},
-  LeadsOnlineFTPParams in 'LeadsOnlineFTPParams.pas' {frmLeadsOnlineFTPParams},
+  LeadsOnlineSettings in 'LeadsOnlineSettings.pas' {frmLeadsOnlineSettings},
   Nvv.IO.CSV.Delphi.NvvCSVClasses in '..\COMMON\Nvv.IO.CSV.Delphi.NvvCSVClasses.pas',
   Nvv.FB5.DBA in '..\COMMON\Nvv.FB5.DBA.pas',
   DPAPIUtils in '..\COMMON\DPAPIUtils.pas',
@@ -85,6 +85,7 @@ uses
   CheckBoxDrawer in 'CheckBoxDrawer.pas',
   LeadsOnlineWS in 'LeadsOnlineWS.pas',
   uLeadsOnlineClient in 'uLeadsOnlineClient.pas',
+  uLeadsOnlineTicketMap in 'uLeadsOnlineTicketMap.pas',
   ReportsDM in 'ReportsDM.pas' {DMReports: TDataModule},
   uPawnProIniPrinters in 'uPawnProIniPrinters.pas',
   uPawnIniDefaults in 'uPawnIniDefaults.pas',
@@ -98,7 +99,8 @@ uses
   ItemHistory in 'ItemHistory.pas' {frmItemHistory},
   uImageMaintenanceGate in 'uImageMaintenanceGate.pas',
   uImageBackupAudit in 'uImageBackupAudit.pas',
-  uImageAuditController in 'uImageAuditController.pas';
+  uImageAuditController in 'uImageAuditController.pas',
+  LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport};
 
 {$R *.RES}
 
@@ -121,5 +123,9 @@ begin
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TDMReports, DMReports);
   Application.CreateForm(TfrmPawnMain, frmPawnMain);
+  // TfrmLeadsOnlineSoapExport is created on demand by actLeadsOnlineExport,
+  // like every other dialog here -- auto-creating it would keep the form and
+  // its datasets alive for the whole session and collide with the create/free
+  // in that handler.
   Application.Run;
 end.

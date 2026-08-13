@@ -8111,7 +8111,7 @@ object DM: TDM
       
         '       LEADS_ONLINE_API_USER, LEADS_ONLINE_API_PASSWORD, LEADS_O' +
         'NLINE_EXPORT_METHOD,'
-      '       LEADS_ONLINE_USE_SANDBOX,'
+      '       LEADS_ONLINE_USE_SANDBOX, LEADS_ONLINE_SKIP_CSV_SENT,'
       
         '       DEFAULT_WEIGHT_MEASURE_UNIT, SALES_TAX_PERC, DEFAULT_PAWN' +
         '_INTERESTRATE'
@@ -8248,6 +8248,10 @@ object DM: TDM
     object qryStoreLEADS_ONLINE_USE_SANDBOX: TBooleanField
       FieldName = 'LEADS_ONLINE_USE_SANDBOX'
       Origin = 'LEADS_ONLINE_USE_SANDBOX'
+    end
+    object qryStoreLEADS_ONLINE_SKIP_CSV_SENT: TBooleanField
+      FieldName = 'LEADS_ONLINE_SKIP_CSV_SENT'
+      Origin = 'LEADS_ONLINE_SKIP_CSV_SENT'
     end
     object qryStorePAWN_DATE_CALCULATION_BASE: TWideStringField
       FieldName = 'PAWN_DATE_CALCULATION_BASE'

@@ -94,6 +94,21 @@ type
     /// Non-raising form, for a "Test Connection" button.
     function TryCheckLogin(out AResult: TLeadsOnlineResult; out AError: string): Boolean;
 
+    /// Sends one ticket. The caller owns ATicket and may free it afterwards.
+    ///
+    /// Retry semantics matter here and are not obvious. Per the vendor spec,
+    /// re-sending a ticket whose key already exists is normally an error --
+    /// EXCEPT when it matches "the last successful ticket submitted", which is
+    /// suppressed so a client can safely resend after a lost response. That
+    /// exemption covers only the ticket just sent, so the retry built into
+    /// Execute (inline, same ticket, before anything else is submitted) is the
+    /// only retry that is safe. Never re-submit an older ticket later and treat
+    /// a duplicate error as failure -- see ResultIsAlreadyAccepted.
+    function SubmitTransaction(ATicket: Ticket): TLeadsOnlineResult;
+    /// Non-raising form: returns False and fills AError on transport failure.
+    function TrySubmitTransaction(ATicket: Ticket; out AResult: TLeadsOnlineResult;
+      out AError: string): Boolean;
+
     property StoreId: Integer read FStoreId;
     property UserName: string read FUserName;
     property UseSandbox: Boolean read FUseSandbox;
@@ -114,6 +129,28 @@ type
     property LastResponseXML: string read FLastResponseXML;
   end;
 
+/// Works out WHY the endpoint could not be reached, in words an operator can
+/// act on, separating three failures that look identical from inside a SOAP
+/// exception: no connectivity, something intercepting the connection, and
+/// LeadsOnline itself being slow or down.
+///
+/// Deliberately does NOT treat successful name resolution as evidence of
+/// connectivity. Plenty of ISPs answer every lookup with a redirect page, so a
+/// name that resolves and a socket that opens can both be true while the real
+/// host is unreachable -- confirmed here with a nonexistent hostname, which
+/// resolved and accepted a connection on 443. Only completing an HTTPS exchange
+/// with the endpoint proves we are talking to LeadsOnline.
+///
+/// Diagnostic only -- never called on the success path, so its cost does not
+/// matter and a wrong guess cannot break a submission.
+function DiagnoseEndpoint(const AURL: string): string;
+
+/// True when the service rejected a submit only because it already holds the
+/// ticket. Codes 6 and 13 both mean "this ticket key exists"; for a resend of
+/// something we believe we sent, that is confirmation it landed, not a failure.
+/// Reporting it as an error would leave a row looking permanently unsent.
+function ResultIsAlreadyAccepted(const AResult: TLeadsOnlineResult): Boolean;
+
 /// errorCode -> something worth putting in front of a user. The service sends
 /// its own text in errorResponse, so that wins when present; the full code
 /// table lives in the NDA document under PawnDocs/Private/.
@@ -122,21 +159,158 @@ function LeadsOnlineErrorText(AErrorCode: Integer; const AErrorResponse: string)
 implementation
 
 uses
-  IdStack;
+  System.StrUtils, System.Net.HttpClient, IdStack, IdTCPClient;
+
+function DiagnoseEndpoint(const AURL: string): string;
+var
+  Host, IP: string;
+  P: Integer;
+  Client: TIdTCPClient;
+  Http: THTTPClient;
+  Body: string;
+begin
+  Host := AURL;
+  P := Pos('://', Host);
+  if P > 0 then
+    Delete(Host, 1, P + 2);
+  P := Pos('/', Host);
+  if P > 0 then
+    Host := Copy(Host, 1, P - 1);
+  P := Pos(':', Host);
+  if P > 0 then
+    Host := Copy(Host, 1, P - 1);
+
+  // Name resolution is recorded as a FACT, never used as evidence that the
+  // internet works. Many ISPs hijack unknown names and answer every lookup with
+  // a search-page address, so "it resolved" can be true with no connectivity to
+  // the real host at all -- verified here against a deliberately bogus name,
+  // which resolved happily and accepted a socket on 443.
+  IP := '';
+  try
+    TIdStack.IncUsage;
+    try
+      IP := GStack.ResolveHost(Host);
+    finally
+      TIdStack.DecUsage;
+    end;
+  except
+    IP := '';
+  end;
+
+  // 1. Is there a listening socket at all?
+  Client := TIdTCPClient.Create(nil);
+  try
+    Client.Host := Host;
+    Client.Port := 443;
+    Client.ConnectTimeout := 8000;
+    try
+      Client.Connect;
+      Client.Disconnect;
+    except
+      on E: Exception do
+        Exit(Format(
+          'This PC cannot reach %s.' + sLineBreak + sLineBreak +
+          'Either the store has no internet connection at the moment, or ' +
+          'something here (a firewall or security product) is blocking ' +
+          'outgoing secure traffic.' + sLineBreak + sLineBreak +
+          'Technical detail: %s%s',
+          [Host, E.Message,
+           IfThen(IP = '', '', ' (name resolved to ' + IP + ')')]));
+    end;
+  finally
+    Client.Free;
+  end;
+
+  // 2. A socket opened -- but to WHAT? "Something answered" is not the same as
+  // "LeadsOnline answered": a captive portal or an ISP redirect will happily
+  // accept the connection. Fetching the service's own WSDL and looking for its
+  // contract is the cheap proof, because only the real endpoint can produce it.
+  Body := '';
+  try
+    Http := THTTPClient.Create;
+    try
+      Http.ConnectionTimeout := 8000;
+      Http.ResponseTimeout := 8000;
+      Body := Http.Get(AURL + '?wsdl').ContentAsString;
+    finally
+      Http.Free;
+    end;
+  except
+    on E: Exception do
+      Exit(Format(
+        'Something answered at %s, but the connection to LeadsOnline could not ' +
+        'be completed.' + sLineBreak + sLineBreak +
+        'This usually means the connection is being intercepted -- a captive ' +
+        'wifi login page, a proxy, or an internet provider redirecting the ' +
+        'address -- or that LeadsOnline''s certificate has a problem.' +
+        sLineBreak + sLineBreak + 'Technical detail: %s', [Host, E.Message]));
+  end;
+
+  if not ContainsText(Body, 'ticketWSSoap') then
+    Exit(Format(
+      'Something answered at %s, but it is not LeadsOnline.' + sLineBreak + sLineBreak +
+      'The address is being redirected somewhere else -- most often a captive ' +
+      'wifi login page, a company proxy, or an internet provider that answers ' +
+      'unknown addresses with its own search page. The store may look like it ' +
+      'has internet when it does not.' + sLineBreak + sLineBreak +
+      'Ask whoever manages the network here to allow %s.', [Host, Host]));
+
+  Result := Format(
+    'The connection to %s is working normally%s, so this is not a network ' +
+    'problem at the store.' + sLineBreak + sLineBreak +
+    'LeadsOnline accepted the connection but did not complete the request in ' +
+    'time. Their service is most likely busy or having problems. Try again later.',
+    [Host, IfThen(IP = '', '', ' (' + IP + ')')]);
+end;
+
+function ResultIsAlreadyAccepted(const AResult: TLeadsOnlineResult): Boolean;
+begin
+  //  6 - conflicts with a ticket created through another source
+  // 13 - ticket already exists and cannot be modified by a submit
+  Result := (AResult.ErrorCode = 6) or (AResult.ErrorCode = 13);
+end;
 
 function LeadsOnlineErrorText(AErrorCode: Integer; const AErrorResponse: string): string;
+var
+  Known: string;
 begin
   if AErrorCode = 0 then
     Exit('OK');
 
+  // Transcribed from the vendor spec's Error Codes section. The service also
+  // sends its own prose in errorResponse, which is usually more specific (it
+  // names the offending store id or username), so that wins when present and
+  // this table fills in when it is empty.
+  case AErrorCode of
+    -1: Known := 'An internal error occurred at LeadsOnline. Contact their Business Support.';
+     1: Known := 'A date was sent in a format LeadsOnline did not recognise.';
+     2: Known := 'No ticket number was supplied.';
+     3: Known := 'The store ID is not valid.';
+     4: Known := 'The API username or password is not correct.';
+     5: Known := 'LeadsOnline has no ticket with that ticket key.';
+     6: Known := 'This ticket conflicts with one already created by another source ' +
+                 '(not this web service).';
+     7: Known := 'The ticket date is out of range - either in the future, or too old ' +
+                 'for LeadsOnline to still hold.';
+     8: Known := 'Invalid state abbreviation.';
+     9: Known := 'Invalid ID number.';
+    10: Known := 'The image upload failed.';
+    11: Known := 'The image delete failed.';
+    12: Known := 'At least two of name, ID number and date of birth must be supplied.';
+    13: Known := 'This ticket already exists and cannot be modified by a submit. ' +
+                 'Use UpdateTransaction, or resubmit it immediately after the ' +
+                 'attempt that failed.';
+  else
+    Known := '';
+  end;
+
   if Trim(AErrorResponse) <> '' then
     Exit(Format('%s (code %d)', [Trim(AErrorResponse), AErrorCode]));
 
-  case AErrorCode of
-    7: Result := 'Ticket date is out of range (code 7)';
+  if Known <> '' then
+    Result := Format('%s (code %d)', [Known, AErrorCode])
   else
     Result := Format('LeadsOnline returned error code %d', [AErrorCode]);
-  end;
 end;
 
 { ELeadsOnlineTransport }
@@ -330,6 +504,43 @@ begin
       end);
   finally
     Login.Free;
+  end;
+end;
+
+function TLeadsOnlineClient.SubmitTransaction(ATicket: Ticket): TLeadsOnlineResult;
+var
+  Login: LoginInfo;
+begin
+  if ATicket = nil then
+    raise ELeadsOnlineTransport.Create('SubmitTransaction', GetEndpointURL,
+      'no ticket was supplied');
+
+  Login := NewLoginInfo;
+  try
+    Result := Execute('SubmitTransaction',
+      function: Response
+      begin
+        Result := GetService.SubmitTransaction(FApiVersion, ResolveIpAddress, Login, ATicket);
+      end);
+  finally
+    Login.Free;
+  end;
+end;
+
+function TLeadsOnlineClient.TrySubmitTransaction(ATicket: Ticket;
+  out AResult: TLeadsOnlineResult; out AError: string): Boolean;
+begin
+  AError := '';
+  try
+    AResult := SubmitTransaction(ATicket);
+    Result := True;             // reached the service; AResult says what it said
+  except
+    on E: Exception do
+    begin
+      AResult := Default(TLeadsOnlineResult);
+      AError := E.Message;
+      Result := False;          // never reached the service
+    end;
   end;
 end;
 

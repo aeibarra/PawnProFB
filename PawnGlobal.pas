@@ -166,6 +166,20 @@ const
   PawnDefaultedItemMelted = 1;
   PawnDefaultedItemForSale = 2;
 
+  // STORE.LEADS_ONLINE_EXPORT_METHOD -- whether this store reports to
+  // LeadsOnline at all, and if so over which channel. Not every store is a
+  // LeadsOnline customer, so 'N' is the default for a new store and the whole
+  // LeadsOnline export UI stays hidden until someone opts in.
+  //
+  // The column is nullable, so treat NULL/blank/anything unrecognised as 'N':
+  // an unconfigured store must not appear to be reporting to law enforcement.
+  // Stores migrated by uDBMigrations Step6 were explicitly backfilled to 'C',
+  // so the ones already exporting by CSV keep working untouched.
+  LeadsExportMethodNone = 'N';
+  LeadsExportMethodCsv  = 'C';
+  LeadsExportMethodSoap = 'S';
+
+
 var
   AppPath: string;
   GlobalIniFile, LocalIniFile: string;
@@ -186,6 +200,12 @@ var
   DeleteImageProc: TDeleteImageProc;  // Procedure pointer for deleting images
 
 function WindowsDirectory: string;
+
+/// The store's LeadsOnline channel, normalised to one of the three
+/// LeadsExportMethod* constants -- never NULL, blank or unrecognised.
+function LeadsOnlineMethod(const AStoredValue: string): string;
+/// True when this store reports to LeadsOnline over either channel.
+function UsesLeadsOnline(const AStoredValue: string): Boolean;
 
 //function AddBackSlash(Path: string): string;
 function ReadIniFile(Section, Key: string): string;
@@ -260,6 +280,25 @@ var
 // project's pre-build step; the committed copy is the fallback when git is not
 // on PATH at build time.
 {$I BuildInfo.inc}
+
+function LeadsOnlineMethod(const AStoredValue: string): string;
+var
+  V: string;
+begin
+  V := UpperCase(Trim(AStoredValue));
+  if (V = LeadsExportMethodCsv) or (V = LeadsExportMethodSoap) then
+    Result := V
+  else
+    // NULL, blank, or something nobody recognises. Defaulting to "not using"
+    // is the safe direction: the alternative is a store that looks like it is
+    // reporting to law enforcement when nothing is configured.
+    Result := LeadsExportMethodNone;
+end;
+
+function UsesLeadsOnline(const AStoredValue: string): Boolean;
+begin
+  Result := LeadsOnlineMethod(AStoredValue) <> LeadsExportMethodNone;
+end;
 
 function GetBuildStamp: string;
 begin

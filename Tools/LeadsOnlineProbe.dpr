@@ -45,11 +45,25 @@ end;
 function Run: Integer;
 var
   I, StoreId, ApiVersion, TimeoutMS: Integer;
+  DiagUrl: string;
   UserName, Password, Arg: string;
   UseSandbox, ShowXML: Boolean;
   Client: TLeadsOnlineClient;
   Res: TLeadsOnlineResult;
 begin
+  // Connectivity diagnosis on its own -- no credentials, no call. This is the
+  // text the export screen shows an operator when the line is down.
+  if SameText(ParamStr(1), '--diagnose') then
+  begin
+    DiagUrl := ParamStr(2);
+    if DiagUrl = '' then
+      DiagUrl := LeadsOnlineSandboxURL;
+    Writeln('Diagnosing: ', DiagUrl);
+    Writeln;
+    Writeln(DiagnoseEndpoint(DiagUrl));
+    Exit(ExitOK);
+  end;
+
   if ParamCount < 3 then
   begin
     Usage;

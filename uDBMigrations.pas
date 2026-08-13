@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 6;
+  CURRENT_DB_VERSION = 8;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -369,6 +369,48 @@ begin
     '  CONSTRAINT UQ_LEADS_SOAP_SUBMISSION UNIQUE (TRANSACTION_NO))');
 end;
 
+{ v7: LeadsOnline becomes opt-in.
+
+  Not every store is a LeadsOnline customer, so the default for a NEW store is
+  now 'N' (not using) rather than 'C'. Existing rows are deliberately left
+  alone: Step6 backfilled them to 'C', so stores already exporting by CSV keep
+  working. Only future inserts see the new default, which in practice means
+  only brand-new store databases.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_LeadsOnlineOptIn.sql. }
+procedure Step7_LeadsOnlineOptIn(Conn: TFDConnection);
+begin
+  if not ColumnExists(Conn, 'STORE', 'LEADS_ONLINE_EXPORT_METHOD') then
+    Exit;
+
+  ExecDDL(Conn,
+    'ALTER TABLE STORE ALTER COLUMN LEADS_ONLINE_EXPORT_METHOD SET DEFAULT ''N''');
+end;
+
+{ v8: skip transactions the CSV export already reported.
+
+  Answers what a store does with its history on the day it moves to SOAP. The
+  CSV export already logs what it sent (EXPORT_LOG_FILE_DETAIL), so the SOAP
+  screen can leave those out and offer only what was never reported at all --
+  including gaps mid-history, which a "start from this date" cutoff would miss.
+
+  DEFAULT TRUE suits every store: one with CSV history wants it, and a new one
+  has an empty export log so it excludes nothing.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_LeadsOnlineSkipCsvSent.sql. }
+procedure Step8_LeadsOnlineSkipCsvSent(Conn: TFDConnection);
+begin
+  if not ColumnExists(Conn, 'STORE', 'LEADS_ONLINE_SKIP_CSV_SENT') then
+    ExecDDL(Conn,
+      'ALTER TABLE STORE ADD LEADS_ONLINE_SKIP_CSV_SENT BOOLEAN DEFAULT TRUE');
+
+  // Firebird applies a new DEFAULT to future inserts only; existing rows read
+  // NULL until set. Idempotent by IS NULL.
+  ExecDDL(Conn,
+    'UPDATE STORE SET LEADS_ONLINE_SKIP_CSV_SENT = TRUE ' +
+    ' WHERE LEADS_ONLINE_SKIP_CSV_SENT IS NULL');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
@@ -417,7 +459,19 @@ begin
     SetDbVersion(Conn, 6);
   end;
 
-  // Future steps: if V < 7 then begin Step7_...(Conn); SetDbVersion(Conn, 7); end;
+  if V < 7 then
+  begin
+    Step7_LeadsOnlineOptIn(Conn);
+    SetDbVersion(Conn, 7);
+  end;
+
+  if V < 8 then
+  begin
+    Step8_LeadsOnlineSkipCsvSent(Conn);
+    SetDbVersion(Conn, 8);
+  end;
+
+  // Future steps: if V < 9 then begin Step9_...(Conn); SetDbVersion(Conn, 9); end;
 end;
 
 end.

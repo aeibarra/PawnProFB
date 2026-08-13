@@ -134,7 +134,7 @@ var
 
 implementation
 
-uses PawnDM, CardReader, GLbUtils, SearchClient;
+uses PawnDM, CardReader, GLbUtils, SearchClient, System.DateUtils, uPawnDialogs;
 
 {$R *.DFM}
 
@@ -429,6 +429,8 @@ begin
 end;
 
 procedure TfrmEnterClientInfo.btnSaveClick(Sender: TObject);
+var
+  CustDOB: TDateTime;
 begin
   if ScanningPDF417Barcode then
     exit;
@@ -449,6 +451,32 @@ begin
       edLast.SetFocus;
       exit;
     end;
+
+  // Checked BEFORE the licence is calculated, because FloridaLic derives the
+  // number from the date of birth: a mistyped year does not just travel with
+  // the record, it produces a wrong driver licence number that then goes out on
+  // police reports and to LeadsOnline as the customer's ID.
+  //
+  // A typo of this kind is easy to make and invisible afterwards -- one live
+  // store accumulated 74 customers born in years like 0368 (for 1968). It is
+  // also what makes LeadsOnline reject an entire transaction with "date is not
+  // in proper format", so a real pawn goes unreported over a typing slip.
+  //
+  // Only the impossible is rejected: DOB is not required here, and an unusual
+  // but possible date is the operator's business, not ours.
+  if not DM.qryCustomersCUST_DOB.IsNull then
+  begin
+    CustDOB := DM.qryCustomersCUST_DOB.AsDateTime;
+    if (CustDOB > Date) or (CustDOB < IncYear(Date, -120)) then
+    begin
+      PawnWarn(Format('The date of birth (%s) cannot be right.' + sLineBreak + sLineBreak +
+        'Please check the year — a birth date cannot be in the future, and ' +
+        'nobody is older than 120.',
+        [FormatDateTime('mm/dd/yyyy', CustDOB)]));
+      cbCustDOB.SetFocus;
+      Exit;
+    end;
+  end;
 
   if DM.qryCustomersCUST_FL_DRV_LIC.IsNull then
     btnCalcLicClick(nil);

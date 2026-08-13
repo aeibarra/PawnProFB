@@ -1,4 +1,4 @@
-﻿unit LeadsOnlineFTPParams;
+﻿unit LeadsOnlineSettings;
 
 interface
 
@@ -8,31 +8,34 @@ uses
   RzButton, RzLabel, Vcl.Mask, RzEdit, RzDBEdit, Vcl.DBCtrls;
 
 type
-  TfrmLeadsOnlineFTPParams = class(TForm)
+  TfrmLeadsOnlineSettings = class(TForm)
     GroupBox2: TGroupBox;
     GroupBox1: TGroupBox;
-    RzBitBtn1: TRzBitBtn;
-    RzBitBtn2: TRzBitBtn;
-    edLeadsOnlineFTPAddress: TRzDBEdit;
-    RzLabel1: TRzLabel;
-    edUserName: TRzDBEdit;
-    edPassword: TRzDBEdit;
-    RzLabel2: TRzLabel;
-    RzLabel3: TRzLabel;
-    RzDBEdit1: TRzDBEdit;
-    DBCheckBox1: TDBCheckBox;
-    RzLabel4: TRzLabel;
+    btnSave: TRzBitBtn;
+    btnCancel: TRzBitBtn;
     gbApi: TGroupBox;
     lblApiUser: TRzLabel;
     lblApiPassword: TRzLabel;
     edApiUser: TRzDBEdit;
     edApiPassword: TRzDBEdit;
     chkUseSandbox: TDBCheckBox;
+    chkSkipCsvSent: TDBCheckBox;
+    lblSkipCsvHint: TLabel;
     btnTestConnection: TRzBitBtn;
     rgExportMethod: TDBRadioGroup;
+    GroupBox3: TGroupBox;
+    RzLabel1: TRzLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    edLeadsOnlineFTPAddress: TRzDBEdit;
+    edUserName: TRzDBEdit;
+    edPassword: TRzDBEdit;
+    DBCheckBox1: TDBCheckBox;
+    RzLabel4: TRzLabel;
+    edStoreId: TRzDBEdit;
     procedure FormShow(Sender: TObject);
-    procedure RzBitBtn2Click(Sender: TObject);
-    procedure RzBitBtn1Click(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
     procedure btnTestConnectionClick(Sender: TObject);
   private
     { Private declarations }
@@ -41,7 +44,7 @@ type
   end;
 
 var
-  frmLeadsOnlineFTPParams: TfrmLeadsOnlineFTPParams;
+  frmLeadsOnlineSettings: TfrmLeadsOnlineSettings;
 
 implementation
 
@@ -49,7 +52,7 @@ implementation
 
 uses PawnDM, uPawnDialogs, uLeadsOnlineClient;
 
-procedure TfrmLeadsOnlineFTPParams.FormShow(Sender: TObject);
+procedure TfrmLeadsOnlineSettings.FormShow(Sender: TObject);
 begin
   DM.qryStore.edit;
 
@@ -64,7 +67,7 @@ end;
 // store number is shared with the FTP export (STORE.LEADS_STORE_ID) -- SOAP
 // wants it as an integer, so a store with anything else in there has to be told
 // plainly rather than being sent a storeId of 0.
-procedure TfrmLeadsOnlineFTPParams.btnTestConnectionClick(Sender: TObject);
+procedure TfrmLeadsOnlineSettings.btnTestConnectionClick(Sender: TObject);
 var
   StoreId: Integer;
   Client: TLeadsOnlineClient;
@@ -82,7 +85,7 @@ begin
              'issued (for example 57390).' + sLineBreak + sLineBreak +
              'It is currently ' +
              AnsiQuotedStr(Trim(DM.qryStoreLEADS_STORE_ID.AsString), '"') + '.');
-    RzDBEdit1.SetFocus;
+    edStoreId.SetFocus;
     Exit;
   end;
 
@@ -108,14 +111,14 @@ begin
   end;
 end;
 
-procedure TfrmLeadsOnlineFTPParams.RzBitBtn1Click(Sender: TObject);
+procedure TfrmLeadsOnlineSettings.btnSaveClick(Sender: TObject);
 begin
   DM.qryStore.Post;
 
   ModalResult := mrOk;
 end;
 
-procedure TfrmLeadsOnlineFTPParams.RzBitBtn2Click(Sender: TObject);
+procedure TfrmLeadsOnlineSettings.btnCancelClick(Sender: TObject);
 begin
   DM.qryStore.Cancel;
 

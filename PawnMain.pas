@@ -205,6 +205,10 @@ type
     procedure WaitForGoldPriceTaskShutdown;
     procedure WMSettingChange(var Msg: TMessage); Message WM_SETTINGCHANGE;
     procedure InitializeImageStorage;
+    /// Shows or hides the LeadsOnline export entry point according to whether
+    /// this store reports to LeadsOnline at all. The settings button is not
+    /// affected -- it is how the feature gets turned on.
+    procedure ApplyLeadsOnlineVisibility;
   protected
     procedure DoClose(var Action: TCloseAction); override;
   public
@@ -222,8 +226,8 @@ Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory,
   MaintenanceJewle, SetupBarcodePrinter,
   BackupDB, TransactionList, ExportPoliceInformation,
   Report01, Report02, RepPurchases, GLbUtils, ReportExportTransactions,
-  SetDefaultMaturityMonth, LeadsOnlineFTPParams, ImagesStorageSettings,
-  BackupInProgress, uPawnDialogs;
+  SetDefaultMaturityMonth, LeadsOnlineSettings, ImagesStorageSettings,
+  BackupInProgress, uPawnDialogs, LeadsOnlineSoapExport;
 
 {$R *.DFM}
 
@@ -515,6 +519,8 @@ begin
   ToolBarHome.ButtonHeight := Round(96 * ScaleFactor);
   ToolBarHome.ButtonWidth := Round(120 * ScaleFactor);
 
+  ApplyLeadsOnlineVisibility;
+
 
   Left := Screen.WorkAreaLeft;
   Top := Screen.WorkAreaTop;
@@ -695,13 +701,47 @@ begin
   frmInventory.Show;
 end;
 
+procedure TfrmPawnMain.ApplyLeadsOnlineVisibility;
+begin
+  // Not every store is a LeadsOnline customer. When the store has not opted in,
+  // the whole export entry point disappears rather than being offered and then
+  // failing -- an unconfigured store must not look like it reports to law
+  // enforcement. Hiding the ACTION hides every menu item and toolbar button
+  // bound to it, so there is nothing to keep in sync.
+  //
+  // The SETTINGS button deliberately stays visible: it is the only way to turn
+  // LeadsOnline on, so hiding it would make the feature unreachable forever.
+  actLeadsOnlineExport.Visible :=
+    UsesLeadsOnline(DM.qryStoreLEADS_ONLINE_EXPORT_METHOD.AsString);
+end;
+
 procedure TfrmPawnMain.actLeadsOnlineExportExecute(Sender: TObject);
 begin
-  frmExportPoliceInformation := TfrmExportPoliceInformation.Create(Self);
-  try
-    frmExportPoliceInformation.ShowModal;
-  finally
-    frmExportPoliceInformation.Free;
+  // One entry point for both LeadsOnline channels, dispatching on the store's
+  // configured method, so staff never have to know which protocol their store
+  // uses and the wrong screen is unavailable rather than merely discouraged.
+  //
+  // Anything that is not explicitly 'S' means CSV. The column is nullable by
+  // design (see uDBMigrations Step6), so "not configured" has to keep today's
+  // behaviour -- it must never silently become "report by web service".
+  if LeadsOnlineMethod(DM.qryStoreLEADS_ONLINE_EXPORT_METHOD.AsString) = LeadsExportMethodSoap then
+  begin
+    frmLeadsOnlineSoapExport := TfrmLeadsOnlineSoapExport.Create(Self);
+    try
+      frmLeadsOnlineSoapExport.ShowModal;
+    finally
+      frmLeadsOnlineSoapExport.Free;
+      frmLeadsOnlineSoapExport := nil;
+    end;
+  end
+  else
+  begin
+    frmExportPoliceInformation := TfrmExportPoliceInformation.Create(Self);
+    try
+      frmExportPoliceInformation.ShowModal;
+    finally
+      frmExportPoliceInformation.Free;
+    end;
   end;
 end;
 
@@ -750,12 +790,15 @@ end;
 
 procedure TfrmPawnMain.btnLeadsOnlineFTPParamsClick(Sender: TObject);
 begin
-  frmLeadsOnlineFTPParams := TfrmLeadsOnlineFTPParams.Create(Self);
+  frmLeadsOnlineSettings := TfrmLeadsOnlineSettings.Create(Self);
   try
-    frmLeadsOnlineFTPParams.ShowModal;
+    frmLeadsOnlineSettings.ShowModal;
   finally
-    frmLeadsOnlineFTPParams.Free;
+    frmLeadsOnlineSettings.Free;
   end;
+  // Turning LeadsOnline on or off here has to take effect now, not at the next
+  // restart -- otherwise enabling it appears to do nothing.
+  ApplyLeadsOnlineVisibility;
 end;
 
 procedure TfrmPawnMain.btnQuickExportClick(Sender: TObject);
