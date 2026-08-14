@@ -3,8 +3,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
   Top = 0
   BorderStyle = bsDialog
   Caption = 'LeadsOnline Settings'
-  ClientHeight = 607
-  ClientWidth = 365
+  ClientHeight = 663
+  ClientWidth = 430
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -18,13 +18,15 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 539
-    Width = 359
+    Top = 595
+    Width = 424
     Height = 65
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 539
+    ExplicitWidth = 359
     object btnSave: TRzBitBtn
-      Left = 52
+      Left = 72
       Top = 12
       Width = 99
       Height = 42
@@ -38,7 +40,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
       Spacing = -5
     end
     object btnCancel: TRzBitBtn
-      Left = 198
+      Left = 228
       Top = 12
       Width = 99
       Height = 42
@@ -56,10 +58,12 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 359
-    Height = 530
+    Width = 424
+    Height = 586
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 359
+    ExplicitHeight = 530
     object RzLabel4: TRzLabel
       Left = 31
       Top = 10
@@ -77,7 +81,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     object gbApi: TGroupBox
       Left = 16
       Top = 267
-      Width = 324
+      Width = 389
       Height = 190
       Caption = 'LeadsOnline Web Service (SOAP)'
       TabOrder = 2
@@ -96,6 +100,19 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         Height = 20
         Caption = 'Password:'
         FocusControl = edApiPassword
+      end
+      object lblSkipCsvHint: TLabel
+        Left = 36
+        Top = 167
+        Width = 333
+        Height = 15
+        Caption = 'Leave ticked when moving a store from CSV to the web service.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clGrayText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
       end
       object edApiUser: TRzDBEdit
         Left = 15
@@ -129,25 +146,12 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
       object chkSkipCsvSent: TDBCheckBox
         Left = 17
         Top = 148
-        Width = 296
+        Width = 352
         Height = 17
         Caption = 'Do not resend what the CSV export already sent'
         DataField = 'LEADS_ONLINE_SKIP_CSV_SENT'
         DataSource = DM.DSStore
         TabOrder = 4
-      end
-      object lblSkipCsvHint: TLabel
-        Left = 36
-        Top = 167
-        Width = 280
-        Height = 15
-        Caption = 'Leave ticked when moving a store from CSV to the web service.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
       end
       object btnTestConnection: TRzBitBtn
         Left = 15
@@ -161,8 +165,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     end
     object rgExportMethod: TDBRadioGroup
       Left = 16
-      Top = 420
-      Width = 324
+      Top = 463
+      Width = 389
       Height = 108
       Caption = 'LeadsOnline reporting for this store'
       DataField = 'LEADS_ONLINE_EXPORT_METHOD'
@@ -186,7 +190,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     object GroupBox3: TGroupBox
       Left = 16
       Top = 64
-      Width = 324
+      Width = 389
       Height = 197
       Caption = 'LeadsOnline FTP Information'
       TabOrder = 1

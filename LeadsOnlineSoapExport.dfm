@@ -3,8 +3,8 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'LeadsOnline'
-  ClientHeight = 814
-  ClientWidth = 1215
+  ClientHeight = 830
+  ClientWidth = 1175
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,25 +19,27 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 742
-    Width = 1209
-    Height = 69
+    Top = 759
+    Width = 1169
+    Height = 68
     Align = alBottom
     TabOrder = 0
-    ExplicitWidth = 1059
+    ExplicitTop = 743
+    ExplicitWidth = 1209
     DesignSize = (
-      1209
-      69)
+      1169
+      68)
     object lblProgress: TLabel
-      Left = 208
-      Top = 26
-      Width = 4
+      Left = 333
+      Top = 20
+      Width = 38
       Height = 20
+      Caption = '0 of 0'
     end
     object btnExit: TBitBtn
-      Left = 1097
+      Left = 1057
       Top = 11
-      Width = 96
+      Width = 100
       Height = 48
       Anchors = [akTop, akRight]
       Cancel = True
@@ -46,43 +48,48 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       ImageName = 'actExit'
       Images = DM.vilMain24
       ModalResult = 2
-      TabOrder = 0
-      OnClick = btnExitClick
-      ExplicitLeft = 947
-    end
-    object btnSubmit: TBitBtn
-      Left = 16
-      Top = 11
-      Width = 176
-      Height = 48
-      Caption = ' &Submit selected'
-      Default = True
       TabOrder = 1
-      OnClick = btnSubmitClick
+      OnClick = btnExitClick
     end
     object pbSubmit: TProgressBar
-      Left = 208
+      Left = 327
       Top = 46
-      Width = 873
+      Width = 714
       Height = 12
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
-      ExplicitWidth = 723
+      ExplicitWidth = 754
+    end
+    object btnSubmit: TRzBitBtn
+      Left = 21
+      Top = 11
+      Width = 286
+      Height = 48
+      Caption = ' &Submit selected to Leadsonline'
+      DoubleBuffered = True
+      ParentDoubleBuffered = False
+      TabOrder = 0
+      OnClick = btnSubmitClick
+      ImageIndex = 33
+      Images = DM.vilMain
+      Margin = 4
+      Spacing = -8
     end
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1209
-    Height = 733
+    Width = 1169
+    Height = 750
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 1059
+    ExplicitWidth = 1209
+    ExplicitHeight = 734
     DesignSize = (
-      1209
-      733)
+      1169
+      750)
     object lblSandbox: TLabel
       Left = 503
       Top = 22
@@ -98,7 +105,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Visible = False
     end
     object lblCount: TLabel
-      Left = 1087
+      Left = 1047
       Top = 60
       Width = 4
       Height = 20
@@ -118,8 +125,8 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       AlignWithMargins = True
       Left = 5
       Top = 173
-      Width = 1199
-      Height = 491
+      Width = 1159
+      Height = 508
       Anchors = [akLeft, akTop, akRight, akBottom]
       DataSource = dsTickets
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgCancelOnExit]
@@ -323,12 +330,13 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     object GroupBox3: TGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 669
-      Width = 1199
+      Top = 686
+      Width = 1159
       Height = 59
       Align = alBottom
       TabOrder = 3
-      ExplicitWidth = 1049
+      ExplicitTop = 670
+      ExplicitWidth = 1199
       object btnCheckAll: TButton
         Left = 23
         Top = 14

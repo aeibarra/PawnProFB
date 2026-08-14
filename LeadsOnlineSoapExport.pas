@@ -49,7 +49,6 @@ type
     GroupBox2: TGroupBox;
     btnExit: TBitBtn;
     GroupBox1: TGroupBox;
-    btnSubmit: TBitBtn;
     lblProgress: TLabel;
     pbSubmit: TProgressBar;
     lblSandbox: TLabel;
@@ -74,6 +73,7 @@ type
     GroupBox3: TGroupBox;
     btnCheckAll: TButton;
     btnClearAll: TButton;
+    btnSubmit: TRzBitBtn;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -402,6 +402,7 @@ end;
 
 procedure TfrmLeadsOnlineSoapExport.FormShow(Sender: TObject);
 begin
+  lblProgress.Caption := '';
   Caption := 'LeadsOnline Export (Web Service)';
 
   // Unmissable when pointed at the sandbox. A store that believes it has

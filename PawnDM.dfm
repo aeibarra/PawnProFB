@@ -5,31 +5,31 @@ object DM: TDM
   Width = 1494
   object DSCustomers: TDataSource
     DataSet = qryCustomers
-    Left = 635
+    Left = 666
     Top = 92
   end
   object DSStates: TDataSource
     DataSet = qryStates
-    Left = 147
+    Left = 178
     Top = 92
   end
   object DSTransactions: TDataSource
     DataSet = qryTransactions
-    Left = 498
+    Left = 529
     Top = 92
   end
   object DSPayments: TDataSource
     DataSet = qryPayments
-    Left = 773
+    Left = 804
     Top = 92
   end
   object DSStore: TDataSource
     DataSet = qryStore
-    Left = 240
+    Left = 271
     Top = 92
   end
   object RegIniFile: TRzRegIniFile
-    Left = 126
+    Left = 157
     Top = 517
   end
   object ImageListBtn: TImageList
@@ -37,8 +37,8 @@ object DM: TDM
     ColorDepth = cd32Bit
     Height = 32
     Width = 32
-    Left = 41
-    Top = 455
+    Left = 65
+    Top = 432
     Bitmap = {
       494C01011C00D801040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
@@ -4282,7 +4282,7 @@ object DM: TDM
       'from IMAGES_DATA'
       'where IMAGES_DATA_NO = :ImagesDataNo'
       '')
-    Left = 1365
+    Left = 1396
     Top = 32
     ParamData = <
       item
@@ -4323,7 +4323,7 @@ object DM: TDM
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 276
+    Left = 307
     Top = 194
     object clnWeigthUnitsWeigthUnitValue: TWideStringField
       FieldName = 'WeigthUnitValue'
@@ -4341,7 +4341,7 @@ object DM: TDM
       '  set  TRAN_STATUS = :TranStatus,'
       '        TRAN_CLOSE_REASON = :TranCloseReason'
       'where TRANSACTION_NO = :TransactionNo')
-    Left = 1132
+    Left = 1163
     Top = 32
     ParamData = <
       item
@@ -4389,7 +4389,7 @@ object DM: TDM
       'FROM INVENTORY_ITEMS'
       'WHERE TRANSACTION_NO = :TransactionNo'
       '')
-    Left = 1132
+    Left = 1163
     Top = 92
     ParamData = <
       item
@@ -4698,8 +4698,8 @@ object DM: TDM
     Width = 40
     Height = 40
     Size = 40
-    Left = 116
-    Top = 367
+    Left = 186
+    Top = 366
   end
   object svgMain: TSVGIconImageCollection
     SVGIconItems = <
@@ -7530,7 +7530,7 @@ object DM: TDM
           '18,3.582-8,8-8h48c4.418,0,8,3.582,8,8v0 C368,172.418,364.418,176' +
           ',360,176z"/></g></svg>'
       end>
-    Left = 36
+    Left = 67
     Top = 366
   end
   object vilMain24: TSVGIconVirtualImageList
@@ -7825,7 +7825,7 @@ object DM: TDM
     Width = 32
     Height = 32
     Size = 32
-    Left = 112
+    Left = 182
     Top = 425
   end
   object qryPawnPay: TFDMemTable
@@ -7836,7 +7836,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 1268
+    Left = 1299
     Top = 32
   end
   object qryTotalPaid: TFDQuery
@@ -7845,7 +7845,7 @@ object DM: TDM
       'select SUM(PAY_AMOUNT) as TotalPaid'
       'from PAYMENTS'
       'where TRANSACTION_NO = :TransactionNo')
-    Left = 1001
+    Left = 1032
     Top = 32
     ParamData = <
       item
@@ -7868,7 +7868,7 @@ object DM: TDM
       'from IMAGES_DATA'
       'where IMAGES_DATA_NO = :ImagesDataNo'
       '')
-    Left = 1003
+    Left = 1034
     Top = 92
     ParamData = <
       item
@@ -7892,16 +7892,16 @@ object DM: TDM
       'Password=@PepitoKAKITA'
       'DriverID=FB')
     LoginPrompt = False
-    Left = 35
+    Left = 66
     Top = 31
   end
   object FDPhysFBDriverLink1: TFDPhysFBDriverLink
-    Left = 34
+    Left = 65
     Top = 109
   end
   object qryDummyFB: TFDQuery
     Connection = ConnFB
-    Left = 142
+    Left = 173
     Top = 182
   end
   object qryBackupSetings: TFDQuery
@@ -7912,7 +7912,7 @@ object DM: TDM
       '  AUTO_BACKUP_WHEN_CLOSE_APP,'
       '  BACKUP_IMAGES_PATH'
       'FROM BACKUP_SETTINGS;')
-    Left = 139
+    Left = 170
     Top = 261
     object qryBackupSetingsBACKUP_PATH: TWideStringField
       FieldName = 'BACKUP_PATH'
@@ -7950,7 +7950,7 @@ object DM: TDM
       'FROM TRANSACTIONS'
       'WHERE CUST_NO = :CUST_NO AND TRAN_TYPE IN ('#39'P'#39', '#39'U'#39', '#39'L'#39')'
       'ORDER BY TRAN_STATUS, TRAN_DATE DESC, TRAN_TICKET_NO DESC')
-    Left = 498
+    Left = 529
     Top = 32
     ParamData = <
       item
@@ -8117,7 +8117,7 @@ object DM: TDM
         '_INTERESTRATE'
       'FROM STORE'
       'WHERE STORE_NO = '#39'0'#39)
-    Left = 239
+    Left = 270
     Top = 32
     object qryStorecCity: TWideStringField
       FieldKind = fkCalculated
@@ -8279,7 +8279,7 @@ object DM: TDM
     SQL.Strings = (
       'SELECT STATE_ABBR, STATE_NAME '
       'FROM STATES')
-    Left = 144
+    Left = 175
     Top = 32
     object qryStatesSTATE_ABBR: TWideStringField
       FieldName = 'STATE_ABBR'
@@ -8316,7 +8316,7 @@ object DM: TDM
       '   --SearchByTicketNo'
       '   --SearchByPhone'
       'ORDER BY CUST_FIRST, CUST_LAST')
-    Left = 635
+    Left = 666
     Top = 32
     ParamData = <
       item
@@ -8532,7 +8532,7 @@ object DM: TDM
       'FROM PAYMENTS'
       'WHERE TRANSACTION_NO = :TRANSACTION_NO'
       'ORDER BY PAYMENT_NO DESC')
-    Left = 773
+    Left = 804
     Top = 32
     ParamData = <
       item
@@ -8612,7 +8612,7 @@ object DM: TDM
       '    GROUP BY TRANSACTION_NO'
       ') P ON P.TRANSACTION_NO = T.TRANSACTION_NO'
       'WHERE T.TRANSACTION_NO = :TRANSACTION_NO')
-    Left = 775
+    Left = 806
     Top = 154
     ParamData = <
       item
@@ -8636,7 +8636,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 887
+    Left = 918
     Top = 32
   end
   object qryItemStatus: TFDQuery
@@ -8645,7 +8645,7 @@ object DM: TDM
       'SELECT STATUS, STATUS_DESC'
       'FROM ITEM_STATUS'
       'ORDER BY STATUS_DESC')
-    Left = 887
+    Left = 918
     Top = 92
   end
   object qryCalcUnitCostFromWeight: TFDQuery
@@ -8654,7 +8654,7 @@ object DM: TDM
       
         'EXECUTE PROCEDURE SPU_CALC_UNIT_COST_FROM_WEIGHT(:TRANSACTION_NO' +
         ')')
-    Left = 1137
+    Left = 1168
     Top = 154
     ParamData = <
       item
@@ -8671,7 +8671,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 374
+    Left = 405
     Top = 186
     object clnJGendersJ_GENDER: TWideStringField
       FieldName = 'J_GENDER'
@@ -8692,7 +8692,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 374
+    Left = 405
     Top = 240
     object clnJMetalsJ_METAL: TWideStringField
       FieldName = 'J_METAL'
@@ -8713,7 +8713,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 374
+    Left = 405
     Top = 293
     object clnJStoneColorsJ_STONE_COLOR: TWideStringField
       FieldName = 'J_STONE_COLOR'
@@ -8734,7 +8734,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 468
+    Left = 499
     Top = 188
     object clnJStoneShapesJ_SHAPE: TWideStringField
       FieldName = 'J_SHAPE'
@@ -8755,7 +8755,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 468
+    Left = 499
     Top = 242
     object clnJStylesJ_STYLE: TWideStringField
       FieldName = 'J_STYLE'
@@ -8776,7 +8776,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 468
+    Left = 499
     Top = 295
     object clnJTypesJ_TYPE: TWideStringField
       FieldName = 'J_TYPE'
@@ -8798,7 +8798,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 560
+    Left = 591
     Top = 295
     object clnStoneTypesSTONE_TYPE: TWideStringField
       FieldName = 'STONE_TYPE'
@@ -8814,7 +8814,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 666
+    Left = 697
     Top = 242
     object clnInventoryCategoriesINV_CAT_NO: TIntegerField
       FieldName = 'INV_CAT_NO'
@@ -8834,7 +8834,7 @@ object DM: TDM
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 666
+    Left = 697
     Top = 295
     object clnInventoryBrandsINV_ITEM_BRAND: TWideStringField
       FieldName = 'INV_ITEM_BRAND'
@@ -8844,7 +8844,7 @@ object DM: TDM
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'Forms'
     ScreenCursor = gcrHourGlass
-    Left = 37
+    Left = 68
     Top = 184
   end
 end
