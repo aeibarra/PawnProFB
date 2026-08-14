@@ -54,5 +54,26 @@ If gbak isn't on PATH, run it with its full path.
 - vendor_secret.key is the ONLY thing that can decrypt backups. Never lose it,
   never send it to a store, never commit it to git. Keep a spare copy of the
   USB in a safe place.
-- After a recovery, have the store change the SYSDBA password via PawnProSetup.
+
+- RESTORE WITH THE SAME SYSDBA PASSWORD THE STORE HAD BEFORE.
+  Not just for convenience: once LeadsOnline credential encryption ships, the
+  key that unlocks those credentials is derived from the database password.
+  Restore with the same password and the store's LeadsOnline setup keeps
+  working with nothing to re-enter. Restore with a different one and the
+  credentials must be typed in again from the LeadsOnline Settings screen.
+  (The pawn data itself restores fine either way - gbak does not need the old
+  password, because Firebird keeps users on the server, not in the .fbk.)
+
+- Changing the SYSDBA password after a recovery is fine, but do it THROUGH
+  PawnProSetup, never with a bare "ALTER USER SYSDBA SET PASSWORD". Setup
+  re-wraps the LeadsOnline credential key as part of the change; a bare ALTER
+  leaves that key unopenable and the failure does not show up until the next
+  time PawnPro starts.
+
+- CHECK WHERE THE BACKUP IS BEING WRITTEN.
+  None of the above helps if the only copy of PawnPro_<ts>.fbk.enc was on the
+  machine that died. The backup path is chosen by the operator in the Backup
+  screen. For a single-workstation store, confirm it points somewhere that
+  leaves the premises. The image folder is backed up separately - check that
+  too.
 ============================================================
