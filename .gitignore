@@ -106,3 +106,6 @@ ImageBackupAudit.log
 
 # Test evidence: real customer item photos, never commit.
 Docs/CrashEvidence/T7_originals/
+
+# LeadsOnline API documentation received under NDA -- never commit.
+PawnDocs/Private/

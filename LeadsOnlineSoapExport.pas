@@ -159,6 +159,12 @@ const
   /// wasted wait at about three minutes rather than one per remaining row.
   MaxConsecutiveUnreachable = 3;
 
+  /// The same idea inside one ticket's images. Lower than the ticket limit
+  /// because by this point a ticket has already been accepted: the cost of
+  /// stopping early is only that its photos are offered again next run, while
+  /// the cost of carrying on is a timeout per remaining photo.
+  MaxConsecutiveImageFailures = 2;
+
   { Candidates: pawns and buys LeadsOnline has not accepted yet.
 
     The ('P','U') filter is the SAME one the CSV export applies (LeadsOnlineDM
@@ -199,16 +205,31 @@ const
     // ID photos hang off the customer (type 1, keyed by CUST_NO). Both are
     // shown so the operator can see what is about to go with the ticket -- and
     // notice when something is missing BEFORE sending rather than afterwards.
+    //
+    // These count what WILL BE SENT, not what exists, so they must apply the
+    // same two rules as SQLTicketImages: already-uploaded images are excluded,
+    // and only the newest customer ID photo counts. A column that says "3" and
+    // then sends one teaches the operator to distrust the column.
     '       (SELECT COUNT(*) FROM IMAGES_DATA IM' +
     '         JOIN INVENTORY_ITEMS I2 ON I2.INV_ITEM_NO = IM.IMAG_REF_TO_ROW_NO' +
     '        WHERE IM.IMAGE_TYPE_NO = 2' +
-    '          AND I2.TRANSACTION_NO = T1.TRANSACTION_NO) AS ITEM_IMAGE_COUNT,' +
-    // Normally 1. More than one means the customer has been photographed again
-    // over the years; only the most recent is sent, so a 3 here is information,
-    // not a problem.
+    '          AND I2.TRANSACTION_NO = T1.TRANSACTION_NO' +
+    '          AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_IMAGE_SENT SI' +
+    '                           WHERE SI.TRANSACTION_NO = T1.TRANSACTION_NO' +
+    '                             AND SI.IMAGES_DATA_NO = IM.IMAGES_DATA_NO' +
+    '                             AND SI.ERROR_CODE = 0)) AS ITEM_IMAGE_COUNT,' +
+    // 0 or 1. A customer photographed several times over the years has several
+    // rows, but only the most recent is ever sent.
     '       (SELECT COUNT(*) FROM IMAGES_DATA IM2' +
     '        WHERE IM2.IMAGE_TYPE_NO = 1' +
-    '          AND IM2.IMAG_REF_TO_ROW_NO = T1.CUST_NO) AS ID_IMAGE_COUNT,' +
+    '          AND IM2.IMAG_REF_TO_ROW_NO = T1.CUST_NO' +
+    '          AND IM2.IMAGES_DATA_NO = (SELECT MAX(IM4.IMAGES_DATA_NO) FROM IMAGES_DATA IM4' +
+    '                                     WHERE IM4.IMAGE_TYPE_NO = 1' +
+    '                                       AND IM4.IMAG_REF_TO_ROW_NO = T1.CUST_NO)' +
+    '          AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_IMAGE_SENT SI2' +
+    '                           WHERE SI2.TRANSACTION_NO = T1.TRANSACTION_NO' +
+    '                             AND SI2.IMAGES_DATA_NO = IM2.IMAGES_DATA_NO' +
+    '                             AND SI2.ERROR_CODE = 0)) AS ID_IMAGE_COUNT,' +
     '       S.ERROR_CODE AS LAST_ERROR_CODE, S.ERROR_RESPONSE AS LAST_ERROR_RESPONSE' +
     '  FROM TRANSACTIONS T1' +
     '  JOIN CUSTOMER T2 ON T2.CUST_NO = T1.CUST_NO' +
@@ -809,9 +830,11 @@ var
   IndexIsNull: Boolean;
   Res: TLeadsOnlineResult;
   Err: string;
+  ConsecutiveFail: Integer;
 begin
   ASent := 0;
   AFailed := 0;
+  ConsecutiveFail := 0;
 
   if not Assigned(GetImageBytesProc) then
     Exit;   // storage layer not bound; nothing sensible to do
@@ -822,7 +845,11 @@ begin
     Q.ParamByName('TransactionNo').AsInteger := ATransactionNo;
     Q.Open;
 
-    while not Q.Eof do
+    // Cancel is honoured BETWEEN images, not just between tickets. Each upload
+    // carries the client's own retry, so a ticket with several photos on a dead
+    // line would otherwise ignore the button for minutes and read as a hang.
+    while (not Q.Eof) and (not FCancelled) and
+          (ConsecutiveFail < MaxConsecutiveImageFailures) do
     begin
       ImagesDataNo := Q.FieldByName('IMAGES_DATA_NO').AsInteger;
       Category := Q.FieldByName('IMAGE_CATEGORY').AsString;
@@ -849,13 +876,17 @@ begin
       if Length(Bytes) = 0 then
       begin
         // The row exists but the file does not. Recorded so it is visible
-        // rather than silently skipped on every future run.
+        // rather than silently skipped on every future run. A missing file says
+        // nothing about the line, so it does not count toward the give-up rule.
         Inc(AFailed);
         RecordImageSent(ATransactionNo, ImagesDataNo, Category, ItemIndex, IndexIsNull,
                         '', -1, 'The image file could not be found or is empty.');
       end
       else if AClient.TryUploadImage(AKey, Bytes, Cat, SentIndex, Res, Err) then
       begin
+        // Reached the service, whatever it said -- so the line is up and any
+        // earlier transport failure was a one-off.
+        ConsecutiveFail := 0;
         if Res.Succeeded then
         begin
           // On success their errorResponse carries the server's filename for
@@ -877,6 +908,7 @@ begin
         // ticket is not: we do not know whether they got it, and leaving no row
         // means the next run offers it again.
         Inc(AFailed);
+        Inc(ConsecutiveFail);
       end;
 
       Q.Next;
@@ -896,7 +928,6 @@ var
   Reached, IsVoid: Boolean;
   ImgSent, ImgFailed: Integer;
 begin
-  Result := soRejected;
   ATransportError := '';
   Header := nil; Items := nil; Stones := nil; T := nil;
   try
@@ -1023,11 +1054,10 @@ begin
     Exit;
   end;
 
-  if not PawnConfirm(Format('Submit %d transaction(s) to LeadsOnline?%s%s',
-       [Total, sLineBreak + sLineBreak,
-        'Endpoint: ' + IfThen(DM.qryStoreLEADS_ONLINE_USE_SANDBOX.AsBoolean,
-                              LeadsOnlineSandboxURL, LeadsOnlineProductionURL)])) then
-    Exit;
+  // No "are you sure" here on purpose. Ticking the rows is the confirmation --
+  // the operator has already said which transactions go, and lblSandbox states
+  // which endpoint they go to for as long as the form is open. A second prompt
+  // in front of a deliberate act only teaches people to dismiss prompts.
 
   // Narrow the grid to exactly what is going out, before the first call. The
   // rows being worked stay on screen instead of scrolling away among the
