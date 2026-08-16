@@ -246,10 +246,24 @@ uses Windows DPAPI.
 
 ## Third-party credential encryption (LeadsOnline)
 
-Planned, not yet implemented. This section is the agreed design.
+Designed, not implemented. This section is the agreed design, held for later.
 
-**Priority: worth doing, but not first.** Two things temper the urgency, and both
-should be weighed before this work is scheduled ahead of anything else:
+**Deferred by decision, 2026-08-14 — sequenced after Kendale's SOAP cutover.**
+The rollout order is Perez Cash (pilot) → Lucky → Ricardo → Kendale ASA-to-FB5
+conversion → Kendale SOAP → this. Kendale is a multi-station store with the least
+experienced staff, and the deciding factor was giving them one change at a time
+rather than stacking a credential migration on top of a database conversion and a
+new police-reporting channel. The less noise for that store, the better.
+
+That ordering also removes a trap: because encryption lands *after* the ASA-to-FB5
+conversion, `Pump_ASA_FB` never has to participate in it. The pump writes plain
+text into a plaintext world, and encryption arrives later as its own pass that
+converts on save. Reversing the order would mean updating the pump first — see
+"Other writers of these columns".
+
+**Priority when it is taken up: worth doing, but not first.** Two things temper
+the urgency, and both should be weighed before this work is scheduled ahead of
+anything else:
 
 - The `.fbk`-in-transit case cited below as motivation is **already closed** by
   the encrypted backups described in the previous section. The honest residual is
