@@ -41,8 +41,23 @@ const
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
-  app against a half-migrated database). }
+  app against a half-migrated database).
+
+  ONLY THE MACHINE THAT HOLDS THE DATABASE MAY CALL THIS. Every step is
+  idempotent, but idempotent is not the same as concurrency-safe: two PCs
+  starting together can both pass the same `if not ColumnExists` guard and issue
+  the same DDL, which Firebird rejects with a metadata lock error. Since a failed
+  migration is fatal, that would stop tills from opening. Workstations call
+  DatabaseIsCurrent instead. }
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
+
+{ Read-only counterpart for a machine that must NOT migrate. True when the
+  database is already at CURRENT_DB_VERSION.
+
+  Creates and alters nothing, and never raises: a missing APP_STATE — or any
+  other failure to read the version — counts as "not current", which is exactly
+  the situation the caller has to catch. }
+function DatabaseIsCurrent(Conn: TFDConnection): Boolean;
 
 implementation
 
@@ -444,6 +459,18 @@ begin
 end;
 
 { ---- orchestrator ------------------------------------------------------- }
+
+function DatabaseIsCurrent(Conn: TFDConnection): Boolean;
+begin
+  try
+    Result := GetDbVersion(Conn) >= CURRENT_DB_VERSION;
+  except
+    // APP_STATE absent, or unreadable. Either way the host has not brought this
+    // database up to date, so report "behind" rather than propagating: the
+    // caller's job is to say so plainly, not to crash with a SQL error.
+    Result := False;
+  end;
+end;
 
 procedure EnsureDatabaseCurrent(Conn: TFDConnection);
 var

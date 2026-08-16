@@ -606,6 +606,31 @@ end;
 
 procedure TDM.CheckForMissingDBChanges;
 begin
+  // Only the machine holding the database applies migrations. Every workstation
+  // reaches this code at startup, and while the steps are idempotent they are
+  // not concurrency-safe: two PCs starting together can both pass the same
+  // "if not ColumnExists" guard and issue the same DDL, which Firebird rejects
+  // with a metadata lock error. A failed migration is fatal, so that would stop
+  // tills from opening -- at a multi-station store, on the first morning after
+  // an update, which is the worst possible moment.
+  if not IsLocalDatabase then
+  begin
+    // Skipping the migration is not the same as ignoring the version. Running
+    // new code against an old schema fails later, deeper, and far less legibly
+    // than saying so here.
+    if not DatabaseIsCurrent(ConnFB) then
+    begin
+      ShowMessage('PawnPro cannot start: this store''s database is not up to date.' + sLineBreak + sLineBreak +
+                  'The computer that holds the database has to run PawnPro first so it can ' +
+                  'apply the update.' + sLineBreak + sLineBreak +
+                  'Start PawnPro on that computer, wait for it to finish loading, ' +
+                  'then start PawnPro here again.');
+      Application.Terminate;
+      Halt(0);
+    end;
+    Exit;
+  end;
+
   // Apply any pending schema migrations for already-deployed stores. Fatal on
   // failure: never let the app run against a half-migrated database.
   try

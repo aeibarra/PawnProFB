@@ -270,9 +270,15 @@ anything else:
   narrower than the list suggests: a support technician handed a `.fdb` copy. A
   store employee with a SQL console is sitting at a PC that also holds the EXE,
   and is therefore outside the boundary this scheme creates at all.
-- A live database credential remains committed in this repository's history and
-  needs rotating. That is a broader exposure than anything in this section, it is
-  a task rather than a design, and it should be cleared first.
+- A database credential sits in this repository's history, written into a
+  `TFDConnection`'s design-time `Params` by the IDE. The repository is private and
+  single-owner, so this is hygiene rather than a disclosure — and from 2026-08-14
+  production stores use passwords that were never in the repository at all, which
+  retires the exposure rather than merely reducing it. Still worth clearing: the
+  stored value is unused at runtime, because the connection parameters are
+  overwritten from the INI on every start, so blanking it costs nothing. Note the
+  IDE re-adds it whenever someone connects that data module at design time, so a
+  pre-commit check for `Password=` in `*.dfm` is the only durable fix.
 
 ### Scope
 
