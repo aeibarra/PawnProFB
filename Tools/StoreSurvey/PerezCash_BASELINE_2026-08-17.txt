@@ -1,0 +1,30 @@
+﻿PEREZ CASH -- BASELINE, captured 2026-08-17 from the copy taken at 12:44,
+BEFORE the SOAP build was installed in the store.
+Re-run the same survey on a fresh copy and diff against this.
+======================================================================
+STORE_NAME                      Perez Cash Jewelry II,INC.
+STORE_ADDR                      15118 SW 56th Street
+STORE_CITY_ST_ZIP               Miami, FL 33186
+STORE_PHONE                     (305)386-3338
+STORE_POLICE_ID                 0811
+LEADS_STORE_ID                  63271
+FTP_USER                        perezcash
+LEADS_ONLINE_FTP_ADDRESS        ftp.leadsonline.com
+BACKUP_PATH                     E:\
+BACKUP_IMAGES_PATH              E:\PawnImages
+AUTO_BACKUP_WHEN_CLOSE_APP      <false>
+BACKUPS_LOGGED                  5295
+LAST_BACKUP                     2026-08-17 12:44:06.1120
+TOTAL_PU                        38742
+NEVER_IN_A_CSV                  13516
+OLDEST                          2000-09-01
+NEWEST                          2026-08-15
+MULTI_ITEM_ZERO_AMOUNT          1438
+ZERO_AMOUNT_AND_UNSENT          0
+CUSTOMERS                       10207
+DOB_MISSING                     12
+DOB_IN_FUTURE                   48
+DOB_TOO_OLD                     1
+ITEM_PHOTOS                     5691
+ID_PHOTOS                       44
+STONES_THAT_WOULD_DROP          0
