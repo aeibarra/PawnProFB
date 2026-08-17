@@ -1,0 +1,1496 @@
+
+--------------------------------2026/7/24 17:37:43--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 945016
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491EC8A30:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 47 EB 4C 24 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  G  ë  L  $  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/24 17:41:54--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 962986
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x24CC, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA392BBA 
+00007FF6BA394BC1 
+00007FF6BA394406 
+00007FF6BA394E2B 
+00007FF6BAA7D037 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAAB9F70 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAA581E7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAA587E7 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF4927793A0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 65 BE 50 24 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  e  ¾  P  $  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/27 12:49:08--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 4033218
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491838850:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 1F C7 B7 32 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  Ç  ·  2  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/27 12:56:42--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 4048933
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD985 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389AB0 
+00007FF6BA597139 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA8546C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA854702 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA854788 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA81DE0D [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA84152F [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA81AFB4 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491836320:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 29 B3 BE 32 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  )  ³  ¾  2  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/27 18:26:55--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 4553544
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x4218, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491447190:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 F3 05 ED 33 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  ó  .  í  3  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/28 16:41:55--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 5695125
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x2470, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF490B41400:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 BB 40 B3 38 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  »  @  ³  8  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/29 15:31:37--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 7062823
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BACCB55B [Unknown function at __dbk_fcall_wrapper]
+00007FF6BACCC659 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BACCCB3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BACCEE10 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD1D81C [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD1CC14 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD2275F [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD2239D [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF490B3EED0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 06 3F 99 3D 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  ?  ™  =  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/29 15:41:55--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 7126852
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x2354, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B1AB90:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 6F AE A2 3D 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  o  ®  ¢  =  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/31 15:21:06--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 10705600
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF490A47E20:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 BD 53 DC 47 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  ½  S  Ü  G  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/7/31 15:26:56--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 10719897
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x2B40, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B27A30:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 21 AB E1 47 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  !  «  á  G  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/3 17:04:17--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 14297173
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF4920F7E60:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 95 DA AD 57 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  •  Ú  ­  W  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/3 17:04:40--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 14315735
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2248B1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB0132D8 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB223F18 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB223DE8 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B20110:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 23 32 AE 57 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  #  2  ®  W  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/5 17:13:30--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 16841233
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8633 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B4B31 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4BDC42 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA576C6B [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4C0400 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4BFB43 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF490A458F0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 C5 FB 02 62 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  Å  û  .  b  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/5 17:26:59--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 16919630
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x42A0, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF49226FB70:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 FC 54 0F 62 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  ü  T  .  b  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/5 18:34:35--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 17009560
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B1D5C0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 CB 3A 4D 62 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  Ë  :  M  b  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/5 18:41:59--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 17025103
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x143C, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD816 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B6D 
+00007FF6BA397FEE 
+00007FF6BA510D83 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA50CA7E [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA50E1FE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABD7BBD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABD2FD5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABD2D4D [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B225D0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 02 00 54 62 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  .  T  b  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/6 14:26:59--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 17816968
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x3428, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B18160:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 B8 E5 90 66 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  ¸  å    f  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/7 10:35:56--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 19492966
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF4920E76D0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 B6 B9 E3 6A 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  ¶  ¹  ã  j  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/7 10:36:18--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 19504561
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2248B1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB0132D8 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB223F18 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB223DE8 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491EB6770:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 BA 0F E4 6A 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  º  .  ä  j  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/10 11:41:56--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 22985540
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0xF44, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF49019B720:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 09 35 93 7A 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  5  “  z  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/10 11:57:00--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(4)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 23009501
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x47E4, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF491B25000:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 1E 02 A1 7A 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  .  .  ¡  z  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+
+--------------------------------2026/8/11 16:42:01--------------------------------
+FastMM has detected an error during a GetMem operation. FastMM detected that a block has been modified after being freed. 
+
+Modified byte offsets (and lengths): 168(3)
+
+The previous block size was: 7376
+
+This block was previously allocated by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD466 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA38F4D1 
+00007FF6BA390121 
+00007FF6BB2C1348 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4ADB [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2C4FF9 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BB2423EC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759D9A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA7595B5 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA390170 
+
+The block was previously used for an object of class: VFrames.TVideoImage
+
+The allocation number was: 24539048
+
+The block was previously freed by thread 0xF44, and the stack trace (return addresses) at the time was:
+00007FF6BA3AD6CD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B34 
+00007FF6BA38F508 
+00007FF6BA390141 
+00007FF6BB2C15BA [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA38F738 
+00007FF6BB2C5039 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759E3A [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA759ADD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3901C5 
+00007FF6BA759B21 [Unknown function at __dbk_fcall_wrapper]
+
+The current thread ID is 0x45D0, and the stack trace (return addresses) leading to this error is:
+00007FF6BA3AD3C7 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA3AD446 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA389B04 
+00007FF6BA4B86C1 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B85CE [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B8757 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BA4B87A4 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BABE15BD [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD32BEC [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD31638 [Unknown function at __dbk_fcall_wrapper]
+00007FF6BAD3188F [Unknown function at __dbk_fcall_wrapper]
+
+Current memory dump of 256 bytes starting at pointer address 7FF4901967C0:
+3C B9 61 BB F6 7F 00 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 6C 4B CC 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80
+<  ¹  a  »  ö    .  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  l  K  Ì  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €
