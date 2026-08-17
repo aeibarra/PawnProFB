@@ -96,12 +96,27 @@ begin
                                         DM.qryStoreLEADS_ONLINE_API_PASSWORD.AsString,
                                         DM.qryStoreLEADS_ONLINE_USE_SANDBOX.AsBoolean);
     try
-      if Client.TryCheckLogin(Res, Err) then
+      // Three outcomes, not two. Reporting a dead line as "wrong credentials"
+      // sends the operator off re-typing a password that was always correct --
+      // which is exactly what happened the first time this was used against
+      // production.
+      if not Client.TryCheckLogin(Res, Err) then
+        PawnError('Could not reach LeadsOnline, so the credentials were never ' +
+                  'checked.' + sLineBreak + sLineBreak +
+                  DiagnoseEndpoint(Client.EndpointURL) + sLineBreak + sLineBreak +
+                  'Endpoint: ' + Client.EndpointURL + sLineBreak +
+                  'Details: ' + Err)
+      else if Res.Succeeded then
         PawnInfo('LeadsOnline accepted these credentials.' + sLineBreak + sLineBreak +
                  'Endpoint: ' + Client.EndpointURL)
       else
-        PawnError('LeadsOnline did not accept these credentials.' + sLineBreak + sLineBreak +
-                  Err + sLineBreak + sLineBreak +
+        PawnError('LeadsOnline was reached, but did not accept these ' +
+                  'credentials.' + sLineBreak + sLineBreak +
+                  Res.Text + sLineBreak + sLineBreak +
+                  'Check the Store ID, API user name and API password. Note that ' +
+                  'sandbox and production use DIFFERENT credentials, so this also ' +
+                  'fails when production details are tested against the sandbox ' +
+                  '(or the reverse).' + sLineBreak + sLineBreak +
                   'Endpoint: ' + Client.EndpointURL);
     finally
       Client.Free;

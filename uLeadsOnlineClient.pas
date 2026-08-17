@@ -92,7 +92,11 @@ type
     /// Verifies the store id / user / password against the selected endpoint.
     /// Raises ELeadsOnlineTransport if the service could not be reached.
     function CheckLogin: TLeadsOnlineResult;
-    /// Non-raising form, for a "Test Connection" button.
+    /// Non-raising form, for a "Test Connection" button. True means the service
+    /// was REACHED -- read AResult for its verdict. False means the call never
+    /// got there, with AError holding why. A caller that reads False as "wrong
+    /// password" will tell an operator to re-type credentials when the real
+    /// fault is the network.
     function TryCheckLogin(out AResult: TLeadsOnlineResult; out AError: string): Boolean;
 
     /// Sends one ticket. The caller owns ATicket and may free it afterwards.
@@ -271,7 +275,13 @@ begin
       'wifi login page, a company proxy, or an internet provider that answers ' +
       'unknown addresses with its own search page. The store may look like it ' +
       'has internet when it does not.' + sLineBreak + sLineBreak +
-      'Ask whoever manages the network here to allow %s.', [Host, Host]));
+      'Ask whoever manages the network here to allow %s.' + sLineBreak + sLineBreak +
+      // The probed address is printed because this verdict is stated
+      // confidently and is the one most likely to send someone hunting a
+      // firewall that is not the problem. Handed a URL without the service
+      // path, the site answers 403 and this branch fires on a perfectly
+      // healthy connection -- seeing the address makes that obvious.
+      'Address checked: %s', [Host, Host, AURL + '?wsdl']));
 
   Result := Format(
     'The connection to %s is working normally%s, so this is not a network ' +
@@ -641,9 +651,13 @@ begin
   AError := '';
   try
     AResult := CheckLogin;
-    Result := AResult.Succeeded;
-    if not Result then
-      AError := AResult.Text;
+    // REACHED the service -- whatever it thought of the credentials. AResult
+    // carries the verdict. This deliberately matches TrySubmitTransaction and
+    // TryUploadImage: True means "we got an answer", never "the answer was
+    // yes". Returning False for a rejected login as well as for a dead line
+    // made the two indistinguishable to the caller, and the settings screen
+    // reported a firewall block as bad credentials.
+    Result := True;
   except
     on E: Exception do
     begin
