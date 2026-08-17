@@ -20,6 +20,9 @@ interface
 
 uses
   System.SysUtils, System.Classes, Soap.SOAPHTTPClient, Soap.InvokeRegistry,
+  // THTTPReqResp and THTTPClient appear in the OnBeforePost signature below,
+  // where the TLS version is pinned -- see HTTPWebNodeBeforePost.
+  Soap.SOAPHTTPTrans, System.Net.HttpClient,
   LeadsOnlineWS;
 
 const
@@ -78,6 +81,8 @@ type
     function GetService: ticketWSSoap;
     function NewLoginInfo: LoginInfo;
     function ResolveIpAddress: string;
+    procedure HTTPWebNodeBeforePost(const HTTPReqResp: THTTPReqResp;
+      Client: THTTPClient);
     procedure HTTPRIOBeforeExecute(const MethodName: string; SOAPRequest: TStream);
     procedure HTTPRIOAfterExecute(const MethodName: string; SOAPResponse: TStream);
     /// Runs ACall, retrying only transport failures, and normalises whatever
@@ -181,7 +186,9 @@ function LeadsOnlineErrorText(AErrorCode: Integer; const AErrorResponse: string)
 implementation
 
 uses
-  System.StrUtils, System.Net.HttpClient, IdStack, IdTCPClient;
+  // System.Net.HttpClient is in the interface uses -- THTTPClient appears in
+  // the OnBeforePost signature.
+  System.StrUtils, IdStack, IdTCPClient;
 
 function DiagnoseEndpoint(const AURL: string): string;
 var
@@ -253,6 +260,10 @@ begin
     try
       Http.ConnectionTimeout := 8000;
       Http.ResponseTimeout := 8000;
+      // Same TLS pin as the SOAP calls -- see HTTPWebNodeBeforePost. Without
+      // it this diagnostic fails on exactly the machines it exists to diagnose,
+      // and then blames a proxy for what is really an old TLS default.
+      Http.SecureProtocols := [THTTPSecureProtocol.TLS12];
       Body := Http.Get(AURL + '?wsdl').ContentAsString;
     finally
       Http.Free;
@@ -412,6 +423,7 @@ begin
       RIO.HTTPWebNode.ConnectTimeout := FTimeoutMS;
       RIO.HTTPWebNode.SendTimeout := FTimeoutMS;
       RIO.HTTPWebNode.ReceiveTimeout := FTimeoutMS;
+      RIO.HTTPWebNode.OnBeforePost := HTTPWebNodeBeforePost;
       RIO.OnBeforeExecute := HTTPRIOBeforeExecute;
       RIO.OnAfterExecute := HTTPRIOAfterExecute;
       FService := GetticketWSSoap(False, RIO.URL, RIO);
@@ -454,6 +466,30 @@ begin
       end;
   end;
   Result := FIpAddress;
+end;
+
+{ Pins the TLS version for every call.
+
+  LeadsOnline's production endpoint accepts TLS 1.2 and NOTHING ELSE -- probed
+  directly 2026-08-17: 1.0 and 1.1 are refused at the handshake, 1.3 is not
+  offered. Left alone, THTTPClient uses the machine's WinHTTP default, and on an
+  older Windows that is still TLS 1.0. The handshake then fails before a single
+  byte of SOAP is sent, surfacing as WinHTTP 12175
+  (ERROR_WINHTTP_SECURE_FAILURE) -- which reads like a certificate or proxy
+  fault and sends you looking in entirely the wrong place.
+
+  Setting it here rather than per machine matters: the alternative is editing
+  registry keys or Internet Options on every workstation of every store, which
+  is not a thing that stays done.
+
+  Deliberately TLS 1.2 alone rather than [TLS12, TLS13]: the server does not
+  offer 1.3, and passing that flag to a Windows build predating support for it
+  risks failing the option call outright -- on exactly the old machines this
+  exists to rescue. Add TLS13 here if LeadsOnline ever moves. }
+procedure TLeadsOnlineClient.HTTPWebNodeBeforePost(const HTTPReqResp: THTTPReqResp;
+  Client: THTTPClient);
+begin
+  Client.SecureProtocols := [THTTPSecureProtocol.TLS12];
 end;
 
 procedure TLeadsOnlineClient.HTTPRIOBeforeExecute(const MethodName: string; SOAPRequest: TStream);
