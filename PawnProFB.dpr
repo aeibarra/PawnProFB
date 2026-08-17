@@ -1,31 +1,36 @@
 ﻿program PawnProFB;
 
-// Diagnostic memory-manager build for the intermittent EInvalidPointer /
-// "component already exists" / windowless-ghost-process hunt.
+// OFF. Diagnostic memory-manager build, kept for the next time something needs
+// hunting rather than deleted -- it earned its place once already.
 //
-// With MMDEBUG defined, FastMM4 FullDebugMode wraps every allocation in guard
-// blocks and records a stack trace, so a double-free, use-after-free or buffer
-// overrun is caught AT THE MOMENT IT HAPPENS -- not later, somewhere unrelated.
-// Both the allocation and the free stack are appended to
-// PawnProFB_MemoryManager_EventLog.txt next to the EXE.
+// Uncommenting the define links FastMM4 in FullDebugMode: every allocation gets
+// guard blocks and a recorded stack trace, so a double-free, use-after-free or
+// overrun is caught AT THE MOMENT IT HAPPENS rather than later somewhere
+// unrelated, and both the allocation and free stacks are appended to
+// PawnProFB_MemoryManager_EventLog.txt beside the EXE.
 //
-// Deployment requirements when this is ON -- all three must sit beside the EXE:
-//   FastMM_FullDebugMode64.dll   stack capture (app will not start without it)
-//   PawnProFB.map                resolves traces to unit + line number
-//   (the event log is created on first error; nothing to pre-deploy)
+// It found the VFrames.TVideoImage use-after-free in July 2026 (see the camera
+// capture fix and Docs\ImageAuditTestPlan.md) after that bug had been producing
+// "component already exists" and out-of-memory reports for months.
 //
-// Store-safety settings live in FastMM4Options.inc: NoMessageBoxes is ON so a
-// detected error is logged instead of popping a modal dialog at the register,
-// and RawStackTraces / AlwaysAllocateTopDown are OFF so the build stays fast
-// enough to run all day. See the PawnPro notes in that file before changing it.
+// If you turn it back on, ALL of the following must sit beside the EXE:
+//   FastMM_FullDebugMode64.dll   stack capture -- the app will NOT start without it
+//   PawnProFB.map               resolves traces to unit + line, and must be
+//                               REGENERATED WITH THE SAME BUILD; a stale map
+//                               silently resolves addresses to the wrong code
+// and the Release config needs DCC_DebugInformation 2, DCC_LocalDebugSymbols,
+// DCC_GenerateStackFrames and DCC_MapFile 3 restored, or the traces come back as
+// raw addresses.
 //
-// NOTE: FastMM4.pas / FastMM4Options.inc / FastMM_FullDebugMode64.dll are
-// .gitignored, so a fresh clone will NOT compile with MMDEBUG defined until
-// those files are copied in. Comment the define out for a clean-checkout build.
+// Store-safety settings live in FastMM4Options.inc -- NoMessageBoxes ON so a
+// detected error is logged instead of popping a dialog at the register, and
+// RawStackTraces / AlwaysAllocateTopDown OFF so it stays usable all day. That
+// file is .gitignored, along with FastMM4.pas and the DLL, so a fresh clone will
+// not compile with MMDEBUG defined until they are copied back in.
 //
-// Turn this OFF once the hunt is over: with it undefined FastMM4 is not linked
-// at all and the binary is byte-for-byte unaffected.
-{$DEFINE MMDEBUG}
+// With the define commented out FastMM4 is not linked at all and the binary is
+// unaffected.
+{.$DEFINE MMDEBUG}
 
 uses
   {$IFDEF MMDEBUG}
