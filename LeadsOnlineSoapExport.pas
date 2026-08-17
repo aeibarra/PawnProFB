@@ -107,6 +107,9 @@ type
     /// a running count -- rows change from several places (load, tick, check
     /// all, clear all) and a counter that drifts would be worse than useless
     /// on a screen whose whole job is "send exactly these".
+    /// The column genuinely under the pointer, which is not the one OnCellClick
+    /// reports while the grid is in dgRowSelect mode.
+    function ClickedColumn: TColumn;
     function SelectedCount: Integer;
     /// How many ticked rows are newer than RecentExclusionMonths. Excluding old
     /// history is housekeeping; excluding a recent pawn means a transaction that
@@ -612,7 +615,39 @@ begin
   end;
 end;
 
+{ Which column was actually clicked.
+
+  The Column passed to OnCellClick cannot be trusted here, because the grid runs
+  with dgRowSelect: in row-select mode TDBGrid keeps no current column, so it
+  reports the FIRST one for a click anywhere on the row -- and the first one is
+  the tick box. Every click therefore toggled the row, which is precisely the
+  bug this exists to fix.
+
+  Hit-testing the live cursor position is reliable at this moment because the
+  event is raised from the grid's own mouse handling, with the pointer still
+  where the operator put it. Returns nil if the click landed on the indicator
+  strip, a title, or past the last column. }
+function TfrmLeadsOnlineSoapExport.ClickedColumn: TColumn;
+var
+  Pt: TPoint;
+  Cell: TGridCoord;
+  Idx: Integer;
+begin
+  Result := nil;
+  Pt := grdTickets.ScreenToClient(Mouse.CursorPos);
+  Cell := grdTickets.MouseCoord(Pt.X, Pt.Y);
+
+  Idx := Cell.X;
+  if dgIndicator in grdTickets.Options then
+    Dec(Idx);
+
+  if (Cell.Y > 0) and (Idx >= 0) and (Idx < grdTickets.Columns.Count) then
+    Result := grdTickets.Columns[Idx];
+end;
+
 procedure TfrmLeadsOnlineSoapExport.grdTicketsCellClick(Column: TColumn);
+var
+  Clicked: TColumn;
 begin
   // Click the tick column to include/exclude a row.
   //
@@ -620,8 +655,14 @@ begin
   // would fail the filter and the row would vanish from the results the
   // operator is reading. Refresh (or Check all / Clear all) brings the whole
   // list back and re-enables ticking.
-  if FRunning or FShowOnlySelected or (not SameText(Column.FieldName, ColSelected)) then
+  if FRunning or FShowOnlySelected then
     Exit;
+
+  // Column is ignored on purpose -- see ClickedColumn.
+  Clicked := ClickedColumn;
+  if (Clicked = nil) or (not SameText(Clicked.FieldName, ColSelected)) then
+    Exit;
+
   clnTickets.Edit;
   clnTickets.FieldByName(ColSelected).AsBoolean := not clnTickets.FieldByName(ColSelected).AsBoolean;
   clnTickets.Post;
@@ -878,16 +919,15 @@ begin
     try
       clnTickets.First;
       while not clnTickets.Eof do
-      begin
-        if clnTickets.FieldByName(ColSelected).AsBoolean then
         begin
-          Qry.ParamByName('TransactionNo').AsInteger :=
-            clnTickets.FieldByName('TRANSACTION_NO').AsInteger;
-          Qry.ExecSQL;
-          Inc(Done);
+          if clnTickets.FieldByName(ColSelected).AsBoolean then
+            begin
+              Qry.ParamByName('TransactionNo').AsInteger := clnTickets.FieldByName('TRANSACTION_NO').AsInteger;
+              Qry.ExecSQL;
+              Inc(Done);
+            end;
+          clnTickets.Next;
         end;
-        clnTickets.Next;
-      end;
       if clnTickets.BookmarkValid(BM) then
         clnTickets.GotoBookmark(BM);
     finally
