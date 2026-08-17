@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 9;
+  CURRENT_DB_VERSION = 10;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -458,6 +458,34 @@ begin
     '  CONSTRAINT UQ_LEADS_SOAP_IMAGE_SENT UNIQUE (TRANSACTION_NO, IMAGES_DATA_NO))');
 end;
 
+{ Step 10 — LEADS_SOAP_EXCLUDED.
+
+  Transactions the store has decided must never go to LeadsOnline. A store
+  joining the web service brings its whole history: Perez Cash has 13,516 pawns
+  and purchases that never appeared in any CSV export, the oldest from 2000.
+  Nothing removes a transaction from the candidate list until the service has
+  answered about it, so without this they queue forever in front of the few
+  rows that matter.
+
+  Deliberately NOT a sentinel ERROR_CODE on LEADS_SOAP_SUBMISSION: that table's
+  TICKET_TYPE / TICKET_NUMBER / TICKET_DATETIME are NOT NULL and hold exactly
+  what was transmitted. These were never transmitted, so there is nothing
+  truthful to put there.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_LeadsSoapExcluded.sql. }
+procedure Step10_LeadsSoapExcluded(Conn: TFDConnection);
+begin
+  if RelationExists(Conn, 'LEADS_SOAP_EXCLUDED') then
+    Exit;
+
+  ExecDDL(Conn,
+    'CREATE TABLE LEADS_SOAP_EXCLUDED (' +
+    '  TRANSACTION_NO  INTEGER    NOT NULL,' +
+    '  EXCLUDED_AT     TIMESTAMP  DEFAULT CURRENT_TIMESTAMP NOT NULL,' +
+    '  REASON          VARCHAR(255),' +
+    '  CONSTRAINT PK_LEADS_SOAP_EXCLUDED PRIMARY KEY (TRANSACTION_NO))');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 function DatabaseIsCurrent(Conn: TFDConnection): Boolean;
@@ -536,7 +564,13 @@ begin
     SetDbVersion(Conn, 9);
   end;
 
-  // Future steps: if V < 10 then begin Step10_...(Conn); SetDbVersion(Conn, 10); end;
+  if V < 10 then
+  begin
+    Step10_LeadsSoapExcluded(Conn);
+    SetDbVersion(Conn, 10);
+  end;
+
+  // Future steps: if V < 11 then begin Step11_...(Conn); SetDbVersion(Conn, 11); end;
 end;
 
 end.

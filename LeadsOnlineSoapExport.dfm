@@ -24,8 +24,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     Height = 68
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 743
-    ExplicitWidth = 1209
     DesignSize = (
       1169
       68)
@@ -59,7 +57,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
-      ExplicitWidth = 754
     end
     object btnSubmit: TRzBitBtn
       Left = 21
@@ -85,8 +82,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     Height = 750
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 1209
-    ExplicitHeight = 734
     DesignSize = (
       1169
       750)
@@ -130,6 +125,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Anchors = [akLeft, akTop, akRight, akBottom]
       DataSource = dsTickets
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgCancelOnExit]
+      PopupMenu = popMnuGrid
       ReadOnly = True
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
@@ -335,8 +331,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Height = 59
       Align = alBottom
       TabOrder = 3
-      ExplicitTop = 670
-      ExplicitWidth = 1199
       object btnCheckAll: TButton
         Left = 23
         Top = 14
@@ -379,5 +373,14 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     RegIniFile = DM.RegIniFile
     Left = 470
     Top = 436
+  end
+  object popMnuGrid: TPopupMenu
+    OnPopup = popMnuGridPopup
+    Left = 180
+    Top = 282
+    object ExcludeSelected1: TMenuItem
+      Caption = 'Never send these to LeadsOnline...'
+      OnClick = ExcludeSelected1Click
+    end
   end
 end

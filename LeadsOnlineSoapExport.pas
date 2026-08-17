@@ -36,7 +36,7 @@ uses
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client,
   // TLeadsOnlineClient and TicketKey both appear in method signatures below.
-  uLeadsOnlineClient, LeadsOnlineWS;
+  uLeadsOnlineClient, LeadsOnlineWS, Vcl.Menus;
 
 type
   /// What happened to one ticket. "Unreachable" is kept separate from
@@ -74,6 +74,8 @@ type
     btnCheckAll: TButton;
     btnClearAll: TButton;
     btnSubmit: TRzBitBtn;
+    popMnuGrid: TPopupMenu;
+    ExcludeSelected1: TMenuItem;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -86,6 +88,8 @@ type
     procedure grdTicketsCellClick(Column: TColumn);
     procedure grdTicketsDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure ExcludeSelected1Click(Sender: TObject);
+    procedure popMnuGridPopup(Sender: TObject);
   private
     FRunning: Boolean;
     FCancelled: Boolean;
@@ -104,6 +108,10 @@ type
     /// all, clear all) and a counter that drifts would be worse than useless
     /// on a screen whose whole job is "send exactly these".
     function SelectedCount: Integer;
+    /// How many ticked rows are newer than RecentExclusionMonths. Excluding old
+    /// history is housekeeping; excluding a recent pawn means a transaction that
+    /// never reaches law enforcement, so the confirmation has to separate them.
+    function SelectedRecentCount: Integer;
     procedure UpdateCountLabel;
     procedure SetAllSelected(AValue: Boolean);
     procedure SetRunning(AValue: Boolean);
@@ -236,8 +244,35 @@ const
     '  LEFT JOIN LEADS_SOAP_SUBMISSION S ON S.TRANSACTION_NO = T1.TRANSACTION_NO' +
     ' WHERE T1.TRAN_TYPE IN (''P'', ''U'')' +
     '   AND COALESCE(T1.TRAN_CLOSE_REASON, 0) <> 1' +
+    // Excluded by the store, permanently. See SQLExcludeTransaction.
+    '   AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_EXCLUDED X' +
+    '                    WHERE X.TRANSACTION_NO = T1.TRANSACTION_NO)' +
     '   AND (S.ID IS NULL OR S.ERROR_CODE IS NULL' +
     '        OR S.ERROR_CODE NOT IN (0, 6, 7, 13))';
+
+  { Marks one transaction as never-to-be-sent.
+
+    UPDATE OR INSERT rather than INSERT so that re-excluding an already-excluded
+    row is harmless -- the operator cannot see the exclusion list, so they have
+    no way of knowing what is already on it.
+
+    The table carries no EXCLUDED_BY because PawnPro has no application login,
+    so there is no user to name. EXCLUDED_AT answers the question anyone
+    actually asks later: when was this decided. }
+  SQLExcludeTransaction =
+    'UPDATE OR INSERT INTO LEADS_SOAP_EXCLUDED' +
+    '  (TRANSACTION_NO, EXCLUDED_AT, REASON)' +
+    '  VALUES (:TransactionNo, CURRENT_TIMESTAMP, :Reason)' +
+    '  MATCHING (TRANSACTION_NO)';
+
+  /// Reason written for every exclusion made from this screen. A column rather
+  /// than a constant string in case a future screen excludes for another cause.
+  ExcludeReasonOperator = 'Excluded on the LeadsOnline export screen';
+
+  /// A transaction younger than this is not old history, and excluding it means
+  /// a pawn that never reaches law enforcement. The confirmation calls those
+  /// out separately -- see ExcludeSelected1Click.
+  RecentExclusionMonths = 12;
 
   { Every image belonging to one ticket, in one pass.
 
@@ -678,6 +713,37 @@ begin
   end;
 end;
 
+function TfrmLeadsOnlineSoapExport.SelectedRecentCount: Integer;
+var
+  BM: TBookmark;
+  Cutoff: TDateTime;
+begin
+  Result := 0;
+  if (not clnTickets.Active) or clnTickets.IsEmpty then
+    Exit;
+
+  Cutoff := IncMonth(Date, -RecentExclusionMonths);
+
+  BM := clnTickets.GetBookmark;
+  clnTickets.DisableControls;
+  try
+    clnTickets.First;
+    while not clnTickets.Eof do
+    begin
+      if clnTickets.FieldByName(ColSelected).AsBoolean and
+         (not clnTickets.FieldByName('TRAN_DATE').IsNull) and
+         (clnTickets.FieldByName('TRAN_DATE').AsDateTime >= Cutoff) then
+        Inc(Result);
+      clnTickets.Next;
+    end;
+    if clnTickets.BookmarkValid(BM) then
+      clnTickets.GotoBookmark(BM);
+  finally
+    clnTickets.EnableControls;
+    clnTickets.FreeBookmark(BM);
+  end;
+end;
+
 procedure TfrmLeadsOnlineSoapExport.UpdateCountLabel;
 begin
   // "3 of 214 ticked" rather than a bare total: with Check all / Clear all the
@@ -743,6 +809,101 @@ end;
 procedure TfrmLeadsOnlineSoapExport.btnClearAllClick(Sender: TObject);
 begin
   SetAllSelected(False);
+end;
+
+// Greyed out rather than hidden while a run is in progress or nothing is
+// ticked, so the item's existence is discoverable but it cannot fire at a
+// moment when "the selection" is ambiguous.
+procedure TfrmLeadsOnlineSoapExport.popMnuGridPopup(Sender: TObject);
+begin
+  ExcludeSelected1.Enabled := (not FRunning) and (SelectedCount > 0);
+end;
+
+{ Marks the ticked transactions as never-to-be-sent.
+
+  This is the answer to a store joining the web service with decades of history:
+  most of it is far older than LeadsOnline will accept, and nothing removes a
+  transaction from the candidate list until the service has answered about it,
+  so without this the genuinely-unsent rows stay buried under thousands that can
+  never succeed.
+
+  The confirmation counts RECENT transactions separately and on purpose. This
+  one menu item does two very different things: excluding a 2001 pawn is
+  housekeeping, while excluding last week's means a transaction that never
+  reaches law enforcement. A single "are you sure?" for both teaches people to
+  click through the one that matters. }
+procedure TfrmLeadsOnlineSoapExport.ExcludeSelected1Click(Sender: TObject);
+var
+  Total, Recent, Done: Integer;
+  Msg: string;
+  Qry: TFDQuery;
+  BM: TBookmark;
+begin
+  if FRunning then
+    Exit;
+
+  Total := SelectedCount;
+  if Total = 0 then
+  begin
+    PawnInfo('Tick the transactions to exclude first.');
+    Exit;
+  end;
+
+  Recent := SelectedRecentCount;
+
+  Msg := Format('Never send %d transaction(s) to LeadsOnline?', [Total]) +
+         sLineBreak + sLineBreak +
+         'They will stop appearing in this list and will not be sent, now or later.';
+
+  if Recent > 0 then
+    Msg := Msg + sLineBreak + sLineBreak +
+           Format('WARNING: %d of them %s from the last %d months.',
+                  [Recent, IfThen(Recent = 1, 'is', 'are'), RecentExclusionMonths]) +
+           sLineBreak +
+           'Recent transactions are normally reportable. Excluding one means it ' +
+           'is never reported to law enforcement.';
+
+  if not PawnConfirm(Msg) then
+    Exit;
+
+  Done := 0;
+  Qry := NewQuery(SQLExcludeTransaction);
+  try
+    Qry.ParamByName('TransactionNo').DataType := ftInteger;
+    Qry.ParamByName('Reason').DataType := ftString;
+    Qry.ParamByName('Reason').AsString := ExcludeReasonOperator;
+
+    BM := clnTickets.GetBookmark;
+    clnTickets.DisableControls;
+    try
+      clnTickets.First;
+      while not clnTickets.Eof do
+      begin
+        if clnTickets.FieldByName(ColSelected).AsBoolean then
+        begin
+          Qry.ParamByName('TransactionNo').AsInteger :=
+            clnTickets.FieldByName('TRANSACTION_NO').AsInteger;
+          Qry.ExecSQL;
+          Inc(Done);
+        end;
+        clnTickets.Next;
+      end;
+      if clnTickets.BookmarkValid(BM) then
+        clnTickets.GotoBookmark(BM);
+    finally
+      clnTickets.EnableControls;
+      clnTickets.FreeBookmark(BM);
+    end;
+  finally
+    Qry.Free;
+  end;
+
+  // Reload rather than delete the rows in place: the candidate query is the one
+  // definition of what is still sendable, and re-running it proves the
+  // exclusions took rather than merely assuming they did.
+  LoadCandidates;
+
+  PawnInfo(Format('%d transaction(s) will no longer be sent to LeadsOnline.', [Done]));
 end;
 
 procedure TfrmLeadsOnlineSoapExport.SetRunning(AValue: Boolean);
