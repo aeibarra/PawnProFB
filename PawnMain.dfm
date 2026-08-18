@@ -735,7 +735,7 @@ object frmPawnMain: TfrmPawnMain
         Top = 0
         Width = 90
         Height = 76
-        ImageIndex = 33
+        ImageIndex = 41
         Layout = blGlyphTop
         Spacing = 1
         UseToolbarButtonSize = False
