@@ -200,48 +200,56 @@ object frmClients: TfrmClients
             Expanded = False
             FieldName = 'CUST_ID_AGENCY_STATE'
             Title.Caption = 'ID Agency or State'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_GENDER'
             Title.Caption = 'Gender'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_RACE'
             Title.Caption = 'Race'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HAIR'
             Title.Caption = 'Hair'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_EYES'
             Title.Caption = 'Eyes'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_MARK'
             Title.Caption = 'Mark'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_WEIGHT'
             Title.Caption = 'Weight'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'CUST_HEIGHT'
             Title.Caption = 'Height'
+            Width = 64
             Visible = True
           end
           item
@@ -1297,6 +1305,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end
             item
@@ -1344,6 +1353,7 @@ object frmClients: TfrmClients
               Title.Font.Height = -13
               Title.Font.Name = 'Segoe UI'
               Title.Font.Style = []
+              Width = 64
               Visible = True
             end>
         end
@@ -3713,10 +3723,10 @@ object frmClients: TfrmClients
         Brush.Style = bsClear
         ParentWidth = True
         Pen.Color = clGray
-        mmHeight = 53726
-        mmLeft = 380
-        mmTop = 25899
-        mmWidth = 202440
+        mmHeight = 53711
+        mmLeft = 0
+        mmTop = 25933
+        mmWidth = 203200
         BandType = 0
         LayerName = Foreground1
       end
@@ -4541,14 +4551,14 @@ object frmClients: TfrmClients
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 8731
+        mmHeight = 10054
         mmLeft = 1055
-        mmTop = 60800
+        mmTop = 59531
         mmWidth = 3704
         BandType = 0
         LayerName = Foreground1
-        RotatedOriginLeft = 0
-        RotatedOriginTop = 8731
+        RotatedOriginLeft = 402
+        RotatedOriginTop = 10054
       end
       object ppLabel37: TppLabel
         DesignLayer = ppDesignLayer2
@@ -5215,9 +5225,9 @@ object frmClients: TfrmClients
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2552
+        mmHeight = 2108
         mmLeft = 12435
-        mmTop = 56328
+        mmTop = 55440
         mmWidth = 4234
         BandType = 0
         LayerName = Foreground1
@@ -5229,16 +5239,16 @@ object frmClients: TfrmClients
         Caption = 'H. Handgun'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2202
+        mmHeight = 2125
         mmLeft = 12435
-        mmTop = 58593
-        mmWidth = 7409
+        mmTop = 57500
+        mmWidth = 10528
         BandType = 0
         LayerName = Foreground1
       end
@@ -5249,16 +5259,16 @@ object frmClients: TfrmClients
         Caption = 'R. Rifle'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2054
+        mmHeight = 2125
         mmLeft = 12435
-        mmTop = 60467
-        mmWidth = 4498
+        mmTop = 59500
+        mmWidth = 6516
         BandType = 0
         LayerName = Foreground1
       end
@@ -5269,16 +5279,16 @@ object frmClients: TfrmClients
         Caption = 'S. Shotgun'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2202
+        mmHeight = 2125
         mmLeft = 12435
-        mmTop = 62404
-        mmWidth = 6615
+        mmTop = 61500
+        mmWidth = 9722
         BandType = 0
         LayerName = Foreground1
       end
@@ -5289,16 +5299,16 @@ object frmClients: TfrmClients
         Caption = 'A. Airgun'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2202
+        mmHeight = 2125
         mmLeft = 12435
-        mmTop = 64458
-        mmWidth = 5821
+        mmTop = 63500
+        mmWidth = 8249
         BandType = 0
         LayerName = Foreground1
       end
@@ -5309,16 +5319,16 @@ object frmClients: TfrmClients
         Caption = 'B. Black Powder'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2202
+        mmHeight = 2125
         mmLeft = 12435
-        mmTop = 66543
-        mmWidth = 10319
+        mmTop = 65500
+        mmWidth = 14426
         BandType = 0
         LayerName = Foreground1
       end
@@ -5337,7 +5347,7 @@ object frmClients: TfrmClients
         Transparent = True
         mmHeight = 2108
         mmLeft = 29633
-        mmTop = 56328
+        mmTop = 55440
         mmWidth = 7409
         BandType = 0
         LayerName = Foreground1
@@ -5349,16 +5359,16 @@ object frmClients: TfrmClients
         Caption = '1. Single'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 29633
-        mmTop = 58593
-        mmWidth = 5027
+        mmTop = 57500
+        mmWidth = 7760
         BandType = 0
         LayerName = Foreground1
       end
@@ -5369,16 +5379,16 @@ object frmClients: TfrmClients
         Caption = '2. Double'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 29633
-        mmTop = 60467
-        mmWidth = 5821
+        mmTop = 59500
+        mmWidth = 8539
         BandType = 0
         LayerName = Foreground1
       end
@@ -5389,16 +5399,16 @@ object frmClients: TfrmClients
         Caption = '3. Over Under'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 29633
-        mmTop = 62404
-        mmWidth = 8732
+        mmTop = 61500
+        mmWidth = 12354
         BandType = 0
         LayerName = Foreground1
       end
@@ -5409,16 +5419,16 @@ object frmClients: TfrmClients
         Caption = '4. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 29633
-        mmTop = 64458
-        mmWidth = 5027
+        mmTop = 63500
+        mmWidth = 7324
         BandType = 0
         LayerName = Foreground1
       end
@@ -5436,8 +5446,8 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 2108
-        mmLeft = 45773
-        mmTop = 56328
+        mmLeft = 45508
+        mmTop = 55440
         mmWidth = 6879
         BandType = 0
         LayerName = Foreground1
@@ -5449,16 +5459,16 @@ object frmClients: TfrmClients
         Caption = 'R. Revolver'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 58593
-        mmWidth = 7409
+        mmTop = 57500
+        mmWidth = 10251
         BandType = 0
         LayerName = Foreground1
       end
@@ -5469,16 +5479,16 @@ object frmClients: TfrmClients
         Caption = 'A. Semi-Auto'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 60467
-        mmWidth = 8467
+        mmTop = 59500
+        mmWidth = 11673
         BandType = 0
         LayerName = Foreground1
       end
@@ -5489,16 +5499,16 @@ object frmClients: TfrmClients
         Caption = 'B. Bolt Action'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 62404
-        mmWidth = 8732
+        mmTop = 61500
+        mmWidth = 12080
         BandType = 0
         LayerName = Foreground1
       end
@@ -5509,16 +5519,16 @@ object frmClients: TfrmClients
         Caption = 'L. Lever'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 64458
-        mmWidth = 5028
+        mmTop = 63500
+        mmWidth = 7067
         BandType = 0
         LayerName = Foreground1
       end
@@ -5529,16 +5539,16 @@ object frmClients: TfrmClients
         Caption = 'P. Pump'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 66543
-        mmWidth = 5028
+        mmTop = 65500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -5549,16 +5559,16 @@ object frmClients: TfrmClients
         Caption = 'S. Single Shot'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 45508
-        mmTop = 68862
-        mmWidth = 8203
+        mmTop = 67500
+        mmWidth = 12338
         BandType = 0
         LayerName = Foreground1
       end
@@ -5577,7 +5587,7 @@ object frmClients: TfrmClients
         Transparent = True
         mmHeight = 2108
         mmLeft = 63236
-        mmTop = 56328
+        mmTop = 55440
         mmWidth = 5820
         BandType = 0
         LayerName = Foreground1
@@ -5589,16 +5599,16 @@ object frmClients: TfrmClients
         Caption = 'C. Chrome Nickel'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 63236
-        mmTop = 58593
-        mmWidth = 11112
+        mmTop = 57500
+        mmWidth = 15216
         BandType = 0
         LayerName = Foreground1
       end
@@ -5609,16 +5619,16 @@ object frmClients: TfrmClients
         Caption = 'B. Blue Steel'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 63236
-        mmTop = 60467
-        mmWidth = 7937
+        mmTop = 59500
+        mmWidth = 11291
         BandType = 0
         LayerName = Foreground1
       end
@@ -5629,16 +5639,16 @@ object frmClients: TfrmClients
         Caption = 'S. Stainless Steel'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 63236
-        mmTop = 62404
-        mmWidth = 10583
+        mmTop = 61500
+        mmWidth = 15242
         BandType = 0
         LayerName = Foreground1
       end
@@ -5649,16 +5659,16 @@ object frmClients: TfrmClients
         Caption = 'X. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 63236
-        mmTop = 64458
-        mmWidth = 5027
+        mmTop = 63500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -5689,16 +5699,16 @@ object frmClients: TfrmClients
         Caption = 'R. Ring'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 57301
-        mmWidth = 4498
+        mmTop = 57500
+        mmWidth = 6501
         BandType = 0
         LayerName = Foreground1
       end
@@ -5709,16 +5719,16 @@ object frmClients: TfrmClients
         Caption = 'W. Watch'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 59360
-        mmWidth = 6085
+        mmTop = 59500
+        mmWidth = 8643
         BandType = 0
         LayerName = Foreground1
       end
@@ -5729,16 +5739,16 @@ object frmClients: TfrmClients
         Caption = 'N. Necklace'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 61280
-        mmWidth = 7673
+        mmTop = 61500
+        mmWidth = 10493
         BandType = 0
         LayerName = Foreground1
       end
@@ -5749,16 +5759,16 @@ object frmClients: TfrmClients
         Caption = 'B. Bracelet'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 63199
-        mmWidth = 7143
+        mmTop = 63500
+        mmWidth = 9699
         BandType = 0
         LayerName = Foreground1
       end
@@ -5769,16 +5779,16 @@ object frmClients: TfrmClients
         Caption = 'P. Pendam Charm'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 65119
-        mmWidth = 11377
+        mmTop = 65500
+        mmWidth = 15838
         BandType = 0
         LayerName = Foreground1
       end
@@ -5796,7 +5806,7 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 2108
-        mmLeft = 110336
+        mmLeft = 110422
         mmTop = 55440
         mmWidth = 5821
         BandType = 0
@@ -5809,16 +5819,16 @@ object frmClients: TfrmClients
         Caption = 'Y. Yellow Gold'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 57386
-        mmWidth = 8467
+        mmTop = 57500
+        mmWidth = 12865
         BandType = 0
         LayerName = Foreground1
       end
@@ -5829,16 +5839,16 @@ object frmClients: TfrmClients
         Caption = 'W. White Gold'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 59324
-        mmWidth = 8731
+        mmTop = 59500
+        mmWidth = 12798
         BandType = 0
         LayerName = Foreground1
       end
@@ -5849,16 +5859,16 @@ object frmClients: TfrmClients
         Caption = 'S. Sterling Silver'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 61176
-        mmWidth = 9790
+        mmTop = 61500
+        mmWidth = 14783
         BandType = 0
         LayerName = Foreground1
       end
@@ -5869,16 +5879,16 @@ object frmClients: TfrmClients
         Caption = 'P. Platimum'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 63292
-        mmWidth = 7408
+        mmTop = 63500
+        mmWidth = 10834
         BandType = 0
         LayerName = Foreground1
       end
@@ -5889,16 +5899,16 @@ object frmClients: TfrmClients
         Caption = 'T. Tri-Color'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 65028
-        mmWidth = 6879
+        mmTop = 65500
+        mmWidth = 10038
         BandType = 0
         LayerName = Foreground1
       end
@@ -5929,16 +5939,16 @@ object frmClients: TfrmClients
         Caption = 'M. Man'#39's'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 127799
-        mmTop = 57386
-        mmWidth = 5292
+        mmTop = 57500
+        mmWidth = 7898
         BandType = 0
         LayerName = Foreground1
       end
@@ -5949,16 +5959,16 @@ object frmClients: TfrmClients
         Caption = 'W. Woman'#39's'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 127799
-        mmTop = 59324
-        mmWidth = 7937
+        mmTop = 59500
+        mmWidth = 11144
         BandType = 0
         LayerName = Foreground1
       end
@@ -5969,16 +5979,16 @@ object frmClients: TfrmClients
         Caption = 'N. Not Applicable'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 127799
-        mmTop = 61176
-        mmWidth = 10848
+        mmTop = 61500
+        mmWidth = 15398
         BandType = 0
         LayerName = Foreground1
       end
@@ -5996,7 +6006,7 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 2108
-        mmLeft = 147211
+        mmLeft = 147386
         mmTop = 55440
         mmWidth = 5292
         BandType = 0
@@ -6016,7 +6026,7 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 2108
-        mmLeft = 168817
+        mmLeft = 171463
         mmTop = 55440
         mmWidth = 12171
         BandType = 0
@@ -6036,8 +6046,8 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 2108
-        mmLeft = 188926
-        mmTop = 55588
+        mmLeft = 189048
+        mmTop = 55440
         mmWidth = 12700
         BandType = 0
         LayerName = Foreground1
@@ -6049,16 +6059,16 @@ object frmClients: TfrmClients
         Caption = 'E. Earrings'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 67039
-        mmWidth = 6615
+        mmTop = 67500
+        mmWidth = 9604
         BandType = 0
         LayerName = Foreground1
       end
@@ -6069,16 +6079,16 @@ object frmClients: TfrmClients
         Caption = 'C. Chain'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 68959
-        mmWidth = 5292
+        mmTop = 69500
+        mmWidth = 7370
         BandType = 0
         LayerName = Foreground1
       end
@@ -6089,16 +6099,16 @@ object frmClients: TfrmClients
         Caption = 'L. Cufflinks'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 70879
-        mmWidth = 7144
+        mmTop = 71500
+        mmWidth = 9997
         BandType = 0
         LayerName = Foreground1
       end
@@ -6109,16 +6119,16 @@ object frmClients: TfrmClients
         Caption = 'X. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 90488
-        mmTop = 72755
-        mmWidth = 5027
+        mmTop = 73500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -6129,16 +6139,16 @@ object frmClients: TfrmClients
         Caption = 'X. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2117
+        mmHeight = 2125
         mmLeft = 110422
-        mmTop = 66880
-        mmWidth = 5027
+        mmTop = 67500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -6149,16 +6159,16 @@ object frmClients: TfrmClients
         Caption = 'E. Emerald'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 57301
-        mmWidth = 6615
+        mmTop = 57500
+        mmWidth = 9531
         BandType = 0
         LayerName = Foreground1
       end
@@ -6169,16 +6179,16 @@ object frmClients: TfrmClients
         Caption = 'H. Heart'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 59064
-        mmWidth = 5292
+        mmTop = 59500
+        mmWidth = 7465
         BandType = 0
         LayerName = Foreground1
       end
@@ -6189,16 +6199,16 @@ object frmClients: TfrmClients
         Caption = 'M. Marquise'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 60984
-        mmWidth = 7409
+        mmTop = 61500
+        mmWidth = 10866
         BandType = 0
         LayerName = Foreground1
       end
@@ -6209,16 +6219,16 @@ object frmClients: TfrmClients
         Caption = 'O. Oval'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 62903
-        mmWidth = 4498
+        mmTop = 63500
+        mmWidth = 6494
         BandType = 0
         LayerName = Foreground1
       end
@@ -6229,16 +6239,16 @@ object frmClients: TfrmClients
         Caption = 'P. Pear'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 64823
-        mmWidth = 4234
+        mmTop = 65500
+        mmWidth = 6355
         BandType = 0
         LayerName = Foreground1
       end
@@ -6249,16 +6259,16 @@ object frmClients: TfrmClients
         Caption = 'R. Round'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 66743
-        mmWidth = 5821
+        mmTop = 67500
+        mmWidth = 8187
         BandType = 0
         LayerName = Foreground1
       end
@@ -6269,216 +6279,16 @@ object frmClients: TfrmClients
         Caption = 'X. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 171463
-        mmTop = 68663
-        mmWidth = 5027
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel114: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label114'
-        Border.mmPadding = 0
-        Caption = 'R. Red/Pink'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 70583
-        mmWidth = 7144
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel115: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label1204'
-        Border.mmPadding = 0
-        Caption = 'P. Purple'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 68663
-        mmWidth = 5292
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel116: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label116'
-        Border.mmPadding = 0
-        Caption = 'O. Brown'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 66891
-        mmWidth = 5821
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel117: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label117'
-        Border.mmPadding = 0
-        Caption = 'K. Black'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 65119
-        mmWidth = 5292
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel118: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label118'
-        Border.mmPadding = 0
-        Caption = 'G. Green'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 63051
-        mmWidth = 5556
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel124: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label124'
-        Border.mmPadding = 0
-        Caption = 'C. Clear'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 60984
-        mmWidth = 5027
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel125: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label125'
-        Border.mmPadding = 0
-        Caption = 'B. Blue'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 59212
-        mmWidth = 4498
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel126: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label126'
-        Border.mmPadding = 0
-        Caption = 'A. Amber'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 57301
-        mmWidth = 6086
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel127: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label127'
-        Border.mmPadding = 0
-        Caption = 'W. White'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 72459
-        mmWidth = 6297
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLabel128: TppLabel
-        DesignLayer = ppDesignLayer2
-        UserName = 'Label128'
-        Border.mmPadding = 0
-        Caption = 'Y. Yellow'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
-        Font.Style = [fsBold]
-        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
-        FormFieldSettings.FormFieldType = fftNone
-        Transparent = True
-        mmHeight = 2116
-        mmLeft = 191836
-        mmTop = 74320
-        mmWidth = 5292
+        mmTop = 69500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -6489,16 +6299,16 @@ object frmClients: TfrmClients
         Caption = 'B. Box Link'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2054
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 57301
-        mmWidth = 7144
+        mmTop = 57500
+        mmWidth = 9994
         BandType = 0
         LayerName = Foreground1
       end
@@ -6509,16 +6319,16 @@ object frmClients: TfrmClients
         Caption = 'C. Class School'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 59064
-        mmWidth = 9790
+        mmTop = 59500
+        mmWidth = 13330
         BandType = 0
         LayerName = Foreground1
       end
@@ -6529,16 +6339,16 @@ object frmClients: TfrmClients
         Caption = 'F. Figaro'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 60836
-        mmWidth = 5292
+        mmTop = 61500
+        mmWidth = 7770
         BandType = 0
         LayerName = Foreground1
       end
@@ -6549,16 +6359,16 @@ object frmClients: TfrmClients
         Caption = 'G. Gucci'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 62607
-        mmWidth = 5292
+        mmTop = 63500
+        mmWidth = 7319
         BandType = 0
         LayerName = Foreground1
       end
@@ -6569,16 +6379,16 @@ object frmClients: TfrmClients
         Caption = 'H. Herringbone'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 64379
-        mmWidth = 9525
+        mmTop = 65500
+        mmWidth = 13592
         BandType = 0
         LayerName = Foreground1
       end
@@ -6589,16 +6399,16 @@ object frmClients: TfrmClients
         Caption = 'M. Monogram'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 66447
-        mmWidth = 8467
+        mmTop = 67500
+        mmWidth = 12238
         BandType = 0
         LayerName = Foreground1
       end
@@ -6609,16 +6419,16 @@ object frmClients: TfrmClients
         Caption = 'N. Nugget'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 68367
-        mmWidth = 6350
+        mmTop = 69500
+        mmWidth = 9016
         BandType = 0
         LayerName = Foreground1
       end
@@ -6629,16 +6439,16 @@ object frmClients: TfrmClients
         Caption = 'O. Solitaire'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 70287
-        mmWidth = 6615
+        mmTop = 71500
+        mmWidth = 9930
         BandType = 0
         LayerName = Foreground1
       end
@@ -6649,16 +6459,16 @@ object frmClients: TfrmClients
         Caption = 'P. Band'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 72163
-        mmWidth = 4763
+        mmTop = 73500
+        mmWidth = 6833
         BandType = 0
         LayerName = Foreground1
       end
@@ -6669,16 +6479,16 @@ object frmClients: TfrmClients
         Caption = 'R. Rope'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 147386
-        mmTop = 74266
-        mmWidth = 5027
+        mmTop = 75500
+        mmWidth = 6976
         BandType = 0
         LayerName = Foreground1
       end
@@ -6689,16 +6499,16 @@ object frmClients: TfrmClients
         Caption = 'S. Serpentine'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 158014
-        mmTop = 72225
-        mmWidth = 8202
+        mmTop = 73500
+        mmWidth = 11943
         BandType = 0
         LayerName = Foreground1
       end
@@ -6709,16 +6519,16 @@ object frmClients: TfrmClients
         Caption = 'X. Other'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Name = 'Browallia New'
-        Font.Size = 6
+        Font.Name = 'Tahoma'
+        Font.Size = 5
         Font.Style = [fsBold]
         FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
-        mmHeight = 2116
+        mmHeight = 2125
         mmLeft = 158014
-        mmTop = 74266
-        mmWidth = 5027
+        mmTop = 75500
+        mmWidth = 7408
         BandType = 0
         LayerName = Foreground1
       end
@@ -6739,20 +6549,6 @@ object frmClients: TfrmClients
         mmLeft = 4048
         mmTop = 76594
         mmWidth = 49477
-        BandType = 0
-        LayerName = Foreground1
-      end
-      object ppLine29: TppLine
-        DesignLayer = ppDesignLayer2
-        UserName = 'Line29'
-        Border.mmPadding = 0
-        Pen.Color = clGray
-        Position = lpBottom
-        Weight = 0.75000000000000000
-        mmHeight = 1512
-        mmLeft = 380
-        mmTop = 75408
-        mmWidth = 202440
         BandType = 0
         LayerName = Foreground1
       end
@@ -6837,6 +6633,221 @@ object frmClients: TfrmClients
         mmLeft = 152441
         mmTop = 47815
         mmWidth = 2646
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel128: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label128'
+        Border.mmPadding = 0
+        Caption = 'Y. Yellow'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 75500
+        mmWidth = 8303
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLine29: TppLine
+        DesignLayer = ppDesignLayer2
+        UserName = 'Line29'
+        Border.mmPadding = 0
+        Pen.Color = clGray
+        ParentWidth = True
+        Position = lpBottom
+        Weight = 0.75000000000000000
+        mmHeight = 1588
+        mmLeft = 0
+        mmTop = 78184
+        mmWidth = 203200
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel114: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label114'
+        Border.mmPadding = 0
+        Caption = 'R. Red/Pink'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 73500
+        mmWidth = 10789
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel115: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label1204'
+        Border.mmPadding = 0
+        Caption = 'P. Purple'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 67500
+        mmWidth = 8071
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel116: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label116'
+        Border.mmPadding = 0
+        Caption = 'O. Brown'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 71500
+        mmWidth = 8289
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel117: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label117'
+        Border.mmPadding = 0
+        Caption = 'K. Black'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 190236
+        mmTop = 65500
+        mmWidth = 7188
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel118: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label118'
+        Border.mmPadding = 0
+        Caption = 'G. Green'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 63500
+        mmWidth = 7786
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel124: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label124'
+        Border.mmPadding = 0
+        Caption = 'C. Clear'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 61500
+        mmWidth = 6924
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel125: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label125'
+        Border.mmPadding = 0
+        Caption = 'B. Blue'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 59500
+        mmWidth = 6297
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel126: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label126'
+        Border.mmPadding = 0
+        Caption = 'A. Amber'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 57500
+        mmWidth = 8192
+        BandType = 0
+        LayerName = Foreground1
+      end
+      object ppLabel127: TppLabel
+        DesignLayer = ppDesignLayer2
+        UserName = 'Label127'
+        Border.mmPadding = 0
+        Caption = 'W. White'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 5
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 2125
+        mmLeft = 189048
+        mmTop = 69500
+        mmWidth = 8236
         BandType = 0
         LayerName = Foreground1
       end
@@ -7470,12 +7481,12 @@ object frmClients: TfrmClients
         FormFieldSettings.FormFieldType = fftNone
         Transparent = True
         mmHeight = 6085
-        mmLeft = 1043
+        mmLeft = 1055
         mmTop = 8468
         mmWidth = 3704
         BandType = 4
         LayerName = Foreground1
-        RotatedOriginLeft = 0
+        RotatedOriginLeft = 402
         RotatedOriginTop = 6085
       end
       object ppLine36: TppLine
