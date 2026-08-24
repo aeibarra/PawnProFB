@@ -53,6 +53,7 @@ The pilot. First store on the web service.
 |---|---|
 | **SOAP build installed** | 2026-08-17 |
 | **Pilot confirmed good** | 2026-08-24, after a week of live use |
+| **Week 1 result** | 14 tickets submitted, all accepted; 26 images uploaded, none failed; zero errors of any kind. See `Tools/StoreSurvey/PerezCash_WEEK1_2026-08-24.txt` |
 | **Export method** | `'S'` — SOAP |
 | **Skip CSV-already-sent** | on |
 | **Sandbox flag** | off |
@@ -90,6 +91,82 @@ these to LeadsOnline** on the export grid rather than submitted.
 - **`AUTO_BACKUP_WHEN_CLOSE_APP` is off**, and their backup drive is on site.
 - 61 dates of birth are worth correcting. With no resend in version 1, anything
   already submitted keeps the value it was sent with.
+
+---
+
+## 2. Lucky Jewelry
+
+Scheduled. Credentials not yet issued.
+
+| | |
+|---|---|
+| **Name** | Lucky Jewelry |
+| **Address** | 12843 SW 42 St, Suite 2, Miami, FL 33175 |
+| **Phone** | (305) 392-1998 |
+| **Email** | Luckysjewelry@comcast.net |
+| **Florida police ID** | — |
+
+### LeadsOnline
+
+| | |
+|---|---|
+| **Store ID** | not yet recorded — read `STORE.LEADS_STORE_ID` from their database |
+| **API user name** | not yet issued |
+| **Endpoint** | production, once live |
+
+### Cutover
+
+| | |
+|---|---|
+| **SOAP build installed** | not yet |
+| **Stations** | single workstation |
+
+### Before installing
+
+- Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline.
+- Read `LEADS_STORE_ID` from the survey and quote it when requesting credentials.
+- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
+
+---
+
+## 3. Ricardo Joyeria
+
+Scheduled. Credentials not yet issued.
+
+| | |
+|---|---|
+| **Name** | Ricardo Joyeria |
+| **Address** | 11048 W Flagler St, Miami, FL 33174 |
+| **Phone** | (305) 226-6800 |
+| **Email** | `ricardoconcepcion921#yahoo.com` — **see note** |
+| **Florida police ID** | — |
+
+> **The email address needs confirming before it is used.** It was supplied with
+> a `#` where an `@` belongs. `ricardoconcepcion921@yahoo.com` is the obvious
+> reading, but it has not been verified, and LeadsOnline are asked to copy the
+> store on the credentials request — a wrong address means the store is never
+> copied and nobody notices. Corrected here only once confirmed.
+
+### LeadsOnline
+
+| | |
+|---|---|
+| **Store ID** | not yet recorded — read `STORE.LEADS_STORE_ID` from their database |
+| **API user name** | not yet issued |
+| **Endpoint** | production, once live |
+
+### Cutover
+
+| | |
+|---|---|
+| **SOAP build installed** | not yet |
+| **Stations** | single workstation |
+
+### Before installing
+
+- Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline.
+- Read `LEADS_STORE_ID` from the survey and quote it when requesting credentials.
+- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
 
 ---
 

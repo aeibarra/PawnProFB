@@ -1,0 +1,95 @@
+﻿PEREZ CASH -- WEEK 1 REVIEW, 2026-08-24
+Cutover 2026-08-17. Compare with PerezCash_BASELINE_2026-08-17.txt
+======================================================================
+DB_VERSION                      10
+APP_VERSION                     v3.37.1.20  |  fix/camera-memory-and-audit-isolation 3763d41+  |  built 2026-08-17 14:00
+SUBMISSIONS_LOGGED              14
+ACCEPTED                        14
+ALREADY_HELD                    0
+TOO_OLD                         0
+OTHER_ERRORS                    0
+FIRST_SUBMISSION                2026-08-17 13:54:42.4570
+LAST_SUBMISSION                 2026-08-21 17:37:22.0080
+IMAGE_ATTEMPTS                  26
+UPLOADED                        26
+FAILED                          0
+CUSTOMER_IDS                    13
+EXCLUDED_TOTAL                  13515
+FIRST_EXCLUSION                 2026-08-17 13:51:55.5860
+LAST_EXCLUSION                  2026-08-17 13:52:29.2160
+EXCLUDED_BUT_RECENT             0
+TRAN_DATE                       2026-07-27
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-07-28
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-07-29
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-07-30
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-07-31
+WRITTEN                         2
+REPORTED                        0
+TRAN_DATE                       2026-08-01
+WRITTEN                         3
+REPORTED                        0
+TRAN_DATE                       2026-08-03
+WRITTEN                         5
+REPORTED                        0
+TRAN_DATE                       2026-08-04
+WRITTEN                         3
+REPORTED                        0
+TRAN_DATE                       2026-08-05
+WRITTEN                         2
+REPORTED                        0
+TRAN_DATE                       2026-08-06
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-08-07
+WRITTEN                         2
+REPORTED                        0
+TRAN_DATE                       2026-08-08
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-08-10
+WRITTEN                         3
+REPORTED                        0
+TRAN_DATE                       2026-08-11
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-08-12
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-08-13
+WRITTEN                         1
+REPORTED                        0
+TRAN_DATE                       2026-08-14
+WRITTEN                         3
+REPORTED                        0
+TRAN_DATE                       2026-08-15
+WRITTEN                         3
+REPORTED                        0
+TRAN_DATE                       2026-08-17
+WRITTEN                         5
+REPORTED                        5
+TRAN_DATE                       2026-08-18
+WRITTEN                         1
+REPORTED                        1
+TRAN_DATE                       2026-08-19
+WRITTEN                         2
+REPORTED                        2
+TRAN_DATE                       2026-08-20
+WRITTEN                         3
+REPORTED                        3
+TRAN_DATE                       2026-08-21
+WRITTEN                         2
+REPORTED                        2
+TRAN_DATE                       2026-08-24
+WRITTEN                         2
+REPORTED                        0
+SCREEN_SHOWS                    2
+LAST_BACKUP                     2026-08-24 12:28:28.0230
+NEWEST_TRANSACTION              2026-08-24
