@@ -270,10 +270,21 @@ function GetPawnStatusColor(const AStatus: string): TPawnStatusColor;
 procedure CalcTaxAndTotal(const Amount: Currency; const TaxPercent: Currency;
                           out Tax: Currency; out TotalAmount: Currency);
 
-// Human-readable build identity: file version, git branch/hash (from the
-// build-time BuildInfo.inc), and compile date. Shown in the About box and
-// stored in APP_STATE so a store's running build can be identified at a glance.
+// FULL build identity: file version, git branch/hash (from the build-time
+// BuildInfo.inc), and compile date. For support, not for customers -- written to
+// APP_STATE every startup so a store's running build is a database lookup
+// rather than a guess.
 function GetBuildStamp: string;
+
+// What the ABOUT BOX shows: version and build date only.
+//
+// Deliberately not GetBuildStamp. That carries the git branch name, and a store
+// owner reading "fix/camera-memory-and-audit-isolation" has just been told the
+// software has a camera problem -- by a branch whose own work finished long ago
+// and which now carries something else entirely. Branch names describe our work
+// to us; they are not a message to a customer. The full stamp still goes to
+// APP_STATE every startup, so support loses nothing.
+function GetVersionCaption: string;
 
 
 implementation
@@ -311,6 +322,14 @@ function GetBuildStamp: string;
 begin
   Result := Format('v%s  |  %s %s  |  built %s',
     [GetVersionInfo(ParamStr(0), ''), BUILD_GIT_BRANCH, BUILD_GIT_HASH, BUILD_TIMESTAMP]);
+end;
+
+function GetVersionCaption: string;
+begin
+  // Date only, not the timestamp: the minute a build was compiled tells a store
+  // nothing, and a stamp that changes several times a day reads like churn.
+  Result := Format('Version %s  -  %s',
+    [GetVersionInfo(ParamStr(0), ''), Copy(BUILD_TIMESTAMP, 1, 10)]);
 end;
 
 function AddDoubleBackSlash(S: string): string;
