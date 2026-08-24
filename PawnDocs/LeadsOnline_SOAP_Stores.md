@@ -138,14 +138,8 @@ Scheduled. Credentials not yet issued.
 | **Name** | Ricardo Joyeria |
 | **Address** | 11048 W Flagler St, Miami, FL 33174 |
 | **Phone** | (305) 226-6800 |
-| **Email** | `ricardoconcepcion921#yahoo.com` — **see note** |
+| **Email** | ricardoconcepcion921@yahoo.com |
 | **Florida police ID** | — |
-
-> **The email address needs confirming before it is used.** It was supplied with
-> a `#` where an `@` belongs. `ricardoconcepcion921@yahoo.com` is the obvious
-> reading, but it has not been verified, and LeadsOnline are asked to copy the
-> store on the credentials request — a wrong address means the store is never
-> copied and nobody notices. Corrected here only once confirmed.
 
 ### LeadsOnline
 
