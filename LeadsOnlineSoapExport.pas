@@ -97,10 +97,17 @@ type
     /// starts so the operator watches exactly what is being sent, rather than
     /// the worked rows scrolling away among thousands of untouched ones.
     FShowOnlySelected: Boolean;
+    /// The CSV-skip warning is shown once per visit, not once per Refresh.
+    /// Repeating it on every reload would train the operator to dismiss it
+    /// unread, which is the failure it exists to prevent.
+    FWarnedCsvSkipOff: Boolean;
     procedure ShowOnlySelected(AValue: Boolean);
     procedure clnTicketsFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure BuildGridStructure;
     procedure LoadCandidates;
+    /// Says so when the store is listing transactions the CSV export already
+    /// reported, because the option that hides them is off.
+    procedure WarnIfCsvSkipOff;
     function StoreIdOrComplain(out AStoreId: Integer): Boolean;
     function CredentialsConfigured: Boolean;
     /// Number of rows currently ticked. Walks the memtable rather than keeping
@@ -342,6 +349,27 @@ const
     '   AND NOT EXISTS (SELECT 1 FROM EXPORT_LOG_FILE_DETAIL D' +
     '                    WHERE D.TRANSACTION_NO = T1.TRANSACTION_NO)';
 
+
+  { How many of the rows CURRENTLY LISTED were already reported by the CSV
+    export -- i.e. exactly how many would vanish if the store turned the
+    skip-CSV-sent option on. Deliberately not a plain count of
+    EXPORT_LOG_FILE_DETAIL: that number includes transactions long since
+    excluded or submitted, so it would overstate what the operator is looking
+    at and read as scaremongering.
+
+    Only consulted when the option is OFF -- see WarnIfCsvSkipOff. }
+  SQLCandidatesCsvAlreadyReported =
+    'SELECT COUNT(*) FROM TRANSACTIONS T1' +
+    ' WHERE T1.TRAN_TYPE IN (''P'', ''U'')' +
+    '   AND COALESCE(T1.TRAN_CLOSE_REASON, 0) <> 1' +
+    '   AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_EXCLUDED X' +
+    '                    WHERE X.TRANSACTION_NO = T1.TRANSACTION_NO)' +
+    '   AND EXISTS (SELECT 1 FROM EXPORT_LOG_FILE_DETAIL D' +
+    '                WHERE D.TRANSACTION_NO = T1.TRANSACTION_NO)' +
+    '   AND NOT EXISTS (SELECT 1 FROM LEADS_SOAP_SUBMISSION S' +
+    '                    WHERE S.TRANSACTION_NO = T1.TRANSACTION_NO' +
+    '                      AND S.ERROR_CODE IN (0, 6, 7, 13))';
+
   SQLCandidatesOrder      = ' ORDER BY T1.TRAN_DATE, T1.TRANSACTION_NO';
 
   { One row per transaction, rewritten on every attempt. The key columns hold
@@ -539,6 +567,62 @@ begin
   clnTickets.OnFilterRecord := clnTicketsFilterRecord;
 end;
 
+{ Announces a silent misconfiguration that costs an operator real work.
+
+  A store moving off the CSV export almost always wants
+  STORE.LEADS_ONLINE_SKIP_CSV_SENT on: without it the screen offers every
+  transaction ever written, including the years already reported through the
+  file feed. Submitting those is not harmful -- LeadsOnline answer "Transaction
+  already exists" (error 13) and the rows settle correctly -- but it is a long
+  list and a great many pointless round trips.
+
+  This happened at Lucky Jewelry: the option was on after the upgrade and off
+  by the time the first export ran, so 1,232 rows were offered where a handful
+  were due, and 25 of the 26 sent came back as duplicates. Nothing was
+  double-reported, and nothing in the log said why.
+
+  Deliberately a notice rather than a question, and deliberately silent when
+  there is nothing to say: it appears only when the option is off AND the store
+  actually has CSV history to hide. A store that never used the file feed never
+  sees it. }
+procedure TfrmLeadsOnlineSoapExport.WarnIfCsvSkipOff;
+var
+  Q: TFDQuery;
+  N: Integer;
+begin
+  if FWarnedCsvSkipOff or DM.qryStoreLEADS_ONLINE_SKIP_CSV_SENT.AsBoolean then
+    Exit;
+
+  N := 0;
+  try
+    Q := OpenSQL(SQLCandidatesCsvAlreadyReported);
+    try
+      if not Q.Eof then
+        N := Q.Fields[0].AsInteger;
+    finally
+      Q.Free;
+    end;
+  except
+    // A diagnostic must never be the thing that stops the export screen
+    // opening. If the count cannot be taken, say nothing.
+    Exit;
+  end;
+
+  if N = 0 then
+    Exit;
+
+  FWarnedCsvSkipOff := True;
+  PawnWarn(Format('This list includes %d transaction(s) that the CSV export ' +
+                  'has already reported to LeadsOnline.', [N]) + sLineBreak + sLineBreak +
+           'They are shown because "Do not resend what the CSV export already ' +
+           'sent" is switched OFF for this store.' + sLineBreak + sLineBreak +
+           'Sending them again does no harm — LeadsOnline will answer that it ' +
+           'already has them — but it is a great deal of waiting for nothing.' +
+           sLineBreak + sLineBreak +
+           'To hide them, switch that option on in LeadsOnline Settings and ' +
+           'press Refresh.');
+end;
+
 procedure TfrmLeadsOnlineSoapExport.LoadCandidates;
 var
   Q: TFDQuery;
@@ -613,6 +697,10 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+
+  // After the cursor is restored and the list is on screen, so the notice
+  // appears over something the operator can already see and act on.
+  WarnIfCsvSkipOff;
 end;
 
 { Which column was actually clicked.
