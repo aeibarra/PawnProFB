@@ -17,9 +17,37 @@ the LeadsOnline Settings screen.
 
 Credential scope, confirmed by LeadsOnline 2026-08-14: **one API user name and
 password per company**, with the **store id** distinguishing locations. A
-company with a single location gets store-level credentials automatically. The
-store id is the same number for the FTP feed and the API — it does not change
-when a store switches channel.
+company with a single location gets store-level credentials automatically.
+
+## Verify the store id before the first send
+
+LeadsOnline confirmed the store id is the **same number for the FTP feed and the
+API** — it does not change when a store switches channel. Perez Cash bore that
+out: `STORE.LEADS_STORE_ID` already read `63271`, exactly what was issued.
+
+So for every store, **check `STORE.LEADS_STORE_ID` against the id LeadsOnline
+issued before sending a single ticket.** If they disagree, stop and ask. The two
+possibilities are that a different id was issued for the API, or that the number
+the store has been sending CSV under is wrong — and both mean tickets could land
+against the wrong store's record with law enforcement. It costs one line of the
+pre-cutover survey to rule out.
+
+## How a store gets its own credentials
+
+From LeadsOnline, 2026-08-24. Stores no longer need to go through us:
+
+> They can email our support team at **support@leadsonline.com**. They will need
+> to email **from the email address associated with the account**. They can state
+> they are **using PawnPro**, and that they need their **API credentials**, and
+> our support team will be able to give them what they need.
+
+Three things have to be right or support cannot help: the request comes from the
+account's own email address, it names **PawnPro**, and it asks for **API
+credentials** — not a password reset, which would get them website login details
+instead. Those are the words to give an owner.
+
+**PawnPro on their POS software list:** requested, not yet live. LeadsOnline are
+checking with their IT team whether it can be added before deployment.
 
 ---
 
@@ -96,7 +124,7 @@ these to LeadsOnline** on the export grid rather than submitted.
 
 ## 2. Lucky Jewelry
 
-Scheduled. Credentials not yet issued.
+Scheduled. Credentials issued 2026-08-24; not yet installed.
 
 | | |
 |---|---|
@@ -110,8 +138,10 @@ Scheduled. Credentials not yet issued.
 
 | | |
 |---|---|
-| **Store ID** | not yet recorded — read `STORE.LEADS_STORE_ID` from their database |
-| **API user name** | not yet issued |
+| **Store ID** | `75764` |
+| **API user name** | `luckysjewelry` |
+| **API password** | not recorded here — see the note at the top |
+| **Credentials issued** | 2026-08-24, by Russell House |
 | **Endpoint** | production, once live |
 
 ### Cutover
@@ -124,14 +154,15 @@ Scheduled. Credentials not yet issued.
 ### Before installing
 
 - Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline.
-- Read `LEADS_STORE_ID` from the survey and quote it when requesting credentials.
+- **Confirm `STORE.LEADS_STORE_ID` already matches the store id above.** If it
+  does not, stop and ask before sending anything — see the store id note at the top.
 - Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
 
 ---
 
 ## 3. Ricardo Joyeria
 
-Scheduled. Credentials not yet issued.
+Scheduled. Credentials issued 2026-08-24; not yet installed.
 
 | | |
 |---|---|
@@ -145,8 +176,10 @@ Scheduled. Credentials not yet issued.
 
 | | |
 |---|---|
-| **Store ID** | not yet recorded — read `STORE.LEADS_STORE_ID` from their database |
-| **API user name** | not yet issued |
+| **Store ID** | `71184` |
+| **API user name** | `ricardojoyeria` |
+| **API password** | not recorded here — see the note at the top |
+| **Credentials issued** | 2026-08-24, by Russell House |
 | **Endpoint** | production, once live |
 
 ### Cutover
@@ -159,7 +192,8 @@ Scheduled. Credentials not yet issued.
 ### Before installing
 
 - Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline.
-- Read `LEADS_STORE_ID` from the survey and quote it when requesting credentials.
+- **Confirm `STORE.LEADS_STORE_ID` already matches the store id above.** If it
+  does not, stop and ask before sending anything — see the store id note at the top.
 - Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
 
 ---
