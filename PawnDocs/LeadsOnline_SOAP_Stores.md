@@ -188,13 +188,56 @@ Scheduled. Credentials issued 2026-08-24; not yet installed.
 |---|---|
 | **SOAP build installed** | not yet |
 | **Stations** | single workstation |
+| **`RemoteBindAddress`** | set to `127.0.0.1` on 2026-08-25 (was `0.0.0.0`, listening on every interface) |
+
+### Site notes
+
+- **Backups** to `F:\PawnBackup`, images to `F:\PawnImagesBackup`, 5,082 logged.
+  **`AUTO_BACKUP_WHEN_CLOSE_APP` is ON** — the only one of the three stores where
+  it is, so backups do not depend on anyone remembering.
+- **`STORE_POLICE_ID` is blank.** Perez Cash has `0811`, Kendale `810`. It does
+  not affect SOAP submission, but printed police reports use it — worth asking
+  whether they have one.
+- **This store barely photographs.** 2,441 item photos across 58,809
+  transactions, 21 customer ID photos across 17,588 customers. The Photos and
+  IDs columns will read 0 on nearly every row. That is their practice, not a
+  fault.
+
+### Data at cutover (2026-08-25 baseline)
+
+Full numbers in `Tools/StoreSurvey/RicardoJoyeria_BASELINE_2026-08-25.txt`.
+
+| | |
+|---|---|
+| Pawns and purchases, all time | 58,809 (oldest 1958-04-18 — a typo) |
+| Never in any CSV export | 53,865 |
+| ...of those, from 2020 onward | **about 95** |
+| Multi-item tickets that would send `$0.00` | 0 |
+| Customers | 17,588 |
+| Questionable dates of birth | 62 (27 missing, 26 future, 9 implausible) |
+| Item photos / customer ID photos | 2,441 / 21 |
+
+**The 53,865 looks alarming and is not.** The CSV export log only starts around
+2020, and from there it covers everything: 2024 is 716 of 716, 2023 is 898 of
+900, 2026 is 359 of 360. So virtually all of the unlogged history is pre-2020 —
+decades past anything LeadsOnline retains.
+
+### Cutover plan
+
+1. Confirm **skip CSV-already-sent is ON** before the first load. It defaults to
+   on, but Lucky proved it can end up off — see that store's notes.
+2. Open the export screen and **exclude everything before 2020** in one pass.
+3. That leaves roughly 95 rows, of which only the 2025 and 2026 ones stand any
+   chance of being accepted; the rest settle themselves as error 7.
+
+Perez Cash needed 13,515 exclusions. This is a bigger store with a smaller job.
 
 ### Before installing
 
-- Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline.
-- **Confirm `STORE.LEADS_STORE_ID` already matches the store id above.** If it
-  does not, stop and ask before sending anything — see the store id note at the top.
-- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
+- Run `Tools/StoreSurvey/PreCutover_Survey.sql` and save the baseline. ✅ done
+- **Confirm `STORE.LEADS_STORE_ID` already matches the store id above.** ✅ reads
+  `71184`, matching what LeadsOnline issued.
+- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points. ✅ on, `F:\`
 
 ---
 

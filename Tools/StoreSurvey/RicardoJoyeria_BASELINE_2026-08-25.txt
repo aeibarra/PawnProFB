@@ -1,0 +1,34 @@
+﻿RICARDO JOYERIA -- BASELINE, captured 2026-08-25 from the copy taken at 10:51,
+BEFORE the SOAP build was installed.
+Re-run Week1_Review.sql on a fresh copy and compare against this.
+
+Note: of the 53,865 never in a CSV export, only about 95 are from 2020 onward.
+The CSV log starts around 2020 and covers it near-completely from there; the
+rest is pre-2020 history to be excluded rather than sent.
+======================================================================
+STORE_NAME                      Ricardo Joyeria
+STORE_ADDR                      11048 West Flagler Street
+STORE_CITY_ST_ZIP               Miami, FL 33174
+STORE_PHONE                     (305)226-6800
+STORE_POLICE_ID                 
+LEADS_STORE_ID                  71184
+FTP_USER                        RICARDOJOYERIA
+LEADS_ONLINE_FTP_ADDRESS        ftp.leadsonline.com
+BACKUP_PATH                     F:\PawnBackup
+BACKUP_IMAGES_PATH              F:\PawnImagesBackup
+AUTO_BACKUP_WHEN_CLOSE_APP      <true>
+BACKUPS_LOGGED                  5082
+LAST_BACKUP                     2026-08-25 10:51:32.6230
+TOTAL_PU                        58809
+NEVER_IN_A_CSV                  53865
+OLDEST                          1958-04-18
+NEWEST                          2026-08-24
+MULTI_ITEM_ZERO_AMOUNT          956
+ZERO_AMOUNT_AND_UNSENT          0
+CUSTOMERS                       17588
+DOB_MISSING                     27
+DOB_IN_FUTURE                   26
+DOB_TOO_OLD                     9
+ITEM_PHOTOS                     2441
+ID_PHOTOS                       21
+STONES_THAT_WOULD_DROP          0
