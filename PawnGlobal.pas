@@ -7,7 +7,7 @@ Uses Windows, SysUtils, System.Classes, Forms, Controls, IniFiles, Dialogs, Acti
      Winapi.WinSpool, Vcl.Printers, Math,
      Db, dbctrls, Graphics, buttons, stdctrls, extctrls, DBGrids, System.Generics.Collections,
      Grids, Types, Variants, Vcl.FileCtrl, Nvv.IO.CSV.Delphi.NvvCSVClasses,
-     System.SyncObjs;
+     System.SyncObjs, System.DateUtils;
 
 type
   TDBInfo = record
@@ -286,6 +286,21 @@ function GetBuildStamp: string;
 // APP_STATE every startup, so support loses nothing.
 function GetVersionCaption: string;
 
+type
+  /// How a transaction date reads. Three outcomes rather than two on purpose:
+  /// refusing everything unusual would block a clerk legitimately correcting
+  /// last month's ticket, while accepting everything is what let a pawn dated
+  /// 1958 reach a live store.
+  TTranDateVerdict = (tdOk, tdImpossible, tdUnlikely);
+
+/// Checks a transaction date before it is posted. ANewRow says whether the
+/// transaction is being created now, which is what makes a date far from today
+/// suspicious rather than merely old.
+///
+/// tdImpossible must stop the save; tdUnlikely should ask, not refuse.
+function CheckTransactionDate(ADate: TDateTime; ANewRow: Boolean;
+  out AMessage: string): TTranDateVerdict;
+
 
 implementation
 
@@ -330,6 +345,70 @@ begin
   // nothing, and a stamp that changes several times a day reads like churn.
   Result := Format('Version %s  -  %s',
     [GetVersionInfo(ParamStr(0), ''), Copy(BUILD_TIMESTAMP, 1, 10)]);
+end;
+
+{ Rejects transaction dates that cannot be real, and questions ones that can be
+  but probably are not.
+
+  Both failures are seen in live data. Ricardo Joyeria carries a pawn dated
+  1958-04-18, decades before the store existed; Perez Cash had 48 customers born
+  in the future. A wrong transaction date is worse than an odd-looking one: it
+  decides which day a pawn is reported to law enforcement, and LeadsOnline refuse
+  anything outside their retention window, so a typo can mean a real transaction
+  is never reported at all.
+
+  IMPOSSIBLE is judged the same way the date-of-birth check judges it -- only
+  what cannot be true. A future date is not a transaction that has happened. The
+  fifty-year floor is far below any genuine record in these stores (the oldest
+  real data starts in 2000) and exists to catch a mistyped year rather than to
+  express a policy about old tickets.
+
+  UNLIKELY applies only to a transaction being created now. A clerk entering a
+  pawn today and dating it two years ago has almost certainly mistyped the year,
+  but "almost certainly" is not certainly -- a store catching up on a backlog is
+  entitled to do exactly that, so this asks rather than refuses. Editing an
+  existing transaction never triggers it, because its date is simply its date. }
+function CheckTransactionDate(ADate: TDateTime; ANewRow: Boolean;
+  out AMessage: string): TTranDateVerdict;
+const
+  MaxYearsBack     = 50;
+  NewRowGraceDays  = 7;
+begin
+  AMessage := '';
+  Result := tdOk;
+
+  if ADate = 0 then
+  begin
+    AMessage := 'Please enter the transaction date.';
+    Exit(tdImpossible);
+  end;
+
+  if ADate > Date then
+  begin
+    AMessage := Format('The transaction date (%s) is in the future.',
+                       [FormatDateTime('mm/dd/yyyy', ADate)]) + sLineBreak + sLineBreak +
+                'Please check the date. A transaction cannot be dated later than today.';
+    Exit(tdImpossible);
+  end;
+
+  if ADate < IncYear(Date, -MaxYearsBack) then
+  begin
+    AMessage := Format('The transaction date (%s) cannot be right.',
+                       [FormatDateTime('mm/dd/yyyy', ADate)]) + sLineBreak + sLineBreak +
+                'Please check the year — it is more than 50 years ago.';
+    Exit(tdImpossible);
+  end;
+
+  if ANewRow and (ADate < Date - NewRowGraceDays) then
+  begin
+    AMessage := Format('This transaction is dated %s, which is %d days ago.',
+                       [FormatDateTime('mm/dd/yyyy', ADate), Trunc(Date - ADate)]) +
+                sLineBreak + sLineBreak +
+                'It is being entered today. Please check the year.' +
+                sLineBreak + sLineBreak +
+                'Is that date correct?';
+    Exit(tdUnlikely);
+  end;
 end;
 
 function AddDoubleBackSlash(S: string): string;

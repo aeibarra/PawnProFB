@@ -40,7 +40,7 @@ var
 
 implementation
 
-uses PawnDM, PawnGlobal;
+uses PawnDM, PawnGlobal, uPawnDialogs;
 
 {$R *.dfm}
 
@@ -63,7 +63,23 @@ begin
 end;
 
 procedure TfrmEnterPurchase.btnSaveClick(Sender: TObject);
+var
+  DateMsg: string;
 begin
+  // A wrong date decides which day this reaches law enforcement, and
+  // LeadsOnline refuse anything outside their retention window -- so a mistyped
+  // year can mean a real transaction is never reported at all.
+  case CheckTransactionDate(DM.qryTransactionsTRAN_DATE.AsDateTime, NewRow, DateMsg) of
+    tdImpossible:
+      begin
+        PawnWarn(DateMsg);
+        Exit;
+      end;
+    tdUnlikely:
+      if not PawnConfirm(DateMsg) then
+        Exit;
+  end;
+
   if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
       MessageDlg('Please enter purchase amount.', mtInformation, [mbOk], 0);

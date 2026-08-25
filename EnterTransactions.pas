@@ -172,7 +172,7 @@ var
 
 implementation
 
-uses PawnDM, PawnGlobal, ItemsToCopyLargeGrid, GLbUtils, SearchClient;
+uses PawnDM, PawnGlobal, ItemsToCopyLargeGrid, GLbUtils, SearchClient, uPawnDialogs;
 
 {$R *.DFM}
 
@@ -328,6 +328,7 @@ end;
 
 procedure TfrmEnterTransaction.btnSaveClick(Sender: TObject);
 var
+  DateMsg: string;
   NewInvItemNo: integer;
   IntRate, IntAmount: Extended;
   AskIfUpdateTicketNo: boolean;
@@ -337,6 +338,20 @@ begin
   AskIfUpdateTicketNo := false;
   StartedFBTrans := False;
   btnSave.SetFocus;
+
+  // A wrong date decides which day this reaches law enforcement, and
+  // LeadsOnline refuse anything outside their retention window -- so a mistyped
+  // year can mean a real transaction is never reported at all.
+  case CheckTransactionDate(DM.qryTransactionsTRAN_DATE.AsDateTime, NewRow, DateMsg) of
+    tdImpossible:
+      begin
+        PawnWarn(DateMsg);
+        Exit;
+      end;
+    tdUnlikely:
+      if not PawnConfirm(DateMsg) then
+        Exit;
+  end;
 
   if DM.qryTransactionsTRAN_PAWN_AMOUNT.AsFloat <= 0 then
     begin
