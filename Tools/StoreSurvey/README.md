@@ -1,12 +1,28 @@
 # Store survey — LeadsOnline SOAP onboarding
 
-Two read-only SQL scripts for moving a store from the CSV/FTP export to the
-LeadsOnline web service, plus the captured baselines. Neither script writes
-anything.
+Read-only tooling for moving a store from the CSV/FTP export to the LeadsOnline
+web service, plus the baselines already captured.
 
-Run them against a **copy** of the store's database, not the live one.
+Nothing here modifies a database. Run-StoreSurvey.ps1 is meant to run against the
+LIVE database at the store -- it only reads, and takes a gbak backup. The two SQL
+scripts can be pointed at either the live database or a copy.
 
 ## Before the cutover
+
+At the store, from the USB, with no arguments:
+
+```
+.\Run-StoreSurvey.ps1 -ExpectedStoreId 63256
+```
+
+It finds Firebird and PawnPro.ini itself, decrypts the database password from
+`password_enc` (machine-scope DPAPI, so it only opens on that store's own PC --
+no password is typed and none travels on the stick), runs the survey, takes a
+`gbak` backup, and drops both into a dated folder beside the script. Passing the
+store id LeadsOnline issued makes it check that against the database and shout
+if they differ.
+
+To run the SQL by hand instead:
 
 ```
 isql -i PreCutover_Survey.sql -user sysdba -password <pw> \
