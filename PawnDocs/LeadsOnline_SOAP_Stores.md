@@ -241,6 +241,121 @@ Perez Cash needed 13,515 exclusions. This is a bigger store with a smaller job.
 
 ---
 
+
+---
+
+## 4. Felitin's Gold
+
+Credentials issued; awaiting the ASA-to-FB5 conversion.
+
+| | |
+|---|---|
+| **Name** | Felitin's Gold Inc |
+| **Address** | 10719 W. Flagler St, Miami, FL 33174 |
+| **Phone** | (305) 200-5236 |
+| **Email** | emilio314@yahoo.com |
+
+### LeadsOnline
+
+| | |
+|---|---|
+| **Store ID** | `63256` |
+| **API user name** | `felitinsgold` |
+| **API password** | not recorded here — see the note at the top |
+| **Credentials issued** | 2026-08-27, by Russell House |
+| **Verified** | 2026-08-27, `CheckLogin` against production returned errorCode 0 |
+
+### Cutover
+
+| | |
+|---|---|
+| **Database** | still SQL Anywhere — needs the FB5 conversion before SOAP |
+| **Images** | already stored on disk, so no image migration needed |
+| **Stations** | single workstation |
+| **SOAP build installed** | not yet |
+
+### Before installing
+
+- **Convert to FB5 first.** SOAP does not exist on the ASA build, and the survey
+  scripts are Firebird-only (`SET LIST ON`, `IIF`, `DATEADD ... TO`).
+- Run `Tools/StoreSurvey/PreCutover_Survey.sql` against the **converted**
+  database and save the baseline. That is the state immediately before SOAP
+  starts, which is what makes it worth capturing.
+- **Confirm `STORE.LEADS_STORE_ID` reads `63256`** after the pump.
+- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
+
+---
+
+## 5. Kendale Jewelry
+
+Credentials issued; the largest and last of the conversions.
+
+Not part of the same family as the other four — keep it off shared
+correspondence, and copy only its own address on anything sent to LeadsOnline.
+
+| | |
+|---|---|
+| **Name** | Kendale Jewelry |
+| **Address** | 15154 SW 72nd Street, Miami, FL 33193 |
+| **Phone** | (305) 382-1861 |
+| **Email** | kndjewelryinc@aol.com |
+| **Florida police ID** | 810 |
+
+### LeadsOnline
+
+| | |
+|---|---|
+| **Store ID** | `4351` |
+| **API user name** | `kendalejewelry` |
+| **API password** | not recorded here — see the note at the top |
+| **Credentials issued** | 2026-08-27, by Russell House |
+| **Verified** | 2026-08-27, `CheckLogin` against production returned errorCode 0 |
+| **Legacy FTP user** | `kndjewelry` |
+
+### Cutover
+
+| | |
+|---|---|
+| **Database** | still SQL Anywhere |
+| **Images** | still in the database — need moving to disk |
+| **Stations** | **multiple** — the first multi-workstation FB5 store |
+| **SOAP build installed** | not yet |
+
+### ⚠️ The store id in the development copy is wrong
+
+The FB5 copy of Kendale on the development machine reads
+`LEADS_STORE_ID = 57390`. That is the **sandbox** store — Ibarra Consulting Test
+Store — written over the real value during early SOAP testing. Their true number
+is `4351`, as issued above.
+
+This matters because the standard check is "confirm the database already matches
+what LeadsOnline issued", and against that copy the check would compare 57390
+with 4351, fail, and be blamed on LeadsOnline. Take the value from the **live ASA
+database**, or set it to `4351` after the pump.
+
+### Cutover plan
+
+Three changes, deliberately separated so a failure points at one of them:
+
+1. **Images to a file share, while still on ASA.** The step with the most ways
+   to go wrong — UNC paths, permissions, workstations resolving the share. Doing
+   it first means a later problem is not ambiguous, and the pump carries less.
+2. **ASA to FB5**, with the store running on one machine.
+3. **The client workstations**, and only then SOAP.
+
+### Multi-station notes — all first-time in production here
+
+- `RemoteBindAddress` must **not** be `127.0.0.1`, the opposite of the single
+  station stores. `PawnProSetup` handles it when "multiple workstations" is
+  selected, but it is the inverse of what was just done at Ricardo.
+- The firewall needs opening on the DB host:
+  `COMMON/FB-Admin/Set-FirebirdFirewallRule.ps1`, elevated. Note a shop network
+  Windows has categorised as **Public** silently defeats a Private-only rule.
+- `APP_STATE['IMAGE_SHARED_PATH']` publishing, WireCrypt with `chacha.dll`, and
+  `PawnProSetup`'s client-install branch all run for real for the first time.
+- Only the DB host applies schema migrations; a workstation started first will
+  refuse with an instruction to run the server machine first. That is by design.
+
 ## Template for the next store
 
 Copy the block above. The fields that actually matter for support are: store id,
@@ -257,6 +372,10 @@ had none and 61.
 
 ## Not yet on SOAP
 
-| store | status |
+All five stores now have production credentials. What remains is per-store work,
+not anything waiting on LeadsOnline.
+
+| store | what is left |
 |---|---|
-| Kendale Jewelry | still on SQL Anywhere. Needs the ASA-to-FB5 conversion first, then SOAP. Multi-station, so it will be the first store to exercise the workstation paths. |
+| Felitin's Gold | ASA-to-FB5 conversion. Images already on disk. |
+| Kendale Jewelry | images to a file share, ASA-to-FB5 conversion, then the client workstations. |
