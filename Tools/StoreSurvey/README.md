@@ -69,3 +69,29 @@ recent pawn, which is never reported to law enforcement.
 | file | store | captured |
 |---|---|---|
 | `PerezCash_BASELINE_2026-08-17.txt` | Perez Cash Jewelry II | 2026-08-17, before the SOAP build was installed |
+
+## Clearing image blobs left by an old pump
+
+Pumps before 2026-08-28 copied the ASA image blobs into Firebird. The app never
+reads them — it reads from disk — so they are dead weight. At Felitin's Gold
+they are 294 MB of a 397 MB database, and every backup copies them.
+
+```
+.\Clear-ImageBlobs.ps1                  # verify only, changes nothing
+.\Clear-ImageBlobs.ps1 -ClearBlobs      # null the blobs
+.\Clear-ImageBlobs.ps1 -ClearBlobs -Shrink   # and rebuild the file
+```
+
+**Run the verify at the store.** It checks every blob against the file the app
+would actually read — `<ImageDirectory>\yyyymm\<ImagesDataNo>.jpg` — and refuses
+to clear anything if a file is missing, because for those rows the blob is the
+last copy. Run against a database copy on another machine it reports everything
+as missing, which is true of that machine and says nothing about the store.
+
+`-Shrink` matters because the `UPDATE` alone does not shrink the file: Firebird
+reuses freed pages and never truncates. Only a backup and restore rebuilds it
+compactly. The rebuilt database is left beside the original rather than swapped
+in, so the switch is yours to make with the service stopped.
+
+Stores converted after 2026-08-28 do not need this — the pump no longer copies
+blobs, and asks first when a store's images are not yet on disk.
