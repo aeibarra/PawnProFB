@@ -115,7 +115,8 @@ $tmp = [IO.Path]::GetTempFileName()
 @'
 SET HEADING OFF;
 SELECT IMAGES_DATA_NO || '|' ||
-       COALESCE(SUBSTRING(CAST(CREATED AS VARCHAR(30)) FROM 1 FOR 7), 'NULL')
+       COALESCE(SUBSTRING(CAST(CREATED AS VARCHAR(30)) FROM 1 FOR 7), 'NULL') || '|' ||
+       OCTET_LENGTH(IMAGE_DATA)
   FROM IMAGES_DATA
  WHERE IMAGE_DATA IS NOT NULL
  ORDER BY IMAGES_DATA_NO;
@@ -123,9 +124,12 @@ SELECT IMAGES_DATA_NO || '|' ||
 $rows = & $isql -i $tmp -user $dbUser -password $dbPass -ch UTF8 $conn 2>&1
 Remove-Item $tmp -Force -ErrorAction SilentlyContinue
 
-$withBlob = @(); foreach ($r in $rows) {
+$withBlob = @()
+foreach ($r in $rows) {
   $t = "$r".Trim()
-  if ($t -match '^(\d+)\|(.+)$') { $withBlob += ,@($Matches[1], $Matches[2]) }
+  if ($t -match '^(\d+)\|([^|]+)\|(\d+)$') {
+    $withBlob += ,@($Matches[1], $Matches[2].Trim(), [int64]$Matches[3])
+  }
 }
 
 if ($withBlob.Count -eq 0) {
@@ -133,39 +137,82 @@ if ($withBlob.Count -eq 0) {
   return
 }
 
-$missing = New-Object System.Collections.ArrayList
+# Three outcomes, not two. "The file exists" is not the same as "the image was
+# written": ExportAllImagesToFolder builds a blob stream unconditionally, so a
+# row whose IMAGE_DATA is NULL still produces a 0-byte .jpg and still counts as
+# exported. An empty file passes Test-Path and is not a copy of anything, so it
+# is treated as missing.
+#
+# A size that merely DIFFERS is a warning rather than a block: the blob is the
+# frozen ASA copy, and a photo replaced through the app since the conversion
+# will legitimately differ from it. The file on disk is the one the app reads,
+# so it wins.
+$missing  = New-Object System.Collections.ArrayList
+$empty    = New-Object System.Collections.ArrayList
+$differs  = New-Object System.Collections.ArrayList
+
 foreach ($row in $withBlob) {
-  $id = $row[0]; $created = $row[1]
-  # CREATED is 'YYYY-MM'; a NULL date resolves the way the app resolves it,
-  # through TDateTime 0, which FormatDateTime renders as 189912.
+  $id = $row[0]; $created = $row[1]; $blobLen = $row[2]
+  # CREATED comes back as 'YYYY-MM'. A NULL date resolves the way the app
+  # resolves it -- through TDateTime 0, which FormatDateTime renders as 189912.
   if ($created -eq 'NULL') { $ym = '189912' } else { $ym = $created -replace '-', '' }
   $path = Join-Path (Join-Path $ImageDirectory $ym) ($id + '.jpg')
-  if (-not (Test-Path -LiteralPath $path)) { [void]$missing.Add($path) }
+
+  if (-not (Test-Path -LiteralPath $path)) {
+    [void]$missing.Add($path)
+  } else {
+    $len = (Get-Item -LiteralPath $path).Length
+    if ($len -eq 0)            { [void]$empty.Add($path) }
+    elseif ($len -ne $blobLen) { [void]$differs.Add(('{0}  (disk {1:N0} bytes, blob {2:N0})' -f $path, $len, $blobLen)) }
+  }
 }
 
-$onDisk = $withBlob.Count - $missing.Count
+$bad    = $missing.Count + $empty.Count
+$onDisk = $withBlob.Count - $bad
+
 Write-Host ''
-Write-Host ("  rows holding a blob : {0}" -f $withBlob.Count)
-Write-Host ("  found on disk       : {0}" -f $onDisk) -ForegroundColor Green
+Write-Host ("  rows holding a blob   : {0}" -f $withBlob.Count)
+Write-Host ("  good file on disk     : {0}" -f $onDisk) -ForegroundColor Green
+if ($differs.Count -gt 0) {
+  Write-Host ("  size differs          : {0}  (not a problem -- see below)" -f $differs.Count) -ForegroundColor Yellow
+}
 if ($missing.Count -gt 0) {
-  Write-Host ("  NOT on disk         : {0}" -f $missing.Count) -ForegroundColor Red
+  Write-Host ("  NO file on disk       : {0}" -f $missing.Count) -ForegroundColor Red
+}
+if ($empty.Count -gt 0) {
+  Write-Host ("  file is 0 bytes       : {0}" -f $empty.Count) -ForegroundColor Red
+}
+
+if ($differs.Count -gt 0) {
+  Write-Host ''
+  Write-Host 'These differ in size from the blob. Expected where a photo was replaced' -ForegroundColor Yellow
+  Write-Host 'after the conversion -- the file on disk is what the app reads, so it wins:' -ForegroundColor Yellow
+  $differs | Select-Object -First 10 | ForEach-Object { Write-Host "    $_" }
+  if ($differs.Count -gt 10) { Write-Host ("    ... and {0} more" -f ($differs.Count - 10)) }
+}
+
+if ($bad -gt 0) {
   Write-Host ''
   Write-Host 'For these rows the blob is the only copy that exists:' -ForegroundColor Red
-  $missing | Select-Object -First 15 | ForEach-Object { Write-Host "    $_" }
-  if ($missing.Count -gt 15) { Write-Host ("    ... and {0} more" -f ($missing.Count - 15)) }
+  @($missing + $empty) | Select-Object -First 15 | ForEach-Object { Write-Host "    $_" }
+  if ($bad -gt 15) { Write-Host ("    ... and {0} more" -f ($bad - 15)) }
 }
 Write-Host ''
 
 if (-not $ClearBlobs) {
   Write-Host 'VERIFY only. Nothing changed.' -ForegroundColor Yellow
-  if ($missing.Count -eq 0) { Write-Host 'Every blob has a file on disk. Safe to re-run with -ClearBlobs.' }
+  if ($bad -eq 0) {
+    Write-Host 'Every blob has a real file on disk. Safe to re-run with -ClearBlobs.' -ForegroundColor Green
+  } else {
+    Write-Host 'Extract the images again before clearing anything.' -ForegroundColor Red
+  }
   return
 }
 
 # ---- 2. CLEAR ----------------------------------------------------------
-if ($missing.Count -gt 0 -and -not $Force) {
-  throw ("{0} image(s) exist ONLY inside the database. Clearing now would destroy them. " +
-         "Write them to disk first. -Force overrides, and should not be used to get past this." -f $missing.Count)
+if ($bad -gt 0 -and -not $Force) {
+  throw ("{0} image(s) have no usable file on disk. Clearing now would destroy them. " +
+         "Extract the images again first. -Force overrides, and is not the way past this." -f $bad)
 }
 
 Write-Host 'Close PawnPro on every machine before continuing.' -ForegroundColor Yellow
