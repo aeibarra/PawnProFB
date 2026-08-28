@@ -887,17 +887,71 @@ end;
 // have many multi-MB blobs; loading the whole result set client-side (ADO
 // default clUseClient) risks OOM. Batches of 20 rows keep peak memory bounded
 // at roughly 20 * max-image-size while still committing in one FB transaction.
+// IMAGE_DATA is deliberately NOT copied.
+//
+// The Firebird version stores images on disk and never reads IMAGES_DATA.IMAGE_DATA
+// -- PawnMain forces FILE mode at every startup. Carrying the blobs across
+// therefore moves dead weight: at Felitin's Gold it made a 397 MB database out
+// of a store with 1,193 transactions, 294 MB of it blobs nothing would ever
+// read, and every backup since has copied them.
+//
+// The row is still pumped. Only the blob is dropped, so IMAGES_DATA_NO,
+// IMAGE_TYPE_NO and IMAG_REF_TO_ROW_NO keep pointing at the right item or
+// customer and the on-disk file resolves exactly as before.
+//
+// WARNING BEFORE THE LOSS, not after: for a store whose images have not yet
+// been written to disk, these blobs are the only copy in existence. Skipping
+// them silently would destroy the store's photographs with nothing to say so.
+// Hence the count and the confirmation below.
 procedure TfrmPumpAsaFb50Main.PumpImagesData;
 const
   BATCH_SIZE = 20;
 var
   src: TADOQuery;
   dst: TFDQuery;
-  n, BatchCount: Integer;
+  chk: TADOQuery;
+  n, BatchCount, BlobCount: Integer;
   LastID: Integer;
 begin
   lblCurrentProcess.Caption := 'Pumping IMAGES_DATA...';
-  LogLine(Format('Pumping ImagesData -> IMAGES_DATA (batches of %d)...', [BATCH_SIZE]));
+
+  // How many images live only inside the ASA database right now?
+  BlobCount := 0;
+  chk := TADOQuery.Create(nil);
+  try
+    chk.Connection := ConnDB;
+    chk.SQL.Text := 'SELECT COUNT(*) AS N FROM ImagesData WHERE ImageData IS NOT NULL';
+    chk.Open;
+    if not chk.Eof then
+      BlobCount := chk.FieldByName('N').AsInteger;
+  finally
+    chk.Free;
+  end;
+
+  if BlobCount > 0 then
+  begin
+    LogLine(Format('  NOTE: %d image(s) are stored inside the ASA database.', [BlobCount]));
+    if MessageDlg(
+         Format('%d image(s) are still stored INSIDE the ASA database.' + sLineBreak + sLineBreak +
+                'The Firebird version reads images from disk only, so these will ' +
+                'NOT be copied.' + sLineBreak + sLineBreak +
+                'If they have already been written out to the image folder, that ' +
+                'is correct and nothing is lost.' + sLineBreak + sLineBreak +
+                'If they have NOT been written out yet, this database is the only ' +
+                'copy and they will be gone.' + sLineBreak + sLineBreak +
+                'Have the images been written to disk?',
+                [BlobCount]),
+         mtWarning, [mbYes, mbNo], 0) <> mrYes then
+    begin
+      LogLine('  Pump stopped: images have not been written to disk yet.');
+      raise Exception.Create(
+        'Pump stopped. Write the images to disk first, then run the pump again.');
+    end;
+    LogLine('  Confirmed on disk. Blobs will be skipped.');
+  end;
+
+  LogLine(Format('Pumping ImagesData -> IMAGES_DATA, without blobs (batches of %d)...',
+                 [BATCH_SIZE]));
   n := 0;
   LastID := 0;
 
@@ -909,18 +963,21 @@ begin
     dst.Connection := ConnectionFB;
     dst.SQL.Text :=
       'INSERT INTO IMAGES_DATA (IMAGES_DATA_NO, IMAGE_TYPE_NO, IMAG_REF_TO_ROW_NO, ' +
-      '  IMAGE_DESC, IMAGE_DATA, CREATED, UPLOAD_TIME, UPLOAD_FILE_NAME) ' +
+      '  IMAGE_DESC, CREATED, UPLOAD_TIME, UPLOAD_FILE_NAME) ' +
       'VALUES (:IMAGES_DATA_NO, :IMAGE_TYPE_NO, :IMAG_REF_TO_ROW_NO, ' +
-      '  :IMAGE_DESC, :IMAGE_DATA, :CREATED, :UPLOAD_TIME, :UPLOAD_FILE_NAME)';
+      '  :IMAGE_DESC, :CREATED, :UPLOAD_TIME, :UPLOAD_FILE_NAME)';
     dst.Prepare;
 
     ConnectionFB.StartTransaction;
     try
       repeat
         src.Close;
+        // ImageData is left out of the SELECT as well as the INSERT: reading a
+        // blob only to discard it would pull hundreds of megabytes across the
+        // wire for nothing.
         src.SQL.Text := Format(
           'SELECT TOP %d ImagesDataNo, ImageTypeNo, ImagRefToRowNo, ImageDesc, ' +
-          '  ImageData, Created, UploadTime, UploadFileName ' +
+          '  Created, UploadTime, UploadFileName ' +
           'FROM ImagesData WHERE ImagesDataNo > %d ORDER BY ImagesDataNo',
           [BATCH_SIZE, LastID]);
         src.Open;
@@ -932,7 +989,6 @@ begin
           dst.ParamByName('IMAGE_TYPE_NO').Value      := src.FieldByName('ImageTypeNo').Value;
           dst.ParamByName('IMAG_REF_TO_ROW_NO').Value := src.FieldByName('ImagRefToRowNo').Value;
           dst.ParamByName('IMAGE_DESC').Value         := src.FieldByName('ImageDesc').Value;
-          dst.ParamByName('IMAGE_DATA').Value         := src.FieldByName('ImageData').Value;
           dst.ParamByName('CREATED').Value            := src.FieldByName('Created').Value;
           dst.ParamByName('UPLOAD_TIME').Value        := src.FieldByName('UploadTime').Value;
           dst.ParamByName('UPLOAD_FILE_NAME').Value   := src.FieldByName('UploadFileName').Value;
@@ -952,7 +1008,7 @@ begin
       raise;
     end;
 
-    LogLine(Format('  OK. %d rows pumped.', [n]));
+    LogLine(Format('  OK. %d row(s) pumped, blobs skipped.', [n]));
   finally
     dst.Free;
     src.Free;
