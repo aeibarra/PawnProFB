@@ -3,8 +3,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
   Top = 0
   BorderStyle = bsDialog
   Caption = 'LeadsOnline Settings'
-  ClientHeight = 663
-  ClientWidth = 430
+  ClientHeight = 714
+  ClientWidth = 452
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -18,15 +18,15 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 595
-    Width = 424
+    Top = 646
+    Width = 446
     Height = 65
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 539
-    ExplicitWidth = 359
+    ExplicitTop = 595
+    ExplicitWidth = 424
     object btnSave: TRzBitBtn
-      Left = 72
+      Left = 85
       Top = 12
       Width = 99
       Height = 42
@@ -40,7 +40,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
       Spacing = -5
     end
     object btnCancel: TRzBitBtn
-      Left = 228
+      Left = 241
       Top = 12
       Width = 99
       Height = 42
@@ -58,14 +58,14 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 424
-    Height = 586
+    Width = 446
+    Height = 637
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 359
-    ExplicitHeight = 530
+    ExplicitWidth = 424
+    ExplicitHeight = 586
     object RzLabel4: TRzLabel
-      Left = 31
+      Left = 49
       Top = 10
       Width = 142
       Height = 20
@@ -80,30 +80,30 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     end
     object gbApi: TGroupBox
       Left = 16
-      Top = 267
-      Width = 389
-      Height = 190
+      Top = 280
+      Width = 415
+      Height = 218
       Caption = 'LeadsOnline Web Service (SOAP)'
       TabOrder = 2
       object lblApiUser: TRzLabel
-        Left = 15
-        Top = 26
+        Left = 33
+        Top = 36
         Width = 76
         Height = 20
         Caption = 'User Name:'
         FocusControl = edApiUser
       end
       object lblApiPassword: TRzLabel
-        Left = 156
-        Top = 26
+        Left = 174
+        Top = 36
         Width = 64
         Height = 20
         Caption = 'Password:'
         FocusControl = edApiPassword
       end
       object lblSkipCsvHint: TLabel
-        Left = 36
-        Top = 167
+        Left = 54
+        Top = 186
         Width = 333
         Height = 15
         Caption = 'Leave ticked when moving a store from CSV to the web service.'
@@ -115,8 +115,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         ParentFont = False
       end
       object edApiUser: TRzDBEdit
-        Left = 15
-        Top = 46
+        Left = 33
+        Top = 56
         Width = 135
         Height = 28
         DataSource = DM.DSStore
@@ -124,8 +124,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 0
       end
       object edApiPassword: TRzDBEdit
-        Left = 156
-        Top = 46
+        Left = 174
+        Top = 56
         Width = 151
         Height = 28
         DataSource = DM.DSStore
@@ -134,8 +134,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 1
       end
       object chkUseSandbox: TDBCheckBox
-        Left = 17
-        Top = 86
+        Left = 35
+        Top = 101
         Width = 307
         Height = 17
         Caption = 'Use LeadsOnline SANDBOX - testing only'
@@ -144,8 +144,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 2
       end
       object chkSkipCsvSent: TDBCheckBox
-        Left = 17
-        Top = 148
+        Left = 35
+        Top = 167
         Width = 352
         Height = 17
         Caption = 'Do not resend what the CSV export already sent'
@@ -154,8 +154,8 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 4
       end
       object btnTestConnection: TRzBitBtn
-        Left = 15
-        Top = 110
+        Left = 33
+        Top = 127
         Width = 152
         Height = 30
         Caption = 'Test Connection'
@@ -165,9 +165,9 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     end
     object rgExportMethod: TDBRadioGroup
       Left = 16
-      Top = 463
-      Width = 389
-      Height = 108
+      Top = 510
+      Width = 415
+      Height = 116
       Caption = 'LeadsOnline reporting for this store'
       DataField = 'LEADS_ONLINE_EXPORT_METHOD'
       DataSource = DM.DSStore
@@ -189,13 +189,13 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
     end
     object GroupBox3: TGroupBox
       Left = 16
-      Top = 64
-      Width = 389
-      Height = 197
+      Top = 69
+      Width = 415
+      Height = 202
       Caption = 'LeadsOnline FTP Information'
       TabOrder = 1
       object RzLabel1: TRzLabel
-        Left = 15
+        Left = 33
         Top = 30
         Width = 213
         Height = 20
@@ -203,7 +203,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         FocusControl = edLeadsOnlineFTPAddress
       end
       object RzLabel2: TRzLabel
-        Left = 15
+        Left = 33
         Top = 130
         Width = 76
         Height = 20
@@ -211,7 +211,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         FocusControl = edUserName
       end
       object RzLabel3: TRzLabel
-        Left = 156
+        Left = 174
         Top = 130
         Width = 64
         Height = 20
@@ -219,7 +219,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         FocusControl = edPassword
       end
       object edLeadsOnlineFTPAddress: TRzDBEdit
-        Left = 15
+        Left = 33
         Top = 50
         Width = 292
         Height = 28
@@ -228,7 +228,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 0
       end
       object edUserName: TRzDBEdit
-        Left = 15
+        Left = 33
         Top = 150
         Width = 135
         Height = 28
@@ -237,7 +237,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 2
       end
       object edPassword: TRzDBEdit
-        Left = 156
+        Left = 174
         Top = 150
         Width = 151
         Height = 28
@@ -247,7 +247,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
         TabOrder = 3
       end
       object DBCheckBox1: TDBCheckBox
-        Left = 26
+        Left = 44
         Top = 97
         Width = 97
         Height = 17
@@ -258,7 +258,7 @@ object frmLeadsOnlineSettings: TfrmLeadsOnlineSettings
       end
     end
     object edStoreId: TRzDBEdit
-      Left = 31
+      Left = 49
       Top = 30
       Width = 178
       Height = 28

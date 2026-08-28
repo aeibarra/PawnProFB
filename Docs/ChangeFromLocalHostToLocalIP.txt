@@ -1,0 +1,9 @@
+IniFile Plus this:
+
+firebird.conf → RemoteBindAddress
+This is the one that actually bites. If it reads RemoteBindAddress = localhost, the listener binds to whatever that machine resolves localhost to. If that comes back ::1 (IPv6) — which is exactly what happens when something else already holds IPv4 port 3050 — then a client asking for 127.0.0.1 will fail even though localhost worked a minute ago. You'd be switching the client to an address the server isn't listening on.
+
+For a single-station store, make it explicit:
+
+
+RemoteBindAddress = 127.0.0.1
