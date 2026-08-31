@@ -68,7 +68,10 @@ recent pawn, which is never reported to law enforcement.
 
 | file | store | captured |
 |---|---|---|
-| `PerezCash_BASELINE_2026-08-17.txt` | Perez Cash Jewelry II | 2026-08-17, before the SOAP build was installed |
+| `PerezCash_BASELINE_2026-08-17.txt` | Perez Cash Jewelry II | 2026-08-17, before the SOAP build |
+| `PerezCash_WEEK1_2026-08-24.txt` | Perez Cash Jewelry II | 2026-08-24, after a week live |
+| `RicardoJoyeria_BASELINE_2026-08-25.txt` | Ricardo Joyeria | 2026-08-25, before the SOAP build |
+| `FelitinsGoldInc_BASELINE_2026-08-28.txt` | Felitin's Gold | 2026-08-28, after the FB5 conversion, before SOAP |
 
 ## Clearing image blobs left by an old pump
 

@@ -46,8 +46,9 @@ account's own email address, it names **PawnPro**, and it asks for **API
 credentials** — not a password reset, which would get them website login details
 instead. Those are the words to give an owner.
 
-**PawnPro on their POS software list:** requested, not yet live. LeadsOnline are
-checking with their IT team whether it can be added before deployment.
+**PawnPro is on their POS software list**, confirmed by LeadsOnline 2026-08-31.
+New businesses signing up can now select it by name instead of describing it,
+which is one less thing for a store owner to get wrong on the phone.
 
 ---
 
@@ -246,7 +247,7 @@ Perez Cash needed 13,515 exclusions. This is a bigger store with a smaller job.
 
 ## 4. Felitin's Gold
 
-Credentials issued; awaiting the ASA-to-FB5 conversion.
+Live on the web service since 2026-08-28.
 
 | | |
 |---|---|
@@ -264,25 +265,65 @@ Credentials issued; awaiting the ASA-to-FB5 conversion.
 | **API password** | not recorded here — see the note at the top |
 | **Credentials issued** | 2026-08-27, by Russell House |
 | **Verified** | 2026-08-27, `CheckLogin` against production returned errorCode 0 |
-
 ### Cutover
 
 | | |
 |---|---|
-| **Database** | still SQL Anywhere — needs the FB5 conversion before SOAP |
-| **Images** | already stored on disk, so no image migration needed |
+| **Converted ASA to FB5** | 2026-08-28 |
+| **SOAP live** | 2026-08-28 |
+| **Schema version** | 10 |
+| **Build** | v3.37.1.20, commit `0abdc65+` |
+| **Images** | already on disk before conversion, so no image migration |
 | **Stations** | single workstation |
-| **SOAP build installed** | not yet |
+| **Store id confirmed** | `63256` in their database, matching what LeadsOnline issued |
 
-### Before installing
+### How it went
 
-- **Convert to FB5 first.** SOAP does not exist on the ASA build, and the survey
-  scripts are Firebird-only (`SET LIST ON`, `IIF`, `DATEADD ... TO`).
-- Run `Tools/StoreSurvey/PreCutover_Survey.sql` against the **converted**
-  database and save the baseline. That is the state immediately before SOAP
-  starts, which is what makes it worth capturing.
-- **Confirm `STORE.LEADS_STORE_ID` reads `63256`** after the pump.
-- Check `AUTO_BACKUP_WHEN_CLOSE_APP` and where `BACKUP_PATH` points.
+The conversion and the SOAP cutover were done in the same visit -- the first
+store where both happened together, since the other three were already on
+Firebird.
+
+There was almost nothing to send. `NEVER_IN_A_CSV` was **1**: the file export had
+already reported everything else. That single ticket was submitted and came back
+"already exists", meaning LeadsOnline held it too and only the CSV log had missed
+recording it. The export screen shows 0, and the store reports through SOAP from
+its next transaction onward.
+
+Baseline in `Tools/StoreSurvey/FelitinsGoldInc_BASELINE_2026-08-28.txt`.
+
+| | |
+|---|---|
+| Pawns and purchases, all time | 1,193 (oldest 2018-08-16) |
+| Never in any CSV export | 1 |
+| Multi-item tickets that would send `$0.00` | 0 |
+| Customers | 599 |
+| Questionable dates of birth | 5, all in the future |
+| Item photos / customer ID photos | 3,012 / 0 |
+| Backups | `D:\Pawn`, **auto-backup ON**, 2,553 logged |
+| Florida police ID | `03337` |
+
+### Outstanding: 294 MB of dead image blobs
+
+The pump that ran here still copied the ASA image blobs across, so the database
+came out at **397 MB** for a store of 1,193 transactions -- 2,991 rows carrying
+294 MB that the Firebird build never reads, because it reads images from disk.
+
+Not harmful, only wasteful: every backup copies them, and the encrypted backup
+carries them too.
+
+To clean it up, at the store:
+
+```
+.\Clear-ImageBlobs.ps1                        # verify only
+.\Clear-ImageBlobs.ps1 -ClearBlobs -Shrink    # then clear and rebuild
+```
+
+Expect roughly 400 MB down to about 100 MB. Note the store has 22 rows whose
+IMAGE_DATA is NULL; the FB5 extractor writes a 0-byte file for those, which the
+verify treats as missing rather than as a copy.
+
+Stores converted from 2026-08-28 do not inherit this -- the pump no longer
+copies blobs.
 
 ---
 
@@ -372,10 +413,11 @@ had none and 61.
 
 ## Not yet on SOAP
 
-All five stores now have production credentials. What remains is per-store work,
-not anything waiting on LeadsOnline.
+Four of the five are live. Nothing is waiting on LeadsOnline.
 
 | store | what is left |
 |---|---|
-| Felitin's Gold | ASA-to-FB5 conversion. Images already on disk. |
-| Kendale Jewelry | images to a file share, ASA-to-FB5 conversion, then the client workstations. |
+| Kendale Jewelry | images to a file share, ASA-to-FB5 conversion, then the client workstations. Scheduled 2026-09-01. |
+
+Felitin's Gold is live but still carries 294 MB of image blobs from the old
+pump — see its entry. Housekeeping, not a blocker.

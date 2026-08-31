@@ -1,0 +1,30 @@
+﻿Felitins Gold Inc -- PRE-CUTOVER BASELINE, captured 2026-08-28 12:01
+Database: 127.0.0.1/3050:PAWNDATA
+Captured BEFORE the SOAP export was enabled. Compare later with Week1_Review.sql.
+======================================================================
+STORE_NAME                      Felitins Gold Inc
+STORE_ADDR                      10719 W. Flagler ST
+STORE_CITY_ST_ZIP               Miami, FL 33174
+STORE_PHONE                     3052005236
+STORE_POLICE_ID                 03337
+LEADS_STORE_ID                  63256
+FTP_USER                        felitinsgoldinc
+LEADS_ONLINE_FTP_ADDRESS        ftp.leadsonline.com
+BACKUP_PATH                     D:\Pawn
+BACKUP_IMAGES_PATH              D:\PawnImages
+AUTO_BACKUP_WHEN_CLOSE_APP      <true>
+BACKUPS_LOGGED                  2553
+LAST_BACKUP                     2026-08-28 11:59:16.6200
+TOTAL_PU                        1193
+NEVER_IN_A_CSV                  1
+OLDEST                          2018-08-16
+NEWEST                          2026-08-26
+MULTI_ITEM_ZERO_AMOUNT          675
+ZERO_AMOUNT_AND_UNSENT          0
+CUSTOMERS                       599
+DOB_MISSING                     0
+DOB_IN_FUTURE                   5
+DOB_TOO_OLD                     0
+ITEM_PHOTOS                     3012
+ID_PHOTOS                       0
+STONES_THAT_WOULD_DROP          0
