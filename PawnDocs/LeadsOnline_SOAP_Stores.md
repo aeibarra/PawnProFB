@@ -302,34 +302,32 @@ Baseline in `Tools/StoreSurvey/FelitinsGoldInc_BASELINE_2026-08-28.txt`.
 | Backups | `D:\Pawn`, **auto-backup ON**, 2,553 logged |
 | Florida police ID | `03337` |
 
-### Outstanding: 294 MB of dead image blobs
+### Image blobs cleared, 2026-09-01
 
-The pump that ran here still copied the ASA image blobs across, so the database
-came out at **397 MB** for a store of 1,193 transactions -- 2,991 rows carrying
-294 MB that the Firebird build never reads, because it reads images from disk.
+The pump that ran here still copied the ASA image blobs, so the database came out
+at **397 MB** for 1,193 transactions -- 2,991 rows carrying 294 MB the Firebird
+build never reads, because it reads images from disk.
 
-Not harmful, only wasteful: every backup copies them, and the encrypted backup
-carries them too.
+Cleaned up with `Clear-ImageBlobs.ps1 -ClearBlobs -Shrink`:
 
-To clean it up, at the store:
+| | |
+|---|---|
+| before | 379 MB |
+| after | **14.2 MB** |
+| image rows | 3,018, all intact |
+| rows still holding a blob | **0** |
 
-```
-.\Clear-ImageBlobs.ps1                        # verify only
-.\Clear-ImageBlobs.ps1 -ClearBlobs -Shrink    # then clear and rebuild
-```
-
-Expect roughly 400 MB down to about 100 MB. Note the store has 22 rows whose
-IMAGE_DATA is NULL; the FB5 extractor writes a 0-byte file for those, which the
-verify treats as missing rather than as a copy.
+Far better than the ~100 MB estimated. The blobs were very nearly the whole
+database.
 
 Stores converted from 2026-08-28 do not inherit this -- the pump no longer
-copies blobs.
+copies blobs, and asks first when a store's images are not yet on disk.
 
 ---
 
 ## 5. Kendale Jewelry
 
-Credentials issued; the largest and last of the conversions.
+Live on the web service since 2026-09-01. The largest store, and the last conversion.
 
 Not part of the same family as the other four — keep it off shared
 correspondence, and copy only its own address on anything sent to LeadsOnline.
@@ -357,43 +355,94 @@ correspondence, and copy only its own address on anything sent to LeadsOnline.
 
 | | |
 |---|---|
-| **Database** | still SQL Anywhere |
-| **Images** | still in the database — need moving to disk |
+| **Images to file share** | 2026-09-01, before the conversion |
+| **Converted ASA to FB5** | 2026-09-01 |
+| **SOAP live** | 2026-09-01 |
+| **Schema version** | 10 |
+| **Build** | v3.37.1.20, commit `0abdc65+` |
 | **Stations** | **multiple** — the first multi-workstation FB5 store |
-| **SOAP build installed** | not yet |
+| **Store id confirmed** | `4351` came through the pump from the live ASA database |
 
-### ⚠️ The store id in the development copy is wrong
+### How it went
 
-The FB5 copy of Kendale on the development machine reads
-`LEADS_STORE_ID = 57390`. That is the **sandbox** store — Ibarra Consulting Test
-Store — written over the real value during early SOAP testing. Their true number
-is `4351`, as issued above.
+All three changes in one day, in the order planned: images to the share while
+still on ASA, then the pump, then the workstations.
 
-This matters because the standard check is "confirm the database already matches
-what LeadsOnline issued", and against that copy the check would compare 57390
-with 4351, fail, and be blamed on LeadsOnline. Take the value from the **live ASA
-database**, or set it to `4351` after the pump.
+**The pump's blob guard did its job.** It found 7,110 images stored inside the
+ASA database, said they would not be copied, and waited — 25 seconds by the log —
+before "Confirmed on disk. Blobs will be skipped." That prompt existed for
+exactly this store, and this is the run it was written for. All 38 post-pump
+validations passed; the NULL coercion summary was empty.
 
-### Cutover plan
+| | |
+|---|---|
+| Customers | 9,898 |
+| Transactions | 29,656 |
+| Inventory items | 70,815 |
+| Stones | 30,727 |
+| Image rows (no blobs) | 7,110 |
+| Export log detail | 71,173 |
 
-Three changes, deliberately separated so a failure points at one of them:
+Submissions on the day: **33 sent, 33 accepted, no errors of any kind. 33 images
+uploaded, none failed.** Every day from the cutover has written equal to
+reported, and the export screen shows 0.
 
-1. **Images to a file share, while still on ASA.** The step with the most ways
-   to go wrong — UNC paths, permissions, workstations resolving the share. Doing
-   it first means a later problem is not ambiguous, and the pump carries less.
-2. **ASA to FB5**, with the store running on one machine.
-3. **The client workstations**, and only then SOAP.
+Baseline in `Tools/StoreSurvey/KENDALEJEWELRY_BASELINE_2026-09-01.txt`.
 
-### Multi-station notes — all first-time in production here
+| | |
+|---|---|
+| Pawns and purchases, all time | 29,656 (oldest 2008-08-07) |
+| Never in any CSV export | 547 |
+| Multi-item tickets that would send `$0.00` | 0 |
+| Questionable dates of birth | 138 (64 missing, 67 future, 7 implausible) |
+| Item photos / customer ID photos | 7,110 / 0 |
+| Backups | `D:\`, images to `D:\PawnImagesBck`, 2,555 logged |
 
-- `RemoteBindAddress` must **not** be `127.0.0.1`, the opposite of the single
-  station stores. `PawnProSetup` handles it when "multiple workstations" is
-  selected, but it is the inverse of what was just done at Ricardo.
+### ⚠️ Four recent transactions were excluded by mistake
+
+`EXCLUDED_BUT_RECENT` reads **4**, and it should read 0. These were caught in the
+bulk exclusion — all 514 landed within half a second of each other, so it was one
+sweep, and these four sat inside the selected range:
+
+| ticket | date | type |
+|---|---|---|
+| 32711 | 2025-09-19 | Pawn |
+| 32934 | 2025-12-10 | Purchase |
+| 32977 | 2025-12-29 | Pawn |
+| 33068 | 2026-01-31 | Purchase |
+
+**None of the four ever appeared in a CSV export either**, so as things stand
+they have never reached law enforcement through any channel.
+
+The confirmation did warn — "4 of them are from the last 12 months" — which is
+easy to skim past when the same dialog is excluding 514 rows. Worth remembering
+that the warning is most likely to be missed exactly when it is most needed.
+
+To undo: delete those four rows from `LEADS_SOAP_EXCLUDED` and they reappear in
+the export list. Whether to send them is a judgement call — the oldest is nearly
+a year old and may come back as error 7 regardless.
+
+### Site notes
+
+- **`AUTO_BACKUP_WHEN_CLOSE_APP` is OFF.** The only live store where it is, and
+  the one with the least experienced staff, so backups depend on someone
+  remembering. Worth turning on.
+- **No customer ID photos at all** (0 of 9,898 customers), so the IDs column
+  reads 0 on every row.
+- Backups go to `D:\` root, images to `D:\PawnImagesBck`.
+
+### Multi-station notes — all ran in production for the first time here
+
+- `RemoteBindAddress` was left open rather than bound to `127.0.0.1`, which is
+  the inverse of the single-station stores and so the setting most easily got
+  wrong from muscle memory. `PawnProSetup` handles it when "multiple
+  workstations" is selected.
 - The firewall needs opening on the DB host:
   `COMMON/FB-Admin/Set-FirebirdFirewallRule.ps1`, elevated. Note a shop network
   Windows has categorised as **Public** silently defeats a Private-only rule.
 - `APP_STATE['IMAGE_SHARED_PATH']` publishing, WireCrypt with `chacha.dll`, and
-  `PawnProSetup`'s client-install branch all run for real for the first time.
+  `PawnProSetup`'s client-install branch all ran for real for the first time
+  here, and all worked.
 - Only the DB host applies schema migrations; a workstation started first will
   refuse with an instruction to run the server machine first. That is by design.
 
@@ -411,13 +460,22 @@ had none and 61.
 
 ---
 
-## Not yet on SOAP
+## All five are live
 
-Four of the five are live. Nothing is waiting on LeadsOnline.
+| store | live since | stations |
+|---|---|---|
+| Perez Cash Jewelry II | 2026-08-17 | single |
+| Lucky Jewelry | 2026-08-24 | single |
+| Ricardo Joyeria | 2026-08-25 | single |
+| Felitin's Gold | 2026-08-28 | single |
+| Kendale Jewelry | 2026-09-01 | multiple |
 
-| store | what is left |
-|---|---|
-| Kendale Jewelry | images to a file share, ASA-to-FB5 conversion, then the client workstations. Scheduled 2026-09-01. |
+The CSV/FTP export still exists and still works; no store is using it any more.
 
-Felitin's Gold is live but still carries 294 MB of image blobs from the old
-pump — see its entry. Housekeeping, not a blocker.
+**Open items, neither urgent:**
+
+- **Kendale**: four recent transactions excluded by mistake, and they were never
+  in a CSV either, so they have reached law enforcement through no channel at
+  all. See that store's entry.
+- **Kendale**: `AUTO_BACKUP_WHEN_CLOSE_APP` is off, the only live store where it
+  is, at the store with the least experienced staff.

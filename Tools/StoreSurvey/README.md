@@ -72,12 +72,14 @@ recent pawn, which is never reported to law enforcement.
 | `PerezCash_WEEK1_2026-08-24.txt` | Perez Cash Jewelry II | 2026-08-24, after a week live |
 | `RicardoJoyeria_BASELINE_2026-08-25.txt` | Ricardo Joyeria | 2026-08-25, before the SOAP build |
 | `FelitinsGoldInc_BASELINE_2026-08-28.txt` | Felitin's Gold | 2026-08-28, after the FB5 conversion, before SOAP |
+| `KENDALEJEWELRY_BASELINE_2026-09-01.txt` | Kendale Jewelry | 2026-09-01, after the FB5 conversion, before SOAP |
 
 ## Clearing image blobs left by an old pump
 
 Pumps before 2026-08-28 copied the ASA image blobs into Firebird. The app never
-reads them — it reads from disk — so they are dead weight. At Felitin's Gold
-they are 294 MB of a 397 MB database, and every backup copies them.
+reads them - it reads from disk - so they are dead weight. Felitin's Gold was
+the only store affected: 294 MB of a 397 MB database, cleared on 2026-09-01 and
+rebuilt down to 14.2 MB.
 
 ```
 .\Clear-ImageBlobs.ps1                  # verify only, changes nothing

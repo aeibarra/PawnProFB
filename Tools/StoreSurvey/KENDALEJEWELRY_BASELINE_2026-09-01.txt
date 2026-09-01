@@ -1,0 +1,30 @@
+﻿KENDALE JEWELRY -- PRE-CUTOVER BASELINE, captured 2026-09-01 13:54
+Database: 127.0.0.1/3050:PAWNDATA
+Captured BEFORE the SOAP export was enabled. Compare later with Week1_Review.sql.
+======================================================================
+STORE_NAME                      KENDALE JEWELRY
+STORE_ADDR                      15154 SW 72nd Street
+STORE_CITY_ST_ZIP               Miami, FL 33193
+STORE_PHONE                     (305)382-1861
+STORE_POLICE_ID                 810
+LEADS_STORE_ID                  4351
+FTP_USER                        kndjewelry
+LEADS_ONLINE_FTP_ADDRESS        ftp.leadsonline.com
+BACKUP_PATH                     D:\
+BACKUP_IMAGES_PATH              D:\PawnImagesBck
+AUTO_BACKUP_WHEN_CLOSE_APP      <false>
+BACKUPS_LOGGED                  2555
+LAST_BACKUP                     2026-09-01 13:29:42.1190
+TOTAL_PU                        29656
+NEVER_IN_A_CSV                  547
+OLDEST                          2008-08-07
+NEWEST                          2026-09-01
+MULTI_ITEM_ZERO_AMOUNT          155
+ZERO_AMOUNT_AND_UNSENT          0
+CUSTOMERS                       9898
+DOB_MISSING                     64
+DOB_IN_FUTURE                   67
+DOB_TOO_OLD                     7
+ITEM_PHOTOS                     7110
+ID_PHOTOS                       0
+STONES_THAT_WOULD_DROP          0
