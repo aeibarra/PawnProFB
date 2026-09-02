@@ -570,7 +570,7 @@ difficulty in the first five. Felitin's was small and Kendale large, and both
 conversions went cleanly; Kendale's only real trouble was the image share, and
 Ricardo's only real work was 53,865 unreported transactions to exclude.
 
-Three things decide how hard a store is, none of them size:
+Four things decide how hard a store is, none of them size:
 
 1. **How many workstations.** The one that actually bit. A second till brings the
    image share, the firewall, `RemoteBindAddress`, and workstation provisioning.
@@ -578,9 +578,16 @@ Three things decide how hard a store is, none of them size:
    the pump; already on disk means neither.
 3. **How much history never reached a CSV.** Decides whether the first export
    screen offers a dozen rows or fifty thousand.
+4. **How much the store leans on the reports.** Several of the nine use them
+   heavily, which is part of why they were left until later. Reports are the
+   likeliest part of the app to need work after a conversion, and the
+   late-payment report (`Report01`) is already known to have drifted and to be
+   heavily used by exactly these stores. A report-dependent store is a longer
+   job than its size suggests, and the work may land after the migration rather
+   than during it.
 
-None of these is known for any of the nine. An ASA-side survey would answer all
-three before anything is scheduled, and would collect each store's existing
+The first three are unknown for all nine. An ASA-side survey would answer them
+before anything is scheduled, and would collect each store's existing
 `LEADS_STORE_ID` at the same time — enough to request every set of credentials
 from LeadsOnline in one message rather than nine.
 
