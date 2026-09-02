@@ -17,15 +17,15 @@ missing entries below are as much a part of the record as the filled ones.
 | Ricardo Joyeria | SOAP | FB5 | single | live 2026-08-25 |
 | Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
-| Gema Jewelers | CSV/FTP | ASA | ? | to migrate |
-| Gold Star Pawn & Jewelry | CSV/FTP | ASA | ? | to migrate |
-| Perez Cash Joyeria | CSV/FTP | ASA | ? | to migrate |
-| I Love Miami Jewelry | CSV/FTP | ASA | ? | to migrate |
-| A Loz Jewelry | CSV/FTP | ASA | ? | to migrate |
-| A1 Jewelry Loans | CSV/FTP | ASA | ? | to migrate |
-| Ok Jewelers | CSV/FTP | ASA | ? | to migrate |
-| Home of Watches & Jewels | CSV/FTP | ASA | ? | to migrate |
-| AJ Jewelry | **none** | ASA | ? | to migrate, no LeadsOnline |
+| Gema Jewelers | CSV/FTP | ASA | single | to migrate |
+| Gold Star Pawn & Jewelry | CSV/FTP | ASA | **multiple** | to migrate |
+| Perez Cash Joyeria | CSV/FTP | ASA | single | to migrate |
+| I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
+| A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
+| A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
+| Ok Jewelers | CSV/FTP | ASA | single | to migrate |
+| Home of Watches & Jewels | CSV/FTP | ASA | single | to migrate |
+| AJ Jewelry | **none** | ASA | single | to migrate, no LeadsOnline |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service in the same visit, as Felitin's and Kendale were.
@@ -518,6 +518,14 @@ Phone — · Email — · LeadsOnline store id —
 10158 W Flagler St, Miami, FL 33174
 Phone — · Email — · LeadsOnline store id —
 
+**MULTI-STATION -- the only one of the nine.** Everything Kendale needed applies
+here and nowhere else: images to a share before the pump, the firewall opened on
+the DB host, `RemoteBindAddress` left open rather than bound to loopback, and a
+credential stored on each till. Tools are in `Tools/ImageShare`, and they have
+not yet been run against a real share -- Kendale was done by hand before they
+existed. Worth a rehearsal in the VM first, since there is no cheaper store to
+learn on.
+
 ### Perez Cash Joyeria
 3611 W Flagler St, Miami, FL 33135
 Phone — · Email — · LeadsOnline store id —
@@ -572,8 +580,13 @@ Ricardo's only real work was 53,865 unreported transactions to exclude.
 
 Four things decide how hard a store is, none of them size:
 
-1. **How many workstations.** The one that actually bit. A second till brings the
-   image share, the firewall, `RemoteBindAddress`, and workstation provisioning.
+1. **How many workstations.** The one that actually bit at Kendale. A second till
+   brings the image share, the firewall, `RemoteBindAddress` left open, and
+   workstation provisioning.
+
+   KNOWN as of 2026-09-02: only **Gold Star Pawn & Jewelry** is multi-station.
+   The other eight are single. So eight of the nine are Felitin's-shaped jobs --
+   convert and cut over in one visit -- and exactly one is Kendale-shaped.
 2. **Where the images live.** In the ASA database means an extraction step before
    the pump; already on disk means neither.
 3. **How much history never reached a CSV.** Decides whether the first export
@@ -586,9 +599,9 @@ Four things decide how hard a store is, none of them size:
    job than its size suggests, and the work may land after the migration rather
    than during it.
 
-The first three are unknown for all nine. An ASA-side survey would answer them
-before anything is scheduled, and would collect each store's existing
-`LEADS_STORE_ID` at the same time — enough to request every set of credentials
+Station count is now known. Image location and CSV history are not, for any of
+the nine. An ASA-side survey would answer both before anything is scheduled, and
+would collect each store's existing `LEADS_STORE_ID` at the same time — enough to request every set of credentials
 from LeadsOnline in one message rather than nine.
 
 ## Template for the next store
