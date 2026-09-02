@@ -1,12 +1,47 @@
-# LeadsOnline SOAP — stores moved off the CSV/FTP export
+# PawnPro stores
 
-The authoritative list of which pawnshops report to LeadsOnline through the web
-service, and everything needed to support one without phoning someone.
+The list of every pawnshop running PawnPro: who they are, what they run, and
+where each one has got to. Maintained here rather than in a phone contact group,
+because the details that matter for support are not the ones a contact card
+holds.
 
-Stores not listed here are still on the CSV + FTP export. Moving one is a
-per-store decision: `STORE.LEADS_ONLINE_EXPORT_METHOD` is `'C'` (CSV) by
-default and only becomes `'S'` (SOAP) when someone deliberately switches it on
-the LeadsOnline Settings screen.
+**Gaps are marked, not omitted.** A blank is a thing to go and find out, and the
+missing entries below are as much a part of the record as the filled ones.
+
+## Every store
+
+| store | LeadsOnline | database | stations | status |
+|---|---|---|---|---|
+| Perez Cash Jewelry II | SOAP | FB5 | single | live 2026-08-17 |
+| Lucky Jewelry | SOAP | FB5 | single | live 2026-08-24 |
+| Ricardo Joyeria | SOAP | FB5 | single | live 2026-08-25 |
+| Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
+| Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
+| Gema Jewelers | CSV/FTP | ASA | ? | to migrate |
+| Gold Star Pawn & Jewelry | CSV/FTP | ASA | ? | to migrate |
+| Perez Cash Joyeria | CSV/FTP | ASA | ? | to migrate |
+| I Love Miami Jewelry | CSV/FTP | ASA | ? | to migrate |
+| A Loz Jewelry | CSV/FTP | ASA | ? | to migrate |
+| A1 Jewelry Loans | CSV/FTP | ASA | ? | to migrate |
+| Ok Jewelers | CSV/FTP | ASA | ? | to migrate |
+| Home of Watches & Jewels | CSV/FTP | ASA | ? | to migrate |
+| AJ Jewelry | **none** | ASA | ? | to migrate, no LeadsOnline |
+
+Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
+service in the same visit, as Felitin's and Kendale were.
+
+## ⚠️ Two stores are called Perez Cash
+
+| | |
+|---|---|
+| **Perez Cash Jewelry II** | 15118 SW 56th St, Miami FL 33186 — live on SOAP, store id `63256` |
+| **Perez Cash Joyeria** | 3611 W Flagler St, Miami FL 33135 — still on ASA |
+
+Different addresses, different databases, different LeadsOnline accounts. Worth
+saying out loud because "Perez Cash called" is ambiguous, and the wrong one
+getting a credential change or a conversion is the kind of mistake that is
+obvious only afterwards.
+
 
 > **API passwords are deliberately not in this file.**
 > They live in each store's own database (`STORE.LEADS_ONLINE_API_PASSWORD`) and
@@ -446,6 +481,88 @@ a year old and may come back as error 7 regardless.
 - Only the DB host applies schema migrations; a workstation started first will
   refuse with an instruction to run the server machine first. That is by design.
 
+## Stores still to migrate
+
+Basic details as supplied 2026-09-02. **Phone numbers and email addresses are
+missing for most**, and both are needed: the email because LeadsOnline copy the
+store on a credentials request, the phone because it is how you reach them on
+the day.
+
+Station count, image location and history size are unknown for all of them, and
+those are the three things that actually decide how hard a migration is — see
+"What decides the order" below.
+
+### Gema Jewelers
+9864 SW 40th St, Miami, FL 33165
+Phone — · Email — · LeadsOnline store id —
+
+### Gold Star Pawn & Jewelry
+10158 W Flagler St, Miami, FL 33174
+Phone — · Email — · LeadsOnline store id —
+
+### Perez Cash Joyeria
+3611 W Flagler St, Miami, FL 33135
+Phone — · Email — · LeadsOnline store id —
+**Not the same store as Perez Cash Jewelry II.** See the warning at the top.
+
+### I Love Miami Jewelry
+5889 NW 36th St, Miami, FL 33166
+Phone — · Email — · LeadsOnline store id —
+
+### A Loz Jewelry
+6145 SW 8th St, Miami, FL 33144
+Phone — · Email — · LeadsOnline store id —
+
+### A1 Jewelry Loans (Frank's store)
+8150 SW 8th St #125, Miami, FL 33144
+Phone (305) 967-8981 · Email — · LeadsOnline store id —
+
+### Ok Jewelers
+10601 SW 40th St, Miami, FL 33165
+Phone — · Email — · LeadsOnline store id —
+**Same owner as Home of Watches & Jewels.**
+
+### Home of Watches & Jewels
+1876 SW 57th Ave, Miami, FL 33155
+Phone (305) 264-3359 · Email — · LeadsOnline store id —
+**Same owner as Ok Jewelers.**
+
+Two locations under one owner is the first time the company-level credential
+question becomes real. LeadsOnline support both arrangements: one user name and
+password shared across a company's locations, or separate credentials per
+location, with the store id distinguishing them either way. Ask which they have
+been set up with before requesting anything.
+
+### AJ Jewelry
+3185 W 76th St, Hialeah, FL 33018
+Phone — · Email — · LeadsOnline store id — **none**
+
+**Does not use LeadsOnline.** Still needs the ASA to Firebird 5 conversion, but
+no credentials, no export configuration, and `LEADS_ONLINE_EXPORT_METHOD` stays
+`'N'`. A simpler migration than the rest, and a reasonable one to convert early
+for that reason.
+
+## What decides the order
+
+Volume is the obvious way to rank these and it is not the one that predicted
+difficulty in the first five. Felitin's was small and Kendale large, and both
+conversions went cleanly; Kendale's only real trouble was the image share, and
+Ricardo's only real work was 53,865 unreported transactions to exclude.
+
+Three things decide how hard a store is, none of them size:
+
+1. **How many workstations.** The one that actually bit. A second till brings the
+   image share, the firewall, `RemoteBindAddress`, and workstation provisioning.
+2. **Where the images live.** In the ASA database means an extraction step before
+   the pump; already on disk means neither.
+3. **How much history never reached a CSV.** Decides whether the first export
+   screen offers a dozen rows or fifty thousand.
+
+None of these is known for any of the nine. An ASA-side survey would answer all
+three before anything is scheduled, and would collect each store's existing
+`LEADS_STORE_ID` at the same time — enough to request every set of credentials
+from LeadsOnline in one message rather than nine.
+
 ## Template for the next store
 
 Copy the block above. The fields that actually matter for support are: store id,
@@ -460,22 +577,15 @@ had none and 61.
 
 ---
 
-## All five are live
+## Open items
 
-| store | live since | stations |
-|---|---|---|
-| Perez Cash Jewelry II | 2026-08-17 | single |
-| Lucky Jewelry | 2026-08-24 | single |
-| Ricardo Joyeria | 2026-08-25 | single |
-| Felitin's Gold | 2026-08-28 | single |
-| Kendale Jewelry | 2026-09-01 | multiple |
+Neither urgent, both at Kendale, both easy to lose:
 
-The CSV/FTP export still exists and still works; no store is using it any more.
+- **Four recent transactions excluded by mistake**, and none was ever in a CSV
+  either, so they have reached law enforcement through no channel at all. The
+  fix is on the USB at `C:\TempUSB\Kendale`. See Kendale's entry.
+- **`AUTO_BACKUP_WHEN_CLOSE_APP` is off** — the only live store where it is, and
+  the one whose staff are least likely to remember doing it by hand.
 
-**Open items, neither urgent:**
-
-- **Kendale**: four recent transactions excluded by mistake, and they were never
-  in a CSV either, so they have reached law enforcement through no channel at
-  all. See that store's entry.
-- **Kendale**: `AUTO_BACKUP_WHEN_CLOSE_APP` is off, the only live store where it
-  is, at the store with the least experienced staff.
+The CSV/FTP export still exists and still works. None of the five live stores is
+using it; the nine still to migrate all are.
