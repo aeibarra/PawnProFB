@@ -12,14 +12,14 @@ missing entries below are as much a part of the record as the filled ones.
 
 | store | LeadsOnline | database | stations | status |
 |---|---|---|---|---|
-| Perez Cash Jewelry II (store 2) | SOAP | FB5 | single | live 2026-08-17 |
+| Perez Cash Jewelry II | SOAP | FB5 | single | live 2026-08-17 |
 | Lucky Jewelry | SOAP | FB5 | single | live 2026-08-24 |
 | Ricardo Joyeria | SOAP | FB5 | single | live 2026-08-25 |
 | Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
 | Gema Jewelers | CSV/FTP | ASA | ? | to migrate |
 | Gold Star Pawn & Jewelry | CSV/FTP | ASA | ? | to migrate |
-| Perez Cash Joyeria (store 1) | CSV/FTP | ASA | ? | to migrate |
+| Perez Cash Joyeria | CSV/FTP | ASA | ? | to migrate |
 | I Love Miami Jewelry | CSV/FTP | ASA | ? | to migrate |
 | A Loz Jewelry | CSV/FTP | ASA | ? | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | ? | to migrate |
@@ -30,27 +30,34 @@ missing entries below are as much a part of the record as the filled ones.
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service in the same visit, as Felitin's and Kendale were.
 
-## ⚠️ Perez Cash is two stores, 1 and 2
+## ⚠️ Perez Cash is two stores under one owner
 
-| | |
-|---|---|
-| **Perez Cash Joyeria** — the first store | 3611 W Flagler St, Miami FL 33135 — still on ASA |
-| **Perez Cash Jewelry II** — the second | 15118 SW 56th St, Miami FL 33186 — live on SOAP, store id `63256`, API user `pcj15118` |
+Both names are official, and only the second carries a number:
 
-Same business, two locations. Separate databases, separate PawnPro installs, and
+| official name | where | state |
+|---|---|---|
+| **Perez Cash Joyeria** | 3611 W Flagler St, Miami FL 33135 | still on ASA |
+| **Perez Cash Jewelry II** | 15118 SW 56th St, Miami FL 33186 | live on SOAP, store id `63256`, API user `pcj15118` |
+
+There is no "Perez Cash I". The first store simply has no number in its name, so
+the two are told apart by the presence or absence of the **II**, and by address.
+
+Same owner, two locations. Separate databases, separate PawnPro installs, and
 separate LeadsOnline store ids — the store id is what distinguishes locations
 within one company.
 
 **Two consequences.**
 
-When the first store is migrated, say in the credentials request that it is the
-same company as Perez Cash Jewelry II, store `63256`. LeadsOnline set credentials
-either at company level, one user name and password shared across the locations,
-or per location; they will match whatever this company already has, and asking
-saves a mismatch later.
+When Perez Cash Joyeria is migrated, say in the credentials request that it is
+the same owner as Perez Cash Jewelry II, store `63256`. LeadsOnline set
+credentials either at company level, one user name and password shared across the
+locations, or per location; they will match whatever this owner already has, and
+asking up front avoids a mismatch that would only surface at the first
+submission.
 
-And in conversation, "Perez Cash" alone is ambiguous. The wrong one getting a
+And "Perez Cash" alone is ambiguous in conversation. The wrong one getting a
 credential change, a conversion or an exclusion sweep is the kind of mistake that
+is obvious only afterwards. Use the full name, or the street.
 is obvious only afterwards. Say **1** or **II**.
 
 
@@ -511,11 +518,11 @@ Phone — · Email — · LeadsOnline store id —
 10158 W Flagler St, Miami, FL 33174
 Phone — · Email — · LeadsOnline store id —
 
-### Perez Cash Joyeria -- the FIRST Perez Cash store
+### Perez Cash Joyeria
 3611 W Flagler St, Miami, FL 33135
 Phone — · Email — · LeadsOnline store id —
 
-**Same business as Perez Cash Jewelry II**, which is already live on SOAP with
+**Same owner as Perez Cash Jewelry II**, which is already live on SOAP with
 store id 63256 and API user pcj15118. Mention that when requesting credentials,
 so LeadsOnline set this one up the same way. See the warning at the top.
 
