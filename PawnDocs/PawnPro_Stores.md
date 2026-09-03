@@ -30,6 +30,25 @@ missing entries below are as much a part of the record as the filled ones.
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service in the same visit, as Felitin's and Kendale were.
 
+## Builds
+
+| version | what it is |
+|---|---|
+| **3.37.2.0** and later | licensed ReportBuilder. The build to ship. |
+| 3.37.1.x | trial ReportBuilder. What the five live stores were installed with. |
+
+The trial engine put a message on the **report preview only**. Paper printing was
+unaffected throughout, so no pawn ticket, receipt or police report ever carried a
+trial mark. It was an operator annoyance on screen, not something a customer or a
+detective ever saw.
+
+That matters most for the stores still to migrate, several of which lean heavily
+on the reports — they will be installed on 3.37.2.0 or later and never meet it.
+
+Each store writes its build into `APP_STATE.APP_VERSION` at startup, and the
+About box shows the version and build date, so confirming a store has actually
+been updated is a look at one screen rather than a guess.
+
 ## ⚠️ Perez Cash is two stores under one owner
 
 Both names are official, and only the second carries a number:
@@ -620,7 +639,13 @@ had none and 61.
 
 ## Open items
 
-Neither urgent, both at Kendale, both easy to lose:
+- **All five live stores need the executable replaced** with 3.37.2.0. They are
+  on 3.37.1.20, the trial-ReportBuilder build. Preview-only, so nothing on paper
+  was ever affected, but the message is there on screen until they are updated.
+  Confirm each one afterwards from the About box rather than assuming the copy
+  landed.
+
+Two more, both at Kendale, both easy to lose:
 
 - **Four recent transactions excluded by mistake**, and none was ever in a CSV
   either, so they have reached law enforcement through no channel at all. The
