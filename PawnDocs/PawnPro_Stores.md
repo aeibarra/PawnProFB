@@ -543,16 +543,53 @@ those are the three things that actually decide how hard a migration is — see
 
 ### Gema Jewelers
 9864 SW 40th St, Miami, FL 33165
-Phone — · Email misbelnegrin@yahoo.com · LeadsOnline store id —
+Phone (305) 223-9710 · Email misbelnegrin@yahoo.com · LeadsOnline store id `63207`
+Legacy FTP user `gema9864`
 
 **Converted to Firebird 5 on 2026-09-03. Still on CSV/FTP.** The API credentials
 have not been requested yet, so `LEADS_ONLINE_EXPORT_METHOD` is still `'C'` and
 the store reports exactly as it always has, on Firebird instead of SQL Anywhere.
 Nothing is missed while it waits.
 
-To finish: read `STORE.LEADS_STORE_ID` from the converted database, request
-credentials from LeadsOnline copying the store, then switch the method to `'S'`
-and work the export list.
+To finish: request credentials from LeadsOnline quoting store id `63207` and
+copying misbelnegrin@yahoo.com, then switch the method to `'S'` and work the
+export list.
+
+### ⚠️ This store deletes pawns once they are redeemed
+
+Measured on the converted database, 2026-09-03:
+
+| | |
+|---|---|
+| transactions present | 321 |
+| span of transaction ids (1075 – 3421) | 2,347 |
+| therefore deleted | about **2,026 — 86% of everything ever written** |
+| rows with close reason "Redeemed" | **zero** |
+| customers still on file | 1,031 |
+
+Eleven years of trading, 2015 to now, and only 111 rows survive from 2026.
+
+**It is not only statistics that are lost.** The CSV export log records 2,060
+transactions reported to LeadsOnline, and **1,867 of them — 91% — no longer exist
+in the database.** The store reports a pawn to law enforcement and then deletes
+its own copy once the customer redeems.
+
+Record retention is a statutory obligation for Florida pawnbrokers; the exact
+period should be checked before raising it, but deleting reported transactions is
+very likely to conflict with it. That is a stronger reason to stop than the
+reporting they asked about.
+
+**The argument likeliest to work:** they are almost certainly deleting to clear
+redeemed pawns off their working list, and closing already does that.
+`PawnChangeStatus` sets `TRAN_STATUS='I'` and the active list only shows `'A'`,
+so redeeming produces exactly the same clean list as deleting — and keeps the
+record. Deleting buys them nothing they do not already get.
+
+**On our side:** deletion is one button and one confirmation
+([SearchClient.pas:1333](../SearchClient.pas#L1333)), and nothing distinguishes
+removing a mistyped ticket from removing a pawn already filed with law
+enforcement. Worth considering whether a reported transaction should refuse to
+delete, or at least say what it is about to destroy.
 
 ### Gold Star Pawn & Jewelry
 10158 W Flagler St, Miami, FL 33174
