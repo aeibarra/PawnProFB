@@ -96,9 +96,13 @@ is obvious only afterwards. Say **1** or **II**.
 > — see `Docs/SECURITY_PLAN.md`. The user name is recorded because it identifies
 > the account; the password is not, because it opens it.
 
-Credential scope, confirmed by LeadsOnline 2026-08-14: **one API user name and
-password per company**, with the **store id** distinguishing locations. A
+Credential scope, confirmed by LeadsOnline 2026-08-14: they support **either** one
+API user name and password shared across a company's locations, **or** a separate
+set per location, with the **store id** distinguishing locations either way. A
 company with a single location gets store-level credentials automatically.
+
+**We ask for separate credentials per store**, decided 2026-09-03 -- see the Ok
+Jewelers and Home of Watches section for why.
 
 ## Verify the store id before the first send
 
@@ -639,12 +643,21 @@ Chosen as the next pair, 2026-09-03. Same owner, so one conversation, one
 credentials request, and the second install rehearses the first. Both are single
 station, so neither needs the share, the firewall or workstation provisioning.
 
-**The credential question is answered here for the first time.** LeadsOnline
-support one user name and password shared across a company's locations, or
-separate credentials per location, with the store id distinguishing them either
-way. The request should name both stores, say they are one owner, and ask which
-arrangement this owner already has — rather than requesting twice and finding out
-from the answers.
+**Credentials are requested per store, not per company.** Decided 2026-09-03.
+
+LeadsOnline offer both: one user name and password shared across a company's
+locations, or a separate set per location, with the store id distinguishing them
+either way. We ask for separate.
+
+Two reasons. API credentials still sit in **plain text** in `STORE` — the
+encryption is designed in `Docs/SECURITY_PLAN.md` and deliberately not built yet
+— so one leaked credential should cost one store rather than every location its
+owner has. And it removes a special case: every store looks identical at install,
+in the roster, and when its owner phones support, regardless of who else they own.
+
+**Say so in the request.** Faced with two locations under one owner, LeadsOnline
+may reasonably default to company-level credentials. Asking for a separate set
+per location is one sentence, and much easier than untangling it afterwards.
 
 **⚠️ The real risk of pairing them is crossing the store ids.** Two similar
 stores, done back to back, with both sets of credentials on the same sheet of
