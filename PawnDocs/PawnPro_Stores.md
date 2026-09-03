@@ -17,7 +17,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Ricardo Joyeria | SOAP | FB5 | single | live 2026-08-25 |
 | Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
-| Gema Jewelers | CSV/FTP | **FB5** | single | converted 2026-09-03, credentials verified, SOAP not yet switched on |
+| Gema Jewelers | SOAP | FB5 | single | live 2026-09-03 |
 | Gold Star Pawn & Jewelry | CSV/FTP | ASA | **multiple** | to migrate |
 | Perez Cash Joyeria | CSV/FTP | ASA | single | to migrate |
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
@@ -27,17 +27,15 @@ missing entries below are as much a part of the record as the filled ones.
 | Home of Watches & Jewels | CSV/FTP | ASA | single | **next**, with Ok Jewelers |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 
-Most remaining migrations are a full one -- ASA to Firebird 5 **and** onto the web
-service in the same visit, as Felitin's and Kendale were. The two exceptions are
-both already done:
+Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
+service, as Felitin's, Kendale and Gema were. **AJ Jewelry** was the one
+exception, having no LeadsOnline account at all, so its conversion was the whole
+job.
 
-- **AJ Jewelry** does not use LeadsOnline at all, so the conversion was the whole
-  job.
-- **Gema Jewelers** is converted but still exporting by CSV/FTP, because the API
-  credentials have not been requested yet. That is a legitimate state to sit in:
-  `LEADS_ONLINE_EXPORT_METHOD` stays `'C'` and the store keeps reporting exactly
-  as it did, on Firebird instead of SQL Anywhere. Nothing is missed while it
-  waits.
+Gema is worth remembering for the shape rather than the store: converted in the
+morning, live in the afternoon, sitting on CSV/FTP in between while the
+credentials were waited for. That intermediate state costs nothing and misses
+nothing, so a conversion never has to wait on LeadsOnline.
 
 ## Builds
 
@@ -549,8 +547,8 @@ a year old and may come back as error 7 regardless.
 
 ## Stores still to migrate
 
-Seven left. AJ Jewelry and Gema Jewelers are converted and have moved out of this
-list in all but heading -- their entries below record what was done.
+Seven left. AJ Jewelry and Gema Jewelers are done and have moved out of this list
+in all but heading -- their entries below record what happened.
 
 Basic details as supplied 2026-09-02. **Phone numbers and email addresses are
 missing for most**, and both are needed: the email because LeadsOnline copy the
@@ -576,15 +574,10 @@ Legacy FTP user `gema9864`
 | **Credentials issued** | 2026-09-03, by Russell House |
 | **Verified** | 2026-09-03, `CheckLogin` against production returned errorCode 0 -- on the second attempt, see the note about provisioning lag |
 
-**Converted to Firebird 5 on 2026-09-03. Credentials in hand, still on CSV/FTP.**
-`LEADS_ONLINE_EXPORT_METHOD` is still `'C'`, so the store reports exactly as it
-always has, on Firebird instead of SQL Anywhere. Nothing is missed while it waits
-for the switch.
-
-To finish, now that the credentials are in hand: enter them in LeadsOnline
-Settings and Test Connection, switch the method to `'S'`, run
-`Run-StoreSurvey.ps1 -ExpectedStoreId 63207` to confirm the database agrees, then
-work the export list. Expect it to be short -- see below.
+**Converted to Firebird 5 and live on the web service, both 2026-09-03.** The
+conversion and the cutover happened in one day, split either side of waiting for
+credentials -- which is what the intermediate CSV/FTP state was for. Nothing was
+missed while it waited.
 
 ### ⚠️ This store deletes pawns once they are redeemed
 
@@ -768,7 +761,7 @@ had none and 61.
 
 ## Open items
 
-- **All five SOAP stores need the executable replaced** with 3.37.2.0. They are
+- **All six SOAP stores need the executable replaced** with 3.37.2.0. They are
   on 3.37.1.20, the trial-ReportBuilder build. Preview-only, so nothing on paper
   was ever affected, but the message is there on screen until they are updated.
   Confirm each one afterwards from the About box rather than assuming the copy
@@ -782,6 +775,5 @@ Two more, both at Kendale, both easy to lose:
 - **`AUTO_BACKUP_WHEN_CLOSE_APP` is off** — the only live store where it is, and
   the one whose staff are least likely to remember doing it by hand.
 
-The CSV/FTP export still exists and still works. The five SOAP stores do not use
-it; everyone else does, including Gema now that it is on Firebird but not yet on
-the web service.
+The CSV/FTP export still exists and still works. The six SOAP stores do not use
+it; the seven still to migrate all do.
