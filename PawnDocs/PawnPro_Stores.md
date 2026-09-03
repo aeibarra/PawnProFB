@@ -23,8 +23,8 @@ missing entries below are as much a part of the record as the filled ones.
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
-| Ok Jewelers | CSV/FTP | ASA | single | to migrate |
-| Home of Watches & Jewels | CSV/FTP | ASA | single | to migrate |
+| Ok Jewelers | CSV/FTP | ASA | single | **next**, with Home of Watches |
+| Home of Watches & Jewels | CSV/FTP | ASA | single | **next**, with Ok Jewelers |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 
 Most remaining migrations are a full one -- ASA to Firebird 5 **and** onto the web
@@ -623,21 +623,49 @@ Phone — · Email — · LeadsOnline store id —
 8150 SW 8th St #125, Miami, FL 33144
 Phone (305) 967-8981 · Email — · LeadsOnline store id —
 
-### Ok Jewelers
+### Ok Jewelers — NEXT, with Home of Watches
 10601 SW 40th St, Miami, FL 33165
 Phone — · Email — · LeadsOnline store id —
 **Same owner as Home of Watches & Jewels.**
 
-### Home of Watches & Jewels
+### Home of Watches & Jewels — NEXT, with Ok Jewelers
 1876 SW 57th Ave, Miami, FL 33155
 Phone (305) 264-3359 · Email — · LeadsOnline store id —
 **Same owner as Ok Jewelers.**
 
-Two locations under one owner is the first time the company-level credential
-question becomes real. LeadsOnline support both arrangements: one user name and
-password shared across a company's locations, or separate credentials per
-location, with the store id distinguishing them either way. Ask which they have
-been set up with before requesting anything.
+## Doing Ok Jewelers and Home of Watches together
+
+Chosen as the next pair, 2026-09-03. Same owner, so one conversation, one
+credentials request, and the second install rehearses the first. Both are single
+station, so neither needs the share, the firewall or workstation provisioning.
+
+**The credential question is answered here for the first time.** LeadsOnline
+support one user name and password shared across a company's locations, or
+separate credentials per location, with the store id distinguishing them either
+way. The request should name both stores, say they are one owner, and ask which
+arrangement this owner already has — rather than requesting twice and finding out
+from the answers.
+
+**⚠️ The real risk of pairing them is crossing the store ids.** Two similar
+stores, done back to back, with both sets of credentials on the same sheet of
+paper. Entering one store's id at the other files its pawns against the wrong
+location with law enforcement, and nothing downstream would reveal it — the
+submissions succeed, they are simply attributed to the wrong shop.
+
+Perez Cash has two locations too, but months apart; these two are the first done
+in one sitting. Use the check that exists:
+
+```
+.\Run-StoreSurvey.ps1 -ExpectedStoreId <that store's id>
+```
+
+It compares `STORE.LEADS_STORE_ID` against what LeadsOnline issued and says so
+loudly when they differ. Run it at each store before the first submission, not
+after.
+
+**Before going:** both stores need their email address collected, and Ok Jewelers
+its phone. LeadsOnline copy the store on a credentials request, so a missing
+address means a request that cannot be sent.
 
 ### AJ Jewelry -- DONE
 3185 W 76th St, Hialeah, FL 33018
