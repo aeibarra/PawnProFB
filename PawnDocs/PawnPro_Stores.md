@@ -17,7 +17,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Ricardo Joyeria | SOAP | FB5 | single | live 2026-08-25 |
 | Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
-| Gema Jewelers | CSV/FTP | **FB5** | single | converted 2026-09-03, SOAP pending credentials |
+| Gema Jewelers | CSV/FTP | **FB5** | single | converted 2026-09-03, credentials verified, SOAP not yet switched on |
 | Gold Star Pawn & Jewelry | CSV/FTP | ASA | **multiple** | to migrate |
 | Perez Cash Joyeria | CSV/FTP | ASA | single | to migrate |
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
@@ -125,6 +125,22 @@ From LeadsOnline, 2026-08-24. Stores no longer need to go through us:
 > to email **from the email address associated with the account**. They can state
 > they are **using PawnPro**, and that they need their **API credentials**, and
 > our support team will be able to give them what they need.
+
+**Newly issued credentials may not work immediately.** Gema's were rejected with
+error 4 -- "Username and password are not correct" -- and the same credentials,
+unchanged, were accepted about an hour later. Nothing had been mistyped: the
+username came back echoed in their own error message and the password was
+verified byte-exact on the wire before anything was reported to LeadsOnline.
+
+The first five stores all worked within minutes, so this is the exception rather
+than the rule -- which is exactly why it is written down. Before chasing a
+rejection as a fault, wait and try again. And resist guessing variations at a
+production authentication endpoint; it teaches nothing trustworthy and is how
+accounts get locked.
+
+Note error 4 and error 3 say different things. 4 is "login information is not
+correct"; 3 is "the store ID specified is not valid". Getting 4 means the store
+id was recognised, which narrows the problem usefully.
 
 Three things have to be right or support cannot help: the request comes from the
 account's own email address, it names **PawnPro**, and it asks for **API
@@ -547,17 +563,28 @@ those are the three things that actually decide how hard a migration is — see
 
 ### Gema Jewelers
 9864 SW 40th St, Miami, FL 33165
-Phone (305) 223-9710 · Email misbelnegrin@yahoo.com · LeadsOnline store id `63207`
+Phone (305) 223-9710 · Email misbelnegrin@yahoo.com
 Legacy FTP user `gema9864`
 
-**Converted to Firebird 5 on 2026-09-03. Still on CSV/FTP.** The API credentials
-have not been requested yet, so `LEADS_ONLINE_EXPORT_METHOD` is still `'C'` and
-the store reports exactly as it always has, on Firebird instead of SQL Anywhere.
-Nothing is missed while it waits.
+### LeadsOnline
 
-To finish: request credentials from LeadsOnline quoting store id `63207` and
-copying misbelnegrin@yahoo.com, then switch the method to `'S'` and work the
-export list.
+| | |
+|---|---|
+| **Store ID** | `63207` |
+| **API user name** | `gemaj9864!` |
+| **API password** | not recorded here — see the note at the top |
+| **Credentials issued** | 2026-09-03, by Russell House |
+| **Verified** | 2026-09-03, `CheckLogin` against production returned errorCode 0 -- on the second attempt, see the note about provisioning lag |
+
+**Converted to Firebird 5 on 2026-09-03. Credentials in hand, still on CSV/FTP.**
+`LEADS_ONLINE_EXPORT_METHOD` is still `'C'`, so the store reports exactly as it
+always has, on Firebird instead of SQL Anywhere. Nothing is missed while it waits
+for the switch.
+
+To finish, now that the credentials are in hand: enter them in LeadsOnline
+Settings and Test Connection, switch the method to `'S'`, run
+`Run-StoreSurvey.ps1 -ExpectedStoreId 63207` to confirm the database agrees, then
+work the export list. Expect it to be short -- see below.
 
 ### ⚠️ This store deletes pawns once they are redeemed
 
