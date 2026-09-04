@@ -649,12 +649,12 @@ Phone (305) 967-8981 · Email — · LeadsOnline store id —
 
 ### Ok Jewelers — NEXT, with Home of Watches
 10601 SW 40th St, Miami, FL 33165
-Phone — · Email — · LeadsOnline store id —
+Phone — · Email scanizares2003@yahoo.com · LeadsOnline store id —
 **Same owner as Home of Watches & Jewels.**
 
 ### Home of Watches & Jewels — NEXT, with Ok Jewelers
 1876 SW 57th Ave, Miami, FL 33155
-Phone (305) 264-3359 · Email — · LeadsOnline store id —
+Phone (305) 264-3359 · Email scanizares2003@yahoo.com · LeadsOnline store id —
 **Same owner as Ok Jewelers.**
 
 ## Doing Ok Jewelers and Home of Watches together
@@ -696,9 +696,13 @@ It compares `STORE.LEADS_STORE_ID` against what LeadsOnline issued and says so
 loudly when they differ. Run it at each store before the first submission, not
 after.
 
-**Before going:** both stores need their email address collected, and Ok Jewelers
-its phone. LeadsOnline copy the store on a credentials request, so a missing
-address means a request that cannot be sent.
+**Both stores share one email address**, scanizares2003@yahoo.com — the owner's,
+not a per-shop one. LeadsOnline copy the store on a credentials request, so that
+one address receives both sets. Worth knowing rather than assuming each shop gets
+only its own.
+
+Still missing: Ok Jewelers' phone number. Their store ids will come out of the
+pump, as Gema's did.
 
 ### AJ Jewelry -- DONE
 3185 W 76th St, Hialeah, FL 33018
