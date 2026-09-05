@@ -105,7 +105,8 @@ uses
   uImageMaintenanceGate in 'uImageMaintenanceGate.pas',
   uImageBackupAudit in 'uImageBackupAudit.pas',
   uImageAuditController in 'uImageAuditController.pas',
-  LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport};
+  LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport},
+  ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets};
 
 {$R *.RES}
 

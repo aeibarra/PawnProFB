@@ -76,10 +76,12 @@ type
     btnSubmit: TRzBitBtn;
     popMnuGrid: TPopupMenu;
     ExcludeSelected1: TMenuItem;
+    bnViewSentTickets: TRzToolButton;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnRefreshClick(Sender: TObject);
+    procedure bnViewSentTicketsClick(Sender: TObject);
     procedure btnSubmitClick(Sender: TObject);
     procedure ScopeChanged(Sender: TObject);
     procedure DateRangeChanged(Sender: TObject);
@@ -153,7 +155,7 @@ implementation
 uses
   System.StrUtils, System.DateUtils,
   PawnDM, LeadsOnlineDM, PawnGlobal, uPawnDialogs, CheckBoxDrawer,
-  uLeadsOnlineTicketMap;
+  uLeadsOnlineTicketMap, ViewSentTickets;
 
 const
   ColSelected   = 'SELECTED';
@@ -495,6 +497,21 @@ begin
   CanClose := not FRunning;
   if not CanClose then
     PawnWarn('A submission is still running. Use Cancel first.');
+end;
+
+{ The send list only shows what is still OUTSTANDING: a ticket that settles
+  leaves it and never comes back. So once the day's work has gone the screen is
+  empty -- correct, and indistinguishable from nothing ever having happened.
+  This is where an operator goes to see that it did. }
+procedure TfrmLeadsOnlineSoapExport.bnViewSentTicketsClick(Sender: TObject);
+begin
+  frmViewSentTickets := TfrmViewSentTickets.Create(Self);
+  try
+    frmViewSentTickets.ShowModal;
+  finally
+    frmViewSentTickets.Free;
+    frmViewSentTickets := nil;
+  end;
 end;
 
 procedure TfrmLeadsOnlineSoapExport.btnExitClick(Sender: TObject);

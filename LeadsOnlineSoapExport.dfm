@@ -4,7 +4,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'LeadsOnline'
   ClientHeight = 830
-  ClientWidth = 1175
+  ClientWidth = 1213
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,12 +20,13 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     AlignWithMargins = True
     Left = 3
     Top = 759
-    Width = 1169
+    Width = 1207
     Height = 68
     Align = alBottom
     TabOrder = 0
+    ExplicitWidth = 1169
     DesignSize = (
-      1169
+      1207
       68)
     object lblProgress: TLabel
       Left = 333
@@ -35,7 +36,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Caption = '0 of 0'
     end
     object btnExit: TBitBtn
-      Left = 1057
+      Left = 1095
       Top = 11
       Width = 100
       Height = 48
@@ -48,15 +49,17 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       ModalResult = 2
       TabOrder = 1
       OnClick = btnExitClick
+      ExplicitLeft = 1057
     end
     object pbSubmit: TProgressBar
       Left = 327
       Top = 46
-      Width = 714
+      Width = 752
       Height = 12
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
+      ExplicitWidth = 714
     end
     object btnSubmit: TRzBitBtn
       Left = 21
@@ -78,12 +81,13 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1169
+    Width = 1207
     Height = 750
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 1169
     DesignSize = (
-      1169
+      1207
       750)
     object lblSandbox: TLabel
       Left = 503
@@ -100,12 +104,28 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Visible = False
     end
     object lblCount: TLabel
-      Left = 1047
+      Left = 1085
       Top = 60
       Width = 4
       Height = 20
       Anchors = [akTop, akRight]
       ExplicitLeft = 640
+    end
+    object bnViewSentTickets: TRzToolButton
+      Left = 1025
+      Top = 127
+      Width = 164
+      Height = 40
+      Flat = False
+      ImageIndex = 33
+      Images = DM.vilMain24
+      ShowCaption = True
+      UseToolbarButtonSize = False
+      UseToolbarShowCaption = False
+      Anchors = [akTop, akRight]
+      Caption = 'View Sent Tickets'
+      OnClick = bnViewSentTicketsClick
+      ExplicitLeft = 986
     end
     object btnRefresh: TBitBtn
       Left = 528
@@ -120,7 +140,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       AlignWithMargins = True
       Left = 5
       Top = 173
-      Width = 1159
+      Width = 1197
       Height = 508
       Anchors = [akLeft, akTop, akRight, akBottom]
       DataSource = dsTickets
@@ -327,10 +347,11 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       AlignWithMargins = True
       Left = 5
       Top = 686
-      Width = 1159
+      Width = 1197
       Height = 59
       Align = alBottom
       TabOrder = 3
+      ExplicitWidth = 1159
       object btnCheckAll: TButton
         Left = 23
         Top = 14
