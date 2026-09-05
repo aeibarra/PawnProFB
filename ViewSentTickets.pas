@@ -1,4 +1,4 @@
-unit ViewSentTickets;
+﻿unit ViewSentTickets;
 
 { A read-only look at what has already gone to LeadsOnline.
 
@@ -35,10 +35,10 @@ type
     btnExit: TBitBtn;
     DBGrid1: TDBGrid;
     GroupBox3: TGroupBox;
-    Label1: TLabel;
-    Label3: TLabel;
-    edTDate: TRzDateTimeEdit;
-    edFDate: TRzDateTimeEdit;
+    lblSentFrom: TLabel;
+    lblSentTo: TLabel;
+    edSentTo: TRzDateTimeEdit;
+    edSentFrom: TRzDateTimeEdit;
     btnRefresh: TRzBitBtn;
     clnSent: TFDMemTable;
     dsSent: TDataSource;
@@ -142,8 +142,8 @@ end;
 
 procedure TfrmViewSentTickets.FormShow(Sender: TObject);
 begin
-  edFDate.Date := Date - DefaultDaysBack;
-  edTDate.Date := Date;
+  edSentFrom.Date := Date - DefaultDaysBack;
+  edSentTo.Date := Date;
   LoadSent;
 end;
 
@@ -161,10 +161,10 @@ var
 begin
   // A backwards range finds nothing, which on this screen reads as "we sent
   // nothing" -- the one wrong answer it must never give.
-  if edFDate.Date > edTDate.Date then
+  if edSentFrom.Date > edSentTo.Date then
   begin
-    PawnWarn('The From date is after the To date, so nothing can be found. ' +
-             'Swap them and try again.');
+    PawnWarn('The "Sent From" date is after the "Sent To" date, so nothing can ' +
+             'be found. Swap them and try again.');
     Exit;
   end;
 
@@ -175,8 +175,8 @@ begin
     try
       Q.Connection := DM.ConnFB;
       Q.SQL.Text := SQLSent;
-      Q.ParamByName('DateFrom').AsDate := edFDate.Date;
-      Q.ParamByName('DateTo').AsDate := edTDate.Date;
+      Q.ParamByName('DateFrom').AsDate := edSentFrom.Date;
+      Q.ParamByName('DateTo').AsDate := edSentTo.Date;
       Q.Open;
 
       clnSent.DisableControls;

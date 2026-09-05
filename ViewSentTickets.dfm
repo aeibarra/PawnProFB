@@ -163,12 +163,12 @@ object frmViewSentTickets: TfrmViewSentTickets
     Height = 70
     Align = alTop
     TabOrder = 0
-    object Label1: TLabel
+    object lblSentFrom: TLabel
       Left = 27
       Top = 13
       Width = 63
       Height = 14
-      Caption = 'From Date'
+      Caption = 'Sent From'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -176,12 +176,12 @@ object frmViewSentTickets: TfrmViewSentTickets
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label3: TLabel
+    object lblSentTo: TLabel
       Left = 154
       Top = 13
       Width = 48
       Height = 14
-      Caption = 'To Date'
+      Caption = 'Sent To'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -189,7 +189,7 @@ object frmViewSentTickets: TfrmViewSentTickets
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object edFDate: TRzDateTimeEdit
+    object edSentFrom: TRzDateTimeEdit
       Left = 27
       Top = 31
       Width = 121
@@ -197,7 +197,7 @@ object frmViewSentTickets: TfrmViewSentTickets
       EditType = etDate
       TabOrder = 0
     end
-    object edTDate: TRzDateTimeEdit
+    object edSentTo: TRzDateTimeEdit
       Left = 154
       Top = 31
       Width = 121
