@@ -259,7 +259,8 @@ begin
   Screen.Cursor := crHourGlass;
   try
     qryPawnAndPurchases.Close;
-    if rbDateRange.Checked then
+
+    if rbDateRange.Checked then  //Params selection
       begin
         lblRep1PawnAndPurchaseTitle.Caption := 'Pawn and Purchases';
         lblFromToDates.Visible := true;
