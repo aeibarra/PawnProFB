@@ -74,13 +74,20 @@ const
   /// without acquiring a database dependency, so it filters these rows in
   /// memory by INV_ITEM_NO instead. Only the first two stones per item are
   /// exported, matching the CSV export.
+  // The two lookups translate a stored code into the English word LeadsOnline
+  // receives; they are NOT filters. They must stay LEFT joins: a stone recorded
+  // without a colour or shape -- common in older data, 487 of them at Perez Cash
+  // Joyeria -- matches nothing, and an inner join would drop the whole stone
+  // from the ticket, taking its type, carat and weight with it, silently. A
+  // stone reported with one attribute missing beats a stone not reported at all.
+  // AddProp already omits an empty value, so the NULL description sends nothing.
   SQLTicketStones =
     'SELECT T1.INV_ITEM_NO, T1.STONE_NUMBER, T1.STONE_TYPE, T1.CT, T1.WT,' +
     '       T1.STONE_WEIGHT_UNIT, T2.J_STONE_DESC, T3.J_SHAPE_DESC' +
     '  FROM STONES T1' +
     '  JOIN INVENTORY_ITEMS T4 ON T4.INV_ITEM_NO   = T1.INV_ITEM_NO' +
-    '  JOIN J_STONE_COLORS  T2 ON T2.J_STONE_COLOR = T1.STONE_COLOR' +
-    '  JOIN J_STONE_SHAPES  T3 ON T3.J_SHAPE       = T1.STONE_SHAPE' +
+    '  LEFT JOIN J_STONE_COLORS T2 ON T2.J_STONE_COLOR = T1.STONE_COLOR' +
+    '  LEFT JOIN J_STONE_SHAPES T3 ON T3.J_SHAPE       = T1.STONE_SHAPE' +
     ' WHERE T4.TRANSACTION_NO = :TransactionNo' +
     ' ORDER BY T1.INV_ITEM_NO, T1.STONE_NO';
 
@@ -530,6 +537,23 @@ begin
   begin
     // The dataset holds every stone on the ticket; take only this item's.
     if Field(AStones, 'INV_ITEM_NO').AsInteger <> AItemNo then
+    begin
+      AStones.Next;
+      Continue;
+    end;
+
+    // A stone has to earn its slot. Only two are ever sent, and older data holds
+    // stones recorded with nothing but a quantity -- 490 of them at Perez Cash
+    // Joyeria, all with a quantity and 57 with no type or weight either. The
+    // lookups are LEFT joined (see SQLTicketStones) so those rows now reach us
+    // instead of being dropped, which is right; but letting one occupy a slot
+    // would push a genuine stone off the ticket, which is not. Quantity alone is
+    // not substance: it says "1" about a stone we cannot otherwise describe.
+    if (Str(AStones, 'STONE_TYPE') = '') and
+       (Str(AStones, 'J_STONE_DESC') = '') and
+       (Str(AStones, 'J_SHAPE_DESC') = '') and
+       (Num(AStones, 'CT') <= 0) and
+       (Num(AStones, 'WT') <= 0) then
     begin
       AStones.Next;
       Continue;
