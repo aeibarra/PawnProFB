@@ -23,8 +23,8 @@ missing entries below are as much a part of the record as the filled ones.
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
-| Ok Jewelers | CSV/FTP | ASA | single | **next**, with Home of Watches |
-| Home of Watches & Jewels | CSV/FTP | ASA | single | **next**, with Ok Jewelers |
+| Ok Jewelers | CSV/FTP | ASA | single | **next**, with Home of Watches — credentials in hand |
+| Home of Watches & Jewels | CSV/FTP | ASA | single | **next**, with Ok Jewelers — credentials in hand |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
@@ -63,7 +63,7 @@ Both names are official, and only the second carries a number:
 | official name | where | state |
 |---|---|---|
 | **Perez Cash Joyeria** | 3611 W Flagler St, Miami FL 33135 | still on ASA |
-| **Perez Cash Jewelry II** | 15118 SW 56th St, Miami FL 33186 | live on SOAP, store id `63256`, API user `pcj15118` |
+| **Perez Cash Jewelry II** | 15118 SW 56th St, Miami FL 33186 | live on SOAP, store id `63271`, API user `pcj15118` |
 
 There is no "Perez Cash I". The first store simply has no number in its name, so
 the two are told apart by the presence or absence of the **II**, and by address.
@@ -75,7 +75,7 @@ within one company.
 **Two consequences.**
 
 When Perez Cash Joyeria is migrated, say in the credentials request that it is
-the same owner as Perez Cash Jewelry II, store `63256`. LeadsOnline set
+the same owner as Perez Cash Jewelry II, store `63271`. LeadsOnline set
 credentials either at company level, one user name and password shared across the
 locations, or per location; they will match whatever this owner already has, and
 asking up front avoids a mismatch that would only surface at the first
@@ -627,13 +627,94 @@ not yet been run against a real share -- Kendale was done by hand before they
 existed. Worth a rehearsal in the VM first, since there is no cheaper store to
 learn on.
 
-### Perez Cash Joyeria
-3611 W Flagler St, Miami, FL 33135
-Phone — · Email — · LeadsOnline store id —
+### Perez Cash Joyeria — CONVERTED to FB5 2026-09-05, awaiting credentials
+3611 West Flagler Street, Miami, FL 33135
+Phone (305) 541-1821 · Email — · Florida police ID `01-Miami`
+**LeadsOnline store id `97956`** — already in `STORE.LEADS_STORE_ID`.
 
 **Same owner as Perez Cash Jewelry II**, which is already live on SOAP with
-store id 63256 and API user pcj15118. Mention that when requesting credentials,
-so LeadsOnline set this one up the same way. See the warning at the top.
+store id `63271` and API user `pcj15118`. Mention that when requesting
+credentials, so LeadsOnline set this one up the same way. See the warning at the
+top.
+
+Credentials to be requested Tuesday 2026-09-08 — Russell had not replied over
+the holiday. **Quote `97956`.** At both Perez Cash II and Felitin's the id
+already in the database is exactly the one LeadsOnline issued, so this is very
+likely the number that comes back; if it differs, that is worth querying rather
+than accepting.
+
+#### Baseline, 2026-09-05
+
+Taken from the pre-SOAP copy at `DB/PerezCash_I/`, not by running
+`Run-StoreSurvey.ps1` at the store. Backups are automatic and current (5,406
+logged, last 2026-09-05), so nothing else was needed.
+
+| | |
+|---|---|
+| Transactions (P and U) | 14,411, from 2001-08-16 to 2026-09-05 |
+| Never in a CSV export | **1,619** — the real backlog |
+| Multi-item tickets at $0.00 | 824 in history, **0 that would be sent** |
+| Customers | 4,702 |
+| DOB problems | **24** — 16 missing, 7 in the future, 1 too old |
+| Stones that would drop | **490** |
+| Images | **none at all** — `IMAGES_DATA` is empty |
+| Payments | none — see note |
+
+**Two items to settle before the first submission**, because neither can be
+corrected once a transaction has been sent:
+
+- **490 stones would be silently dropped — and this is a mapper bug, not bad
+  store data.** The unmatched values are not exotic entries missing from the
+  lookups; they are **blank**: 487 stones have an empty `STONE_COLOR` and 15 an
+  empty `STONE_SHAPE`. `SQLTicketStones` inner-joins both lookups, so a stone
+  recorded without a colour vanishes from the ticket entirely, taking its type,
+  carat and weight with it, silently. The fix is two `LEFT JOIN`s — see the note
+  below. Do not "fix" this by adding blank rows to the lookup tables.
+- **24 customers with bad dates of birth.** Fix before sending, not after.
+
+**No images anywhere.** Every other converted store has thousands
+(Perez Cash II 5,760, Kendale 7,110, Felitin 3,018); Gema also has none. Worth
+one check that this store genuinely never used photos, rather than the pump's
+image step having been skipped — `IMAGES_DATA` carries the metadata that ties a
+file to an item, so if it is empty the app cannot see images even when the files
+are on disk. If the store never took photos, nothing to do: images are optional
+in a submission.
+
+#### The stone-drop bug this store uncovered
+
+`SQLTicketStones` in `uLeadsOnlineTicketMap.pas` inner-joins `J_STONE_COLORS`
+and `J_STONE_SHAPES`. A stone whose colour or shape is blank matches neither and
+is dropped from the submission — not just its colour, the whole stone.
+
+All four earlier baselines report 0, so no live store has ever hit it. Perez Cash
+Joyeria is the first, with 490.
+
+**Fixed 2026-09-05**, in two parts.
+
+Both lookup joins became `LEFT JOIN`. `AddProp` already omits an empty value
+rather than sending it blank, so a stone with no recorded colour now goes out
+with its type, carat and weight and simply no `JEWELRY_STONE<n>_COLOR` property.
+
+The second part came out of verifying the first. **Only two stones per item are
+ever sent** (`AddStoneProps`), and blank stones used to be filtered out by the
+SQL, so they never consumed one of those slots — after the join change they
+could. At Perez Cash Joyeria 98 items have a blank stone ordering ahead of a real
+one, and 5 items carry more than two stones including a blank, so a genuine stone
+could have been pushed off the ticket. The first fix alone would have traded one
+silent loss for another.
+
+So a stone now has to earn its slot: it is skipped unless it has a type, colour,
+shape, carat or weight. A quantity alone does not count — all 490 blank stones
+carry one, so testing "did it contribute any property at all" would have let
+every one of them take a slot and fixed nothing.
+
+Verified against all six store databases: **zero** rows changed or lost anywhere,
+and the row count rises only at Perez Cash Joyeria (16,341 → 16,831, exactly the
+490). Perez Cash II, Ricardo, Kendale, Felitin and Gema are byte-identical.
+
+**Zero payments is normal here, not a fault.** Kendale has 2, Felitin 1, Gema 0;
+only Perez Cash II (9,630) really uses the payments module. Same underlying
+pattern as the unused statuses — see `Docs/Report02_ActivePawns_Design.md`.
 
 ### I Love Miami Jewelry
 5889 NW 36th St, Miami, FL 33166
@@ -649,12 +730,24 @@ Phone (305) 967-8981 · Email — · LeadsOnline store id —
 
 ### Ok Jewelers — NEXT, with Home of Watches
 10601 SW 40th St, Miami, FL 33165
-Phone — · Email scanizares2003@yahoo.com · LeadsOnline store id —
+Contact (786) 916-7641 · Email scanizares2003@yahoo.com · LeadsOnline store id `63235`
+That number is the owner's contact for us, **not confirmed as the shop's own
+published line** — so do not put it in `STORE.STORE_PHONE` at install without
+asking. That column prints on customer receipts and tickets (`ReportsDM`), so a
+personal cell entered there ends up on the customer's paperwork. It is not sent
+to LeadsOnline — the phone in a submission is the *customer's*, not the store's.
+Ask for the shop's line before the install.
+API user name `okjewelers10601`. Password is **not** recorded here — password
+manager, and `STORE` at install.
 **Same owner as Home of Watches & Jewels.**
 
 ### Home of Watches & Jewels — NEXT, with Ok Jewelers
 1876 SW 57th Ave, Miami, FL 33155
-Phone (305) 264-3359 · Email scanizares2003@yahoo.com · LeadsOnline store id —
+Phone (305) 264-3359 · Contact (786) 208-5720 · Email scanizares2003@yahoo.com
+LeadsOnline store id `63269`
+The 786 number is the owner's contact for us; (305) 264-3359 is the shop line.
+API user name `homewatches1876`. Password is **not** recorded here — password
+manager, and `STORE` at install.
 **Same owner as Ok Jewelers.**
 
 ## Doing Ok Jewelers and Home of Watches together
@@ -701,8 +794,21 @@ not a per-shop one. LeadsOnline copy the store on a credentials request, so that
 one address receives both sets. Worth knowing rather than assuming each shop gets
 only its own.
 
-Still missing: Ok Jewelers' phone number. Their store ids will come out of the
-pump, as Gema's did.
+**Credentials received 2026-09-04**, and LeadsOnline did issue a separate set
+per location as asked:
+
+| | Ok Jewelers | Home of Watches & Jewels |
+|---|---|---|
+| store id | `63235` | `63269` |
+| API user name | `okjewelers10601` | `homewatches1876` |
+
+Note both ids begin `632` and both user names end in the shop's own street
+number — 10601 and 1876. That is a useful check at install: the number in the
+user name must match the address on the door.
+
+Passwords are not in this file. Password manager, and `STORE` at install.
+
+Still missing: Ok Jewelers' phone number.
 
 ### AJ Jewelry -- DONE
 3185 W 76th St, Hialeah, FL 33018

@@ -1,0 +1,53 @@
+﻿
+STORE_NAME                      PEREZ CASH INC.
+STORE_ADDR                      3611 West Flagler Street
+STORE_CITY_ST_ZIP               Miami, FL 33135
+STORE_PHONE                     (305)541-1821
+STORE_POLICE_ID                 01-Miami
+LEADS_STORE_ID                  97956
+FTP_USER                        <null>
+LEADS_ONLINE_FTP_ADDRESS        ftp.leadsonline.com
+
+
+
+BACKUP_PATH                     D:\
+BACKUP_IMAGES_PATH              D:\PawnImagesBck\
+AUTO_BACKUP_WHEN_CLOSE_APP      <true>
+
+
+
+BACKUPS_LOGGED                  5406
+LAST_BACKUP                     2026-09-05 13:08:32.9470
+
+
+
+TOTAL_PU                        14411
+NEVER_IN_A_CSV                  1619
+OLDEST                          2001-08-16
+NEWEST                          2026-09-05
+
+
+
+MULTI_ITEM_ZERO_AMOUNT          824
+
+
+
+ZERO_AMOUNT_AND_UNSENT          0
+
+
+
+CUSTOMERS                       4702
+DOB_MISSING                     16
+DOB_IN_FUTURE                   7
+DOB_TOO_OLD                     1
+
+
+
+ITEM_PHOTOS                     <null>
+ID_PHOTOS                       <null>
+
+
+
+STONES_THAT_WOULD_DROP          490
+
+
