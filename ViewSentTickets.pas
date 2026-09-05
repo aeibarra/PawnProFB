@@ -33,7 +33,7 @@ type
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     btnExit: TBitBtn;
-    DBGrid1: TDBGrid;
+    grSentTickets: TDBGrid;
     GroupBox3: TGroupBox;
     lblSentFrom: TLabel;
     lblSentTo: TLabel;
@@ -47,7 +47,7 @@ type
     procedure btnRefreshClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+    procedure grSentTicketsDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     procedure BuildGridStructure;
@@ -243,7 +243,7 @@ end;
 
 { Colour the row the way the send screen does, so a failure is visible without
   reading every line. }
-procedure TfrmViewSentTickets.DBGrid1DrawColumnCell(Sender: TObject;
+procedure TfrmViewSentTickets.grSentTicketsDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   Outcome: string;
@@ -252,14 +252,14 @@ begin
   begin
     Outcome := clnSent.FieldByName('OUTCOME').AsString;
     if Outcome = OutcomeFailed then
-      DBGrid1.Canvas.Font.Color := clRed
+      grSentTickets.Canvas.Font.Color := clRed
     else if (Outcome = OutcomeSent) or (Outcome = OutcomeAlready) then
-      DBGrid1.Canvas.Font.Color := clGreen
+      grSentTickets.Canvas.Font.Color := clGreen
     else if Outcome = OutcomeTooOld then
-      DBGrid1.Canvas.Font.Color := clGray;
+      grSentTickets.Canvas.Font.Color := clGray;
   end;
 
-  DBGrid1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  grSentTickets.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 procedure TfrmViewSentTickets.btnExitClick(Sender: TObject);

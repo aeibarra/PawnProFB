@@ -3,15 +3,16 @@ object frmViewSentTickets: TfrmViewSentTickets
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'View Sent Tickets'
-  ClientHeight = 517
-  ClientWidth = 853
+  ClientHeight = 591
+  ClientWidth = 1296
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -15
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poMainFormCenter
+  PopupMode = pmAuto
+  Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 20
@@ -19,17 +20,19 @@ object frmViewSentTickets: TfrmViewSentTickets
     AlignWithMargins = True
     Left = 3
     Top = 79
-    Width = 847
-    Height = 365
+    Width = 1290
+    Height = 439
     Align = alClient
     Caption = 'Sent Tickets'
     TabOrder = 1
-    object DBGrid1: TDBGrid
+    ExplicitWidth = 847
+    ExplicitHeight = 365
+    object grSentTickets: TDBGrid
       AlignWithMargins = True
       Left = 5
       Top = 25
-      Width = 837
-      Height = 335
+      Width = 1280
+      Height = 409
       Align = alClient
       DataSource = dsSent
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgCancelOnExit, dgTitleClick]
@@ -40,7 +43,7 @@ object frmViewSentTickets: TfrmViewSentTickets
       TitleFont.Height = -15
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
-      OnDrawColumnCell = DBGrid1DrawColumnCell
+      OnDrawColumnCell = grSentTicketsDrawColumnCell
       Columns = <
         item
           Expanded = False
@@ -124,13 +127,15 @@ object frmViewSentTickets: TfrmViewSentTickets
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 450
-    Width = 847
+    Top = 524
+    Width = 1290
     Height = 64
     Align = alBottom
     TabOrder = 2
+    ExplicitTop = 450
+    ExplicitWidth = 847
     DesignSize = (
-      847
+      1290
       64)
     object lblCount: TLabel
       Left = 16
@@ -140,7 +145,7 @@ object frmViewSentTickets: TfrmViewSentTickets
       Caption = ' '
     end
     object btnExit: TBitBtn
-      Left = 734
+      Left = 1177
       Top = 11
       Width = 100
       Height = 43
@@ -153,16 +158,18 @@ object frmViewSentTickets: TfrmViewSentTickets
       ModalResult = 2
       TabOrder = 0
       OnClick = btnExitClick
+      ExplicitLeft = 734
     end
   end
   object GroupBox3: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 847
+    Width = 1290
     Height = 70
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 847
     object lblSentFrom: TLabel
       Left = 27
       Top = 13

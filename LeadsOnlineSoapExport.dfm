@@ -24,7 +24,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     Height = 68
     Align = alBottom
     TabOrder = 0
-    ExplicitWidth = 1169
     DesignSize = (
       1207
       68)
@@ -49,7 +48,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       ModalResult = 2
       TabOrder = 1
       OnClick = btnExitClick
-      ExplicitLeft = 1057
     end
     object pbSubmit: TProgressBar
       Left = 327
@@ -59,7 +57,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
-      ExplicitWidth = 714
     end
     object btnSubmit: TRzBitBtn
       Left = 21
@@ -85,7 +82,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     Height = 750
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 1169
     DesignSize = (
       1207
       750)
@@ -124,6 +120,12 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       UseToolbarShowCaption = False
       Anchors = [akTop, akRight]
       Caption = 'View Sent Tickets'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       OnClick = bnViewSentTicketsClick
       ExplicitLeft = 986
     end
@@ -351,7 +353,6 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Height = 59
       Align = alBottom
       TabOrder = 3
-      ExplicitWidth = 1159
       object btnCheckAll: TButton
         Left = 23
         Top = 14
