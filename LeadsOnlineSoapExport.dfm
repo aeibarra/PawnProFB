@@ -113,7 +113,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Width = 164
       Height = 40
       Flat = False
-      ImageIndex = 33
+      ImageIndex = 40
       Images = DM.vilMain24
       ShowCaption = True
       UseToolbarButtonSize = False
