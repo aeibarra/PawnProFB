@@ -673,10 +673,9 @@ to reveal it.
 `BACKUP_PATH` moved from `D:\` to `D:\Pawnbackup` at install — a folder on the
 second disk rather than its root, which is the better arrangement.
 
-Still unconfirmed: whether this store ever took photos. `IMAGES_DATA` was empty
-before the cutover and no images have been uploaded since. Consistent with a
-store that never used them, and harmless if so — images are optional in a
-submission.
+**Data only, no images — confirmed by the owner 2026-09-10.** `IMAGES_DATA` is
+empty, so there is nothing to send and nothing missing. The empty table was not
+a pump failure. Images are optional in a submission, so nothing more is needed.
 
 #### Baseline, 2026-09-05
 
@@ -792,6 +791,9 @@ Legal name in `STORE`: **O.K. JEWELERS ENT, CORP.**
 
 The id/user-name cross-check holds: `okjewelers10601` against 10601 SW 40th St,
 and store `63235` rather than Home of Watches' `63269`. Nothing crossed.
+
+**Data only, no images — confirmed by the owner 2026-09-10.** `IMAGES_DATA` is
+empty, as at Perez Cash Joyeria. Nothing to send, nothing missing.
 
 **Nothing has been submitted yet.** `LEADS_SOAP_SUBMISSION` is empty, so the
 channel is configured but still unproven at this store — unlike everywhere else,
