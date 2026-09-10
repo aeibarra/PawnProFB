@@ -1081,6 +1081,7 @@ begin
 
   btnPrintPayReceipt.Visible := AppPrinterSettings.UsePaymentReceiptPrinter;
   btnPrintEnvLabel.Visible := AppPrinterSettings.UseEnvelopeLabelPrinter;
+  btnLayawayRcpt.Visible := AppPrinterSettings.UseLayawayReceiptPrinter;
 
   DM.RefreshStoreQry;
 
@@ -2377,7 +2378,8 @@ end;
 
 procedure TfrmClients.btnLayawayRcptClick(Sender: TObject);
 begin
-  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger,
+    AppPrinterSettings.LayawayReceiptPrinter, AppPrinterSettings.LayawayReceiptPrinterBin);
 end;
 
 procedure TfrmClients.FormCreate(Sender: TObject);

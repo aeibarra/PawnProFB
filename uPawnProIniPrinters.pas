@@ -19,6 +19,10 @@ const
   C_KEY_USE_ENVELOPE_PRN      = 'UseEnvelopeLabelPrinter';
   C_KEY_ENVELOPE_PRN_NAME     = 'EnvelopeLabelPrinterName';
 
+  C_KEY_LAYAWAYRCPTPRN        = 'LAYAWAYRCPTPRN';
+  C_KEY_LAYAWAYRCPTPRNBIN     = 'LAYAWAYRCPTPRNBIN';
+  C_KEY_USE_LAYAWAY_RCPT_PRN  = 'UseLayawayReceiptPrinter';
+
 type
   TPrinterIniSettings = record
     // Existing:
@@ -31,6 +35,10 @@ type
 
     UseEnvelopeLabelPrinter:  Boolean; // Y/N in INI
     EnvelopeLabelPrinterName: string;
+
+    UseLayawayReceiptPrinter: Boolean; // Y/N in INI
+    LayawayReceiptPrinter:    string;  // LAYAWAYRCPTPRN
+    LayawayReceiptPrinterBin: string;  // LAYAWAYRCPTPRNBIN
   end;
 
 var
@@ -75,6 +83,19 @@ begin
 
     // EnvelopeLabelPrinterName
     Settings.EnvelopeLabelPrinterName := Ini.ReadString(C_SEC_PRINTERS, C_KEY_ENVELOPE_PRN_NAME, '');
+
+    // Layaway receipt. Until 2026-09 it had no settings of its own and simply
+    // borrowed the payment receipt printer, so the payment values are the
+    // DEFAULTS here rather than blanks: a store upgrading keeps printing exactly
+    // where it did before, and only starts differing once someone sets it.
+    S := Ini.ReadString(C_SEC_PRINTERS, C_KEY_USE_LAYAWAY_RCPT_PRN,
+                        BoolToYN(Settings.UsePaymentReceiptPrinter));
+    Settings.UseLayawayReceiptPrinter := YNToBool(S);
+
+    Settings.LayawayReceiptPrinter    := Ini.ReadString(C_SEC_PRINTERS, C_KEY_LAYAWAYRCPTPRN,
+                                                       Settings.PayReceiptPrinter);
+    Settings.LayawayReceiptPrinterBin := Ini.ReadString(C_SEC_PRINTERS, C_KEY_LAYAWAYRCPTPRNBIN,
+                                                       Settings.PayReceiptPrinterBin);
   finally
     Ini.Free;
   end;
@@ -96,6 +117,10 @@ begin
 
     Ini.WriteString(C_SEC_PRINTERS, C_KEY_USE_ENVELOPE_PRN, BoolToYN(Settings.UseEnvelopeLabelPrinter));
     Ini.WriteString(C_SEC_PRINTERS, C_KEY_ENVELOPE_PRN_NAME, Settings.EnvelopeLabelPrinterName);
+
+    Ini.WriteString(C_SEC_PRINTERS, C_KEY_USE_LAYAWAY_RCPT_PRN, BoolToYN(Settings.UseLayawayReceiptPrinter));
+    Ini.WriteString(C_SEC_PRINTERS, C_KEY_LAYAWAYRCPTPRN,    Settings.LayawayReceiptPrinter);
+    Ini.WriteString(C_SEC_PRINTERS, C_KEY_LAYAWAYRCPTPRNBIN, Settings.LayawayReceiptPrinterBin);
   finally
     Ini.Free;
   end;

@@ -415,6 +415,9 @@ begin
   EnsureIniKey(Ini, 'PRINTERS', 'UsePaymentReceiptPrinter', 'N');
   EnsureIniKey(Ini, 'PRINTERS', 'UseEnvelopeLabelPrinter', 'N');
   EnsureIniKey(Ini, 'PRINTERS', 'EnvelopeLabelPrinterName', '');
+  EnsureIniKey(Ini, 'PRINTERS', 'UseLayawayReceiptPrinter', 'N');
+  EnsureIniKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRN', '');
+  EnsureIniKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRNBIN', '');
 
   EnsureIniKey(Ini, 'LEADS_ONLINE', 'CSVPath', '');
 

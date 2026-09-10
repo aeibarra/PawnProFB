@@ -105,6 +105,14 @@ begin
     EnsureKey(Ini, 'PRINTERS', 'UseEnvelopeLabelPrinter',  'N');
     EnsureKey(Ini, 'PRINTERS', 'EnvelopeLabelPrinterName', '');
 
+    // Deliberately NOT written for existing installs: LoadPrinterSettingsFromIni
+    // falls back to the payment receipt printer when these are absent, which is
+    // where the layaway receipt used to go. Writing blanks here would take that
+    // fallback away and silently stop layaway receipts printing.
+    EnsureKey(Ini, 'PRINTERS', 'UseLayawayReceiptPrinter', 'N');
+    EnsureKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRN',           '');
+    EnsureKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRNBIN',        '');
+
     // ----- [LEADS_ONLINE] -----
     EnsureKey(Ini, 'LEADS_ONLINE', 'CSVPath', '');
 

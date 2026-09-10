@@ -3,8 +3,8 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   Top = 182
   BorderStyle = bsDialog
   Caption = 'Select Printer'
-  ClientHeight = 729
-  ClientWidth = 508
+  ClientHeight = 516
+  ClientWidth = 1018
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -1951,14 +1951,16 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 653
-    Width = 502
+    Top = 440
+    Width = 1012
     Height = 73
     Align = alBottom
-    TabOrder = 0
+    TabOrder = 4
+    ExplicitTop = 653
+    ExplicitWidth = 502
     object btnSelectPrintLabel: TBitBtn
-      Left = 182
-      Top = 15
+      Left = 710
+      Top = 14
       Width = 159
       Height = 45
       Caption = 'Select Printer'
@@ -1970,8 +1972,8 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
       OnClick = btnSelectPrintLabelClick
     end
     object btnExit: TRzBitBtn
-      Left = 366
-      Top = 15
+      Left = 894
+      Top = 14
       Width = 106
       Height = 45
       Cancel = True
@@ -1989,9 +1991,8 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
     Top = 3
     Width = 502
     Height = 278
-    Align = alTop
     Caption = 'Police Report Printer'
-    TabOrder = 1
+    TabOrder = 0
     object Label1: TLabel
       Left = 25
       Top = 92
@@ -2019,7 +2020,7 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
       Width = 451
       Height = 29
       Style = csDropDownList
-      TabOrder = 0
+      TabOrder = 1
       OnChange = cbPrintersChange
     end
     object cbTypeOfPoliceReport: TRzComboBox
@@ -2028,7 +2029,7 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
       Width = 451
       Height = 29
       Style = csDropDownList
-      TabOrder = 1
+      TabOrder = 0
       OnChange = cbTypeOfPoliceReportChange
     end
     object pnPoliceRptCopies: TRzPanel
@@ -2067,10 +2068,10 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   end
   object GroupBox3: TGroupBox
     AlignWithMargins = True
-    Left = 3
-    Top = 287
+    Left = 511
+    Top = 1
     Width = 502
-    Height = 208
+    Height = 214
     Caption = 'Payment Receipt Printer'
     TabOrder = 2
     object Label2: TLabel
@@ -2116,11 +2117,11 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   object GroupBox4: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 497
+    Top = 287
     Width = 502
     Height = 144
     Caption = 'Envelope Label Printer'
-    TabOrder = 3
+    TabOrder = 1
     object Label6: TLabel
       Left = 25
       Top = 68
@@ -2143,6 +2144,54 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
       Height = 17
       Caption = 'Use Envelope Label Printer (Brother QL-820NWB  - 1.1" x 3.5")'
       TabOrder = 1
+    end
+  end
+  object GroupBox5: TGroupBox
+    AlignWithMargins = True
+    Left = 511
+    Top = 220
+    Width = 502
+    Height = 214
+    Caption = 'Layaway Receipt Printer'
+    TabOrder = 3
+    object Label7: TLabel
+      Left = 25
+      Top = 68
+      Width = 50
+      Height = 21
+      Caption = 'Printer:'
+    end
+    object Label8: TLabel
+      Left = 25
+      Top = 131
+      Width = 119
+      Height = 21
+      Caption = 'Printer Bin / Tray:'
+    end
+    object cbPrintersLayawayRcpt: TComboBox
+      Left = 22
+      Top = 91
+      Width = 451
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 0
+      OnChange = cbPrintersLayawayRcptChange
+    end
+    object cbLayawayRcptBins: TComboBox
+      Left = 22
+      Top = 154
+      Width = 257
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 1
+    end
+    object chkUseLayawayReceiptPrinter: TCheckBox
+      Left = 31
+      Top = 38
+      Width = 226
+      Height = 17
+      Caption = 'Use Layaway Receipt Printer'
+      TabOrder = 2
     end
   end
 end

@@ -32,12 +32,19 @@ type
     Label6: TLabel;
     cbPrintersEnvelopeLabel: TComboBox;
     chkUseEnvelopeLabelPrinter: TCheckBox;
+    GroupBox5: TGroupBox;
+    Label7: TLabel;
+    Label8: TLabel;
+    cbPrintersLayawayRcpt: TComboBox;
+    cbLayawayRcptBins: TComboBox;
+    chkUseLayawayReceiptPrinter: TCheckBox;
     procedure btnSelectPrintLabelClick(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbTypeOfPoliceReportChange(Sender: TObject);
     procedure cbPrintersChange(Sender: TObject);
     procedure cbPrintersPayReceiptChange(Sender: TObject);
+    procedure cbPrintersLayawayRcptChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -66,6 +73,10 @@ begin
   AppPrinterSettings.UseEnvelopeLabelPrinter := chkUseEnvelopeLabelPrinter.Checked;
   AppPrinterSettings.EnvelopeLabelPrinterName := cbPrintersEnvelopeLabel.Text;
 
+  AppPrinterSettings.UseLayawayReceiptPrinter := chkUseLayawayReceiptPrinter.Checked;
+  AppPrinterSettings.LayawayReceiptPrinter := cbPrintersLayawayRcpt.Text;
+  AppPrinterSettings.LayawayReceiptPrinterBin := cbLayawayRcptBins.Text;
+
   SavePrinterSettingsToIni(GlobalIniFile, AppPrinterSettings);
 
   DM.qryStore.Edit;
@@ -82,6 +93,11 @@ end;
 procedure TfrmSetupBarcodePrinter.cbPrintersChange(Sender: TObject);
 begin
   FillPrinterTrays(cbPolicePrinterBins, cbPrinters.Text);
+end;
+
+procedure TfrmSetupBarcodePrinter.cbPrintersLayawayRcptChange(Sender: TObject);
+begin
+  FillPrinterTrays(cbLayawayRcptBins, cbPrintersLayawayRcpt.Text);
 end;
 
 procedure TfrmSetupBarcodePrinter.cbPrintersPayReceiptChange(Sender: TObject);
@@ -134,6 +150,7 @@ begin
   cbPrinters.Items.Text := Printer.Printers.Text;
   cbPrintersPayReceipt.Items.Text := Printer.Printers.Text;
   cbPrintersEnvelopeLabel.Items.Text := Printer.Printers.Text;
+  cbPrintersLayawayRcpt.Items.Text := Printer.Printers.Text;
 
   cbPrinters.ItemIndex := cbPrinters.Items.IndexOf(AppPrinterSettings.PoliceReportPrinter);
   if cbPrinters.ItemIndex >= 0 then
@@ -156,6 +173,16 @@ begin
 
   chkUseEnvelopeLabelPrinter.Checked := AppPrinterSettings.UseEnvelopeLabelPrinter;
   cbPrintersEnvelopeLabel.ItemIndex := cbPrintersEnvelopeLabel.Items.IndexOf(AppPrinterSettings.EnvelopeLabelPrinterName);
+
+  chkUseLayawayReceiptPrinter.Checked := AppPrinterSettings.UseLayawayReceiptPrinter;
+  cbPrintersLayawayRcpt.ItemIndex := cbPrintersLayawayRcpt.Items.IndexOf(AppPrinterSettings.LayawayReceiptPrinter);
+  if cbPrintersLayawayRcpt.ItemIndex >= 0 then
+    begin
+      cbPrintersLayawayRcptChange(nil);
+      idx := cbLayawayRcptBins.Items.IndexOf(AppPrinterSettings.LayawayReceiptPrinterBin);
+      if idx >= 0 then
+        cbLayawayRcptBins.ItemIndex := idx;
+    end;
 end;
 
 end.
