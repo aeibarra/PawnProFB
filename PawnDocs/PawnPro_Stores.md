@@ -19,12 +19,12 @@ missing entries below are as much a part of the record as the filled ones.
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
 | Gema Jewelers | SOAP | FB5 | single | live 2026-09-03 |
 | Gold Star Pawn & Jewelry | CSV/FTP | ASA | **multiple** | to migrate |
-| Perez Cash Joyeria | CSV/FTP | ASA | single | to migrate |
+| Perez Cash Joyeria | SOAP | FB5 | single | live 2026-09-10 |
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
-| Ok Jewelers | CSV/FTP | ASA | single | **next**, with Home of Watches — credentials in hand |
-| Home of Watches & Jewels | CSV/FTP | ASA | single | **next**, with Ok Jewelers — credentials in hand |
+| Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
+| Home of Watches & Jewels | CSV/FTP | ASA | single | **next** — credentials in hand |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
@@ -426,7 +426,8 @@ copies blobs, and asks first when a store's images are not yet on disk.
 
 ## 5. Kendale Jewelry
 
-Live on the web service since 2026-09-01. The largest store, and the last conversion.
+Live on the web service since 2026-09-01. The largest store, and the last of the
+first five conversions — Gema, Perez Cash Joyeria and Ok Jewelers followed.
 
 Not part of the same family as the other four — keep it off shared
 correspondence, and copy only its own address on anything sent to LeadsOnline.
@@ -627,9 +628,9 @@ not yet been run against a real share -- Kendale was done by hand before they
 existed. Worth a rehearsal in the VM first, since there is no cheaper store to
 learn on.
 
-### Perez Cash Joyeria — CONVERTED to FB5 2026-09-05, awaiting credentials
+### Perez Cash Joyeria — LIVE on SOAP 2026-09-10
 3611 West Flagler Street, Miami, FL 33135
-Phone (305) 541-1821 · Email — · Florida police ID `01-Miami`
+Phone (305) 541-1821 · Email perezcashinc@gmail.com · Florida police ID `01-Miami`
 **LeadsOnline store id `97956`** — already in `STORE.LEADS_STORE_ID`.
 
 **Same owner as Perez Cash Jewelry II**, which is already live on SOAP with
@@ -637,11 +638,45 @@ store id `63271` and API user `pcj15118`. Mention that when requesting
 credentials, so LeadsOnline set this one up the same way. See the warning at the
 top.
 
-Credentials to be requested Tuesday 2026-09-08 — Russell had not replied over
-the holiday. **Quote `97956`.** At both Perez Cash II and Felitin's the id
-already in the database is exactly the one LeadsOnline issued, so this is very
-likely the number that comes back; if it differs, that is worth querying rather
-than accepting.
+**Credentials received 2026-09-10** from Russell House.
+
+| | |
+|---|---|
+| **API user name** | `perezcash3611` |
+| **API password** | not recorded here — password manager, and `STORE` at install |
+| **Store ID** | `97956` — **confirmed** by two accepted submissions |
+
+The user name follows the house pattern of name plus street number, and 3611
+matches 3611 West Flagler Street. That is the install-day check: the number in
+the user name must match the address on the door.
+
+Russell did not restate the store id in his reply, so `97956` went in from
+`STORE.LEADS_STORE_ID` unconfirmed. **The two accepted submissions settle it:**
+LeadsOnline answer error 3 for a bad store id, so a wrong number could not have
+come back as 0. Worth recording because the risk here was real — the sister shop
+is live on a *different* id (`63271`), same owner, and a crossed id produces
+successful submissions filed against the wrong location with nothing downstream
+to reveal it.
+
+#### Cutover, 2026-09-10
+
+| | |
+|---|---|
+| **Endpoint** | production |
+| **Export method** | `S` (SOAP) |
+| **Skip CSV-sent** | TRUE |
+| **Backups** | `D:\Pawnbackup`, automatic, 5,421 logged, last 2026-09-10 12:27 |
+| **First traffic** | 2 tickets, both accepted, 12:26 |
+| **Still to send** | 0 |
+| **Exclusions** | 1,616, **none from the last 12 months** |
+
+`BACKUP_PATH` moved from `D:\` to `D:\Pawnbackup` at install — a folder on the
+second disk rather than its root, which is the better arrangement.
+
+Still unconfirmed: whether this store ever took photos. `IMAGES_DATA` was empty
+before the cutover and no images have been uploaded since. Consistent with a
+store that never used them, and harmless if so — images are optional in a
+submission.
 
 #### Baseline, 2026-09-05
 
@@ -728,7 +763,7 @@ Phone — · Email — · LeadsOnline store id —
 8150 SW 8th St #125, Miami, FL 33144
 Phone (305) 967-8981 · Email — · LeadsOnline store id —
 
-### Ok Jewelers — NEXT, with Home of Watches
+### Ok Jewelers — LIVE on SOAP 2026-09-10
 10601 SW 40th St, Miami, FL 33165
 Contact (786) 916-7641 · Email scanizares2003@yahoo.com · LeadsOnline store id `63235`
 That number is the owner's contact for us, **not confirmed as the shop's own
@@ -740,6 +775,52 @@ Ask for the shop's line before the install.
 API user name `okjewelers10601`. Password is **not** recorded here — password
 manager, and `STORE` at install.
 **Same owner as Home of Watches & Jewels.**
+
+Legal name in `STORE`: **O.K. JEWELERS ENT, CORP.**
+
+#### Cutover, 2026-09-10
+
+| | |
+|---|---|
+| **Store id in the database** | `63235` — matches what LeadsOnline issued |
+| **API user** | `okjewelers10601` |
+| **Endpoint** | production |
+| **Export method** | `S` (SOAP) |
+| **Skip CSV-sent** | TRUE |
+| **Backups** | `D:\PawnBackup`, automatic, 1,350 logged, last 2026-09-10 13:44 |
+| **Exclusions** | 55, **none from the last 12 months** |
+
+The id/user-name cross-check holds: `okjewelers10601` against 10601 SW 40th St,
+and store `63235` rather than Home of Watches' `63269`. Nothing crossed.
+
+**Nothing has been submitted yet.** `LEADS_SOAP_SUBMISSION` is empty, so the
+channel is configured but still unproven at this store — unlike everywhere else,
+where a couple of tickets went out at install to prove it end to end.
+
+**One transaction is held back on purpose**, to be sent with the owner watching
+as training:
+
+```
+19819   2026-02-27   Purchase   ticket 42233
+```
+
+It is in neither channel — no CSV row, no submission — so LeadsOnline have never
+seen it and it should come back a clean **Sent**, not "Already sent". At about
+six months old it is well inside their date window, so "Too old" is unlikely
+too. Sending it also gives the store its first end-to-end proof.
+
+#### Brought back over a slow line
+
+The connection at the store was too slow to copy the database, so the encrypted
+backup came back instead and was restored here on 2026-09-10:
+
+```
+Tools\PawnProDecrypt.exe <backup>.fbk.enc <backup>.fbk     (needs vendor_secret.key in the CWD)
+gbak -c -user sysdba -password <pw> <backup>.fbk 127.0.0.1/3050:<target>.FDB
+```
+
+Worth knowing for the next store on a bad line: a `.fbk.enc` is useless without
+the offline `vendor_secret.key`, so the restore has to happen where that key is.
 
 ### Home of Watches & Jewels — NEXT, with Ok Jewelers
 1876 SW 57th Ave, Miami, FL 33155
