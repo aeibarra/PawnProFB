@@ -1,8 +1,10 @@
 # Enter on the Clients screen, and the card scanner
 
 Design note and deferred work.
-Written 2026-09-11, after the current version shipped. **Not yet validated
-against a real PDF417 reader** — see "Before changing anything".
+Written 2026-09-11. **Validated against a real PDF417 reader on 2026-09-12:
+both places the scanner is actually used work correctly on the shipping build
+(3.37.4.2).** The simplification below is therefore a tidiness question, not a
+risk one.
 
 ## Why this is delicate
 
@@ -97,10 +99,23 @@ temporarily, focus the Add button, press Enter:
   differently here, the code earns its place, and this document is obsolete
   except for the scanner notes below.
 
-### 2. Then test with a real reader
+### 2. Then re-test with a real reader
 
-A scanner has to be bought for this; it cannot be checked by reasoning. Whichever
-version is in place, verify:
+**The scanner is used in exactly two places**, and they are isolated from each
+other:
+
+| place | form | key interception |
+|---|---|---|
+| Search screen | `frmClients` | yes — everything in this document |
+| First-time client entry | `frmEnterClientInfo` | own handlers, shown modally, **no default button** |
+
+The second one is worth noting as evidence: the form with no Enter interception
+at all is the one that has never caused trouble. There is also a third path,
+F2 → `CardReader`, which parses into a `TMemo` and intercepts nothing; it is not
+part of either daily workflow.
+
+Both places were confirmed working on 2026-09-12. Re-verify after any change
+here:
 
 - a licence scan populates the client fields
 - **nothing else fires during a scan** — no search, no dialog, above all no Delete
