@@ -224,7 +224,7 @@ these to LeadsOnline** on the export grid rather than submitted.
 
 ## 2. Lucky Jewelry
 
-Scheduled. Credentials issued 2026-08-24; not yet installed.
+Live on the web service since 2026-08-24. Credentials issued the same day.
 
 | | |
 |---|---|
@@ -248,7 +248,7 @@ Scheduled. Credentials issued 2026-08-24; not yet installed.
 
 | | |
 |---|---|
-| **SOAP build installed** | not yet |
+| **SOAP build installed** | 2026-08-24 |
 | **Stations** | single workstation |
 
 ### Before installing
@@ -262,7 +262,7 @@ Scheduled. Credentials issued 2026-08-24; not yet installed.
 
 ## 3. Ricardo Joyeria
 
-Scheduled. Credentials issued 2026-08-24; not yet installed.
+Live on the web service since 2026-08-25. Credentials issued 2026-08-24.
 
 | | |
 |---|---|
@@ -286,7 +286,7 @@ Scheduled. Credentials issued 2026-08-24; not yet installed.
 
 | | |
 |---|---|
-| **SOAP build installed** | not yet |
+| **SOAP build installed** | 2026-08-25 |
 | **Stations** | single workstation |
 | **`RemoteBindAddress`** | set to `127.0.0.1` on 2026-08-25 (was `0.0.0.0`, listening on every interface) |
 
@@ -954,11 +954,14 @@ had none and 61.
 
 ## Open items
 
-- **All six SOAP stores need the executable replaced** with 3.37.2.0. They are
-  on 3.37.1.20, the trial-ReportBuilder build. Preview-only, so nothing on paper
-  was ever affected, but the message is there on screen until they are updated.
-  Confirm each one afterwards from the About box rather than assuming the copy
-  landed.
+- **All eight SOAP stores need the executable replaced** with **3.37.4.2**.
+  Several are still on 3.37.1.20, the trial-ReportBuilder build, which shows a
+  message in the report preview — preview only, nothing on paper was ever
+  affected. Beyond clearing that, 3.37.4.2 carries the stone fix (a stone with no
+  colour used to vanish from a LeadsOnline ticket entirely), the About-box image
+  scaling at 125%, the View Sent Tickets screen, and the layaway receipt printer
+  setting. Confirm each store afterwards from the About box rather than assuming
+  the copy landed.
 
 Two more, both at Kendale, both easy to lose:
 
@@ -968,5 +971,5 @@ Two more, both at Kendale, both easy to lose:
 - **`AUTO_BACKUP_WHEN_CLOSE_APP` is off** — the only live store where it is, and
   the one whose staff are least likely to remember doing it by hand.
 
-The CSV/FTP export still exists and still works. The six SOAP stores do not use
-it; the seven still to migrate all do.
+The CSV/FTP export still exists and still works. The eight SOAP stores do not
+use it; the five still to migrate all do.
