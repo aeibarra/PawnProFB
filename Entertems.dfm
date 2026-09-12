@@ -67,6 +67,7 @@ object frmEnterItems: TfrmEnterItems
       Width = 106
       Height = 48
       Caption = '&Save'
+      Default = True
       TabOrder = 1
       OnClick = btnSaveClick
       ImageIndex = 19

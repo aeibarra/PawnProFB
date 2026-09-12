@@ -18,6 +18,15 @@ uses
 const
   sx_ProcessCardScanning = wm_User + 100;
   sx_RefreshPaymentDueDateMesg = wm_User + 101;
+  { Posted, not called, after a NEW layaway is saved. By then the layaway form
+    has closed and this one still has to settle; posting lets that finish before
+    the items dialog opens on top of it. }
+  sx_StartAddingLayawayItems   = wm_User + 102;
+
+  { Shortest gap, in ms, that still counts as a person pressing a key.
+    A PDF417 reader types its whole payload as a burst a few ms apart; nobody
+    reaches for Enter that fast after the previous keystroke. }
+  ScannerBurstGapMs = 40;
 
 type
   TfrmClients = class(TForm)
@@ -943,6 +952,7 @@ type
     ReadChars: string;
     ScanData: TScanDataList;
     LastDataCount: integer;
+    FLastKeyTick: Cardinal;
     procedure AddToKeyQueue(Key: Word);
     function MatchLastKeys(KeyPattern: TKeyQueue): boolean;
     procedure ProcessScannedCard(var Msg: TMessage); Message sx_ProcessCardScanning;
@@ -957,9 +967,11 @@ type
     procedure GetPaymentDueDateBalanceMessage;
     procedure UpdatePawnStatusActions;
     procedure ProcessNewPaymentDueDateMessage(var Msg: TMessage); Message sx_RefreshPaymentDueDateMesg;
+    procedure ProcessStartAddingLayawayItems(var Msg: TMessage); Message sx_StartAddingLayawayItems;
     procedure AddEditPayments(NewRow: boolean);
     procedure AddEditLayaway(NewRow: boolean);
     function IsInactiveLayawaySelected: boolean;
+    function SelectedTransactionItemCount: Integer;
   public
 //    PoliceRptPrinter, PoliceRptPrinterBin, PayReceiptPrinterName, PayReceiptPrinterNameBin: string;
     procedure OpenClientsQuery(FName, LName: string);
@@ -1388,6 +1400,16 @@ begin
     begin
       MessageDlg('Please enter Transaction information first', mtInformation, [mbOK], 0);
       exit;
+    end;
+
+  // Refuse money against a layaway that lists nothing. The payment would save
+  // happily and the customer would be owed goods the database cannot name.
+  if (DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway) and
+     (SelectedTransactionItemCount = 0) then
+    begin
+      PawnWarn('This layaway has no items, so there is nothing to take a payment '+
+               'against. Add the items to the layaway first, then enter the payment.');
+      Exit;
     end;
 
   AddEditPayments(True);
@@ -1850,6 +1872,27 @@ begin
   UpdatePawnStatusActions;
 end;
 
+{ Hands a freshly-saved layaway straight to item entry.
+
+  Items cannot be added before the transaction exists -- btnAddInvItemsClick
+  needs its TRANSACTION_NO -- so the moment after a successful save is the only
+  point where the clerk can be pointed at the next step. Layaways are rare
+  enough that nobody has the sequence in muscle memory the way they do for a
+  pawn, which is why this exists for layaways and not for the others.
+
+  Nothing is forced: cancelling the items dialog leaves the layaway saved, and
+  focus stays on Add so a second item is one Enter away. }
+procedure TfrmClients.ProcessStartAddingLayawayItems(var Msg: TMessage);
+begin
+  pgTransDetail.ActivePage := TabItems;
+  pgTransDetailChange(nil);
+
+  if btnAddInvItems.CanFocus then
+    btnAddInvItems.SetFocus;
+
+  btnAddInvItemsClick(btnAddInvItems);
+end;
+
 procedure TfrmClients.UpdatePawnStatusActions;
 var
   HasPawn, IsActive: boolean;
@@ -2263,14 +2306,21 @@ begin
 end;
 
 procedure TfrmClients.AddEditLayaway(NewRow: boolean);
+var
+  Saved: boolean;
 begin
   frmEnterLayaway := TfrmEnterLayaway.Create(Self);
   try
     frmEnterLayaway.NewRow := NewRow;
-    frmEnterLayaway.ShowModal;
+    Saved := frmEnterLayaway.ShowModal = mrOk;
   finally
     frmEnterLayaway.Free;
   end;
+
+  // Only for a NEW one, and only once it really saved. Reopening item entry
+  // every time somebody edits an existing layaway's amount would be nagging.
+  if NewRow and Saved and (DM.qryTransactionsTRANSACTION_NO.AsInteger > 0) then
+    PostMessage(Handle, sx_StartAddingLayawayItems, 0, 0);
 end;
 
 procedure TfrmClients.btnNewLayawayClick(Sender: TObject);
@@ -2378,6 +2428,17 @@ end;
 
 procedure TfrmClients.btnLayawayRcptClick(Sender: TObject);
 begin
+  // Say so, rather than send a job that produces nothing. qryLayawayRcpt
+  // inner-joins INVENTORY_ITEMS, so with no items the report has no rows and
+  // ReportBuilder prints no pages at all -- no error, nothing in the spooler.
+  // Silence here reads as a broken printer and sends people to the wrong place.
+  if SelectedTransactionItemCount = 0 then
+    begin
+      PawnWarn('This layaway has no items, so there is nothing to print. '+
+               'Add the items to the layaway first.');
+      Exit;
+    end;
+
   DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger,
     AppPrinterSettings.LayawayReceiptPrinter, AppPrinterSettings.LayawayReceiptPrinterBin);
 end;
@@ -2588,6 +2649,25 @@ begin
   DM.RefreshFBQry(qryInvItems);
 end;
 
+{ How many inventory items hang off the transaction on screen.
+
+  A layaway with none is an empty shell: the amount and any payments save
+  fine, but nothing records WHAT the customer is buying. Its receipt is worse
+  than wrong -- qryLayawayRcpt inner-joins INVENTORY_ITEMS, so with no items it
+  returns no rows and ReportBuilder prints NOTHING AT ALL: no error, no blank
+  page, no spooler job. From the counter that is indistinguishable from a
+  broken printer, and it cost an afternoon to find once. }
+function TfrmClients.SelectedTransactionItemCount: Integer;
+begin
+  Result := 0;
+  if DM.qryTransactionsTRANSACTION_NO.AsInteger <= 0 then
+    Exit;
+
+  Result := OpenSQLStatementFB(
+    'select count(*) from INVENTORY_ITEMS where TRANSACTION_NO = ' +
+    DM.qryTransactionsTRANSACTION_NO.AsString);
+end;
+
 function TfrmClients.IsInactiveLayawaySelected: boolean;
 begin
   Result := (DM.qryTransactionsTRANSACTION_NO.AsInteger > 0) and
@@ -2661,8 +2741,13 @@ end;
 
 procedure TfrmClients.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  GapSincePreviousKey: Cardinal;
 begin
    AddToKeyQueue(Key);
+
+  GapSincePreviousKey := GetTickCount - FLastKeyTick;
+  FLastKeyTick := GetTickCount;
   if not ScanningCard then
     begin
       PreHeaderDetected := MatchLastKeys(CardHeader);  ///Preheader detected
@@ -2677,6 +2762,55 @@ begin
         begin
           CardScanNewLineCounter := 0;
           PostMessage(Handle, sx_ProcessCardScanning, 0, 0); //End Of Scanning Detected
+        end;
+    end;
+
+  { Who answers Enter on this form.
+
+    btnSearch used to carry Default = True, which handed it every Enter on the
+    whole form -- so a focused Add, Edit or Print button did nothing at all, and a
+    Raize button does not pass the default along to a focused stock one the way
+    VCL buttons do among themselves. The Default flag is gone; both behaviours are
+    decided here instead:
+
+      a focused button          -> that button
+      anything in the search box -> the search
+
+    DELIBERATELY AFTER THE CARD-SCAN BLOCK ABOVE, and skipped entirely while a
+    scan is running: #13 is part of the scanner's own end-of-scan detection
+    (three newlines), so it has to reach that code first and must never be eaten
+    mid-scan.
+
+    The scan flags are not enough on their own. A driver's licence payload opens
+    '@' CR LF 'ANSI ' -- so a CR arrives BEFORE ScanningPDF417Barcode is set,
+    and without the timing test that CR would press whatever button has focus in
+    the middle of a scan. It used to land on btnSearch and merely re-run the
+    search; it could now land on Delete. Hence ScannerBurstGapMs: a key that
+    arrives hard on the heels of the last one did not come from a person.
+
+    Header detection itself is unaffected either way -- GetLastSevenReadChars
+    keeps only characters >= #32, so the CR never formed part of '@ANSI '. }
+  if (Key = VK_RETURN) and (Shift = []) and
+     not ScanningCard and not ScanningPDF417Barcode and
+     (GapSincePreviousKey > ScannerBurstGapMs) and (ActiveControl <> nil) then
+    begin
+      if (ActiveControl is TButton) and TWinControl(ActiveControl).HandleAllocated then
+        begin
+          Key := 0;
+          SendMessage(TWinControl(ActiveControl).Handle, BM_CLICK, 0, 0);
+        end
+      else if ActiveControl.Parent = GroupBox1 then
+        begin
+          { Enter in any of the search fields runs the search. btnSearch used to be
+            this form's Default button, which gave that for free -- but a Default
+            button claims Enter for the WHOLE form, so a focused Add or Edit button
+            got nothing. Restoring it here keeps the search shortcut AND leaves
+            Enter working on every other button.
+
+            Tested against the group rather than the four fields by name, so a
+            search field added later works without anyone remembering this. }
+          Key := 0;
+          btnSearchClick(btnSearch);
         end;
     end;
 end;
@@ -2719,7 +2853,21 @@ begin
                                  TimerForScan,
                                  LastDataCount);
 
+  { Silence the Enter beep.
 
+    FormKeyDown already acted on Enter -- ran the search, or clicked the focused
+    button -- but clearing Key there stops only the key, not the CHARACTER that
+    follows it. A single-line edit then receives #13, has no use for it, and
+    Windows sounds the default beep. That is the "ding": the work was done and
+    the noise is pure leftover.
+
+    AFTER the scan handlers, and skipped mid-scan, for the same reason as the
+    matching block in FormKeyDown -- #13 is part of the scanner's own protocol.
+    A multiline control is left alone so Enter still inserts a newline; there is
+    none on this form today, but the next one will not have to discover this. }
+  if (Key = #13) and not ScanningCard and not ScanningPDF417Barcode and
+     not (ActiveControl is TCustomMemo) then
+    Key := #0;
 end;
 
 end.

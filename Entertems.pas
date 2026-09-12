@@ -111,6 +111,18 @@ procedure TfrmEnterItems.FormShow(Sender: TObject);
 begin
   FrmSetViewSize(Self);
 
+  // One screen serves all three transaction types, but the caption was fixed at
+  // 'Pawn Item Information' in the DFM, so a clerk adding items to a purchase or
+  // a layaway was told they were on a pawn.
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
+    Caption := 'Purchase Item Information'
+  else if DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway then
+    Caption := 'Layaway Item Information'
+  else if DM.qryTransactionsTRAN_TYPE.AsString = TranPawn then
+    Caption := 'Pawn Item Information'
+  else
+    Caption := 'Item Information';
+
   edItemDesc.SetFocus;
 
   FillCombo(cbBrand, DM.clnInventoryBrands, 'INV_ITEM_BRAND', '', '');

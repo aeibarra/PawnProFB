@@ -517,7 +517,6 @@ object frmClients: TfrmClients
         Top = 15
         Width = 124
         Height = 48
-        Default = True
         Caption = '&Search'
         TabOrder = 4
         OnClick = btnSearchClick
@@ -1667,7 +1666,7 @@ object frmClients: TfrmClients
           end
           object btnAddInvItems: TBitBtn
             Left = 17
-            Top = 2
+            Top = 0
             Width = 110
             Height = 50
             Caption = ' Add'
@@ -3696,7 +3695,7 @@ object frmClients: TfrmClients
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 650
     Top = 151
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 196850
     DataPipelineName = 'DBPPawnItemsLaser'
     object ppHeaderBand2: TppHeaderBand
@@ -10419,7 +10418,7 @@ object frmClients: TfrmClients
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 649
     Top = 204
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 196596
     DataPipelineName = 'DBPPawnItems'
     object ppHeaderBand3: TppHeaderBand
@@ -12004,7 +12003,7 @@ object frmClients: TfrmClients
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 649
     Top = 256
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'DBPPawnItems'
     object ppHeaderBand4: TppHeaderBand
@@ -13473,7 +13472,7 @@ object frmClients: TfrmClients
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 649
     Top = 98
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'DBPPawnItems'
     object ppHeaderBand1: TppHeaderBand
