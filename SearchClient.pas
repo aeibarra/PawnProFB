@@ -215,7 +215,7 @@ type
     ppLabel31: TppLabel;
     ppLabel32: TppLabel;
     ppLabel33: TppLabel;
-    GroupBox1: TGroupBox;
+    gbSearch: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -972,6 +972,7 @@ type
     procedure AddEditLayaway(NewRow: boolean);
     function IsInactiveLayawaySelected: boolean;
     function SelectedTransactionItemCount: Integer;
+    function SearchFieldFocused: boolean;
   public
 //    PoliceRptPrinter, PoliceRptPrinterBin, PayReceiptPrinterName, PayReceiptPrinterNameBin: string;
     procedure OpenClientsQuery(FName, LName: string);
@@ -2657,6 +2658,22 @@ end;
   returns no rows and ReportBuilder prints NOTHING AT ALL: no error, no blank
   page, no spooler job. From the counter that is indistinguishable from a
   broken printer, and it cost an afternoon to find once. }
+{ Is the operator actually in one of the search boxes?
+
+  Scanning a licence on this screen means one thing: look this person up. So
+  the reader is only listened to while the cursor is where a lookup is typed.
+  Keys arriving when focus is on a grid, a button or a transaction tab are not
+  a lookup, and must not be swallowed or acted on.
+
+  edPhone is named explicitly as well as tested by class: TPawnPhoneEdit ships
+  as a DCU here, so its ancestry could not be confirmed. If it is not a
+  TCustomEdit the named test still covers it. }
+function TfrmClients.SearchFieldFocused: boolean;
+begin
+  Result := (ActiveControl <> nil) and (ActiveControl.Parent = gbSearch) and
+            ((ActiveControl is TCustomEdit) or (ActiveControl = edPhone));
+end;
+
 function TfrmClients.SelectedTransactionItemCount: Integer;
 begin
   Result := 0;
@@ -2748,20 +2765,26 @@ begin
 
   GapSincePreviousKey := GetTickCount - FLastKeyTick;
   FLastKeyTick := GetTickCount;
-  if not ScanningCard then
-    begin
-      PreHeaderDetected := MatchLastKeys(CardHeader);  ///Preheader detected
 
-      ReadingCardBuffer := '';
-    end
-  else if MatchLastKeys(CardNewLine) then
+  // Only look for a card while the cursor is in a search box -- or while a scan
+  // is already under way, which must be allowed to finish.
+  if SearchFieldFocused or ScanningCard then
     begin
-      inc(CardScanNewLineCounter);
-
-      if CardScanNewLineCounter = 3 then
+      if not ScanningCard then
         begin
-          CardScanNewLineCounter := 0;
-          PostMessage(Handle, sx_ProcessCardScanning, 0, 0); //End Of Scanning Detected
+          PreHeaderDetected := MatchLastKeys(CardHeader);  ///Preheader detected
+
+          ReadingCardBuffer := '';
+        end
+      else if MatchLastKeys(CardNewLine) then
+        begin
+          inc(CardScanNewLineCounter);
+
+          if CardScanNewLineCounter = 3 then
+            begin
+              CardScanNewLineCounter := 0;
+              PostMessage(Handle, sx_ProcessCardScanning, 0, 0); //End Of Scanning Detected
+            end;
         end;
     end;
 
@@ -2799,7 +2822,7 @@ begin
           Key := 0;
           SendMessage(TWinControl(ActiveControl).Handle, BM_CLICK, 0, 0);
         end
-      else if ActiveControl.Parent = GroupBox1 then
+      else if SearchFieldFocused then
         begin
           { Enter in any of the search fields runs the search. btnSearch used to be
             this form's Default button, which gave that for free -- but a Default
@@ -2844,14 +2867,25 @@ begin
 //  if Key < #32 then
 //    Memo1.Lines.Add(GetStrToShow(Key));
 
-  KeyPressForMagneticScan(Key);
+  { The reader is only listened to while the cursor is in a search box.
 
-  ProcessKeyForPDF417barcodeScan(Key,
-                                 ScanningPDF417Barcode,
-                                 ScanData,
-                                 ReadChars,
-                                 TimerForScan,
-                                 LastDataCount);
+    Scanning a licence on this screen means "look this person up", so anywhere
+    else on the form it is not a lookup and the keys must be left alone --
+    ProcessKeyForPDF417barcodeScan swallows every character once it starts, which
+    would silently eat typing into a grid or an item field.
+
+    An in-progress scan is always allowed to finish, whatever the focus does. }
+  if SearchFieldFocused or ScanningCard or ScanningPDF417Barcode then
+    begin
+      KeyPressForMagneticScan(Key);
+
+      ProcessKeyForPDF417barcodeScan(Key,
+                                     ScanningPDF417Barcode,
+                                     ScanData,
+                                     ReadChars,
+                                     TimerForScan,
+                                     LastDataCount);
+    end;
 
   { Silence the Enter beep.
 
