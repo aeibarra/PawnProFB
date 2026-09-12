@@ -456,7 +456,7 @@ object DMReports: TDMReports
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 248
     Top = 16
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'dbpTranItems'
     object ppHeaderBand1: TppHeaderBand
@@ -827,7 +827,6 @@ object DMReports: TDMReports
       object ppDBText6: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText10'
-        AutoSize = True
         Border.mmPadding = 0
         DataField = 'DESCRIPTION'
         DataPipeline = dbpTranItems
@@ -841,7 +840,7 @@ object DMReports: TDMReports
         mmHeight = 4233
         mmLeft = 40325
         mmTop = 0
-        mmWidth = 17198
+        mmWidth = 48419
         BandType = 4
         LayerName = Foreground
       end
@@ -1668,7 +1667,7 @@ object DMReports: TDMReports
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 141
     Top = 296
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 88900
     DataPipelineName = 'dbpEnvelopeItemLabel'
     object ppDetailBand2: TppDetailBand
@@ -2508,7 +2507,7 @@ object DMReports: TDMReports
     CloudDriveSettings.OneDriveSettings.SharedResources = True
     Left = 812
     Top = 15
-    Version = '23.02'
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'dbpLayawayInfo'
     object ppHeaderBand2: TppHeaderBand
@@ -3466,7 +3465,7 @@ object DMReports: TDMReports
           PrinterSetup.mmPaperHeight = 279400
           PrinterSetup.mmPaperWidth = 215900
           PrinterSetup.PaperSize = 1
-          Version = '23.02'
+          Version = '23.04'
           mmColumnWidth = 0
           DataPipelineName = 'dbpLayawayPayments'
           object ppTitleBand1: TppTitleBand
