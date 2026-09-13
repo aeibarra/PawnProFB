@@ -954,14 +954,25 @@ had none and 61.
 
 ## Open items
 
-- **All eight SOAP stores need the executable replaced** with **3.37.4.2**.
-  Several are still on 3.37.1.20, the trial-ReportBuilder build, which shows a
-  message in the report preview — preview only, nothing on paper was ever
-  affected. Beyond clearing that, 3.37.4.2 carries the stone fix (a stone with no
-  colour used to vanish from a LeadsOnline ticket entirely), the About-box image
-  scaling at 125%, the View Sent Tickets screen, and the layaway receipt printer
-  setting. Confirm each store afterwards from the About box rather than assuming
-  the copy landed.
+- **⚠️ All eight SOAP stores need the executable replaced with 3.37.5.0, and this
+  one is not housekeeping.** Until 3.37.5.0 the driver licence barcode parser
+  searched for field tags anywhere in the text, so it silently wrote wrong
+  customer data: a surname MCDADAMS was stored as MC, an address 123 DADLEY
+  STREET became 123 with LEY STREET landing in the middle-name field, and the sex
+  code was read against the wrong value. No error was ever shown. Every store
+  scanning licences has been doing this, and those records went on to law
+  enforcement. Deploy sooner rather than at the next convenient visit.
+
+  The same build also carries the stone fix (a stone with no colour used to
+  vanish from a LeadsOnline ticket entirely), the About-box image scaling at
+  125%, the View Sent Tickets screen, the layaway receipt printer setting, and a
+  bound on the List of Active Pawns so it no longer prints the shop's entire
+  history. Several stores are also still on 3.37.1.20, the trial-ReportBuilder
+  build, which shows a message in the report preview — preview only, nothing on
+  paper was ever affected.
+
+  Confirm each store afterwards from the About box rather than assuming the copy
+  landed.
 
 Two more, both at Kendale, both easy to lose:
 
