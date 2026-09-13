@@ -3,8 +3,8 @@ object frmReport02: TfrmReport02
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Pawn list'
-  ClientHeight = 453
-  ClientWidth = 797
+  ClientHeight = 432
+  ClientWidth = 730
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -21,12 +21,12 @@ object frmReport02: TfrmReport02
     AlignWithMargins = True
     Left = 4
     Top = 4
-    Width = 418
-    Height = 278
+    Width = 408
+    Height = 316
     TabOrder = 0
     object GroupBox3: TGroupBox
       Left = 59
-      Top = 157
+      Top = 197
       Width = 290
       Height = 93
       TabOrder = 3
@@ -51,7 +51,7 @@ object frmReport02: TfrmReport02
     end
     object pnDateRange: TRzPanel
       Left = 54
-      Top = 92
+      Top = 132
       Width = 295
       Height = 63
       BorderOuter = fsNone
@@ -93,6 +93,21 @@ object frmReport02: TfrmReport02
         TabOrder = 1
       end
     end
+    object cbActiveWithin: TRzComboBox
+      Left = 100
+      Top = 51
+      Width = 203
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 4
+      Text = 'Written in the last 2 years'
+      Items.Strings = (
+        'Written in the last year'
+        'Written in the last 2 years'
+        'Written in the last 5 years'
+        'No limit - every pawn on file')
+      ItemIndex = 1
+    end
     object rbTranStatusActive: TRzRadioButton
       Left = 59
       Top = 22
@@ -106,11 +121,11 @@ object frmReport02: TfrmReport02
     end
     object rbDateRange: TRzRadioButton
       Left = 59
-      Top = 58
-      Width = 301
+      Top = 103
+      Width = 290
       Height = 23
       AlignmentVertical = avCenter
-      AutoSizeWidth = 301
+      AutoSizeWidth = 290
       Caption = 'All Pawns and Purchase in Date Range.'
       Checked = True
       TabOrder = 1
@@ -122,15 +137,15 @@ object frmReport02: TfrmReport02
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 4
-    Top = 288
-    Width = 418
+    Top = 326
+    Width = 408
     Height = 84
     TabOrder = 1
     DesignSize = (
-      418
+      408
       84)
     object btnExit: TBitBtn
-      Left = 301
+      Left = 291
       Top = 16
       Width = 103
       Height = 52
@@ -143,6 +158,7 @@ object frmReport02: TfrmReport02
       ModalResult = 8
       TabOrder = 0
       OnClick = btnExitClick
+      ExplicitLeft = 301
     end
     object btnPreview: TRzBitBtn
       Left = 20
@@ -200,8 +216,8 @@ object frmReport02: TfrmReport02
       'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME'
       ''
       '')
-    Left = 503
-    Top = 23
+    Left = 493
+    Top = 24
     object qryPawnAndPurchasescFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -268,15 +284,15 @@ object frmReport02: TfrmReport02
   end
   object dsPawnAndPurchases: TDataSource
     DataSet = qryPawnAndPurchases
-    Left = 504
-    Top = 75
+    Left = 494
+    Top = 76
   end
   object DBPPawnAndPurchases: TppDBPipeline
     DataSource = dsPawnAndPurchases
     OpenDataSource = False
     UserName = 'DBPPawnAndPurchases'
-    Left = 639
-    Top = 24
+    Left = 629
+    Top = 25
     object DBPPawnAndPurchasesppField1: TppField
       FieldAlias = 'cFullName'
       FieldName = 'cFullName'
@@ -388,8 +404,8 @@ object frmReport02: TfrmReport02
       Sortable = False
     end
     object DBPPawnAndPurchasesppField12: TppField
-      FieldAlias = 'TranDate'
-      FieldName = 'TranDate'
+      FieldAlias = 'TransactionNo'
+      FieldName = 'TransactionNo'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -398,8 +414,8 @@ object frmReport02: TfrmReport02
       Sortable = False
     end
     object DBPPawnAndPurchasesppField13: TppField
-      FieldAlias = 'TranTime'
-      FieldName = 'TranTime'
+      FieldAlias = 'TranDate'
+      FieldName = 'TranDate'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -408,8 +424,8 @@ object frmReport02: TfrmReport02
       Sortable = False
     end
     object DBPPawnAndPurchasesppField14: TppField
-      FieldAlias = 'TranMaturity'
-      FieldName = 'TranMaturity'
+      FieldAlias = 'TranTime'
+      FieldName = 'TranTime'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
@@ -418,12 +434,22 @@ object frmReport02: TfrmReport02
       Sortable = False
     end
     object DBPPawnAndPurchasesppField15: TppField
+      FieldAlias = 'TranMaturity'
+      FieldName = 'TranMaturity'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 14
+      Searchable = False
+      Sortable = False
+    end
+    object DBPPawnAndPurchasesppField16: TppField
       FieldAlias = 'TranTypeDesc'
       FieldName = 'TranTypeDesc'
       FieldLength = 0
       DataType = dtNotKnown
       DisplayWidth = 0
-      Position = 14
+      Position = 15
       Searchable = False
       Sortable = False
     end
@@ -526,9 +552,9 @@ object frmReport02: TfrmReport02
     CloudDriveSettings.OneDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
-    Left = 639
-    Top = 75
-    Version = '23.02'
+    Left = 629
+    Top = 76
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'DBPPawnAndPurchases'
     object ppTitleBand1: TppTitleBand
@@ -638,13 +664,14 @@ object frmReport02: TfrmReport02
         mmHeight = 4498
         mmLeft = 0
         mmTop = 265
-        mmWidth = 47218
+        mmWidth = 60457
         BandType = 4
         LayerName = Foreground
       end
       object ppDBText2: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText2'
+        AutoSize = True
         Border.mmPadding = 0
         DataField = 'TranDate'
         DataPipeline = DBPPawnAndPurchases
@@ -657,10 +684,10 @@ object frmReport02: TfrmReport02
         TextAlignment = taCentered
         Transparent = True
         DataPipelineName = 'DBPPawnAndPurchases'
-        mmHeight = 4498
-        mmLeft = 50536
+        mmHeight = 3969
+        mmLeft = 61366
         mmTop = 0
-        mmWidth = 17198
+        mmWidth = 12171
         BandType = 4
         LayerName = Foreground
       end
@@ -776,6 +803,7 @@ object frmReport02: TfrmReport02
       object ppDBText14: TppDBText
         DesignLayer = ppDesignLayer1
         UserName = 'DBText14'
+        AutoSize = True
         Border.mmPadding = 0
         DataField = 'TranTicketNo'
         DataPipeline = DBPPawnAndPurchases
@@ -787,10 +815,10 @@ object frmReport02: TfrmReport02
         TextAlignment = taCentered
         Transparent = True
         DataPipelineName = 'DBPPawnAndPurchases'
-        mmHeight = 4498
-        mmLeft = 70115
+        mmHeight = 3969
+        mmLeft = 80698
         mmTop = 0
-        mmWidth = 17198
+        mmWidth = 18256
         BandType = 4
         LayerName = Foreground
       end
@@ -885,7 +913,7 @@ object frmReport02: TfrmReport02
           FormFieldSettings.FormFieldType = fftNone
           Transparent = True
           mmHeight = 3969
-          mmLeft = 54769
+          mmLeft = 64144
           mmTop = 7144
           mmWidth = 6615
           BandType = 3
@@ -1011,7 +1039,7 @@ object frmReport02: TfrmReport02
           FormFieldSettings.FormFieldType = fftNone
           Transparent = True
           mmHeight = 3969
-          mmLeft = 77258
+          mmLeft = 84254
           mmTop = 7144
           mmWidth = 11377
           BandType = 3
@@ -1153,8 +1181,8 @@ object frmReport02: TfrmReport02
       'where T2.TRAN_TYPE in ('#39'P'#39', '#39'U'#39')'
       ' --<PARAMS>'
       'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME')
-    Left = 504
-    Top = 131
+    Left = 494
+    Top = 186
     object qryTranPaymentscFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -1224,15 +1252,15 @@ object frmReport02: TfrmReport02
   end
   object dsTranPayments: TDataSource
     DataSet = qryTranPayments
-    Left = 504
-    Top = 185
+    Left = 494
+    Top = 240
   end
   object DBPTranPayments: TppDBPipeline
     DataSource = dsTranPayments
     OpenDataSource = False
     UserName = 'DBPTranPayments'
-    Left = 640
-    Top = 131
+    Left = 630
+    Top = 186
   end
   object RepTranPayments: TppReport
     AutoStop = False
@@ -1332,9 +1360,9 @@ object frmReport02: TfrmReport02
     CloudDriveSettings.OneDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
-    Left = 640
-    Top = 185
-    Version = '23.02'
+    Left = 630
+    Top = 240
+    Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'DBPTranPayments'
     object ppTitleBand2: TppTitleBand

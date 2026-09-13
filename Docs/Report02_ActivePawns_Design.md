@@ -2,6 +2,7 @@
 
 Design note and deferred-work record.
 Analysis run 2026-09-04 against all six live FB5 store databases.
+**Part 1 implemented and tested 2026-09-13.** Part 2 remains deferred.
 
 ## The short version
 
@@ -100,7 +101,35 @@ begins recording redeems properly will have its recent pawns correct from that
 day forward; only its pre-existing rows need a decision, and that decision is the
 owner's.
 
-## Part 1 — bound the report
+## Part 1 — bound the report — DONE 2026-09-13
+
+Built as described below. A `cbActiveWithin` combo sits on the same row as the
+"List of Active Pawns" radio, so the association needs no label, and is greyed
+out in date-range mode the way `pnDateRange` already is.
+
+| choice | months |
+|---|---|
+| Written in the last year | 12 |
+| **Written in the last 2 years** | **24 — default** |
+| Written in the last 5 years | 60 |
+| No limit — every pawn on file | 0 |
+
+Effect, measured on the live copies the day it went in:
+
+| store | no limit | 12 mo | 24 mo | 60 mo |
+|---|---|---|---|---|
+| Perez Cash II | 34,048 | 445 | 1,040 | 3,069 |
+| Ricardo | 56,325 | 524 | 1,120 | 3,665 |
+| Kendale | 22,558 | 704 | 1,507 | 3,656 |
+| Ok Jewelers | 12,843 | 514 | 976 | 2,101 |
+
+`lblFromToDates` was explicitly hidden in this branch, which is how an 800-row
+report and a 3-row one looked like the same thing. It now prints the limit in
+force. "No limit" emits the original SQL unchanged, so nothing is silently cut
+off from a store that does keep its statuses. `Report_2` shares the same
+`ActivePawnFilter` so the two branches cannot drift.
+
+### The original proposal follows.
 
 `Report02.pas`, `Report_1`, the `else` branch (`rbDateRange` unchecked):
 

@@ -10,7 +10,7 @@ uses
   ppCache, ppDesignLayer, ppParameter, RzLabel, RzPanel, RzRadChk,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  FireDAC.Comp.DataSet, System.Generics.Collections;
+  FireDAC.Comp.DataSet, System.Generics.Collections, System.DateUtils, RzCmboBx;
 
 type
   TfrmReport02 = class(TForm)
@@ -137,6 +137,7 @@ type
     RzLabel2: TRzLabel;
     rbTranStatusActive: TRzRadioButton;
     rbDateRange: TRzRadioButton;
+    cbActiveWithin: TRzComboBox;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure qryPawnAndPurchasesCalcFields(DataSet: TDataSet);
@@ -159,6 +160,8 @@ type
     FqryPay: TFDQuery;
     function LiveInterestBalance(TranNo: Integer; PawnDate: TDateTime;
       Amount, Rate: Currency): Currency;
+    function ActiveLimitMonths: Integer;
+    function ActivePawnFilter: string;
     procedure Report_1(Preview: boolean);
     procedure Report_2(Preview: boolean);
     procedure ExecReport(Preview: boolean);
@@ -221,6 +224,10 @@ begin
 
   edFrom.Date := Date;
   edTo.Date := Date;
+
+  if cbActiveWithin.ItemIndex < 0 then
+    cbActiveWithin.ItemIndex := 1;   // two years
+  rbDateRangeClick(nil);
 end;
 
 procedure TfrmReport02.lblTranTypeGetText(Sender: TObject; var Text: string);
@@ -233,7 +240,52 @@ end;
 
 procedure TfrmReport02.lblFromToDatesGetText(Sender: TObject; var Text: string);
 begin
-  Text := 'From ' + FormatDateTime('mm/dd/yyyy', edFrom.Date) + ' To ' + FormatDateTime('mm/dd/yyyy', edTo.Date);
+  // In date-range mode this is the range. In active-pawns mode it is the age
+  // limit in force -- printed so a short report is never mistaken for an empty
+  // one, or for the whole list.
+  if rbDateRange.Checked then
+    Text := 'From ' + FormatDateTime('mm/dd/yyyy', edFrom.Date) + ' To ' + FormatDateTime('mm/dd/yyyy', edTo.Date)
+  else if ActiveLimitMonths = 0 then
+    Text := 'Every active pawn on file, with no age limit'
+  else
+    Text := Format('Active pawns written since %s (last %d months)',
+                   [FormatDateTime('mm/dd/yyyy', IncMonth(Date, -ActiveLimitMonths)),
+                    ActiveLimitMonths]);
+end;
+
+{ How far back the active-pawns list reaches, in months; 0 means no limit.
+
+  The list needs a bound because TRAN_STATUS is only ever cleared when a store
+  records a redeem or a default, and most do not. Every legacy pawn therefore
+  still reads as open: unbounded, this report prints 56,325 pawns at Ricardo
+  back to 1958, and all 22,558 Kendale has ever written, where the real working
+  list is a few hundred. See Docs/Report02_ActivePawns_Design.md.
+
+  The limit is a control, not a constant, and 'No limit' reproduces the old
+  behaviour exactly. A store that DOES keep its statuses may legitimately hold
+  a pawn older than any default we pick, and silently dropping it would turn a
+  noisy report into a wrong one. }
+function TfrmReport02.ActiveLimitMonths: Integer;
+begin
+  case cbActiveWithin.ItemIndex of
+    0: Result := 12;
+    2: Result := 60;
+    3: Result := 0;
+  else
+    Result := 24;   // the default, and what an unset combo falls back to
+  end;
+end;
+
+{ TRAN_DATE, deliberately, not TRAN_MATURITY: maturity is derived from the pawn
+  terms and is not reliably populated in pumped legacy rows, so bounding on it
+  would reintroduce the very unmaintained-column problem this bound exists to
+  work around. TRAN_DATE is always present. }
+function TfrmReport02.ActivePawnFilter: string;
+begin
+  Result := 'and T2.TRAN_TYPE = ''P'' and T2.TRAN_STATUS = ''A'' ';
+  if ActiveLimitMonths > 0 then
+    Result := Result + Format('and T2.TRAN_DATE >= DATEADD(-%d MONTH TO CURRENT_DATE) ',
+                              [ActiveLimitMonths]);
 end;
 
 procedure TfrmReport02.qryPawnAndPurchasesCalcFields(DataSet: TDataSet);
@@ -270,9 +322,11 @@ begin
       end
     else
       begin
-        lblFromToDates.Visible := false;
+        // The limit stays on the page: it was hidden here, which is how an
+        // 800-row report and a 3-row one looked like the same thing.
+        lblFromToDates.Visible := true;
         lblRep1PawnAndPurchaseTitle.Caption := 'List of Active Pawns';
-        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_TYPE = ''P'' and T2.TRAN_STATUS = ''A'' ';
+        qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := ActivePawnFilter;
       end;
 
     qryPawnAndPurchases.Open;
@@ -298,7 +352,7 @@ begin
       end
     else
       begin
-        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := 'and T2.TRAN_TYPE = ''P'' and T2.TRAN_STATUS = ''A'' ';
+        qryTranPayments.SQL[Param_LineNo_qryTranPayments] := ActivePawnFilter;
       end;
 
     qryTranPayments.Open;
@@ -313,6 +367,8 @@ end;
 procedure TfrmReport02.rbDateRangeClick(Sender: TObject);
 begin
   pnDateRange.Enabled := rbDateRange.Checked;
+  // Greyed out in date-range mode, so it is obvious which list it qualifies.
+  cbActiveWithin.Enabled := not rbDateRange.Checked;
 //
 end;
 
