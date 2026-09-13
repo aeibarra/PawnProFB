@@ -951,6 +951,7 @@ type
     ScanningPDF417Barcode: boolean;
     ReadChars: string;
     ScanData: TScanDataList;
+    ScanIdleChecks: Integer;
     LastDataCount: integer;
     FLastKeyTick: Cardinal;
     procedure AddToKeyQueue(Key: Word);
@@ -958,7 +959,7 @@ type
     procedure ProcessScannedCard(var Msg: TMessage); Message sx_ProcessCardScanning;
     procedure KeyPressForMagneticScan(var Key: Char);
     procedure PopulateFieldsWithDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);
-    procedure ProcessAndShowBarcodeData;
+    function ProcessAndShowBarcodeData: Boolean;
     procedure AddEditTransaction(NewTransaction: boolean);
     function GetPawnItemStatus(out AStatusDate: TDateTime): string;
     function GetItemAction(out AActionDate: TDateTime): string;
@@ -2030,33 +2031,52 @@ begin
   end;
 end;
 
-procedure TfrmClients.ProcessAndShowBarcodeData;
+function TfrmClients.ProcessAndShowBarcodeData: Boolean;
 var
   DrvLicInfo: TDriverLicenseInfo;
 begin
-  ParseScanBarcodeData(ScanData, DrvLicInfo);
-
-  PopulateFieldsWithDrvLicInfo(DrvLicInfo);
-
-  ScanData.Clear;
+  Result := False;
+  try
+    try
+      ParseScanBarcodeData(ScanData, DrvLicInfo);
+    except
+      on E: EDriverLicenseBarcode do
+      begin
+        PawnWarn(E.Message, 'Driver license scan', Self);
+        Exit;
+      end;
+      on E: Exception do
+      begin
+        // Anything the parser did not anticipate. The clerk gets the same plain
+        // sentence rather than a Delphi exception dialog; the detail is kept so
+        // a real defect is still reportable.
+        PawnWarn('The license scan could not be read. Please scan again.' + sLineBreak +
+                 sLineBreak + '(' + E.ClassName + ': ' + E.Message + ')',
+                 'Driver license scan', Self);
+        Exit;
+      end;
+    end;
+    PopulateFieldsWithDrvLicInfo(DrvLicInfo);
+    Result := True;
+  finally
+    ScanData.Clear;
+    ReadChars := '';
+    LastDataCount := 0;
+    ScanIdleChecks := 0;
+    ScanningPDF417Barcode := False;
+    TimerForScan.Enabled := False;
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TfrmClients.TimerForScanTimer(Sender: TObject);
 begin
-  if (LastDataCount= 0) or (LastDataCount <> ScanData.Count) then
-    begin
-      LastDataCount := ScanData.Count;
-    end
-  else
-    begin
-      Screen.Cursor := crDefault;
-
-      ScanningPDF417Barcode := false;
-      TimerForScan.Enabled := false;
-
-      ProcessAndShowBarcodeData;
-      btnSearchClick(nil);
-    end;
+  if not ScanBufferIsIdle(ScanData.Count, LastDataCount, ScanIdleChecks) then Exit;
+  TimerForScan.Enabled := False;
+  ScanningPDF417Barcode := False;
+  Screen.Cursor := crDefault;
+  if ProcessAndShowBarcodeData then
+    btnSearchClick(nil);
 end;
 
 procedure TfrmClients.TimerScanningTimeOutTimer(Sender: TObject);
@@ -2811,8 +2831,8 @@ begin
     search; it could now land on Delete. Hence ScannerBurstGapMs: a key that
     arrives hard on the heels of the last one did not come from a person.
 
-    Header detection itself is unaffected either way -- GetLastSevenReadChars
-    keeps only characters >= #32, so the CR never formed part of '@ANSI '. }
+    Header detection compares the printable '@ANSI ' prefix while retaining
+    the original control characters for the parser's byte offsets. }
   if (Key = VK_RETURN) and (Shift = []) and
      not ScanningCard and not ScanningPDF417Barcode and
      (GapSincePreviousKey > ScannerBurstGapMs) and (ActiveControl <> nil) then

@@ -56,6 +56,7 @@ type
     procedure TimerForScanTimer(Sender: TObject);
   private
     LastDataCount: integer;
+    ScanIdleChecks: Integer;
     procedure ParseFL_DL_String;
     procedure ShowDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);
 //    procedure GetScanDataBuffer(var S: string);
@@ -71,7 +72,7 @@ implementation
 
 {$R *.dfm}
 
-uses PawnGlobal, GLbUtils;
+uses PawnGlobal, GLbUtils, uPawnDialogs;
 
 procedure TfrmDriverLicCardReader.ShowDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);
 begin
@@ -99,28 +100,33 @@ var
   DrvLicInfo: TDriverLicenseInfo;
   S: string;
 begin
-  TimerForScan.Enabled := false;
-
-  FillChar(DrvLicInfo, SizeOf(DrvLicInfo), #0);
-
-  S := MemoRawData.Lines.Text;
-  ParsePDF417_US_Driver_License(S, DrvLicInfo);
-
-  ShowDrvLicInfo(DrvLicInfo);
-
-  ModalResult := mrOk;
+  TimerForScan.Enabled := False;
+  try
+    S := MemoRawData.Text;
+    try
+      ParsePDF417_US_Driver_License(S, DrvLicInfo);
+    except
+      on E: EDriverLicenseBarcode do
+      begin
+        PawnWarn(E.Message, 'Driver license scan', Self);
+        MemoRawData.Clear;
+        MemoRawData.SetFocus;
+        Exit;
+      end;
+    end;
+    ShowDrvLicInfo(DrvLicInfo);
+    ModalResult := mrOK;
+  finally
+    LastDataCount := 0;
+    ScanIdleChecks := 0;
+    TimerForScan.Enabled := False;
+  end;
 end;
 
 procedure TfrmDriverLicCardReader.TimerForScanTimer(Sender: TObject);
 begin
-  if (LastDataCount= 0) or (LastDataCount <> MemoRawData.Lines.Count) then
-    begin
-     LastDataCount := MemoRawData.Lines.Count;
-    end
-  else
-    begin
-      ProcessAndShowBarcodeData;
-    end;
+  if ScanBufferIsIdle(Length(MemoRawData.Text), LastDataCount, ScanIdleChecks) then
+    ProcessAndShowBarcodeData;
 end;
 
 procedure TfrmDriverLicCardReader.ParseFL_DL_String;
@@ -220,60 +226,52 @@ end;  *)
 
 procedure TfrmDriverLicCardReader.MemoRawDataChange(Sender: TObject);
 begin
-  /// magnetic swap /////
-  if (MemoRawData.Lines.Count = 3) then
+  if MemoRawData.Text = '' then
+  begin
+    TimerForScan.Enabled := False;
+    LastDataCount := 0;
+    ScanIdleChecks := 0;
+    Exit;
+  end;
+  // PDF417 may have any number of lines. Test its header before magnetic data.
+  if BarcodePDF417PatterDetected(MemoRawData.Text) then
+  begin
+    if not TimerForScan.Enabled then
     begin
-      if pos('?', MemoRawData.Lines[2]) > 0 then
-        begin
-          ParseFL_DL_String;
-
-          ModalResult := mrOk;
-        end;
-    end
-    ////  Barcode PDF417  ///////
-  else if (MemoRawData.Lines.Count = 2) and BarcodePDF417PatterDetected(MemoRawData.Lines.Text) then
-    begin
-      // Activate timer
       LastDataCount := 0;
-      TimerForScan.Enabled := true;
+      ScanIdleChecks := 0;
+      TimerForScan.Enabled := True;
     end;
+  end
+  else if (MemoRawData.Lines.Count = 3) and
+          (Pos('?', MemoRawData.Lines[2]) > 0) then
+  begin
+    ParseFL_DL_String;
+    ModalResult := mrOK;
+  end;
 end;
 
 procedure TfrmDriverLicCardReader.BitBtn3Click(Sender: TObject);
 begin
+  TimerForScan.Enabled := False;
+  LastDataCount := 0;
+  ScanIdleChecks := 0;
   MemoRawData.Lines.Clear;
 end;
 
 procedure TfrmDriverLicCardReader.Button1Click(Sender: TObject);
 var
   DrvLic: TDriverLicenseInfo;
-  ScanData: TScanDataList;
-  i: integer;
   S: string;
 begin
-  ScanData := TScanDataList.Create;
-  S := Memo1.Lines.Text;
-
-  for i := 1 to Length(S) do
-    begin
-      ScanData.Add(S[i]);
-    end;
-
-  ParseScanBarcodeData(ScanData, DrvLic);
-
-//  ParsePDF417_US_Driver_License(MemoRawData.Lines.Text, DrvLic);
-
-  ShowDrvLicInfo(DrvLic);
-
-
-
-//  if pos(PDF417Header, MemoRawData.Lines.Text) > 0 then
-//    begin
-//      ParsePDF417_US_Driver_License(MemoRawData.Lines.Text, DrvLic);
-//      ShowDrvLicInfo(DrvLic);
-//    end
-//  else
-//    ParseFL_DL_String;
+  S := Memo1.Text;
+  try
+    ParsePDF417_US_Driver_License(S, DrvLic);
+    ShowDrvLicInfo(DrvLic);
+  except
+    on E: EDriverLicenseBarcode do
+      PawnWarn(E.Message, 'Driver license scan', Self);
+  end;
 end;
 
 procedure TfrmDriverLicCardReader.Button2Click(Sender: TObject);

@@ -319,7 +319,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
       DataSource = DM.DSCustomers
       TabOrder = 10
     end
-    object DBEdit14: TDBEdit
+    object edCustWeight: TDBEdit
       Left = 346
       Top = 86
       Width = 54
@@ -609,7 +609,7 @@ object frmEnterClientInfo: TfrmEnterClientInfo
   end
   object TimerForScan: TTimer
     Enabled = False
-    Interval = 500
+    Interval = 250
     OnTimer = TimerForScanTimer
     Left = 811
     Top = 91

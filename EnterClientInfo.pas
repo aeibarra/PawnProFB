@@ -44,7 +44,7 @@ type
     edFirst: TDBEdit;
     edMid: TDBEdit;
     DBEdit11: TDBEdit;
-    DBEdit14: TDBEdit;
+    edCustWeight: TDBEdit;
     DBEdit15: TDBEdit;
     DBEdit4: TDBEdit;
     DBEdit5: TDBEdit;
@@ -101,6 +101,7 @@ type
     ScanningPDF417Barcode: boolean;
     ReadChars: string;
     ScanData: TScanDataList;
+    ScanIdleChecks: Integer;
     LastDataCount: integer;
     function GetGender: string;
     procedure SetGender(const Value: string);
@@ -121,7 +122,7 @@ type
     procedure ProcessScannedCard(var Msg: TMessage); Message sx_ProcessCardScanning;
     procedure ProcessKeyForMagneticScan(var Key: Char);
     procedure PopulateFieldsWithDrvLicInfo(const DrvLicInfo: TDriverLicenseInfo);
-    procedure ProcessAndShowBarcodeData;
+    function ProcessAndShowBarcodeData: Boolean;
 //    procedure ProcessKeyForPDF417barcodeScan(var Key: Char);
 //    procedure FinishPDF417BarcodeScanning;
   public
@@ -190,15 +191,42 @@ begin
   DM.qryCustomersCUST_COMMENT.AsString := '';
 end;
 
-procedure TfrmEnterClientInfo.ProcessAndShowBarcodeData;
+function TfrmEnterClientInfo.ProcessAndShowBarcodeData: Boolean;
 var
   DrvLicInfo: TDriverLicenseInfo;
 begin
-  ParseScanBarcodeData(ScanData, DrvLicInfo);
-
-  PopulateFieldsWithDrvLicInfo(DrvLicInfo);
-
-  ScanData.Clear;
+  Result := False;
+  try
+    try
+      ParseScanBarcodeData(ScanData, DrvLicInfo);
+    except
+      on E: EDriverLicenseBarcode do
+      begin
+        PawnWarn(E.Message, 'Driver license scan', Self);
+        Exit;
+      end;
+      on E: Exception do
+      begin
+        // Anything the parser did not anticipate. The clerk gets the same plain
+        // sentence rather than a Delphi exception dialog; the detail is kept so
+        // a real defect is still reportable.
+        PawnWarn('The license scan could not be read. Please scan again.' + sLineBreak +
+                 sLineBreak + '(' + E.ClassName + ': ' + E.Message + ')',
+                 'Driver license scan', Self);
+        Exit;
+      end;
+    end;
+    PopulateFieldsWithDrvLicInfo(DrvLicInfo);
+    Result := True;
+  finally
+    ScanData.Clear;
+    ReadChars := '';
+    LastDataCount := 0;
+    ScanIdleChecks := 0;
+    ScanningPDF417Barcode := False;
+    TimerForScan.Enabled := False;
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TfrmEnterClientInfo.ProcessScannedCard(var Msg: TMessage);
@@ -214,10 +242,10 @@ begin
       ParseFL_DL(ReadingCardBuffer, DrvLicInfo);
 
       PopulateFieldsWithDrvLicInfo(DrvLicInfo);
+      edCustWeight.SetFocus;
     end;
 
 
-  cbRace.SetFocus;
 
 //  if ScanningPDF417Barcode then
 //    begin
@@ -537,21 +565,12 @@ end;
 
 procedure TfrmEnterClientInfo.TimerForScanTimer(Sender: TObject);
 begin
-  if (LastDataCount= 0) or (LastDataCount <> ScanData.Count) then
-    begin
-      LastDataCount := ScanData.Count;
-    end
-  else
-    begin
-      Screen.Cursor := crDefault;
-
-      ScanningPDF417Barcode := false;
-      TimerForScan.Enabled := false;
-
-      ProcessAndShowBarcodeData;
-
-      cbRace.SetFocus;
-    end;
+  if not ScanBufferIsIdle(ScanData.Count, LastDataCount, ScanIdleChecks) then Exit;
+  TimerForScan.Enabled := False;
+  ScanningPDF417Barcode := False;
+  Screen.Cursor := crDefault;
+  if ProcessAndShowBarcodeData then
+    edCustWeight.SetFocus;
 end;
 
 procedure TfrmEnterClientInfo.TimerScanningTimeOutTimer(Sender: TObject);
@@ -744,7 +763,7 @@ begin
 //            DM.qryCustomersCUST_ID_TYPE.AsString := 'DL';
 //          end;
 
-        cbRace.SetFocus;
+        edCustWeight.SetFocus;
       end;
   finally
     frmDriverLicCardReader.Free;

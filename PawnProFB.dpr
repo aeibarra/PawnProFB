@@ -86,6 +86,7 @@ uses
   SealedBox in '..\COMMON\SealedBox.pas',
   Nvv.Crypto.FileEnvelope in '..\COMMON\Nvv.Crypto.FileEnvelope.pas',
   DrvLic_PDF417Parsing in 'DrvLic_PDF417Parsing.pas',
+  DrvLic_AAMVA in 'DrvLic_AAMVA.pas',
   SelectedItemsInGridClass in '..\COMMON\SelectedItemsInGridClass.pas',
   CheckBoxDrawer in 'CheckBoxDrawer.pas',
   LeadsOnlineWS in 'LeadsOnlineWS.pas',
