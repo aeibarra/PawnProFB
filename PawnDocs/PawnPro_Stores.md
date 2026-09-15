@@ -18,7 +18,6 @@ missing entries below are as much a part of the record as the filled ones.
 | Felitin's Gold | SOAP | FB5 | single | live 2026-08-28 |
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
 | Gema Jewelers | SOAP | FB5 | single | live 2026-09-03 |
-| Gold Star Pawn & Jewelry | CSV/FTP | ASA | **multiple** | to migrate |
 | Perez Cash Joyeria | SOAP | FB5 | single | live 2026-09-10 |
 | I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
@@ -548,8 +547,10 @@ a year old and may come back as error 7 regardless.
 
 ## Stores still to migrate
 
-Seven left. AJ Jewelry and Gema Jewelers are done and have moved out of this list
-in all but heading -- their entries below record what happened.
+**Four left**: Home of Watches, I Love Miami, A Loz and A1 Jewelry Loans. AJ
+Jewelry and Gema Jewelers are done, and Gold Star has been sold; they have moved
+out of this list in all but heading, and their entries below record what
+happened.
 
 Basic details as supplied 2026-09-02. **Phone numbers and email addresses are
 missing for most**, and both are needed: the email because LeadsOnline copy the
@@ -616,17 +617,19 @@ removing a mistyped ticket from removing a pawn already filed with law
 enforcement. Worth considering whether a reported transaction should refuse to
 delete, or at least say what it is about to destroy.
 
-### Gold Star Pawn & Jewelry
+### Gold Star Pawn & Jewelry — SOLD, no longer a customer 2026-09-15
 10158 W Flagler St, Miami, FL 33174
-Phone — · Email — · LeadsOnline store id —
 
-**MULTI-STATION -- the only one of the nine.** Everything Kendale needed applies
-here and nowhere else: images to a share before the pump, the firewall opened on
-the DB host, `RemoteBindAddress` left open rather than bound to loopback, and a
-credential stored on each till. Tools are in `Tools/ImageShare`, and they have
-not yet been run against a real share -- Kendale was done by hand before they
-existed. Worth a rehearsal in the VM first, since there is no cheaper store to
-learn on.
+The owner sold the store. Kept here rather than deleted so nobody adds it back
+from an old list.
+
+**It was the only multi-station store left**, which is why its removal matters
+beyond one row: every remaining migration is now a single-till, Felitin's-shaped
+job. The `Tools/ImageShare` scripts have therefore still never run against a real
+share -- Kendale was done by hand before they existed -- and there is no longer a
+store on the list that needs them. Leave them in place: the next multi-station
+store will want them, and the notes in that folder are the record of how Kendale
+was solved.
 
 ### Perez Cash Joyeria — LIVE on SOAP 2026-09-10
 3611 West Flagler Street, Miami, FL 33135
@@ -918,25 +921,27 @@ Four things decide how hard a store is, none of them size:
    brings the image share, the firewall, `RemoteBindAddress` left open, and
    workstation provisioning.
 
-   KNOWN as of 2026-09-02: only **Gold Star Pawn & Jewelry** is multi-station.
-   The other eight are single. So eight of the nine are Felitin's-shaped jobs --
-   convert and cut over in one visit -- and exactly one is Kendale-shaped.
+   As of 2026-09-15 this no longer separates any remaining store. Gold Star was
+   the only multi-station one left and it has been sold, so **every store still
+   to migrate is single-till** -- a Felitin's-shaped job, convert and cut over in
+   one visit. Kendale remains the only Kendale-shaped job ever done.
 2. **Where the images live.** In the ASA database means an extraction step before
    the pump; already on disk means neither.
 3. **How much history never reached a CSV.** Decides whether the first export
    screen offers a dozen rows or fifty thousand.
-4. **How much the store leans on the reports.** Several of the nine use them
-   heavily, which is part of why they were left until later. Reports are the
+4. **How much the store leans on the reports.** Several of the remaining stores
+   use them heavily, which is part of why they were left until later. Reports are the
    likeliest part of the app to need work after a conversion, and the
    late-payment report (`Report01`) is already known to have drifted and to be
    heavily used by exactly these stores. A report-dependent store is a longer
    job than its size suggests, and the work may land after the migration rather
    than during it.
 
-Station count is now known. Image location and CSV history are not, for any of
-the nine. An ASA-side survey would answer both before anything is scheduled, and
-would collect each store's existing `LEADS_STORE_ID` at the same time — enough to request every set of credentials
-from LeadsOnline in one message rather than nine.
+Station count is now settled -- every remaining store is single-till. Image
+location and CSV history are still unknown for all four. An ASA-side survey would
+answer both before anything is scheduled, and would collect each store's existing
+`LEADS_STORE_ID` at the same time -- enough to request every remaining set of
+credentials from LeadsOnline in one message rather than four.
 
 ## Template for the next store
 
@@ -983,4 +988,4 @@ Two more, both at Kendale, both easy to lose:
   the one whose staff are least likely to remember doing it by hand.
 
 The CSV/FTP export still exists and still works. The eight SOAP stores do not
-use it; the five still to migrate all do.
+use it; the four still to migrate all do.
