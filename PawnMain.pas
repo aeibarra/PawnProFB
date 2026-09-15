@@ -277,7 +277,6 @@ var
   BackupPath, ImageBackupPath: string;
   DoImageBackup: Boolean;
   BackupDone: Boolean;
-  SaveTimerEnabled: Boolean;
   R: TBackupResult;
 begin
   CanClose := True;
@@ -285,8 +284,8 @@ begin
   // Stop the gold-price timer before anything else. The close-on-exit backup
   // below pumps messages while it waits, so a timer tick here would spawn a
   // fresh gold-price worker at the exact moment we are trying to shut down.
-  // Restored on the paths that abort the close.
-  SaveTimerEnabled := Timer15Min.Enabled;
+  // Never restored: nothing in this routine aborts the close any more, so once
+  // we are here the application is going to shut down.
   Timer15Min.Enabled := False;
 
   BackupPath := '';
@@ -375,23 +374,34 @@ begin
         raise Exception.Create('Backup file was created, but the backup history could not be saved: ' + R.LogError);
 
       if R.ImageError <> '' then
-      begin
         PawnError(R.ImageError, 'Backup Images', Self);
-        CanClose := False;
-        Timer15Min.Enabled := SaveTimerEnabled;
-      end;
 
     finally
       frmBackupInProgress.Free;
       frmBackupInProgress := nil;
     end;
   except
+    { A FAILED BACKUP MUST NEVER KEEP THE APPLICATION OPEN.
+
+      It used to set CanClose := False, and at Gema in September 2026 that
+      trapped the shop: the backup drive had been moved to a share the app could
+      not write to, so every attempt to exit failed the same way and there was no
+      way out of the program. Task Manager had been password-locked by the same
+      engineer, and nobody on site knew the password.
+
+      The operator cannot fix a permissions problem at closing time, and refusing
+      to close does not make the backup succeed -- it only pushes them towards
+      killing the process, which skips DoClose and the ordered shutdown of the
+      audit and gold-price workers entirely.
+
+      Say what went wrong, clearly, and let them go home. Backups also run on a
+      schedule and on demand, so exit is not the last line of defence. The two
+      earlier guards in this routine already take the same view for an
+      unreachable database and unreadable settings. }
     on E: Exception do
-    begin
-      CanClose := false;
-      Timer15Min.Enabled := SaveTimerEnabled;
-      MsgInfo('Unable to backup: ' + E.Message);
-    end;
+      PawnError('The backup did not complete: ' + E.Message + sLineBreak + sLineBreak +
+                'PawnPro will still close. Please report this so the backup can ' +
+                'be repaired.', 'Backup', Self);
   end;
 
 end;

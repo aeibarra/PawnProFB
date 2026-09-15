@@ -581,6 +581,21 @@ conversion and the cutover happened in one day, split either side of waiting for
 credentials -- which is what the intermediate CSV/FTP state was for. Nothing was
 missed while it waited.
 
+### ⚠️ Backups: the store could not close PawnPro, 2026-09-15
+
+Their network engineer moved the backup destination from the USB drive to a
+shared drive and did not set the permissions, so the app could not write to it.
+The close-on-exit backup failed, and **the application refused to close** --
+every attempt failed the same way, with no way out of the program. The same
+engineer had password-locked Task Manager and nobody on site knew the password.
+
+Resolved on the day. **Fixed properly in 3.37.5.2**: a failed backup now warns
+and lets the application close. It can never hold a shop open again.
+
+Worth confirming on the next contact that the share is actually writable and
+that backups have resumed -- the failure was silent until closing time, so there
+may be a gap in their backup history.
+
 ### ⚠️ This store deletes pawns once they are redeemed
 
 Measured on the converted database, 2026-09-03:
