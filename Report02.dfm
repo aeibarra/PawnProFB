@@ -96,17 +96,17 @@ object frmReport02: TfrmReport02
     object cbActiveWithin: TRzComboBox
       Left = 100
       Top = 51
-      Width = 203
+      Width = 249
       Height = 29
       Style = csDropDownList
       TabOrder = 4
-      Text = 'Written in the last 2 years'
+      Text = 'No limit - every pawn on file'
       Items.Strings = (
         'Written in the last year'
         'Written in the last 2 years'
         'Written in the last 5 years'
         'No limit - every pawn on file')
-      ItemIndex = 1
+      ItemIndex = 3
     end
     object rbTranStatusActive: TRzRadioButton
       Left = 59
@@ -158,7 +158,6 @@ object frmReport02: TfrmReport02
       ModalResult = 8
       TabOrder = 0
       OnClick = btnExitClick
-      ExplicitLeft = 301
     end
     object btnPreview: TRzBitBtn
       Left = 20
