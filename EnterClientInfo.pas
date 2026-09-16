@@ -226,6 +226,7 @@ begin
     ScanningPDF417Barcode := False;
     TimerForScan.Enabled := False;
     Screen.Cursor := crDefault;
+    ShowScanFeedback(Self, False);
   end;
 end;
 
@@ -685,10 +686,12 @@ begin
 end;}
 
 procedure TfrmEnterClientInfo.FormKeyPress(Sender: TObject; var Key: Char);
+var
+  WasScanning: Boolean;
 begin
-  ProcessKeyForMagneticScan(Key);
+  WasScanning := ScanningPDF417Barcode;
 
-//  ProcessKeyForPDF417barcodeScan(Key);
+  ProcessKeyForMagneticScan(Key);
 
   ProcessKeyForPDF417barcodeScan(Key,
                                  ScanningPDF417Barcode,
@@ -696,6 +699,11 @@ begin
                                  ReadChars,
                                  TimerForScan,
                                  LastDataCount);
+
+  // The header has just been recognised. Say so before the message loop
+  // disappears into several hundred keystrokes.
+  if ScanningPDF417Barcode and not WasScanning then
+    ShowScanFeedback(Self, True);
 
 (*
 { This is the event handler for the FORM's OnKeyPress event! }

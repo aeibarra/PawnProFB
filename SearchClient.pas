@@ -2066,6 +2066,7 @@ begin
     ScanningPDF417Barcode := False;
     TimerForScan.Enabled := False;
     Screen.Cursor := crDefault;
+    ShowScanFeedback(Self, False);
   end;
 end;
 
@@ -2883,6 +2884,8 @@ begin
 end;
 
 procedure TfrmClients.FormKeyPress(Sender: TObject; var Key: Char);
+var
+  WasScanning: Boolean;
 begin
 //  if Key < #32 then
 //    Memo1.Lines.Add(GetStrToShow(Key));
@@ -2897,6 +2900,8 @@ begin
     An in-progress scan is always allowed to finish, whatever the focus does. }
   if SearchFieldFocused or ScanningCard or ScanningPDF417Barcode then
     begin
+      WasScanning := ScanningPDF417Barcode;
+
       KeyPressForMagneticScan(Key);
 
       ProcessKeyForPDF417barcodeScan(Key,
@@ -2905,6 +2910,11 @@ begin
                                      ReadChars,
                                      TimerForScan,
                                      LastDataCount);
+
+      // The header has just been recognised. Tell them, before the message loop
+      // disappears into several hundred keystrokes.
+      if ScanningPDF417Barcode and not WasScanning then
+        ShowScanFeedback(Self, True);
     end;
 
   { Silence the Enter beep.

@@ -26,7 +26,8 @@
 interface
 
 uses System.SysUtils, System.Variants, System.Classes, Vcl.Forms,
-  System.Generics.Collections, System.StrUtils, Vcl.ExtCtrls, Vcl.Controls, DrvLic_AAMVA;
+  System.Generics.Collections, System.StrUtils, Vcl.ExtCtrls, Vcl.Controls,
+  Vcl.Graphics, System.Math, DrvLic_AAMVA;
 
 type
   TKeyQueue = array [1..2] of Word;
@@ -48,6 +49,7 @@ procedure ProcessKeyForPDF417barcodeScan(var Key: Char;
   var ScanningPDF417Barcode: Boolean; var ScanData: TScanDataList;
   var ReadChars: string; var TimerTimeOut: TTimer; var LastDataCount: Integer);
 function ScanBufferIsIdle(CurrentCount: Integer; var LastCount, IdleChecks: Integer): Boolean;
+procedure ShowScanFeedback(AParent: TWinControl; AShow: Boolean);
 function GetStrToShow(S: string): string;
 procedure ParseFL_DL(RawData: string; var DrvLicInfo: TDriverLicenseInfo);
 
@@ -128,6 +130,59 @@ begin
     Screen.Cursor := crHourGlass;
     Key := #0;
   end;
+end;
+
+{ A banner across the middle of the form while a licence is being read.
+
+  Screen.Cursor is already an hourglass here, and it is not enough. The pointer
+  stays wherever the clerk last clicked -- on the customer screen that is the
+  scan button in the bottom-left corner -- while they are looking at the name
+  fields or at the customer. A busy cursor in the far corner is feedback nobody
+  sees.
+
+  It also says WHAT is happening. On a slow machine silence is
+  indistinguishable from a scan that failed, and the clerk's instinct is then to
+  scan again in the middle of the first read.
+
+  Built in code rather than dropped onto each form, so the two screens cannot
+  drift apart, and centred on whichever form is passed in. }
+var
+  FScanBanner: TPanel = nil;
+
+procedure ShowScanFeedback(AParent: TWinControl; AShow: Boolean);
+begin
+  if not AShow then
+  begin
+    if Assigned(FScanBanner) then
+    begin
+      FScanBanner.Visible := False;
+      FScanBanner.Parent := nil;
+    end;
+    Exit;
+  end;
+
+  if not Assigned(AParent) then Exit;
+
+  if not Assigned(FScanBanner) then
+  begin
+    FScanBanner := TPanel.Create(nil);
+    FScanBanner.BevelOuter := bvNone;
+    FScanBanner.BorderStyle := bsSingle;
+    FScanBanner.Color := $0080FFFF;        // amber: noticed without alarming
+    FScanBanner.ParentBackground := False;
+    FScanBanner.Font.Style := [fsBold];
+    FScanBanner.Font.Size := 14;
+    FScanBanner.Caption := 'Reading driver license...';
+  end;
+
+  FScanBanner.Parent := AParent;
+  FScanBanner.SetBounds(Max(0, (AParent.ClientWidth - 360) div 2),
+                        Max(0, (AParent.ClientHeight - 60) div 2), 360, 60);
+  FScanBanner.Visible := True;
+  FScanBanner.BringToFront;
+  // Paint it NOW: the message loop is about to be busy swallowing several
+  // hundred keystrokes, and a banner that appears after the scan is useless.
+  FScanBanner.Update;
 end;
 
 function ScanBufferIsIdle(CurrentCount: Integer; var LastCount, IdleChecks: Integer): Boolean;
@@ -392,5 +447,11 @@ begin
 
 end;
 
+
+initialization
+
+finalization
+  // Owner is nil so it can be re-parented between the two scan screens.
+  FreeAndNil(FScanBanner);
 
 end.
