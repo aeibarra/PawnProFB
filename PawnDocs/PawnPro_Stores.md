@@ -23,7 +23,7 @@ missing entries below are as much a part of the record as the filled ones.
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
 | Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
-| Home of Watches & Jewels | CSV/FTP | ASA | single | **next** — credentials in hand |
+| Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
@@ -547,7 +547,7 @@ a year old and may come back as error 7 regardless.
 
 ## Stores still to migrate
 
-**Four left**: Home of Watches, I Love Miami, A Loz and A1 Jewelry Loans. AJ
+**Three left**: I Love Miami, A Loz and A1 Jewelry Loans. Home of Watches, AJ
 Jewelry and Gema Jewelers are done, and Gold Star has been sold; they have moved
 out of this list in all but heading, and their entries below record what
 happened.
@@ -842,7 +842,7 @@ gbak -c -user sysdba -password <pw> <backup>.fbk 127.0.0.1/3050:<target>.FDB
 Worth knowing for the next store on a bad line: a `.fbk.enc` is useless without
 the offline `vendor_secret.key`, so the restore has to happen where that key is.
 
-### Home of Watches & Jewels — NEXT, with Ok Jewelers
+### Home of Watches & Jewels — LIVE on SOAP 2026-10-08
 1876 SW 57th Ave, Miami, FL 33155
 Phone (305) 264-3359 · Contact (786) 208-5720 · Email scanizares2003@yahoo.com
 LeadsOnline store id `63269`
@@ -850,6 +850,34 @@ The 786 number is the owner's contact for us; (305) 264-3359 is the shop line.
 API user name `homewatches1876`. Password is **not** recorded here — password
 manager, and `STORE` at install.
 **Same owner as Ok Jewelers.**
+
+Legal name in `STORE`: **The Home of Watches and Jewels** -- with "and", and a
+leading "The". The roster heading keeps the short form.
+
+#### Cutover, 2026-10-08
+
+| | |
+|---|---|
+| **Store id in the database** | `63269` -- matches what LeadsOnline issued |
+| **API user** | `homewatches1876` (1876 matches 1876 SW 57th Ave) |
+| **Export method** | `S` (SOAP), switched from `C` |
+| **Schema** | v10, migrated up from the v2 USB template on first start |
+| **First traffic** | 1 ticket, accepted |
+| **Exclusions** | 0 |
+| **Databases** | `DB/HomeOfWatches/`, with the pre-SOAP copy as `PAWNDATA_before.FDB` |
+
+A small store: 59 transactions between 2025-03-11 and 2026-10-03, 53 customers,
+115 items, no payments. Checked that this was the store and not a short pump --
+every transaction the CSV export log references still exists
+(`CSV_ROWS_WITH_NO_TRANSACTION = 0`), so unlike Gema nothing reported has been
+deleted.
+
+#### ⚠️ No backup is configured
+
+`BACKUP_PATH` is empty and `AUTO_BACKUP_WHEN_CLOSE_APP` is FALSE. The second live
+store in this state, after Kendale, and worth a phone call rather than waiting
+for the next visit -- Gema's September incident is what a backup problem looks
+like when nobody notices it until it bites.
 
 ## Doing Ok Jewelers and Home of Watches together
 
@@ -974,7 +1002,7 @@ had none and 61.
 
 ## Open items
 
-- **⚠️ All eight SOAP stores need the executable replaced with 3.37.5.0, and this
+- **⚠️ All nine SOAP stores need the executable replaced with 3.37.5.3, and this
   one is not housekeeping.** Until 3.37.5.0 the driver licence barcode parser
   searched for field tags anywhere in the text, so it silently wrote wrong
   customer data: a surname MCDADAMS was stored as MC, an address 123 DADLEY
@@ -994,6 +1022,13 @@ had none and 61.
   Confirm each store afterwards from the About box rather than assuming the copy
   landed.
 
+- **Two live stores have no automatic backup.** Kendale has `AUTO_BACKUP_WHEN_
+  CLOSE_APP` off; Home of Watches has that off AND an empty `BACKUP_PATH`. Gema's
+  September incident is what an unattended backup problem looks like when it
+  finally bites. When setting one: a writable folder on a second disk or a USB,
+  never the system disk, and never a share whose permissions nobody has checked
+  -- that last one is exactly what trapped Gema.
+
 Two more, both at Kendale, both easy to lose:
 
 - **Four recent transactions excluded by mistake**, and none was ever in a CSV
@@ -1002,5 +1037,5 @@ Two more, both at Kendale, both easy to lose:
 - **`AUTO_BACKUP_WHEN_CLOSE_APP` is off** — the only live store where it is, and
   the one whose staff are least likely to remember doing it by hand.
 
-The CSV/FTP export still exists and still works. The eight SOAP stores do not
-use it; the four still to migrate all do.
+The CSV/FTP export still exists and still works. The nine SOAP stores do not
+use it; the three still to migrate all do.
