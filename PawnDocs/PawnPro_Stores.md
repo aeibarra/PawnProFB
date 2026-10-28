@@ -25,6 +25,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
 | Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
+| Big Jewelers | **new** | **new** | ? | NEW CUSTOMER 2026-10-28 — credentials requested |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service, as Felitin's, Kendale and Gema were. **AJ Jewelry** was the one
@@ -985,6 +986,32 @@ location and CSV history are still unknown for all four. An ASA-side survey woul
 answer both before anything is scheduled, and would collect each store's existing
 `LEADS_STORE_ID` at the same time -- enough to request every remaining set of
 credentials from LeadsOnline in one message rather than four.
+
+### Big Jewelers — NEW CUSTOMER, 2026-10-28
+**Barcelos Investment Group LLC**, trading as **Big Jewelers**
+1 NE 1st St, Suite 107, Miami, FL 33132
+Phone (305) 877-7413 · Email bigjewelers@gmail.com · LeadsOnline store id —
+
+**Not a migration.** Every other store on this list came from SAP SQL Anywhere;
+this one has no PawnPro history, so there is no pump, no CSV backlog and no
+`LEADS_STORE_ID` sitting in an existing database to quote. It is the
+**brand-new-store deploy** in CLAUDE.md -- `create_fb_database.bat`, then
+`PawnPro_FB5_NewStoreFullDeploy.sql` (schema **plus** the seed file, which a
+migrating store skips because the pump brings reference data).
+
+**Unknown and worth asking before the visit:**
+
+- **Do they already have a LeadsOnline account?** Every store so far did, and
+  their existing store id turned out to be exactly what LeadsOnline issued. A
+  genuinely new shop may have no account at all, which makes this the first
+  request where we cannot quote a number.
+- How many workstations. If more than one, this is the first multi-station job
+  since Kendale, and `Tools/ImageShare` has still never been run against a real
+  share -- rehearse in the VM first.
+- Where backups will land. Two live stores are already running without one;
+  set it at install rather than leaving it.
+
+Downtown Miami, well away from the SW 8th St cluster.
 
 ## Template for the next store
 
