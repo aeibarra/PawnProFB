@@ -19,7 +19,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Kendale Jewelry | SOAP | FB5 | **multiple** | live 2026-09-01 |
 | Gema Jewelers | SOAP | FB5 | single | live 2026-09-03 |
 | Perez Cash Joyeria | SOAP | FB5 | single | live 2026-09-10 |
-| I Love Miami Jewelry | CSV/FTP | ASA | single | to migrate |
+| I Love Miami Jewelry | **none** | **FB5** | single | converted 2026-11-09, done |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
 | A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
 | Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
@@ -548,7 +548,7 @@ a year old and may come back as error 7 regardless.
 
 ## Stores still to migrate
 
-**Three left**: I Love Miami, A Loz and A1 Jewelry Loans. Home of Watches, AJ
+**Two left**: A Loz and A1 Jewelry Loans. I Love Miami, Home of Watches, AJ
 Jewelry and Gema Jewelers are done, and Gold Star has been sold; they have moved
 out of this list in all but heading, and their entries below record what
 happened.
@@ -769,9 +769,42 @@ and the row count rises only at Perez Cash Joyeria (16,341 → 16,831, exactly t
 only Perez Cash II (9,630) really uses the payments module. Same underlying
 pattern as the unused statuses — see `Docs/Report02_ActivePawns_Design.md`.
 
-### I Love Miami Jewelry
-5889 NW 36th St, Miami, FL 33166
-Phone — · Email — · LeadsOnline store id —
+### I Love Miami Jewelry — CONVERTED to FB5 2026-11-09, done
+**I LOVE MIAMI JEWELRY CORP**
+5889 NW 36th St, **Virginia Gardens**, FL 33166-5712
+Phone (786) 362-0114 · Email — · **Florida police ID `VG-PD`**
+
+The roster had this as "Miami, FL 33166", the postal form. Their own `STORE` row
+says Virginia Gardens, and the police ID is their own small department's.
+
+**No LeadsOnline, and none wanted.** Volume is low enough that the store files
+its police report by hand, so like AJ Jewelry the conversion WAS the whole job --
+no credentials to request, no cutover, no export screen. `LEADS_STORE_ID` is
+null, export method `C`, no API user. The CSV export log is entirely empty, 0
+rows, which confirms the file feed was never used either.
+
+#### Conversion, 2026-11-09
+
+| | |
+|---|---|
+| **Schema** | v10 |
+| **Charset / page** | UTF8 / 32768 |
+| **Data** | 56 transactions (26 pawns, 30 purchases), 46 customers, 100 items, 4 images |
+| **Range** | 2025-01-31 to 2026-10-03 |
+| **Database** | `DB/ILoveMiami/` |
+
+#### ⚠️ Backups have not run for nearly two years
+
+| | |
+|---|---|
+| `BACKUP_PATH` | `D:\` -- the root, not a folder |
+| `AUTO_BACKUP_WHEN_CLOSE_APP` | FALSE |
+| Backups logged | **1, dated 2024-12-23** |
+
+The worst of the three stores currently without working backups, ahead of
+Kendale and Home of Watches. One backup in living memory. `D:\` as a bare root is
+the same arrangement Perez Cash Joyeria had before it was moved to a folder.
+
 
 ### A Loz Jewelry
 6145 SW 8th St, Miami, FL 33144
@@ -1049,12 +1082,23 @@ had none and 61.
   Confirm each store afterwards from the About box rather than assuming the copy
   landed.
 
-- **Two live stores have no automatic backup.** Kendale has `AUTO_BACKUP_WHEN_
-  CLOSE_APP` off; Home of Watches has that off AND an empty `BACKUP_PATH`. Gema's
-  September incident is what an unattended backup problem looks like when it
-  finally bites. When setting one: a writable folder on a second disk or a USB,
-  never the system disk, and never a share whose permissions nobody has checked
-  -- that last one is exactly what trapped Gema.
+- **THREE stores are running without working backups**, now the most common
+  defect on this list:
+
+  | store | `BACKUP_PATH` | auto | last backup |
+  |---|---|---|---|
+  | I Love Miami | `D:\` (bare root) | off | **2024-12-23** |
+  | Home of Watches | **empty** | off | none |
+  | Kendale | set | off | -- |
+
+  Gema's September incident is what an unattended backup problem looks like when
+  it finally bites. When setting one: a writable folder on a second disk or a
+  USB, never the system disk, never a bare drive root, and never a share whose
+  permissions nobody has checked -- that last one is exactly what trapped Gema.
+
+  Worth proving on the spot rather than assuming: set the path, close PawnPro,
+  reopen, and check a new row appears in the backup history. The failure is
+  silent, which is how I Love Miami reached two years.
 
 Two more, both at Kendale, both easy to lose:
 
