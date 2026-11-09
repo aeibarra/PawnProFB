@@ -793,7 +793,7 @@ rows, which confirms the file feed was never used either.
 | **Range** | 2025-01-31 to 2026-10-03 |
 | **Database** | `DB/ILoveMiami/` |
 
-#### ⚠️ Backups have not run for nearly two years
+#### Backups -- was two years stale, set 2026-11-09
 
 | | |
 |---|---|
@@ -801,9 +801,13 @@ rows, which confirms the file feed was never used either.
 | `AUTO_BACKUP_WHEN_CLOSE_APP` | FALSE |
 | Backups logged | **1, dated 2024-12-23** |
 
-The worst of the three stores currently without working backups, ahead of
-Kendale and Home of Watches. One backup in living memory. `D:\` as a bare root is
-the same arrangement Perez Cash Joyeria had before it was moved to a folder.
+That was the state at conversion: one backup in living memory, and `D:\` as a
+bare root -- the same arrangement Perez Cash Joyeria had before it was moved to
+a folder.
+
+**Configured on 2026-11-09.** Reported working; not yet confirmed from a copy
+of the database, so next time one is taken check that `BACKUP_HISTORY` has rows
+after that date.
 
 
 ### A Loz Jewelry
@@ -1082,12 +1086,12 @@ had none and 61.
   Confirm each store afterwards from the About box rather than assuming the copy
   landed.
 
-- **THREE stores are running without working backups**, now the most common
-  defect on this list:
+- **Two stores are running without working backups.** I Love Miami was the
+  third, fixed on 2026-11-09 after two years on a single backup from
+  2024-12-23 with `BACKUP_PATH` set to a bare drive root.
 
   | store | `BACKUP_PATH` | auto | last backup |
   |---|---|---|---|
-  | I Love Miami | `D:\` (bare root) | off | **2024-12-23** |
   | Home of Watches | **empty** | off | none |
   | Kendale | set | off | -- |
 
