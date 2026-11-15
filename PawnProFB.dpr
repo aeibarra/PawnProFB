@@ -69,7 +69,7 @@ uses
   GLbUtils in '..\COMMON\GLbUtils.pas',
   RepPurchases in 'RepPurchases.pas' {frmRepPurchases},
   ReportExportTransactions in 'ReportExportTransactions.pas' {frmReportExportTransactions},
-  SetDefaultMaturityMonth in 'SetDefaultMaturityMonth.pas' {frmSetDefaultMaturityMonth},
+  StoreSettings in 'StoreSettings.pas' {frmStoreSettings},
   IDNumCalc in '..\COMMON\IDNumCalc.pas',
   LeadsOnlineDM in 'LeadsOnlineDM.pas' {DM_LeadsOnline: TDataModule},
   ItemPictures in 'ItemPictures.pas' {frmItemPictures},

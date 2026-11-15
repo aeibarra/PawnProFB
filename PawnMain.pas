@@ -145,7 +145,7 @@ type
     ToolbarSettings: TRzToolbar;
     btnSelectPrinters: TRzToolButton;
     btnLeadsOnlineFTPParams: TRzToolButton;
-    btnDefaultMaturityMonth: TRzToolButton;
+    btnStoreSettings: TRzToolButton;
     RzSpacer1: TRzSpacer;
     RzToolButton4: TRzToolButton;
     RzToolButton20: TRzToolButton;
@@ -184,7 +184,7 @@ type
     procedure btnExitClick(Sender: TObject);
     procedure btnSelectPrintersClick(Sender: TObject);
     procedure btnLeadsOnlineFTPParamsClick(Sender: TObject);
-    procedure btnDefaultMaturityMonthClick(Sender: TObject);
+    procedure btnStoreSettingsClick(Sender: TObject);
     procedure btnQuickExportClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnTabAboutClick(Sender: TObject);
@@ -226,7 +226,7 @@ Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory,
   MaintenanceJewle, SetupBarcodePrinter,
   BackupDB, TransactionList, ExportPoliceInformation,
   Report01, Report02, RepPurchases, GLbUtils, ReportExportTransactions,
-  SetDefaultMaturityMonth, LeadsOnlineSettings, ImagesStorageSettings,
+  StoreSettings, LeadsOnlineSettings, ImagesStorageSettings,
   BackupInProgress, uPawnDialogs, LeadsOnlineSoapExport;
 
 {$R *.DFM}
@@ -770,13 +770,13 @@ begin
   Close;
 end;
 
-procedure TfrmPawnMain.btnDefaultMaturityMonthClick(Sender: TObject);
+procedure TfrmPawnMain.btnStoreSettingsClick(Sender: TObject);
 begin
-  frmSetDefaultMaturityMonth := TfrmSetDefaultMaturityMonth.Create(self);
+  frmStoreSettings := TfrmStoreSettings.Create(self);
   try
-    frmSetDefaultMaturityMonth.ShowModal;
+    frmStoreSettings.ShowModal;
   finally
-    frmSetDefaultMaturityMonth.Free;
+    frmStoreSettings.Free;
   end;
 end;
 

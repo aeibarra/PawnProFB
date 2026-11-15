@@ -705,7 +705,7 @@ object frmPawnMain: TfrmPawnMain
       ToolbarControls = (
         btnSelectPrinters
         btnLeadsOnlineFTPParams
-        btnDefaultMaturityMonth
+        btnStoreSettings
         RzSpacer1
         btnShowGoldPrice
         RzSpacer5
@@ -742,7 +742,7 @@ object frmPawnMain: TfrmPawnMain
         Caption = 'LeadsOnline Parameters'
         OnClick = btnLeadsOnlineFTPParamsClick
       end
-      object btnDefaultMaturityMonth: TRzToolButton
+      object btnStoreSettings: TRzToolButton
         AlignWithMargins = True
         Left = 190
         Top = 0
@@ -752,8 +752,8 @@ object frmPawnMain: TfrmPawnMain
         Layout = blGlyphTop
         Spacing = 1
         UseToolbarButtonSize = False
-        Caption = 'Pawn Defaults'
-        OnClick = btnDefaultMaturityMonthClick
+        Caption = 'Store Settings'
+        OnClick = btnStoreSettingsClick
       end
       object RzSpacer1: TRzSpacer
         AlignWithMargins = True

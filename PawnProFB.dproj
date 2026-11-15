@@ -315,8 +315,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="ReportExportTransactions.pas">
             <Form>frmReportExportTransactions</Form>
         </DCCReference>
-        <DCCReference Include="SetDefaultMaturityMonth.pas">
-            <Form>frmSetDefaultMaturityMonth</Form>
+        <DCCReference Include="StoreSettings.pas">
+            <Form>frmStoreSettings</Form>
         </DCCReference>
         <DCCReference Include="..\COMMON\IDNumCalc.pas"/>
         <DCCReference Include="LeadsOnlineDM.pas">
