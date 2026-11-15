@@ -4693,6 +4693,11 @@ object DM: TDM
         CollectionIndex = 61
         CollectionName = 'driver-license_Color'
         Name = 'driver-license_Color'
+      end
+      item
+        CollectionIndex = 62
+        CollectionName = 'Filter'
+        Name = 'Filter'
       end>
     ImageCollection = svgMain
     Width = 40
@@ -7529,6 +7534,22 @@ object DM: TDM
           'path fill="#A5C3DC" d="M360,176h-48c-4.418,0-8-3.582-8-8v0c0-4.4' +
           '18,3.582-8,8-8h48c4.418,0,8,3.582,8,8v0 C368,172.418,364.418,176' +
           ',360,176z"/></g></svg>'
+      end
+      item
+        IconName = 'Filter'
+        SVGText = 
+          '<svg xmlns="http://w3.org" viewBox="0 0 24 24" width="200" heigh' +
+          't="200" fill="none" stroke="currentColor" stroke-width="0.75" st' +
+          'roke-linecap="butt">'#13#10'  <!-- Outer Circle -->'#13#10'  <circle cx="12"' +
+          ' cy="12" r="11.5" />'#13#10#13#10'  <!-- Top Slider -->'#13#10'  <line x1="6.5" ' +
+          'y1="7.8" x2="10.2" y2="7.8" />'#13#10'  <circle cx="11.4" cy="7.8" r="' +
+          '1.2" />'#13#10'  <line x1="13.4" y1="7.8" x2="17.5" y2="7.8" />'#13#10#13#10'  <' +
+          '!-- Middle Slider -->'#13#10'  <line x1="6.5" y1="12" x2="12.4" y2="12' +
+          '" />'#13#10'  <circle cx="14.5" cy="12" r="1.2" />'#13#10'  <line x1="15.7" ' +
+          'y1="12" x2="17.5" y2="12" />'#13#10#13#10'  <!-- Bottom Slider -->'#13#10'  <lin' +
+          'e x1="6.5" y1="16.2" x2="8.3" y2="16.2" />'#13#10'  <circle cx="9.5" c' +
+          'y="16.2" r="1.2" />'#13#10'  <line x1="11.5" y1="16.2" x2="17.5" y2="1' +
+          '6.2" />'#13#10'</svg>'#13#10
       end>
     Left = 67
     Top = 366
@@ -7820,6 +7841,11 @@ object DM: TDM
         CollectionIndex = 61
         CollectionName = 'driver-license_Color'
         Name = 'driver-license_Color'
+      end
+      item
+        CollectionIndex = 62
+        CollectionName = 'Filter'
+        Name = 'Filter'
       end>
     ImageCollection = svgMain
     Width = 32
@@ -8315,6 +8341,7 @@ object DM: TDM
         'AND CUST_NO > 0'
       '   --SearchByTicketNo'
       '   --SearchByPhone'
+      '   --AdditionalFilters'
       'ORDER BY CUST_FIRST, CUST_LAST')
     Left = 666
     Top = 32

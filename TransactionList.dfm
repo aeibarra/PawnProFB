@@ -93,6 +93,15 @@ object frmTransactionList: TfrmTransactionList
       Style = csDropDownList
       TabOrder = 3
     end
+    object chkUndecidedDefaulted: TCheckBox
+      Left = 545
+      Top = 31
+      Width = 330
+      Height = 21
+      Caption = 'Only pawns with undecided defaulted items'
+      TabOrder = 4
+      OnClick = chkUndecidedDefaultedClick
+    end
   end
   object GroupBox3: TGroupBox
     AlignWithMargins = True
@@ -417,7 +426,7 @@ object frmTransactionList: TfrmTransactionList
                 FieldName = 'DefaultedMeltedCount'
                 Title.Alignment = taCenter
                 Title.Caption = 'Melted'
-                Width = 133
+                Width = 70
                 Visible = True
               end
               item
@@ -425,8 +434,17 @@ object frmTransactionList: TfrmTransactionList
                 Expanded = False
                 FieldName = 'DefaultedForSaleCount'
                 Title.Alignment = taCenter
-                Title.Caption = 'Items Placed for Sale'
-                Width = 133
+                Title.Caption = 'Placed for Sale'
+                Width = 120
+                Visible = True
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'DefaultedUndecidedCount'
+                Title.Alignment = taCenter
+                Title.Caption = 'Undecided'
+                Width = 90
                 Visible = True
               end>
           end
@@ -1998,6 +2016,9 @@ object frmTransactionList: TfrmTransactionList
     end
     object qryDefaultTotalsDefaultedForSaleCount: TIntegerField
       FieldName = 'DefaultedForSaleCount'
+    end
+    object qryDefaultTotalsDefaultedUndecidedCount: TIntegerField
+      FieldName = 'DefaultedUndecidedCount'
     end
   end
   object dsDefaultTotals: TDataSource

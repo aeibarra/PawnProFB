@@ -34,8 +34,8 @@
 
 uses
   {$IFDEF MMDEBUG}
-  FastMM4,   // MUST be first: installs the memory manager before any allocation
-  {$ENDIF}
+  FastMM4,
+  {$ENDIF }
   Forms,
   MidasLib,
   StFirst,
@@ -102,12 +102,14 @@ uses
   uPawnDialogs in 'uPawnDialogs.pas',
   BackupInProgress in 'BackupInProgress.pas' {frmBackupInProgress},
   PawnChangeStatus in 'PawnChangeStatus.pas' {frmPawnChangeStatus},
+  PurchaseChangeStatus in 'PurchaseChangeStatus.pas' {frmPurchaseChangeStatus},
   ItemHistory in 'ItemHistory.pas' {frmItemHistory},
   uImageMaintenanceGate in 'uImageMaintenanceGate.pas',
   uImageBackupAudit in 'uImageBackupAudit.pas',
   uImageAuditController in 'uImageAuditController.pas',
   LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport},
-  ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets};
+  ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets},
+  AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters};
 
 {$R *.RES}
 

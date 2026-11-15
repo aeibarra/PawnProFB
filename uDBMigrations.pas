@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 10;
+  CURRENT_DB_VERSION = 11;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -486,6 +486,40 @@ begin
     '  CONSTRAINT PK_LEADS_SOAP_EXCLUDED PRIMARY KEY (TRANSACTION_NO))');
 end;
 
+{ v11: status char for pawn items defaulted to For Sale / Scrap before the app
+  wrote it. Data fix only, no schema change.
+
+  Defaulting a pawn used to write only FORSALE_DATE / MELTED_DATE and leave
+  INV_ITEM_STATUS = 'P', so those items were invisible to anything that reads
+  For Sale / Scrap stock by the char. Derived purely from the existing dates;
+  For Sale wins if both are set (same rule as TDM.PawnItemStatusChar). Sold rows
+  are never touched. Idempotent by its own WHERE.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_DefaultedPawnItemsStatus.sql. }
+procedure Step11_DefaultedPawnItemsStatus(Conn: TFDConnection);
+begin
+  ExecDDL(Conn,
+    'UPDATE INVENTORY_ITEMS ii ' +
+    '   SET ii.INV_ITEM_STATUS = ''S'' ' +
+    ' WHERE ii.INV_ITEM_STATUS = ''P'' ' +
+    '   AND ii.SOLD_DATE    IS NULL ' +
+    '   AND ii.FORSALE_DATE IS NOT NULL ' +
+    '   AND EXISTS (SELECT 1 FROM TRANSACTIONS t ' +
+    '                WHERE t.TRANSACTION_NO = ii.TRANSACTION_NO ' +
+    '                  AND t.TRAN_TYPE = ''P'')');
+
+  ExecDDL(Conn,
+    'UPDATE INVENTORY_ITEMS ii ' +
+    '   SET ii.INV_ITEM_STATUS = ''C'' ' +
+    ' WHERE ii.INV_ITEM_STATUS = ''P'' ' +
+    '   AND ii.SOLD_DATE    IS NULL ' +
+    '   AND ii.FORSALE_DATE IS NULL ' +
+    '   AND ii.MELTED_DATE  IS NOT NULL ' +
+    '   AND EXISTS (SELECT 1 FROM TRANSACTIONS t ' +
+    '                WHERE t.TRANSACTION_NO = ii.TRANSACTION_NO ' +
+    '                  AND t.TRAN_TYPE = ''P'')');
+end;
+
 { ---- orchestrator ------------------------------------------------------- }
 
 function DatabaseIsCurrent(Conn: TFDConnection): Boolean;
@@ -570,7 +604,13 @@ begin
     SetDbVersion(Conn, 10);
   end;
 
-  // Future steps: if V < 11 then begin Step11_...(Conn); SetDbVersion(Conn, 11); end;
+  if V < 11 then
+  begin
+    Step11_DefaultedPawnItemsStatus(Conn);
+    SetDbVersion(Conn, 11);
+  end;
+
+  // Future steps: if V < 12 then begin Step12_...(Conn); SetDbVersion(Conn, 12); end;
 end;
 
 end.

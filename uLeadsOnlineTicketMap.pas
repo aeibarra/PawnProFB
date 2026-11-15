@@ -294,6 +294,12 @@ begin
   // than guess a reportable status for each of them, anything else falls back
   // to what the TICKET is, which is the thing actually being reported and is
   // correct by construction.
+  //
+  // A pawn ticket always reports Pawn: a defaulted pawn item set For Sale now
+  // carries 'S' too, but it was pawned, not bought.
+  if ATicketType = TicketType.Pawn then
+    Exit('Pawn');
+
   case IndexStr(UpperCase(Trim(ACode)), ['P', 'S']) of
     0: Result := 'Pawn';
     1: Result := 'Buy';         // For Sale: acquired outright

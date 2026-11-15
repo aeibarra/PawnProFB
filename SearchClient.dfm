@@ -470,6 +470,34 @@ object frmClients: TfrmClients
         Caption = 'P&hone:'
         FocusControl = edPhone
       end
+      object btnAddFilters: TRzToolButton
+        Left = 688
+        Top = 15
+        Width = 92
+        Height = 48
+        Hint = 'Additional Filters'
+        Flat = False
+        ImageIndex = 57
+        Images = DM.vilMain24
+        ShowCaption = True
+        UseToolbarButtonSize = False
+        UseToolbarShowCaption = False
+        Caption = 'Filters'
+        OnClick = btnAddFiltersClick
+      end
+      object lblAddFilters: TRzLabel
+        Left = 786
+        Top = 29
+        Width = 86
+        Height = 20
+        Caption = 'lblAddFilters'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI Semibold'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object edFirst: TEdit
         Left = 41
         Top = 32
@@ -954,6 +982,9 @@ object frmClients: TfrmClients
           Font.Style = []
           ParentFont = False
           TabOrder = 1
+          DesignSize = (
+            797
+            60)
           object btnNewPurchase: TBitBtn
             Left = 17
             Top = 2
@@ -1013,6 +1044,34 @@ object frmClients: TfrmClients
               00FFFF00FFFF00FFFF00FFFF00FF5050A95858AFFF00FFFF00FF}
             TabOrder = 2
             OnClick = btnTranDeleteClick
+          end
+          object btnReactivatePurchase: TBitBtn
+            Left = 595
+            Top = 2
+            Width = 188
+            Height = 50
+            Anchors = [akTop, akRight]
+            Caption = 'Undo Items Status'#13#10'For Sale / Scrap'
+            ImageIndex = 51
+            ImageName = 'actChangeTranStatus'
+            Images = DM.vilMain24
+            TabOrder = 3
+            Visible = False
+            OnClick = btnReactivatePurchaseClick
+          end
+          object btnChangePurchaseStatus: TBitBtn
+            Left = 594
+            Top = 1
+            Width = 188
+            Height = 50
+            Anchors = [akTop, akRight]
+            Caption = 'Change Items Status '#13#10'For Sale / Scrap'
+            ImageIndex = 52
+            ImageName = 'icons8-change'
+            Images = DM.vilMain24
+            TabOrder = 4
+            Visible = False
+            OnClick = btnChangePurchaseStatusClick
           end
         end
       end
@@ -14880,6 +14939,10 @@ object frmClients: TfrmClients
     object popmnuItemForSale: TMenuItem
       Caption = 'For Sale'
       OnClick = popmnuItemForSaleClick
+    end
+    object popmnuItemUndecided: TMenuItem
+      Caption = 'Undecided (as purchased)'
+      OnClick = popmnuItemUndecidedClick
     end
     object N4: TMenuItem
       Caption = '-'

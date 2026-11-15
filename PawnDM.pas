@@ -296,6 +296,10 @@ type
     procedure FillPawnStatusCombobox(cb: TRzComboBox; StatusToSelect: String);
     procedure SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
     procedure PutPawnBackToActive(TransactionNo: integer);
+    procedure GetPurchaseItemsState(TransactionNo: integer; out Unclassified, Classified, Locked: integer);
+    procedure SetPurchaseItemsStatus(TransactionNo: integer; PurchaseItemAction: integer);
+    procedure PutPurchaseBackToOriginal(TransactionNo: integer);
+    function SetPurchaseItemStatus(InvItemNo: integer; PurchaseItemAction: integer): boolean;
     procedure RefreshFBQry(Qry: TFDQuery); overload;
     procedure RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string); overload;
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
@@ -1985,16 +1989,32 @@ begin
 
 end;
 
+{ Status char of a PAWN item from its default-action dates: For Sale 'S',
+  Scrap 'C', otherwise still 'P' (open, redeemed, or defaulted with no action). }
+function PawnItemStatusChar(const MeltedDate, ForSaleDate: variant): string;
+begin
+  if not VarIsNull(ForSaleDate) then
+    Result := 'S'
+  else if not VarIsNull(MeltedDate) then
+    Result := 'C'
+  else
+    Result := 'P';
+end;
+
 procedure TDM.UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
 begin
+  // Never touches a sold item, or one in a state the pawn flow does not own.
   ConnFB.ExecSQL(
     'UPDATE INVENTORY_ITEMS ' +
-    'SET REDEEMED_DATE = :REDEEMED_DATE, ' +
+    'SET INV_ITEM_STATUS = :INV_ITEM_STATUS, ' +
+    '    REDEEMED_DATE = :REDEEMED_DATE, ' +
     '    DEFAULTED_DATE = :DEFAULTED_DATE, ' +
     '    MELTED_DATE = :MELTED_DATE, ' +
     '    FORSALE_DATE = :FORSALE_DATE ' +
-    'WHERE INV_ITEM_NO = :INV_ITEM_NO',
-    [RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, InvItemNo]);
+    'WHERE INV_ITEM_NO = :INV_ITEM_NO ' +
+    '  AND SOLD_DATE IS NULL ' +
+    '  AND INV_ITEM_STATUS IN (''P'', ''S'', ''C'')',
+    [PawnItemStatusChar(MeltedDate, ForSaleDate), RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, InvItemNo]);
 end;
 
 procedure TDM.UpdatePawnItemStatusAndStage(TransactionNo: integer; CloseReason: smallint; PawnDefaultedItemAction: integer);
@@ -2023,9 +2043,13 @@ begin
         ForSaleDate := Date;
     end;
 
+  // The status char follows the default action, so a defaulted item set For
+  // Sale / Scrap is real For Sale / Scrap stock (Inventory filter, Sell screen,
+  // reports read the char). Redeemed or defaulted-with-no-action stay 'P'.
   ConnFB.ExecSQL(
     'UPDATE INVENTORY_ITEMS ' +
-    'SET REDEEMED_DATE = :REDEEMED_DATE, ' +
+    'SET INV_ITEM_STATUS = :INV_ITEM_STATUS, ' +
+    '    REDEEMED_DATE = :REDEEMED_DATE, ' +
     '    DEFAULTED_DATE = :DEFAULTED_DATE, ' +
     '    MELTED_DATE = :MELTED_DATE, ' +
     '    FORSALE_DATE = :FORSALE_DATE ' +
@@ -2033,7 +2057,7 @@ begin
     '  AND INV_ITEM_STATUS = ''P'' ' +
     '  AND REDEEMED_DATE IS NULL ' +
     '  AND DEFAULTED_DATE IS NULL',
-    [RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, TransactionNo]);
+    [PawnItemStatusChar(MeltedDate, ForSaleDate), RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate, TransactionNo]);
 end;
 
 procedure TDM.SetPawnAndItemsStatus(TransactionNo: integer; CloseReason: smallint; TranStatus: string; PawnDefaultedItemAction: integer);
@@ -2076,8 +2100,16 @@ var
 begin
   StartedFBTrans := False;
   sTransactionNo := IntToStr(TransactionNo);
-  sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET REDEEMED_DATE = null, DEFAULTED_DATE = null, MELTED_DATE = null, FORSALE_DATE = null ' + sLineBreak +
-                     'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS = ''P'' and SOLD_DATE is null';
+
+  // Defaulted items may now be 'S' (For Sale) or 'C' (Scrap); bring those back
+  // to 'P' as well. A pawn with an item already sold cannot be reactivated --
+  // reverting the rest would leave the pawn half-open.
+  if ConnFB.ExecSQLScalar('SELECT COUNT(*) FROM INVENTORY_ITEMS WHERE TRANSACTION_NO = :TRANSACTION_NO' +
+                          ' AND (SOLD_DATE IS NOT NULL OR INV_ITEM_STATUS = ''D'')', [TransactionNo]) > 0 then
+    raise Exception.Create('This pawn has items that were already sold. It cannot be reactivated.');
+
+  sSQLItemsStatus := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''P'', REDEEMED_DATE = null, DEFAULTED_DATE = null, MELTED_DATE = null, FORSALE_DATE = null ' + sLineBreak +
+                     'WHERE TRANSACTION_NO = ' + sTransactionNo + ' and INV_ITEM_STATUS IN (''P'', ''S'', ''C'') and SOLD_DATE is null';
 
   try
     if not ConnFB.InTransaction then
@@ -2103,6 +2135,153 @@ begin
   end;
 
 
+end;
+
+{ Purchase item status -- the purchase counterpart of the Pawn change-status flow.
+
+  A purchase item is created INV_ITEM_STATUS='S' with no FORSALE_DATE and no
+  MELTED_DATE ("unclassified": bought, the store has not said what it is for).
+  The store then classifies the whole purchase once:
+    For Sale -> 'S' + FORSALE_DATE
+    Scrap    -> 'C' + MELTED_DATE
+  PutPurchaseBackToOriginal undoes that. The purchase TRANSACTION is never
+  touched: unlike a pawn it has nothing to close, so it stays Active.
+
+  "Locked" = sold, on layaway, or any other state this flow does not own. Locked
+  items are never changed, and a purchase holding one cannot be reverted. }
+const
+  PurchaseItemUnclassifiedSQL =
+    'INV_ITEM_STATUS = ''S'' AND FORSALE_DATE IS NULL AND MELTED_DATE IS NULL AND SOLD_DATE IS NULL';
+  PurchaseItemLockedSQL =
+    '(SOLD_DATE IS NOT NULL OR COALESCE(INV_ITEM_STATUS, '''') NOT IN (''S'', ''C''))';
+
+procedure TDM.GetPurchaseItemsState(TransactionNo: integer; out Unclassified, Classified, Locked: integer);
+var
+  Q: TFDQuery;
+begin
+  Unclassified := 0;
+  Classified := 0;
+  Locked := 0;
+
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := ConnFB;
+    Q.SQL.Text :=
+      'SELECT ' +
+      '  COALESCE(SUM(CASE WHEN ' + PurchaseItemLockedSQL + ' THEN 1 ELSE 0 END), 0) AS N_LOCKED, ' +
+      '  COALESCE(SUM(CASE WHEN ' + PurchaseItemUnclassifiedSQL + ' THEN 1 ELSE 0 END), 0) AS N_UNCLASSIFIED, ' +
+      '  COUNT(*) AS N_ALL ' +
+      'FROM INVENTORY_ITEMS WHERE TRANSACTION_NO = :TRANSACTION_NO';
+    Q.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
+    Q.Open;
+
+    Locked := Q.FieldByName('N_LOCKED').AsInteger;
+    Unclassified := Q.FieldByName('N_UNCLASSIFIED').AsInteger;
+    Classified := Q.FieldByName('N_ALL').AsInteger - Locked - Unclassified;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TDM.SetPurchaseItemsStatus(TransactionNo: integer; PurchaseItemAction: integer);
+var
+  sSQL: string;
+  StartedFBTrans: Boolean;
+begin
+  if PurchaseItemAction = PawnDefaultedItemForSale then
+    sSQL := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', FORSALE_DATE = CURRENT_DATE, MELTED_DATE = NULL '
+  else if PurchaseItemAction = PawnDefaultedItemMelted then
+    sSQL := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''C'', MELTED_DATE = CURRENT_DATE, FORSALE_DATE = NULL '
+  else
+    raise Exception.Create('SetPurchaseItemsStatus: unknown item action ' + IntToStr(PurchaseItemAction));
+
+  // Only unclassified items: this is what makes the action one-time per purchase.
+  sSQL := sSQL + 'WHERE TRANSACTION_NO = :TRANSACTION_NO AND ' + PurchaseItemUnclassifiedSQL;
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    ConnFB.ExecSQL(sSQL, [TransactionNo]);
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    on E: Exception do
+    begin
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
+
+      raise Exception.Create('Error updating purchase items status: ' + E.Message);
+    end;
+  end;
+end;
+
+procedure TDM.PutPurchaseBackToOriginal(TransactionNo: integer);
+var
+  Unclassified, Classified, Locked: integer;
+  StartedFBTrans: Boolean;
+begin
+  GetPurchaseItemsState(TransactionNo, Unclassified, Classified, Locked);
+  if Locked > 0 then
+    raise Exception.Create('This purchase has items that were already sold or put on layaway. ' +
+                           'Its items cannot be put back to their original status.');
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    ConnFB.ExecSQL(
+      'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', FORSALE_DATE = NULL, MELTED_DATE = NULL ' +
+      'WHERE TRANSACTION_NO = :TRANSACTION_NO AND NOT ' + PurchaseItemLockedSQL,
+      [TransactionNo]);
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    on E: Exception do
+    begin
+      if StartedFBTrans and ConnFB.InTransaction then
+        ConnFB.Rollback;
+
+      raise Exception.Create('Error reactivating purchase: ' + E.Message);
+    end;
+  end;
+end;
+
+{ Single-item version of SetPurchaseItemsStatus / PutPurchaseBackToOriginal,
+  used by the Items grid right-click menu on a purchase. Writes the same status
+  char and dates as the purchase-wide button, so both stay consistent. Unlike
+  the button it may re-classify an already classified item (For Sale <-> Scrap),
+  but never a locked one (sold / layaway). Returns False when the item was
+  locked and nothing was changed. }
+function TDM.SetPurchaseItemStatus(InvItemNo: integer; PurchaseItemAction: integer): boolean;
+var
+  sSQL: string;
+begin
+  case PurchaseItemAction of
+    PawnDefaultedItemForSale:
+      sSQL := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', FORSALE_DATE = CURRENT_DATE, MELTED_DATE = NULL ';
+    PawnDefaultedItemMelted:
+      sSQL := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''C'', MELTED_DATE = CURRENT_DATE, FORSALE_DATE = NULL ';
+    PurchaseItemUndecided:
+      sSQL := 'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', FORSALE_DATE = NULL, MELTED_DATE = NULL ';
+  else
+    raise Exception.Create('SetPurchaseItemStatus: unknown item action ' + IntToStr(PurchaseItemAction));
+  end;
+
+  sSQL := sSQL + 'WHERE INV_ITEM_NO = :INV_ITEM_NO AND NOT ' + PurchaseItemLockedSQL;
+
+  // Single statement: autocommit is enough, no explicit FB transaction needed.
+  Result := ConnFB.ExecSQL(sSQL, [InvItemNo]) > 0;
 end;
 
 procedure TDM.ReactivateLayway(TransactionNo: integer);

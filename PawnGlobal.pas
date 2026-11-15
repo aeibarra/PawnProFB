@@ -171,6 +171,9 @@ const
 
   PawnDefaultedItemMelted = 1;
   PawnDefaultedItemForSale = 2;
+  // Purchase items reuse Melted / ForSale above; Undecided puts an item back to
+  // how it was bought (TDM.SetPurchaseItemStatus).
+  PurchaseItemUndecided = 0;
 
   // STORE.LEADS_ONLINE_EXPORT_METHOD -- whether this store reports to
   // LeadsOnline at all, and if so over which channel. Not every store is a

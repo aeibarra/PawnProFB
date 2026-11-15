@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Controls, Forms, Vcl.Graphics, Vcl.Dialogs,
-  ExtCtrls, Grids, DBGrids, StdCtrls, Buttons, ComCtrls, DBCtrls, Mask, ActnList, DB, ppComm,
+  ExtCtrls, Grids, DBGrids, StdCtrls, Buttons, ComCtrls, DBCtrls, Mask, ActnList, DB,
   ppRelatv, ppDB, ppDBPipe, ppProd, ppClass, ppReport, ppPrnabl, ppCtrls, StrUtils,
   ppBands, ppCache, ppVar, IniFiles, Menus, System.UITypes, Variants,
   myChkBox, ppParameter, ppDesignLayer, RzForms, RzCommon, System.Actions, PawnGlobal,
@@ -13,7 +13,7 @@ uses
   RzDBLbl, RzEdit, JvExControls, JvLinkLabel, JvExStdCtrls, JvHtControls,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, ppComm, AdditionalFilters;
 
 const
   sx_ProcessCardScanning = wm_User + 100;
@@ -773,6 +773,7 @@ type
     N1: TMenuItem;
     popmnuItemMeltedScrap: TMenuItem;
     popmnuItemForSale: TMenuItem;
+    popmnuItemUndecided: TMenuItem;
     popmnuItemPawned: TMenuItem;
     N2: TMenuItem;
     btnPrintPayReceipt: TRzToolButton;
@@ -848,8 +849,12 @@ type
     btnCustPicID: TBitBtn;
     btnReactivate: TBitBtn;
     btnChangePawnStatus: TBitBtn;
+    btnReactivatePurchase: TBitBtn;
+    btnChangePurchaseStatus: TBitBtn;
     N4: TMenuItem;
     popItemHistory: TMenuItem;
+    btnAddFilters: TRzToolButton;
+    lblAddFilters: TRzLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -910,6 +915,7 @@ type
     procedure TimerScanningTimeOutTimer(Sender: TObject);
     procedure ppLabel176GetText(Sender: TObject; var Text: string);
     procedure btnClearSearchFieldsClick(Sender: TObject);
+    procedure btnAddFiltersClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure qryPoliceRepCustCalcFields(DataSet: TDataSet);
     procedure btnItemPicturesClick(Sender: TObject);
@@ -926,6 +932,7 @@ type
     procedure popmnuItemMeltedScrapClick(Sender: TObject);
     procedure popmnuItemForSaleClick(Sender: TObject);
     procedure popmnuItemPawnedClick(Sender: TObject);
+    procedure popmnuItemUndecidedClick(Sender: TObject);
     procedure btnPrintEnvLabelClick(Sender: TObject);
     procedure qryInvItemsAfterScroll(DataSet: TDataSet);
     procedure gridPaymentsDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -942,6 +949,8 @@ type
     procedure mnuReOpenLayawayClick(Sender: TObject);
     procedure btnReactivateClick(Sender: TObject);
     procedure btnChangePawnStatusClick(Sender: TObject);
+    procedure btnReactivatePurchaseClick(Sender: TObject);
+    procedure btnChangePurchaseStatusClick(Sender: TObject);
     procedure popItemHistoryClick(Sender: TObject);
   private
     LastThreeKeys: TKeyQueue;
@@ -954,6 +963,8 @@ type
     ScanIdleChecks: Integer;
     LastDataCount: integer;
     FLastKeyTick: Cardinal;
+    // Extra transaction-based filters chosen in TfrmAdditionalFilters.
+    FClientFilters: TClientFilters;
     procedure AddToKeyQueue(Key: Word);
     function MatchLastKeys(KeyPattern: TKeyQueue): boolean;
     procedure ProcessScannedCard(var Msg: TMessage); Message sx_ProcessCardScanning;
@@ -967,6 +978,10 @@ type
       const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
     procedure GetPaymentDueDateBalanceMessage;
     procedure UpdatePawnStatusActions;
+    procedure UpdatePurchaseStatusActions;
+    function CurrentTranType: string;
+    procedure SetSelectedPurchaseItemStatus(PurchaseItemAction: integer);
+    function ItemDefaultedDate: variant;
     procedure ProcessNewPaymentDueDateMessage(var Msg: TMessage); Message sx_RefreshPaymentDueDateMesg;
     procedure ProcessStartAddingLayawayItems(var Msg: TMessage); Message sx_StartAddingLayawayItems;
     procedure AddEditPayments(NewRow: boolean);
@@ -974,6 +989,7 @@ type
     function IsInactiveLayawaySelected: boolean;
     function SelectedTransactionItemCount: Integer;
     function SearchFieldFocused: boolean;
+    procedure ShowClientFilters;
   public
 //    PoliceRptPrinter, PoliceRptPrinterBin, PayReceiptPrinterName, PayReceiptPrinterNameBin: string;
     procedure OpenClientsQuery(FName, LName: string);
@@ -990,7 +1006,7 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPayment, CardReader, EditInvItem, Entertems,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
-  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, uPawnDialogs,
+  PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, PurchaseChangeStatus, uPawnDialogs,
   ItemHistory;
 
 {$R *.DFM}
@@ -1022,6 +1038,9 @@ begin
     begin
       SQLStr := ReplaceStr(SQLStr, '--SearchByPhone', ' AND ' + QuotedStr( trim(edPhone.Digits) ) + ' in (CUST_PH_BEEP, CUST_PH_BUSINESS, CUST_PH_CELL, CUST_PH_HOME) ');
     end;
+
+  if FClientFilters <> [] then
+    SQLStr := ReplaceStr(SQLStr, '--AdditionalFilters', ClientFiltersSQL(FClientFilters));
 
 
   DM.qryCustomers.SQL.Text := SQLStr;
@@ -1081,6 +1100,7 @@ end;
 
 procedure TfrmClients.FormShow(Sender: TObject);
 begin
+  ShowClientFilters;
   btnChangePawnStatus.Left := btnReactivate.Left;
   lblNextPaymentInfo.Caption := '';
   lblNextPaymentInfoItems.Caption := '';
@@ -1155,13 +1175,49 @@ begin
 end;
 
 procedure TfrmClients.btnClearSearchFieldsClick(Sender: TObject);
+var
+  HadFilters: boolean;
 begin
   edFirst.Text := '';
   edLast.Text := '';
   edTicketNo.Text := '';
   edPhone.ClearField;
 
+  // The additional filters are cleared too. Unlike the text fields they are
+  // not visible in the grid's search boxes, so re-run the search right away --
+  // otherwise the list would stay filtered with an empty label.
+  HadFilters := FClientFilters <> [];
+  FClientFilters := [];
+  ShowClientFilters;
+  if HadFilters then
+    btnSearchClick(Sender);
+
   edFirst.SetFocus;
+end;
+
+procedure TfrmClients.ShowClientFilters;
+begin
+  lblAddFilters.Caption := ClientFiltersText(FClientFilters);
+  lblAddFilters.Hint := lblAddFilters.Caption;
+  lblAddFilters.ShowHint := lblAddFilters.Caption <> '';
+end;
+
+procedure TfrmClients.btnAddFiltersClick(Sender: TObject);
+var
+  Dlg: TfrmAdditionalFilters;
+begin
+  Dlg := TfrmAdditionalFilters.Create(Self);
+  try
+    Dlg.Filters := FClientFilters;
+    if Dlg.ShowModal <> mrOk then
+      exit;
+    FClientFilters := Dlg.Filters;
+  finally
+    Dlg.Free;
+  end;
+
+  ShowClientFilters;
+  btnSearchClick(Sender);
 end;
 
 procedure TfrmClients.btnClientAddClick(Sender: TObject);
@@ -1911,6 +1967,34 @@ begin
 
   mnuPawnStatusInactive.Enabled := IsActive;
   mnuPawnStatusActive.Enabled := HasPawn and not IsActive;
+
+  // Every caller that refreshes the pawn buttons also needs the purchase ones
+  // (transaction scroll, tab change, form show), so they ride along here.
+  UpdatePurchaseStatusActions;
+end;
+
+{ The purchase transaction stays Active whatever its items are, so unlike Pawn
+  the buttons key off the items (TDM.GetPurchaseItemsState):
+    Items For Sale / Scrap      -- some item not yet classified
+    Undo Items For Sale / Scrap -- all classified, none sold / on layaway }
+procedure TfrmClients.UpdatePurchaseStatusActions;
+var
+  HasPurchase: boolean;
+  Unclassified, Classified, Locked: integer;
+begin
+  HasPurchase := DM.qryTransactions.Active and
+                 not DM.qryTransactions.IsEmpty and
+                 (DM.qryTransactionsTRANSACTION_NO.AsInteger > 0) and
+                 (DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase);
+
+  Unclassified := 0;
+  Classified := 0;
+  Locked := 0;
+  if HasPurchase then
+    DM.GetPurchaseItemsState(DM.qryTransactionsTRANSACTION_NO.AsInteger, Unclassified, Classified, Locked);
+
+  btnChangePurchaseStatus.Visible := Unclassified > 0;
+  btnReactivatePurchase.Visible := (Unclassified = 0) and (Classified > 0) and (Locked = 0);
 end;
 
 procedure TfrmClients.qryInvItemsAfterScroll(DataSet: TDataSet);
@@ -1930,6 +2014,9 @@ begin
     qryInvItemsINV_ITEM_BARCODE.AsString := DM.GetBarcode(qryInvItemsINV_ITEM_NO.AsInteger);
     qryInvItems.Post;
   end;
+
+  // A new item on an already-classified purchase is unclassified again.
+  UpdatePurchaseStatusActions;
 end;
 
 procedure TfrmClients.qryInvItemsCalcFields(DataSet: TDataSet);
@@ -2190,6 +2277,7 @@ begin
     ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + qryInvItemsINV_ITEM_NO.AsString);
 
     qryInvItems.Delete;
+    UpdatePurchaseStatusActions;
   end;
 end;
 
@@ -2290,24 +2378,98 @@ begin
 
 end;
 
+function TfrmClients.CurrentTranType: string;
+begin
+  Result := '';
+  if DM.qryTransactions.Active and not DM.qryTransactions.IsEmpty then
+    Result := DM.qryTransactionsTRAN_TYPE.AsString;
+end;
+
+{ The Items grid is shared by the Pawn, Purchase and Layaway tabs, so the menu
+  follows the current transaction's type:
+    Pawn     -- Pawned / Redeemed / Defaulted / Melted-Scrap / For Sale (dates only)
+    Purchase -- For Sale / Melted-Scrap / Undecided (TDM.SetPurchaseItemStatus)
+    Layaway  -- no status entries; its status belongs to Close Layaway. }
 procedure TfrmClients.PopMnuPawnItemsPopup(Sender: TObject);
 var
-  EnabledMnuEntries: boolean;
+  TranType, ItemStatus: string;
+  HasItem, IsPawn, IsPurchase, EnabledMnuEntries, Locked: boolean;
 begin
-  if (qryInvItemscStatus.AsString <> PawnItemStatus_Pawned) or (not qryInvItemsSOLD_DATE.IsNull) then
-    begin
-      EnabledMnuEntries :=  false;
-    end
-  else
-    begin
-      EnabledMnuEntries :=  true;
-    end;
+  TranType := CurrentTranType;
+  IsPawn := TranType = TranPawn;
+  IsPurchase := TranType = TranPurchase;
+  HasItem := qryInvItems.Active and not qryInvItems.IsEmpty;
 
-  popmnuItemPawned.Enabled := qryInvItemscStatus.AsString <> PawnItemStatus_Pawned;
-  popmnuItemRedeemed.Enabled := EnabledMnuEntries;
-  popmnuItemDefaulted.Enabled := EnabledMnuEntries;
-  popmnuItemMeltedScrap.Enabled := EnabledMnuEntries;
-  popmnuItemForSale.Enabled := EnabledMnuEntries;
+  popmnuItemPawned.Visible := IsPawn;
+  N2.Visible := IsPawn;
+  popmnuItemRedeemed.Visible := IsPawn;
+  popmnuItemDefaulted.Visible := IsPawn;
+  N1.Visible := IsPawn;
+  popmnuItemMeltedScrap.Visible := IsPawn or IsPurchase;
+  popmnuItemForSale.Visible := IsPawn or IsPurchase;
+  popmnuItemUndecided.Visible := IsPurchase;
+  N4.Visible := IsPawn or IsPurchase;
+
+  if IsPawn then
+    begin
+      EnabledMnuEntries := HasItem and
+                           (qryInvItemscStatus.AsString = PawnItemStatus_Pawned) and
+                           qryInvItemsSOLD_DATE.IsNull;
+
+      popmnuItemPawned.Enabled := HasItem and (qryInvItemscStatus.AsString <> PawnItemStatus_Pawned) and
+                                  qryInvItemsSOLD_DATE.IsNull;
+      popmnuItemRedeemed.Enabled := EnabledMnuEntries;
+      popmnuItemDefaulted.Enabled := EnabledMnuEntries;
+      // Defaulted with no decision is a "decide later" state: the item can still
+      // move on to For Sale / Scrap without going back to Pawned first.
+      popmnuItemMeltedScrap.Enabled := EnabledMnuEntries or
+                                       (HasItem and (qryInvItemscStatus.AsString = PawnItemStatus_Defaulted) and
+                                        qryInvItemsSOLD_DATE.IsNull);
+      popmnuItemForSale.Enabled := popmnuItemMeltedScrap.Enabled;
+    end
+  else if IsPurchase then
+    begin
+      // Same "locked" rule as TDM.PurchaseItemLockedSQL: sold, or a status this
+      // flow does not own (e.g. on layaway).
+      ItemStatus := qryInvItemsINV_ITEM_STATUS.AsString;
+      Locked := not HasItem or not qryInvItemsSOLD_DATE.IsNull or
+                ((ItemStatus <> 'S') and (ItemStatus <> 'C'));
+
+      popmnuItemForSale.Enabled := not Locked and
+                                   not ((ItemStatus = 'S') and not qryInvItemsFORSALE_DATE.IsNull);
+      popmnuItemMeltedScrap.Enabled := not Locked and (ItemStatus <> 'C');
+      popmnuItemUndecided.Enabled := not Locked and
+                                     ((ItemStatus = 'C') or
+                                      not qryInvItemsFORSALE_DATE.IsNull or
+                                      not qryInvItemsMELTED_DATE.IsNull);
+    end;
+end;
+
+procedure TfrmClients.SetSelectedPurchaseItemStatus(PurchaseItemAction: integer);
+begin
+  if (CurrentTranType <> TranPurchase) or not qryInvItems.Active or qryInvItems.IsEmpty then
+    exit;
+
+  if not DM.SetPurchaseItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, PurchaseItemAction) then
+    PawnWarn('This item was already sold or put on layaway. Its status was not changed.', 'PawnPro', Self);
+
+  DM.RefreshFBQry(qryInvItems);
+  UpdatePurchaseStatusActions;
+end;
+
+{ Defaulted date to keep when a pawn item moves on to For Sale / Scrap: the
+  item's own date if it was already defaulted ("decided later"), else today. }
+function TfrmClients.ItemDefaultedDate: variant;
+begin
+  if qryInvItemsDEFAULTED_DATE.IsNull then
+    Result := Date
+  else
+    Result := qryInvItemsDEFAULTED_DATE.AsDateTime;
+end;
+
+procedure TfrmClients.popmnuItemUndecidedClick(Sender: TObject);
+begin
+  SetSelectedPurchaseItemStatus(PurchaseItemUndecided);
 end;
 
 procedure TfrmClients.PopMnuTransactionsPopup(Sender: TObject);
@@ -2325,6 +2487,52 @@ procedure TfrmClients.btnChangePawnStatusClick(Sender: TObject);
 begin
   if DM.qryTransactionsTRANSACTION_NO.AsInteger > 0 then
     mnuPawnStatusInactiveClick(Sender);
+end;
+
+procedure TfrmClients.btnChangePurchaseStatusClick(Sender: TObject);
+var
+  TransactionNo, InvItemNo: integer;
+begin
+  TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  if TransactionNo <= 0 then
+    exit;
+  InvItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
+
+  frmPurchaseChangeStatus := TfrmPurchaseChangeStatus.Create(Self);
+  try
+    CenterPopupOnControl(DBGrid6, frmPurchaseChangeStatus);
+    frmPurchaseChangeStatus.TransactionNo := TransactionNo;
+    if frmPurchaseChangeStatus.ShowModal = mrOk then
+      begin
+        DM.RefreshFBQry(DM.qryTransactions, TransactionNo, 'TRANSACTION_NO');
+        DM.RefreshFBQry(qryInvItems, InvItemNo, 'INV_ITEM_NO');
+      end;
+  finally
+    frmPurchaseChangeStatus.Free;
+    frmPurchaseChangeStatus := nil;
+  end;
+
+  UpdatePurchaseStatusActions;
+end;
+
+procedure TfrmClients.btnReactivatePurchaseClick(Sender: TObject);
+var
+  TransactionNo, InvItemNo: integer;
+begin
+  TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
+  if TransactionNo <= 0 then
+    exit;
+  InvItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
+
+  if not PawnConfirm('Put this purchase''s items back to undecided?' + sLineBreak +
+                     'You can then choose For Sale or Scrap again.', 'Undo Items For Sale / Scrap', Self) then
+    exit;
+
+  DM.PutPurchaseBackToOriginal(TransactionNo);
+
+  DM.RefreshFBQry(DM.qryTransactions, TransactionNo, 'TRANSACTION_NO');
+  DM.RefreshFBQry(qryInvItems, InvItemNo, 'INV_ITEM_NO');
+  UpdatePurchaseStatusActions;
 end;
 
 procedure TfrmClients.AddEditLayaway(NewRow: boolean);
@@ -2563,6 +2771,11 @@ end;
 procedure TfrmClients.UpdateStatusOnSelectedItemInPopUp(TransactionNo, ItemNo: integer;
                   const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
 begin
+  // Pawn items only. On any other transaction the status recalculation below
+  // would see "open pawn items" and set the transaction back to Active.
+  if CurrentTranType <> TranPawn then
+    exit;
+
   DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate);
   DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
   DM.RefreshFBQry(qryInvItems);
@@ -2596,8 +2809,14 @@ end;
 
 procedure TfrmClients.popmnuItemForSaleClick(Sender: TObject);
 begin
+  if CurrentTranType = TranPurchase then
+    begin
+      SetSelectedPurchaseItemStatus(PawnDefaultedItemForSale);
+      exit;
+    end;
+
   UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
-                                    null, Date, null, Date);
+                                    null, ItemDefaultedDate, null, Date);
 //  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, Date, null, Date);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshFBQry(qryInvItems);
@@ -2605,8 +2824,14 @@ end;
 
 procedure TfrmClients.popmnuItemMeltedScrapClick(Sender: TObject);
 begin
+  if CurrentTranType = TranPurchase then
+    begin
+      SetSelectedPurchaseItemStatus(PawnDefaultedItemMelted);
+      exit;
+    end;
+
   UpdateStatusOnSelectedItemInPopUp(DM.qryTransactionsTRANSACTION_NO.AsInteger, qryInvItemsINV_ITEM_NO.AsInteger,
-                                    null, Date, Date, null);
+                                    null, ItemDefaultedDate, Date, null);
 //  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, Date, Date, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshFBQry(qryInvItems);
@@ -2636,7 +2861,15 @@ begin
   TransactionNo := DM.qryTransactionsTRANSACTION_NO.AsInteger;
   InvItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
 
-  DM.PutPawnBackToActive(TransactionNo);
+  try
+    DM.PutPawnBackToActive(TransactionNo);
+  except
+    on E: Exception do
+      begin
+        PawnWarn(E.Message, 'Reactivate Pawn', Self);
+        exit;
+      end;
+  end;
 
   DM.RefreshFBQry(DM.qryTransactions, TransactionNo, 'TRANSACTION_NO');
   DM.RefreshFBQry(qryInvItems, InvItemNo, 'INV_ITEM_NO');

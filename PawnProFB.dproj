@@ -3,11 +3,11 @@
         <ProjectGuid>{7F901A4F-048F-4BE9-BB5E-0B8ABF30B89E}</ProjectGuid>
         <MainSource>PawnProFB.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>1027</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>20.4</ProjectVersion>
+        <ProjectVersion>20.5</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">PawnProFB</ProjectName>
     </PropertyGroup>
@@ -381,6 +381,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <Form>frmPawnChangeStatus</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="PurchaseChangeStatus.pas">
+            <Form>frmPurchaseChangeStatus</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <DCCReference Include="ItemHistory.pas">
             <Form>frmItemHistory</Form>
             <FormType>dfm</FormType>
@@ -394,6 +398,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
         </DCCReference>
         <DCCReference Include="ViewSentTickets.pas">
             <Form>frmViewSentTickets</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="AdditionalFilters.pas">
+            <Form>frmAdditionalFilters</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
