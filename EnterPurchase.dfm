@@ -3,8 +3,8 @@ object frmEnterPurchase: TfrmEnterPurchase
   Top = 211
   BorderStyle = bsDialog
   Caption = 'Purchase'
-  ClientHeight = 268
-  ClientWidth = 448
+  ClientHeight = 271
+  ClientWidth = 496
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -20,68 +20,68 @@ object frmEnterPurchase: TfrmEnterPurchase
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 442
-    Height = 194
+    Width = 490
+    Height = 197
     Align = alClient
     TabOrder = 0
     object Label1: TLabel
       Left = 19
-      Top = 15
+      Top = 11
       Width = 31
       Height = 18
       Caption = 'Date'
     end
     object Label3: TLabel
       Left = 19
-      Top = 67
+      Top = 68
       Width = 64
       Height = 18
       Caption = 'Comment'
     end
     object Label5: TLabel
-      Left = 221
-      Top = 15
+      Left = 251
+      Top = 11
       Width = 51
       Height = 18
       Caption = 'Amount'
     end
     object Label4: TLabel
-      Left = 323
-      Top = 15
+      Left = 356
+      Top = 11
       Width = 89
       Height = 18
       Caption = 'Maturity Date'
     end
     object Label2: TLabel
-      Left = 123
-      Top = 15
+      Left = 147
+      Top = 11
       Width = 62
       Height = 18
       Caption = 'Ticket No'
     end
     object DBMemo1: TDBMemo
       Left = 19
-      Top = 91
-      Width = 400
-      Height = 81
+      Top = 90
+      Width = 452
+      Height = 91
       DataField = 'TRAN_COMMENT'
       DataSource = DM.DSTransactions
       ScrollBars = ssVertical
       TabOrder = 4
     end
     object edAmount: TDBEdit
-      Left = 221
+      Left = 248
       Top = 33
-      Width = 83
+      Width = 98
       Height = 26
       DataField = 'TRAN_PAWN_AMOUNT'
       DataSource = DM.DSTransactions
       TabOrder = 2
     end
     object edTicketNo: TDBEdit
-      Left = 123
+      Left = 147
       Top = 33
-      Width = 83
+      Width = 95
       Height = 26
       DataField = 'TRAN_TICKET_NO'
       DataSource = DM.DSTransactions
@@ -90,7 +90,7 @@ object frmEnterPurchase: TfrmEnterPurchase
     object RzDBDateTimeEdit1: TRzDBDateTimeEdit
       Left = 19
       Top = 33
-      Width = 98
+      Width = 122
       Height = 26
       DataSource = DM.DSTransactions
       DataField = 'TRAN_DATE'
@@ -98,9 +98,9 @@ object frmEnterPurchase: TfrmEnterPurchase
       EditType = etDate
     end
     object RzDBDateTimeEdit2: TRzDBDateTimeEdit
-      Left = 323
+      Left = 352
       Top = 33
-      Width = 96
+      Width = 119
       Height = 26
       DataSource = DM.DSTransactions
       DataField = 'TRAN_MATURITY'
@@ -111,15 +111,14 @@ object frmEnterPurchase: TfrmEnterPurchase
   object GroupBox2: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 203
-    Width = 442
+    Top = 206
+    Width = 490
     Height = 62
     Align = alBottom
     TabOrder = 1
-    ExplicitLeft = 8
     object btnSave: TRzBitBtn
-      Left = 81
-      Top = 11
+      Left = 227
+      Top = 10
       Width = 107
       Height = 41
       Caption = '&Save'
@@ -131,8 +130,8 @@ object frmEnterPurchase: TfrmEnterPurchase
       Spacing = -5
     end
     object btnCancel: TBitBtn
-      Left = 252
-      Top = 11
+      Left = 361
+      Top = 10
       Width = 107
       Height = 41
       Kind = bkCancel

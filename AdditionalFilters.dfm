@@ -21,8 +21,6 @@ object frmAdditionalFilters: TfrmAdditionalFilters
     Height = 63
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 263
-    ExplicitWidth = 520
     object btnCancel: TBitBtn
       Left = 358
       Top = 12
@@ -51,8 +49,6 @@ object frmAdditionalFilters: TfrmAdditionalFilters
     Height = 244
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 520
-    ExplicitHeight = 254
     object gbPawns: TGroupBox
       Left = 30
       Top = 13
@@ -135,6 +131,7 @@ object frmAdditionalFilters: TfrmAdditionalFilters
         Top = 114
         Width = 255
         Height = 22
+        AutoSize = False
         AutoSizeWidth = 255
         Caption = 'Defaulted (undecided items status)'
         Font.Charset = DEFAULT_CHARSET
