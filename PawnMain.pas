@@ -705,7 +705,6 @@ begin
     end;
 
   frmInventory := TfrmInventory.Create(Self);
-  frmInventory.chkSale.Checked := true;
   frmInventory.Show;
 end;
 

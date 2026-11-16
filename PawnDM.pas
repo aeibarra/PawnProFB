@@ -27,6 +27,14 @@ type
     SkippedCount: Integer;
   end;
 
+  // One item of a sale, as the sale screens hand it to TDM.CompleteSale. Cost,
+  // quantity and asking price are read from the item itself when saving.
+  TSaleLine = record
+    InvItemNo:   integer;
+    Description: string;      // as shown on the sale (kept for the ticket)
+    SalePrice:   Currency;    // pre-tax, before the whole-sale discount
+  end;
+
   TDM = class(TDataModule)
     DSCustomers: TDataSource;
     DSStates: TDataSource;
@@ -300,6 +308,13 @@ type
     procedure SetPurchaseItemsStatus(TransactionNo: integer; PurchaseItemAction: integer);
     procedure PutPurchaseBackToOriginal(TransactionNo: integer);
     function SetPurchaseItemStatus(InvItemNo: integer; PurchaseItemAction: integer): boolean;
+    function CompleteSale(const Lines: TArray<TSaleLine>; SaleDate: TDateTime;
+                          DiscountIsPercent: boolean; DiscountValue, TaxPerc: Currency): integer;
+    procedure VoidSale(SaleNo: integer; const Reason: string);
+    function FindSaleOfItem(InvItemNo: integer; out SaleNo, TicketNo, LineCount: integer;
+                            out Total: Currency): boolean;
+    function GetSaleTicketsOfTransaction(TransactionNo: integer): string;
+    function UnsellItem(InvItemNo: integer): boolean;
     procedure RefreshFBQry(Qry: TFDQuery); overload;
     procedure RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string); overload;
     procedure UpdatePawnItemStatus(InvItemNo: integer; const RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate: variant);
@@ -2282,6 +2297,294 @@ begin
 
   // Single statement: autocommit is enough, no explicit FB transaction needed.
   Result := ConnFB.ExecSQL(sSQL, [InvItemNo]) > 0;
+end;
+
+{ Saves one sale -- from the Inventory sale drawer or the Sell Items screen --
+  as a numbered ticket: a SALES row holding the money as it was on the day, one
+  SALE_LINES row per item, and each item 'S' -> 'D' with SOLD_DATE (the
+  INVENTORY_ITEM_STATUS_LOG trigger records that). UNIT_PRICE is left alone:
+  the line keeps both the asking price and what the item sold for.
+
+  The whole-sale discount is split across the lines in proportion to their
+  sale price, in whole cents (largest remainder), so the line nets add up to
+  exactly subtotal - discount and no line goes below zero.
+
+  All or nothing, in one FB transaction: if any item is no longer For Sale
+  (another PC sold it meanwhile) nothing is saved and the message names it.
+  The ticket counter is bumped inside the same transaction, so a failed sale
+  never uses up a ticket number. Returns the sale ticket number. }
+function TDM.CompleteSale(const Lines: TArray<TSaleLine>; SaleDate: TDateTime;
+  DiscountIsPercent: boolean; DiscountValue, TaxPerc: Currency): integer;
+var
+  i, Best, SaleNo: integer;
+  Subtotal, Discount, Tax, Total, Share: Currency;
+  SubCents, DiscCents, PriceCents, LeftCents: Int64;
+  ShareCents, Remainders: TArray<Int64>;
+  DiscType, DiscValue: Variant;
+  StartedFBTrans: Boolean;
+  Barcode, Step: string;
+begin
+  if Length(Lines) = 0 then
+    raise Exception.Create('There are no items in this sale.');
+
+  Subtotal := 0;
+  for i := 0 to High(Lines) do
+    begin
+      if Lines[i].SalePrice <= 0 then
+        raise Exception.Create('Every item in the sale needs a sale price.');
+      Subtotal := Subtotal + Lines[i].SalePrice;
+    end;
+
+  Discount := CalcSaleDiscount(Subtotal, DiscountIsPercent, DiscountValue);
+  CalcTaxAndTotal(Subtotal - Discount, TaxPerc, Tax, Total);
+
+  // Discount shares in cents: floor of the proportional share, then the cents
+  // left over go one each to the lines with the largest remainders.
+  SubCents := Round(Subtotal * 100);
+  DiscCents := Round(Discount * 100);
+  SetLength(ShareCents, Length(Lines));
+  SetLength(Remainders, Length(Lines));
+  LeftCents := DiscCents;
+  for i := 0 to High(Lines) do
+    begin
+      PriceCents := Round(Lines[i].SalePrice * 100);
+      ShareCents[i] := (DiscCents * PriceCents) div SubCents;
+      Remainders[i] := (DiscCents * PriceCents) mod SubCents;
+      Dec(LeftCents, ShareCents[i]);
+    end;
+  while LeftCents > 0 do
+    begin
+      Best := 0;
+      for i := 1 to High(Lines) do
+        if Remainders[i] > Remainders[Best] then
+          Best := i;
+      Inc(ShareCents[Best]);
+      Remainders[Best] := -1;
+      Dec(LeftCents);
+    end;
+
+  if Discount > 0 then
+    begin
+      if DiscountIsPercent then
+        DiscType := SaleDiscount_Percent
+      else
+        DiscType := SaleDiscount_Amount;
+      DiscValue := DiscountValue;
+    end
+  else
+    begin
+      DiscType := Null;
+      DiscValue := Null;
+    end;
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    for i := 0 to High(Lines) do
+      if ConnFB.ExecSQL(
+           'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''D'', SOLD_DATE = :SOLD_DATE ' +
+           'WHERE INV_ITEM_NO = :INV_ITEM_NO AND INV_ITEM_STATUS = ''S'' AND SOLD_DATE IS NULL',
+           [DateOf(SaleDate), Lines[i].InvItemNo]) = 0 then
+        begin
+          Barcode := VarToStr(ConnFB.ExecSQLScalar(
+            'SELECT INV_ITEM_BARCODE FROM INVENTORY_ITEMS WHERE INV_ITEM_NO = :INV_ITEM_NO', [Lines[i].InvItemNo]));
+          raise Exception.CreateFmt('Item %s is no longer For Sale. Nothing was sold.', [Barcode]);
+        end;
+
+    // Next sale ticket number: the counter plus a random 1..SaleTicketMaxStep,
+    // so the gap between two receipts says nothing about how many sales
+    // happened in between (the store's volume). Still increasing, and still
+    // inside the sale's transaction: a failed sale gives its number back.
+    // The UPDATE locks the counter row until commit, so two PCs completing a
+    // sale at the same moment cannot share a number (UQ_SALES_TICKET_NO backs
+    // that up). A missing counter row is recreated past the last ticket saved.
+    Step := Format('(1 + CAST(FLOOR(RAND() * %d) AS INTEGER))', [SaleTicketMaxStep]);
+    if ConnFB.ExecSQL('UPDATE TABLE_KEYS SET LAST_KEY = LAST_KEY + ' + Step +
+                      ' WHERE TABLE_NAME = :TABLE_NAME', [SaleTicketNo]) = 0 then
+      ConnFB.ExecSQL('INSERT INTO TABLE_KEYS (TABLE_NAME, LAST_KEY) ' +
+                     'SELECT CAST(:TABLE_NAME AS VARCHAR(15)), ' +
+                     Format('MAXVALUE(COALESCE(MAX(SALE_TICKET_NO), 0), %d) + ', [SaleTicketStartAfter]) + Step +
+                     ' FROM SALES', [SaleTicketNo]);
+    Result := ConnFB.ExecSQLScalar('SELECT LAST_KEY FROM TABLE_KEYS WHERE TABLE_NAME = :TABLE_NAME',
+                                   [SaleTicketNo]);
+
+    // Pay type 1 = Cash (PAYMENT_TYPES); the only way to pay until card
+    // payments are added.
+    ConnFB.ExecSQL(
+      'INSERT INTO SALES (SALE_TICKET_NO, SALE_DATE, SUBTOTAL, DISCOUNT_TYPE, DISCOUNT_VALUE, ' +
+      '  DISCOUNT_AMOUNT, TAX_PERC, TAX_AMOUNT, TOTAL, PAY_TYPE_NO, SALE_STATUS) ' +
+      'VALUES (:SALE_TICKET_NO, :SALE_DATE, :SUBTOTAL, :DISCOUNT_TYPE, :DISCOUNT_VALUE, ' +
+      '  :DISCOUNT_AMOUNT, :TAX_PERC, :TAX_AMOUNT, :TOTAL, 1, :SALE_STATUS)',
+      [Result, DateOf(SaleDate), Subtotal, DiscType, DiscValue,
+       Discount, TaxPerc, Tax, Total, SaleStatus_Completed],
+      [ftInteger, ftDate, ftCurrency, ftWideString, ftCurrency,
+       ftCurrency, ftCurrency, ftCurrency, ftCurrency, ftWideString]);
+
+    SaleNo := ConnFB.ExecSQLScalar('SELECT SALE_NO FROM SALES WHERE SALE_TICKET_NO = :SALE_TICKET_NO', [Result]);
+
+    // Quantity, cost and asking price come from the item as it is now.
+    for i := 0 to High(Lines) do
+      begin
+        Share := ShareCents[i] / 100;
+        ConnFB.ExecSQL(
+          'INSERT INTO SALE_LINES (SALE_NO, INV_ITEM_NO, ITEM_COUNT, DESCRIPTION, UNIT_COST, ' +
+          '  LIST_PRICE, SALE_PRICE, DISCOUNT_SHARE, NET_PRICE) ' +
+          'SELECT CAST(:SALE_NO AS INTEGER), ii.INV_ITEM_NO, ii.INV_ITEM_COUNT, ' +
+          '  CAST(:DESCRIPTION AS VARCHAR(120)), ii.UNIT_COST, ii.UNIT_PRICE, ' +
+          '  CAST(:SALE_PRICE AS DECIMAL(18,2)), CAST(:DISCOUNT_SHARE AS DECIMAL(18,2)), ' +
+          '  CAST(:NET_PRICE AS DECIMAL(18,2)) ' +
+          'FROM INVENTORY_ITEMS ii WHERE ii.INV_ITEM_NO = :INV_ITEM_NO',
+          [SaleNo, Copy(Lines[i].Description, 1, 120), Lines[i].SalePrice, Share,
+           Lines[i].SalePrice - Share, Lines[i].InvItemNo],
+          [ftInteger, ftWideString, ftCurrency, ftCurrency, ftCurrency, ftInteger]);
+      end;
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Rollback;
+    raise;
+  end;
+end;
+
+{ Voids a whole sale ticket: its items go back to For Sale (SOLD_DATE cleared)
+  and the ticket stays in SALES marked Voided -- never deleted -- so ticket
+  numbers have no holes and the history shows what happened. All or nothing:
+  refused when the ticket is already voided, or when any of its items is no
+  longer Sold the way this sale left it. }
+procedure TDM.VoidSale(SaleNo: integer; const Reason: string);
+var
+  LineCount, Restored: integer;
+  VoidReason: Variant;
+  StartedFBTrans: Boolean;
+begin
+  if Trim(Reason) = '' then
+    VoidReason := Null
+  else
+    VoidReason := Copy(Trim(Reason), 1, 120);
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    if ConnFB.ExecSQL(
+         'UPDATE SALES SET SALE_STATUS = :VOIDED, VOID_DATE = CURRENT_TIMESTAMP, VOID_REASON = :VOID_REASON ' +
+         'WHERE SALE_NO = :SALE_NO AND SALE_STATUS = :COMPLETED',
+         [SaleStatus_Voided, VoidReason, SaleNo, SaleStatus_Completed],
+         [ftWideString, ftWideString, ftInteger, ftWideString]) = 0 then
+      raise Exception.Create('This sale was already voided.');
+
+    LineCount := ConnFB.ExecSQLScalar('SELECT COUNT(*) FROM SALE_LINES WHERE SALE_NO = :SALE_NO', [SaleNo]);
+    Restored := ConnFB.ExecSQL(
+      'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', SOLD_DATE = NULL ' +
+      'WHERE INV_ITEM_NO IN (SELECT INV_ITEM_NO FROM SALE_LINES WHERE SALE_NO = :SALE_NO) ' +
+      '  AND INV_ITEM_STATUS = ''D'' AND LAYAWAY_DATE IS NULL',
+      [SaleNo]);
+    if Restored <> LineCount then
+      raise Exception.Create('Some items of this sale are no longer Sold. The sale was not voided.');
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Rollback;
+    raise;
+  end;
+end;
+
+{ The completed sale ticket an item was sold on. False when there is none:
+  the item was sold before sale tickets existed, or through a layaway. }
+function TDM.FindSaleOfItem(InvItemNo: integer; out SaleNo, TicketNo, LineCount: integer;
+  out Total: Currency): boolean;
+var
+  Qry: TFDQuery;
+begin
+  SaleNo := 0;
+  TicketNo := 0;
+  LineCount := 0;
+  Total := 0;
+
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := ConnFB;
+    Qry.SQL.Text :=
+      'SELECT s.SALE_NO, s.SALE_TICKET_NO, s.TOTAL, ' +
+      '       (SELECT COUNT(*) FROM SALE_LINES l2 WHERE l2.SALE_NO = s.SALE_NO) AS LINE_COUNT ' +
+      'FROM SALE_LINES l JOIN SALES s ON s.SALE_NO = l.SALE_NO ' +
+      'WHERE l.INV_ITEM_NO = :INV_ITEM_NO AND s.SALE_STATUS = :COMPLETED ' +
+      'ORDER BY s.SALE_NO DESC ROWS 1';
+    Qry.ParamByName('INV_ITEM_NO').AsInteger := InvItemNo;
+    Qry.ParamByName('COMPLETED').AsString := SaleStatus_Completed;
+    Qry.Open;
+    Result := not Qry.IsEmpty;
+    if Result then
+      begin
+        SaleNo := Qry.FieldByName('SALE_NO').AsInteger;
+        TicketNo := Qry.FieldByName('SALE_TICKET_NO').AsInteger;
+        LineCount := Qry.FieldByName('LINE_COUNT').AsInteger;
+        Total := Qry.FieldByName('TOTAL').AsCurrency;
+      end;
+  finally
+    Qry.Free;
+  end;
+end;
+
+{ Sale ticket numbers (completed or voided) holding items of a transaction,
+  comma separated; '' when none. Such a transaction must not be deleted, or
+  its items (deleted with it by cascade) would vanish from the sales history.
+  There is no FK from SALE_LINES to INVENTORY_ITEMS (see the v12 migration),
+  so this check is what protects it. }
+function TDM.GetSaleTicketsOfTransaction(TransactionNo: integer): string;
+var
+  Qry: TFDQuery;
+begin
+  Result := '';
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := ConnFB;
+    Qry.SQL.Text :=
+      'SELECT DISTINCT s.SALE_TICKET_NO ' +
+      'FROM SALE_LINES l ' +
+      'JOIN SALES s ON s.SALE_NO = l.SALE_NO ' +
+      'JOIN INVENTORY_ITEMS ii ON ii.INV_ITEM_NO = l.INV_ITEM_NO ' +
+      'WHERE ii.TRANSACTION_NO = :TRANSACTION_NO ' +
+      'ORDER BY s.SALE_TICKET_NO';
+    Qry.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
+    Qry.Open;
+    while not Qry.Eof do
+      begin
+        if Result <> '' then
+          Result := Result + ', ';
+        Result := Result + '#' + Qry.Fields[0].AsString;
+        Qry.Next;
+      end;
+  finally
+    Qry.Free;
+  end;
+end;
+
+{ Undo the sale of an item that has no sale ticket (sold before tickets
+  existed): back to For Sale, SOLD_DATE cleared. A layaway payoff also sets
+  SOLD_DATE but belongs to Reactivate Layaway, so it is not touched here.
+  Items sold on a ticket are put back by TDM.VoidSale. False if nothing changed. }
+function TDM.UnsellItem(InvItemNo: integer): boolean;
+begin
+  Result := ConnFB.ExecSQL(
+    'UPDATE INVENTORY_ITEMS ii SET ii.INV_ITEM_STATUS = ''S'', ii.SOLD_DATE = NULL ' +
+    'WHERE ii.INV_ITEM_NO = :INV_ITEM_NO AND ii.INV_ITEM_STATUS = ''D'' AND ii.LAYAWAY_DATE IS NULL ' +
+    '  AND NOT EXISTS (SELECT 1 FROM SALE_LINES l JOIN SALES s ON s.SALE_NO = l.SALE_NO ' +
+    '                  WHERE l.INV_ITEM_NO = ii.INV_ITEM_NO AND s.SALE_STATUS = ''C'')',
+    [InvItemNo]) > 0;
 end;
 
 procedure TDM.ReactivateLayway(TransactionNo: integer);

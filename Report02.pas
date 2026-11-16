@@ -138,6 +138,54 @@ type
     rbTranStatusActive: TRzRadioButton;
     rbDateRange: TRzRadioButton;
     cbActiveWithin: TRzComboBox;
+    rbListItemsForSale: TRzRadioButton;
+    qryItemsForSale: TFDQuery;
+    dsItemsForSale: TDataSource;
+    DBPItemsForSale: TppDBPipeline;
+    RepItemsForSale: TppReport;
+    ppTitleBand3: TppTitleBand;
+    lblFSTitle: TppLabel;
+    ppSystemVariable5: TppSystemVariable;
+    ppSystemVariable6: TppSystemVariable;
+    lblFSAsOf: TppLabel;
+    ppDetailBand3: TppDetailBand;
+    dbFSBarcode: TppDBText;
+    dbFSDescription: TppDBText;
+    dbFSSource: TppDBText;
+    dbFSTicketNo: TppDBText;
+    dbFSForSaleSince: TppDBText;
+    dbFSQty: TppDBText;
+    dbFSUnitCost: TppDBText;
+    dbFSUnitPrice: TppDBText;
+    ppGroup3: TppGroup;
+    ppGroupHeaderBand3: TppGroupHeaderBand;
+    ppGroupFooterBand3: TppGroupFooterBand;
+    dbFSCategory: TppDBText;
+    lblFSHBarcode: TppLabel;
+    lblFSHDescription: TppLabel;
+    lblFSHSource: TppLabel;
+    lblFSHTicketNo: TppLabel;
+    lblFSHForSaleSince: TppLabel;
+    lblFSHQty: TppLabel;
+    lblFSHUnitCost: TppLabel;
+    lblFSHUnitPrice: TppLabel;
+    ppLine7: TppLine;
+    ppLine8: TppLine;
+    lblFSSubtotal: TppLabel;
+    calcFSCost: TppDBCalc;
+    calcFSPrice: TppDBCalc;
+    ppSummaryBand3: TppSummaryBand;
+    ppLine9: TppLine;
+    lblFSSumTitle: TppLabel;
+    lblFSSumCount: TppLabel;
+    lblFSSumMissing: TppLabel;
+    lblFSSumCostCap: TppLabel;
+    lblFSSumCost: TppLabel;
+    lblFSSumPriceCap: TppLabel;
+    lblFSSumPrice: TppLabel;
+    ppDesignLayers3: TppDesignLayers;
+    ppDesignLayer3: TppDesignLayer;
+    ppParameterList3: TppParameterList;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure qryPawnAndPurchasesCalcFields(DataSet: TDataSet);
@@ -163,7 +211,10 @@ type
     function ActiveLimitMonths: Integer;
     function ActivePawnFilter: string;
     procedure Report_1(Preview: boolean);
+    procedure LoadSelection;
+    procedure SaveSelection;
     procedure Report_2(Preview: boolean);
+    procedure Report_ItemsForSale(Preview: boolean);
     procedure ExecReport(Preview: boolean);
   public
     { Public declarations }
@@ -176,7 +227,10 @@ implementation
 
 {$R *.dfm}
 
-uses PawnGlobal, PawnDM, GLbUtils;
+uses PawnGlobal, PawnDM, GLbUtils, uPawnDialogs;
+
+const
+  Report02IniSection = 'Report02';
 
 procedure TfrmReport02.btnExitClick(Sender: TObject);
 begin
@@ -198,6 +252,7 @@ end;
 
 procedure TfrmReport02.FormDestroy(Sender: TObject);
 begin
+  SaveSelection;
   FInterestByTran.Free;
   // FqryPay is owned by the form (Self) and freed with it.
 end;
@@ -222,12 +277,57 @@ procedure TfrmReport02.FormShow(Sender: TObject);
 begin
   FrmSetViewSize(Self);
 
-  edFrom.Date := Date;
-  edTo.Date := Date;
+  // The date range always opens on the current month; it is not remembered.
+  edFrom.Date := StartOfTheMonth(Date);
+  edTo.Date := DateOf(EndOfTheMonth(Date));
+
+  LoadSelection;
 
   if cbActiveWithin.ItemIndex < 0 then
     cbActiveWithin.ItemIndex := 1;   // two years
   rbDateRangeClick(nil);
+end;
+
+{ The user's last choices (per user, local INI) -- report type, which list
+  and the "active within" period. First time: the DFM defaults. The From / To
+  dates are not part of it: they always open on the current month. }
+procedure TfrmReport02.LoadSelection;
+var
+  Idx: integer;
+begin
+  try
+    if DM.RegIniFile.ReadBool(Report02IniSection, 'ListOfPayments', rbPawnWithPayments.Checked) then
+      rbPawnWithPayments.Checked := True
+    else
+      rbPawnList.Checked := True;
+
+    if DM.RegIniFile.ReadBool(Report02IniSection, 'ItemsForSale', False) then
+      rbListItemsForSale.Checked := True
+    else if DM.RegIniFile.ReadBool(Report02IniSection, 'ActivePawns', rbTranStatusActive.Checked) then
+      rbTranStatusActive.Checked := True
+    else
+      rbDateRange.Checked := True;
+
+    Idx := DM.RegIniFile.ReadInteger(Report02IniSection, 'ActiveWithin', cbActiveWithin.ItemIndex);
+    if (Idx >= 0) and (Idx < cbActiveWithin.Items.Count) then
+      cbActiveWithin.ItemIndex := Idx;
+  except
+    // cosmetic: fall back to the defaults
+  end;
+end;
+
+procedure TfrmReport02.SaveSelection;
+begin
+  try
+    DM.RegIniFile.WriteBool(Report02IniSection, 'ListOfPayments', rbPawnWithPayments.Checked);
+    DM.RegIniFile.WriteBool(Report02IniSection, 'ActivePawns', rbTranStatusActive.Checked);
+    DM.RegIniFile.WriteBool(Report02IniSection, 'ItemsForSale', rbListItemsForSale.Checked);
+    DM.RegIniFile.WriteInteger(Report02IniSection, 'ActiveWithin', cbActiveWithin.ItemIndex);
+    // Dates used to be remembered; drop what earlier versions left behind.
+    DM.RegIniFile.DeleteKey(Report02IniSection, 'FromDate');
+    DM.RegIniFile.DeleteKey(Report02IniSection, 'ToDate');
+  except
+  end;
 end;
 
 procedure TfrmReport02.lblTranTypeGetText(Sender: TObject; var Text: string);
@@ -314,7 +414,7 @@ begin
 
     if rbDateRange.Checked then  //Params selection
       begin
-        lblRep1PawnAndPurchaseTitle.Caption := 'Pawn and Purchases';
+        lblRep1PawnAndPurchaseTitle.Caption := 'Pawns and Purchases';
         lblFromToDates.Visible := true;
         qryPawnAndPurchases.SQL[Param_LineNo_qryPawnAndPurchases] := 'and T2.TRAN_DATE between :FromDate and :ToDate ';
         qryPawnAndPurchases.Params.ParamByName('FromDate').AsDate := edFrom.Date;
@@ -364,12 +464,97 @@ begin
   RepTranPayments.Print;
 end;
 
+{ Three lists share this form: active pawns, items For Sale, and every pawn
+  and purchase in a date range. Only the controls that apply to the chosen
+  list stay enabled, and the report-type caption says what it will print:
+  the active list holds pawns only, the date range pawns and purchases. }
+{ Every item For Sale today (INV_ITEM_STATUS = 'S'), grouped by category:
+  purchases and defaulted pawns alike. A snapshot, so the active-within and
+  date-range choices do not apply.
+
+  UNIT_COST and UNIT_PRICE are per line, not per piece: the purchase cost is
+  spread over the lines by weight with no item count involved
+  (SPU_CALC_UNIT_COST_FROM_WEIGHT), and a sale takes one price per line. So
+  the totals add them up as they are; Qty is printed for information only.
+
+  An item without a cost or a price adds nothing to that total, so the
+  summary counts them -- otherwise a low total could not be told from a
+  missing one. }
+procedure TfrmReport02.Report_ItemsForSale(Preview: boolean);
+var
+  Q: TFDQuery;
+  Cnt, NoCost, NoPrice: integer;
+  Missing: string;
+begin
+  Screen.Cursor := crHourGlass;
+  try
+    qryItemsForSale.Close;
+    qryItemsForSale.Open;
+
+    Q := TFDQuery.Create(nil);
+    try
+      Q.Connection := DM.ConnFB;
+      Q.SQL.Text :=
+        'select count(*), coalesce(sum(UNIT_COST), 0), coalesce(sum(UNIT_PRICE), 0), ' +
+        '  sum(iif(coalesce(UNIT_COST, 0) = 0, 1, 0)), sum(iif(coalesce(UNIT_PRICE, 0) = 0, 1, 0)) ' +
+        'from INVENTORY_ITEMS where INV_ITEM_STATUS = ''S''';
+      Q.Open;
+      Cnt := Q.Fields[0].AsInteger;
+      lblFSSumCost.Caption := FormatCurr('$,0.00', Q.Fields[1].AsCurrency);
+      lblFSSumPrice.Caption := FormatCurr('$,0.00', Q.Fields[2].AsCurrency);
+      NoCost := Q.Fields[3].AsInteger;
+      NoPrice := Q.Fields[4].AsInteger;
+    finally
+      Q.Free;
+    end;
+  finally
+    Screen.Cursor := crDefault;
+  end;
+
+  if qryItemsForSale.IsEmpty then
+  begin
+    PawnInfo('There are no items For Sale.', 'Items For Sale', Self);
+    exit;
+  end;
+
+  lblFSAsOf.Caption := 'As of ' + FormatDateTime('mm/dd/yyyy', Date);
+  if Cnt = 1 then
+    lblFSSumCount.Caption := '1 item For Sale'
+  else
+    lblFSSumCount.Caption := Format('%d items For Sale', [Cnt]);
+
+  Missing := '';
+  if NoCost > 0 then
+    Missing := Format('%d without a cost', [NoCost]);
+  if NoPrice > 0 then
+  begin
+    if Missing <> '' then
+      Missing := Missing + ', ';
+    Missing := Missing + Format('%d without a price', [NoPrice]);
+  end;
+  if Missing <> '' then
+    Missing := Missing + ' (not in the totals)';
+  lblFSSumMissing.Caption := Missing;
+
+  RepItemsForSale.DeviceType := PrnPreview[Preview];
+  RepItemsForSale.Print;
+end;
+
 procedure TfrmReport02.rbDateRangeClick(Sender: TObject);
 begin
   pnDateRange.Enabled := rbDateRange.Checked;
-  // Greyed out in date-range mode, so it is obvious which list it qualifies.
-  cbActiveWithin.Enabled := not rbDateRange.Checked;
-//
+  // Greyed out unless active mode, so it is obvious which list it qualifies.
+  cbActiveWithin.Enabled := rbTranStatusActive.Checked;
+
+  // The Items For Sale list has no report type to choose.
+  GroupBox3.Enabled := not rbListItemsForSale.Checked;
+  rbPawnList.Enabled := GroupBox3.Enabled;
+  rbPawnWithPayments.Enabled := GroupBox3.Enabled;
+
+  if rbDateRange.Checked then
+    rbPawnList.Caption := 'List of Pawns and Purchases'
+  else
+    rbPawnList.Caption := 'List of Pawns';
 end;
 
 procedure TfrmReport02.btnPrintClick(Sender: TObject);
@@ -379,7 +564,9 @@ end;
 
 procedure TfrmReport02.ExecReport(Preview: boolean);
 begin
-  if rbPawnList.Checked then
+  if rbListItemsForSale.Checked then
+    Report_ItemsForSale(Preview)
+  else if rbPawnList.Checked then
     begin
       Report_1(Preview);
     end

@@ -299,7 +299,7 @@ object frmRepPurchases: TfrmRepPurchases
     PDFSettings.Outline = False
     PreviewFormSettings.PageBorder.mmPadding = 0
     PreviewFormSettings.WindowState = wsMaximized
-    PreviewFormSettings.ZoomSetting = zsPageWidth
+    PreviewFormSettings.ZoomSetting = zsWholePage
     RTFSettings.AppName = 'ReportBuilder'
     RTFSettings.Author = 'ReportBuilder'
     RTFSettings.DefaultFont.Charset = DEFAULT_CHARSET

@@ -3,7 +3,7 @@ object frmReport02: TfrmReport02
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Pawn list'
-  ClientHeight = 432
+  ClientHeight = 474
   ClientWidth = 730
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -22,14 +22,14 @@ object frmReport02: TfrmReport02
     Left = 4
     Top = 4
     Width = 408
-    Height = 316
+    Height = 353
     TabOrder = 0
     object GroupBox3: TGroupBox
       Left = 59
-      Top = 197
+      Top = 242
       Width = 290
       Height = 93
-      TabOrder = 3
+      TabOrder = 5
       object rbPawnList: TRadioButton
         Left = 19
         Top = 13
@@ -51,11 +51,11 @@ object frmReport02: TfrmReport02
     end
     object pnDateRange: TRzPanel
       Left = 54
-      Top = 132
+      Top = 177
       Width = 295
       Height = 63
       BorderOuter = fsNone
-      TabOrder = 2
+      TabOrder = 4
       object RzLabel1: TRzLabel
         Left = 8
         Top = 3
@@ -99,7 +99,7 @@ object frmReport02: TfrmReport02
       Width = 249
       Height = 29
       Style = csDropDownList
-      TabOrder = 4
+      TabOrder = 1
       Text = 'No limit - every pawn on file'
       Items.Strings = (
         'Written in the last year'
@@ -121,23 +121,34 @@ object frmReport02: TfrmReport02
     end
     object rbDateRange: TRzRadioButton
       Left = 59
-      Top = 103
+      Top = 152
       Width = 290
       Height = 23
       AlignmentVertical = avCenter
+      AutoSize = False
       AutoSizeWidth = 290
       Caption = 'All Pawns and Purchase in Date Range.'
       Checked = True
-      TabOrder = 1
+      TabOrder = 3
       TabStop = True
-      WordWrap = True
+      OnClick = rbDateRangeClick
+    end
+    object rbListItemsForSale: TRzRadioButton
+      Left = 59
+      Top = 100
+      Width = 167
+      Height = 23
+      AlignmentVertical = avCenter
+      AutoSizeWidth = 167
+      Caption = 'List of Items For Sale'
+      TabOrder = 2
       OnClick = rbDateRangeClick
     end
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 4
-    Top = 326
+    Top = 364
     Width = 408
     Height = 84
     TabOrder = 1
@@ -516,7 +527,6 @@ object frmReport02: TfrmReport02
     PDFSettings.Outline = False
     PreviewFormSettings.PageBorder.mmPadding = 0
     PreviewFormSettings.WindowState = wsMaximized
-    PreviewFormSettings.ZoomSetting = zsPageWidth
     RTFSettings.AppName = 'ReportBuilder'
     RTFSettings.Author = 'ReportBuilder'
     RTFSettings.DefaultFont.Charset = DEFAULT_CHARSET
@@ -1180,8 +1190,8 @@ object frmReport02: TfrmReport02
       'where T2.TRAN_TYPE in ('#39'P'#39', '#39'U'#39')'
       ' --<PARAMS>'
       'order by T2.TRAN_TYPE, T2.TRAN_DATE, T2.TRAN_TIME')
-    Left = 494
-    Top = 186
+    Left = 492
+    Top = 154
     object qryTranPaymentscFullName: TWideStringField
       FieldKind = fkCalculated
       FieldName = 'cFullName'
@@ -1251,15 +1261,205 @@ object frmReport02: TfrmReport02
   end
   object dsTranPayments: TDataSource
     DataSet = qryTranPayments
-    Left = 494
-    Top = 240
+    Left = 492
+    Top = 208
   end
   object DBPTranPayments: TppDBPipeline
     DataSource = dsTranPayments
     OpenDataSource = False
     UserName = 'DBPTranPayments'
-    Left = 630
-    Top = 186
+    Left = 628
+    Top = 154
+    object DBPTranPaymentsppField1: TppField
+      FieldAlias = 'cFullName'
+      FieldName = 'cFullName'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 0
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField2: TppField
+      FieldAlias = 'PayDate'
+      FieldName = 'PayDate'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 1
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField3: TppField
+      FieldAlias = 'PayAmount'
+      FieldName = 'PayAmount'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 2
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField4: TppField
+      FieldAlias = 'PayPrincipal'
+      FieldName = 'PayPrincipal'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 3
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField5: TppField
+      FieldAlias = 'PayInterest'
+      FieldName = 'PayInterest'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 4
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField6: TppField
+      FieldAlias = 'CustFirst'
+      FieldName = 'CustFirst'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 5
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField7: TppField
+      FieldAlias = 'CustMid'
+      FieldName = 'CustMid'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 6
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField8: TppField
+      FieldAlias = 'CustLast'
+      FieldName = 'CustLast'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 7
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField9: TppField
+      FieldAlias = 'CustPhCell'
+      FieldName = 'CustPhCell'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 8
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField10: TppField
+      FieldAlias = 'TranTicketNo'
+      FieldName = 'TranTicketNo'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 9
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField11: TppField
+      FieldAlias = 'TranType'
+      FieldName = 'TranType'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 10
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField12: TppField
+      FieldAlias = 'TranPawnAmount'
+      FieldName = 'TranPawnAmount'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 11
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField13: TppField
+      FieldAlias = 'TranInterest'
+      FieldName = 'TranInterest'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 12
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField14: TppField
+      FieldAlias = 'PrincBalance'
+      FieldName = 'PrincBalance'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 13
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField15: TppField
+      FieldAlias = 'InsterestBalance'
+      FieldName = 'InsterestBalance'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 14
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField16: TppField
+      FieldAlias = 'TranDate'
+      FieldName = 'TranDate'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 15
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField17: TppField
+      FieldAlias = 'TranTime'
+      FieldName = 'TranTime'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 16
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField18: TppField
+      FieldAlias = 'TranMaturity'
+      FieldName = 'TranMaturity'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 17
+      Searchable = False
+      Sortable = False
+    end
+    object DBPTranPaymentsppField19: TppField
+      FieldAlias = 'TranTypeDesc'
+      FieldName = 'TranTypeDesc'
+      FieldLength = 0
+      DataType = dtNotKnown
+      DisplayWidth = 0
+      Position = 18
+      Searchable = False
+      Sortable = False
+    end
   end
   object RepTranPayments: TppReport
     AutoStop = False
@@ -1324,7 +1524,6 @@ object frmReport02: TfrmReport02
     PDFSettings.Outline = False
     PreviewFormSettings.PageBorder.mmPadding = 0
     PreviewFormSettings.WindowState = wsMaximized
-    PreviewFormSettings.ZoomSetting = zsPageWidth
     RTFSettings.AppName = 'ReportBuilder'
     RTFSettings.Author = 'ReportBuilder'
     RTFSettings.DefaultFont.Charset = DEFAULT_CHARSET
@@ -1359,8 +1558,8 @@ object frmReport02: TfrmReport02
     CloudDriveSettings.OneDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
     CloudDriveSettings.OneDriveSettings.DirectorySupport = True
     CloudDriveSettings.OneDriveSettings.SharedResources = True
-    Left = 630
-    Top = 240
+    Left = 628
+    Top = 208
     Version = '23.04'
     mmColumnWidth = 0
     DataPipelineName = 'DBPTranPayments'
@@ -1890,6 +2089,917 @@ object frmReport02: TfrmReport02
       end
     end
     object ppParameterList2: TppParameterList
+    end
+  end
+  object qryItemsForSale: TFDQuery
+    Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    SQL.Strings = (
+      'select ii.INV_ITEM_NO as "InvItemNo",'
+      '  ii.INV_ITEM_BARCODE as "Barcode",'
+      '  coalesce(c.INV_CATEGORY, '#39'(No category)'#39') as "Category",'
+      '  coalesce(nullif(trim(ii.DESCRIPTION), '#39#39'),'
+      
+        '           trim(coalesce(jm.J_METAL_DESC, '#39#39') || '#39' '#39' || coalesce' +
+        '(jt.J_TYPE_DESC, '#39#39'))) as "Description",'
+      
+        '  case t.TRAN_TYPE when '#39'U'#39' then '#39'Purchase'#39' when '#39'P'#39' then '#39'Pawn'#39 +
+        ' else '#39#39' end as "Source",'
+      '  t.TRAN_TICKET_NO as "TicketNo",'
+      
+        '  coalesce(ii.FORSALE_DATE, ii.PURCHASE_DATE, ii.DEFAULTED_DATE,' +
+        ' cast(ii.CREATED as date)) as "ForSaleSince",'
+      '  coalesce(ii.INV_ITEM_COUNT, 1) as "Qty",'
+      '  ii.UNIT_COST as "UnitCost",'
+      '  ii.UNIT_PRICE as "UnitPrice"'
+      'from INVENTORY_ITEMS ii'
+      'left join INV_CATEGORIES c on c.INV_CAT_NO = ii.INV_CAT_NO'
+      'left join TRANSACTIONS t on t.TRANSACTION_NO = ii.TRANSACTION_NO'
+      'left join J_TYPES jt on jt.J_TYPE = ii.J_TYPE'
+      'left join J_METALS jm on jm.J_METAL = ii.J_METAL'
+      'where ii.INV_ITEM_STATUS = '#39'S'#39
+      'order by 3, 7, 1')
+    Left = 485
+    Top = 281
+  end
+  object dsItemsForSale: TDataSource
+    DataSet = qryItemsForSale
+    Left = 486
+    Top = 333
+  end
+  object DBPItemsForSale: TppDBPipeline
+    DataSource = dsItemsForSale
+    OpenDataSource = False
+    UserName = 'DBPItemsForSale'
+    Left = 621
+    Top = 281
+  end
+  object RepItemsForSale: TppReport
+    AutoStop = False
+    DataPipeline = DBPItemsForSale
+    PrinterSetup.BinName = 'Default'
+    PrinterSetup.DocumentName = 'Report'
+    PrinterSetup.Duplex = dpNone
+    PrinterSetup.PaperName = 'Letter'
+    PrinterSetup.PrinterName = 'Default'
+    PrinterSetup.SaveDeviceSettings = False
+    PrinterSetup.mmMarginBottom = 6350
+    PrinterSetup.mmMarginLeft = 6350
+    PrinterSetup.mmMarginRight = 6350
+    PrinterSetup.mmMarginTop = 6350
+    PrinterSetup.mmPaperHeight = 279400
+    PrinterSetup.mmPaperWidth = 215900
+    PrinterSetup.PaperSize = 1
+    AllowPrintToFile = True
+    ArchiveFileName = '($MyDocuments)\ReportArchive.raf'
+    DeviceType = 'Screen'
+    DefaultFileDeviceType = 'PDF'
+    EmailSettings.ReportFormat = 'PDF'
+    EmailSettings.ConnectionSettings.MailService = 'SMTP'
+    EmailSettings.ConnectionSettings.WebMail.GmailSettings.OAuth2.AuthStorage = [oasAccessToken, oasRefreshToken, oasEncryptTokens]
+    EmailSettings.ConnectionSettings.WebMail.GmailSettings.OAuth2.RedirectURI = 'http://localhost'
+    EmailSettings.ConnectionSettings.WebMail.GmailSettings.OAuth2.RedirectPort = 0
+    EmailSettings.ConnectionSettings.WebMail.GmailSettings.OAuth2.RefreshTokenLifeSpan = 365
+    EmailSettings.ConnectionSettings.WebMail.Outlook365Settings.OAuth2.AuthStorage = [oasAccessToken, oasRefreshToken, oasEncryptTokens]
+    EmailSettings.ConnectionSettings.WebMail.Outlook365Settings.OAuth2.RedirectURI = 'http://localhost'
+    EmailSettings.ConnectionSettings.WebMail.Outlook365Settings.OAuth2.RedirectPort = 0
+    EmailSettings.ConnectionSettings.WebMail.Outlook365Settings.OAuth2.RefreshTokenLifeSpan = 365
+    EmailSettings.ConnectionSettings.EnableMultiPlugin = False
+    EmailSettings.ConnectionSettings.ConnectionStatusInfo = [csiStatusBar]
+    LanguageID = 'Default'
+    OpenFile = False
+    OutlineSettings.CreateNode = True
+    OutlineSettings.CreatePageNodes = True
+    OutlineSettings.Enabled = True
+    OutlineSettings.Visible = True
+    ThumbnailSettings.Enabled = True
+    ThumbnailSettings.Visible = True
+    ThumbnailSettings.DeadSpace = 30
+    ThumbnailSettings.PageHighlight.Width = 3
+    ThumbnailSettings.ThumbnailSize = tsSmall
+    PDFSettings.EmbedFontOptions = [efUseSubset]
+    PDFSettings.EncryptSettings.AllowCopy = True
+    PDFSettings.EncryptSettings.AllowInteract = True
+    PDFSettings.EncryptSettings.AllowModify = True
+    PDFSettings.EncryptSettings.AllowPrint = True
+    PDFSettings.EncryptSettings.AllowExtract = True
+    PDFSettings.EncryptSettings.AllowAssemble = True
+    PDFSettings.EncryptSettings.AllowQualityPrint = True
+    PDFSettings.EncryptSettings.Enabled = False
+    PDFSettings.EncryptSettings.KeyLength = kl40Bit
+    PDFSettings.EncryptSettings.EncryptionType = etRC4
+    PDFSettings.DigitalSignatureSettings.SignPDF = False
+    PDFSettings.FontEncoding = feAnsi
+    PDFSettings.ImageCompressionLevel = 25
+    PDFSettings.PDFAFormat = pafNone
+    PDFSettings.Layers = False
+    PDFSettings.Outline = False
+    PreviewFormSettings.PageBorder.mmPadding = 0
+    PreviewFormSettings.WindowState = wsMaximized
+    RTFSettings.AppName = 'ReportBuilder'
+    RTFSettings.Author = 'ReportBuilder'
+    RTFSettings.DefaultFont.Charset = DEFAULT_CHARSET
+    RTFSettings.DefaultFont.Color = clWindowText
+    RTFSettings.DefaultFont.Height = -13
+    RTFSettings.DefaultFont.Name = 'Arial'
+    RTFSettings.DefaultFont.Style = []
+    RTFSettings.Title = 'Report'
+    TextFileName = '($MyDocuments)\Report.pdf'
+    TextSearchSettings.DefaultString = '<FindText>'
+    TextSearchSettings.Enabled = True
+    XLSSettings.AppName = 'ReportBuilder'
+    XLSSettings.Author = 'ReportBuilder'
+    XLSSettings.Subject = 'Report'
+    XLSSettings.Title = 'Report'
+    XLSSettings.WorksheetName = 'Report'
+    CloudDriveSettings.DropBoxSettings.OAuth2.AuthStorage = [oasAccessToken, oasRefreshToken, oasEncryptTokens]
+    CloudDriveSettings.DropBoxSettings.OAuth2.RedirectURI = 'http://localhost'
+    CloudDriveSettings.DropBoxSettings.OAuth2.RedirectPort = 0
+    CloudDriveSettings.DropBoxSettings.OAuth2.RefreshTokenLifeSpan = 365
+    CloudDriveSettings.DropBoxSettings.DirectorySupport = True
+    CloudDriveSettings.DropBoxSettings.SharedResources = True
+    CloudDriveSettings.GoogleDriveSettings.OAuth2.AuthStorage = [oasAccessToken, oasRefreshToken, oasEncryptTokens]
+    CloudDriveSettings.GoogleDriveSettings.OAuth2.RedirectURI = 'http://localhost'
+    CloudDriveSettings.GoogleDriveSettings.OAuth2.RedirectPort = 0
+    CloudDriveSettings.GoogleDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
+    CloudDriveSettings.GoogleDriveSettings.DirectorySupport = False
+    CloudDriveSettings.GoogleDriveSettings.SharedResources = False
+    CloudDriveSettings.OneDriveSettings.OAuth2.AuthStorage = [oasAccessToken, oasRefreshToken, oasEncryptTokens]
+    CloudDriveSettings.OneDriveSettings.OAuth2.RedirectURI = 'http://localhost'
+    CloudDriveSettings.OneDriveSettings.OAuth2.RedirectPort = 0
+    CloudDriveSettings.OneDriveSettings.OAuth2.RefreshTokenLifeSpan = 365
+    CloudDriveSettings.OneDriveSettings.DirectorySupport = True
+    CloudDriveSettings.OneDriveSettings.SharedResources = True
+    Left = 621
+    Top = 333
+    Version = '23.04'
+    mmColumnWidth = 0
+    DataPipelineName = 'DBPItemsForSale'
+    object ppTitleBand3: TppTitleBand
+      Border.mmPadding = 0
+      mmBottomOffset = 0
+      mmHeight = 17992
+      mmPrintPosition = 0
+      object lblFSTitle: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSTitle'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'Items For Sale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 22
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 8731
+        mmLeft = 0
+        mmTop = 794
+        mmWidth = 203200
+        BandType = 1
+        LayerName = Foreground2
+      end
+      object ppSystemVariable5: TppSystemVariable
+        DesignLayer = ppDesignLayer3
+        UserName = 'ppSystemVariable5'
+        Border.mmPadding = 0
+        VarType = vtDateTime
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 8
+        Font.Style = []
+        Transparent = True
+        mmHeight = 3704
+        mmLeft = 1852
+        mmTop = 794
+        mmWidth = 29898
+        BandType = 1
+        LayerName = Foreground2
+      end
+      object ppSystemVariable6: TppSystemVariable
+        DesignLayer = ppDesignLayer3
+        UserName = 'ppSystemVariable6'
+        Border.mmPadding = 0
+        VarType = vtPageSetDesc
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 8
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 3704
+        mmLeft = 188384
+        mmTop = 794
+        mmWidth = 14023
+        BandType = 1
+        LayerName = Foreground2
+      end
+      object lblFSAsOf: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSAsOf'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'As of'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 12
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 0
+        mmTop = 10319
+        mmWidth = 203200
+        BandType = 1
+        LayerName = Foreground2
+      end
+    end
+    object ppDetailBand3: TppDetailBand
+      Border.mmPadding = 0
+      mmBottomOffset = 0
+      mmHeight = 4763
+      mmPrintPosition = 0
+      object dbFSBarcode: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSBarcode'
+        Border.mmPadding = 0
+        DataField = 'Barcode'
+        DataPipeline = DBPItemsForSale
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 0
+        mmTop = 265
+        mmWidth = 24000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSDescription: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSDescription'
+        Border.mmPadding = 0
+        DataField = 'Description'
+        DataPipeline = DBPItemsForSale
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 25000
+        mmTop = 265
+        mmWidth = 68000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSSource: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSSource'
+        Border.mmPadding = 0
+        DataField = 'Source'
+        DataPipeline = DBPItemsForSale
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 94000
+        mmTop = 265
+        mmWidth = 17000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSTicketNo: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSTicketNo'
+        Border.mmPadding = 0
+        DataField = 'TicketNo'
+        DataPipeline = DBPItemsForSale
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taCentered
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 112000
+        mmTop = 265
+        mmWidth = 18000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSForSaleSince: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSForSaleSince'
+        Border.mmPadding = 0
+        DataField = 'ForSaleSince'
+        DataPipeline = DBPItemsForSale
+        DisplayFormat = 'mm/dd/yyyy'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taCentered
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 131000
+        mmTop = 265
+        mmWidth = 20000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSQty: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSQty'
+        Border.mmPadding = 0
+        DataField = 'Qty'
+        DataPipeline = DBPItemsForSale
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 152000
+        mmTop = 265
+        mmWidth = 8000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSUnitCost: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSUnitCost'
+        Border.mmPadding = 0
+        DataField = 'UnitCost'
+        DataPipeline = DBPItemsForSale
+        DisplayFormat = '$#,0.00;($#,0.00)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 161000
+        mmTop = 265
+        mmWidth = 20000
+        BandType = 4
+        LayerName = Foreground2
+      end
+      object dbFSUnitPrice: TppDBText
+        DesignLayer = ppDesignLayer3
+        UserName = 'dbFSUnitPrice'
+        Border.mmPadding = 0
+        DataField = 'UnitPrice'
+        DataPipeline = DBPItemsForSale
+        DisplayFormat = '$#,0.00;($#,0.00)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'DBPItemsForSale'
+        mmHeight = 4233
+        mmLeft = 182000
+        mmTop = 265
+        mmWidth = 21000
+        BandType = 4
+        LayerName = Foreground2
+      end
+    end
+    object ppSummaryBand3: TppSummaryBand
+      Border.mmPadding = 0
+      mmBottomOffset = 0
+      mmHeight = 25400
+      mmPrintPosition = 0
+      object ppLine9: TppLine
+        DesignLayer = ppDesignLayer3
+        UserName = 'ppLine9'
+        Border.mmPadding = 0
+        ParentWidth = True
+        Weight = 0.75000000000000000
+        mmHeight = 1323
+        mmLeft = 0
+        mmTop = 1000
+        mmWidth = 203200
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumTitle: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumTitle'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'Totals - all items For Sale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 12
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 0
+        mmTop = 3500
+        mmWidth = 120000
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumCount: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumCount'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = '0 items'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 11
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 0
+        mmTop = 10000
+        mmWidth = 95000
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumMissing: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumMissing'
+        AutoSize = False
+        Border.mmPadding = 0
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 9
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 0
+        mmTop = 16000
+        mmWidth = 100000
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumCostCap: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumCostCap'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'Total cost'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 11
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 105000
+        mmTop = 10000
+        mmWidth = 45000
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumCost: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumCost'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = '$0.00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 11
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 152000
+        mmTop = 10000
+        mmWidth = 51200
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumPriceCap: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumPriceCap'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = 'Total asking price'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 11
+        Font.Style = []
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 105000
+        mmTop = 16000
+        mmWidth = 45000
+        BandType = 7
+        LayerName = Foreground2
+      end
+      object lblFSSumPrice: TppLabel
+        DesignLayer = ppDesignLayer3
+        UserName = 'lblFSSumPrice'
+        AutoSize = False
+        Border.mmPadding = 0
+        Caption = '$0.00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Times New Roman'
+        Font.Size = 11
+        Font.Style = [fsBold]
+        FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+        FormFieldSettings.FormFieldType = fftNone
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 5027
+        mmLeft = 152000
+        mmTop = 16000
+        mmWidth = 51200
+        BandType = 7
+        LayerName = Foreground2
+      end
+    end
+    object ppGroup3: TppGroup
+      BreakName = 'Category'
+      DataPipeline = DBPItemsForSale
+      GroupFileSettings.NewFile = False
+      GroupFileSettings.EmailFile = False
+      OutlineSettings.CreateNode = True
+      StartOnOddPage = False
+      UserName = 'Group3'
+      mmNewColumnThreshold = 0
+      mmNewPageThreshold = 0
+      DataPipelineName = 'DBPItemsForSale'
+      NewFile = False
+      object ppGroupHeaderBand3: TppGroupHeaderBand
+        Border.mmPadding = 0
+        mmBottomOffset = 0
+        mmHeight = 12965
+        mmPrintPosition = 0
+        object dbFSCategory: TppDBText
+          DesignLayer = ppDesignLayer3
+          UserName = 'dbFSCategory'
+          Border.mmPadding = 0
+          DataField = 'Category'
+          DataPipeline = DBPItemsForSale
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 12
+          Font.Style = [fsBold]
+          Transparent = True
+          DataPipelineName = 'DBPItemsForSale'
+          mmHeight = 5027
+          mmLeft = 0
+          mmTop = 529
+          mmWidth = 120000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHBarcode: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHBarcode'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Barcode'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 0
+          mmTop = 7144
+          mmWidth = 24000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHDescription: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHDescription'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Description'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 25000
+          mmTop = 7144
+          mmWidth = 68000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHSource: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHSource'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Source'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 94000
+          mmTop = 7144
+          mmWidth = 17000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHTicketNo: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHTicketNo'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Ticket #'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taCentered
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 112000
+          mmTop = 7144
+          mmWidth = 18000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHForSaleSince: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHForSaleSince'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'For Sale Since'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taCentered
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 131000
+          mmTop = 7144
+          mmWidth = 20000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHQty: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHQty'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Qty'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taRightJustified
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 152000
+          mmTop = 7144
+          mmWidth = 8000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHUnitCost: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHUnitCost'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Cost'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taRightJustified
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 161000
+          mmTop = 7144
+          mmWidth = 20000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSHUnitPrice: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSHUnitPrice'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Price'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taRightJustified
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 182000
+          mmTop = 7144
+          mmWidth = 21000
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object ppLine7: TppLine
+          DesignLayer = ppDesignLayer3
+          UserName = 'ppLine7'
+          Border.mmPadding = 0
+          ParentWidth = True
+          Weight = 0.75000000000000000
+          mmHeight = 1323
+          mmLeft = 0
+          mmTop = 11377
+          mmWidth = 203200
+          BandType = 3
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+      end
+      object ppGroupFooterBand3: TppGroupFooterBand
+        Border.mmPadding = 0
+        HideWhenOneDetail = False
+        mmBottomOffset = 0
+        mmHeight = 8467
+        mmPrintPosition = 0
+        object ppLine8: TppLine
+          DesignLayer = ppDesignLayer3
+          UserName = 'ppLine8'
+          Border.mmPadding = 0
+          Weight = 0.75000000000000000
+          mmHeight = 1323
+          mmLeft = 152000
+          mmTop = 0
+          mmWidth = 51200
+          BandType = 5
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object lblFSSubtotal: TppLabel
+          DesignLayer = ppDesignLayer3
+          UserName = 'lblFSSubtotal'
+          AutoSize = False
+          Border.mmPadding = 0
+          Caption = 'Category subtotal'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          FormFieldSettings.FormSubmitInfo.SubmitMethod = fstPost
+          FormFieldSettings.FormFieldType = fftNone
+          TextAlignment = taRightJustified
+          Transparent = True
+          mmHeight = 3969
+          mmLeft = 112000
+          mmTop = 1852
+          mmWidth = 39000
+          BandType = 5
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object calcFSCost: TppDBCalc
+          DesignLayer = ppDesignLayer3
+          UserName = 'calcFSCost'
+          Border.mmPadding = 0
+          DataField = 'UnitCost'
+          DataPipeline = DBPItemsForSale
+          DisplayFormat = '$#,0.00;($#,0.00)'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          ResetGroup = ppGroup3
+          TextAlignment = taRightJustified
+          Transparent = True
+          DataPipelineName = 'DBPItemsForSale'
+          mmHeight = 4233
+          mmLeft = 161000
+          mmTop = 1852
+          mmWidth = 20000
+          BandType = 5
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+        object calcFSPrice: TppDBCalc
+          DesignLayer = ppDesignLayer3
+          UserName = 'calcFSPrice'
+          Border.mmPadding = 0
+          DataField = 'UnitPrice'
+          DataPipeline = DBPItemsForSale
+          DisplayFormat = '$#,0.00;($#,0.00)'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Name = 'Times New Roman'
+          Font.Size = 9
+          Font.Style = [fsBold]
+          ResetGroup = ppGroup3
+          TextAlignment = taRightJustified
+          Transparent = True
+          DataPipelineName = 'DBPItemsForSale'
+          mmHeight = 4233
+          mmLeft = 182000
+          mmTop = 1852
+          mmWidth = 21000
+          BandType = 5
+          GroupNo = 0
+          LayerName = Foreground2
+        end
+      end
+    end
+    object ppDesignLayers3: TppDesignLayers
+      object ppDesignLayer3: TppDesignLayer
+        UserName = 'Foreground2'
+        LayerType = ltBanded
+        Index = 0
+      end
+    end
+    object ppParameterList3: TppParameterList
     end
   end
 end

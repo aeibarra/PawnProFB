@@ -404,6 +404,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <Form>frmAdditionalFilters</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="SellItems.pas">
+            <Form>frmSellItems</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

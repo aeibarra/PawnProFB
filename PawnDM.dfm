@@ -4698,6 +4698,21 @@ object DM: TDM
         CollectionIndex = 62
         CollectionName = 'Filter'
         Name = 'Filter'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'CashRegister'
+        Name = 'CashRegister'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'SelectToRight'
+        Name = 'SelectToRight'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'SelectToLeft'
+        Name = 'SelectToLeft'
       end>
     ImageCollection = svgMain
     Width = 40
@@ -7550,6 +7565,58 @@ object DM: TDM
           'e x1="6.5" y1="16.2" x2="8.3" y2="16.2" />'#13#10'  <circle cx="9.5" c' +
           'y="16.2" r="1.2" />'#13#10'  <line x1="11.5" y1="16.2" x2="17.5" y2="1' +
           '6.2" />'#13#10'</svg>'#13#10
+      end
+      item
+        IconName = 'CashRegister'
+        SVGText = 
+          '<svg xmlns="http://w3.org" viewBox="0 0 512 512" width="512" hei' +
+          'ght="512">'#13#10'  <!-- Display Screen -->'#13#10'  <path fill="#000000" d=' +
+          '"M294 24h116c24.3 0 44 19.7 44 44v68c0 24.3-19.7 44-44 44h-40v28' +
+          'h-36v-28h-40c-24.3 0-44-19.7-44-44V68c0-24.3 19.7-44 44-44zm6 36' +
+          'c-7.7 0-14 6.3-14 14v56c0 7.7 6.3 14 14 14h104c7.7 0 14-6.3 14-1' +
+          '4V74c0-7.7-6.3-14-14-14H300z"/>'#13#10#13#10'  <!-- Receipt Paper & Slot -' +
+          '->'#13#10'  <path fill="#000000" d="M96 144l28 16 28-16 28 16 28-16v14' +
+          '4h16c8.8 0 16 7.2 16 16s-7.2 16-16 16H96c-8.8 0-16-7.2-16-16s7.2' +
+          '-16 16-16h16V144zm36 44c-5.5 0-10 4.5-10 10s4.5 10 10 10h24c5.5 ' +
+          '0 10-4.5 10-10s-4.5-10-10-10h-24zm0 34c-5.5 0-10 4.5-10 10s4.5 1' +
+          '0 10 10h40c5.5 0 10-4.5 10-10s-4.5-10-10-10h-40zm0 34c-5.5 0-10 ' +
+          '4.5-10 10s4.5 10 10 10h40c5.5 0 10-4.5 10-10s-4.5-10-10-10h-40z"' +
+          '/>'#13#10#13#10'  <!-- Register Body & Cash Drawer -->'#13#10'  <path fill="#000' +
+          '000" d="M96 208c-26.5 0-48.5 19.5-52.4 45.4L32 336v104c0 26.5 21' +
+          '.5 48 48 48h352c26.5 0 48-21.5 48-48V336l-11.6-82.6C464.5 227.5 ' +
+          '442.5 208 416 208H224v28h192c11 0 20.2 8.1 21.8 19L450 344H62l12' +
+          '.2-89c1.6-10.9 10.8-19 21.8-19h16v-28H96zm88 184h144c15.5 0 28 1' +
+          '2.5 28 28s-12.5 28-28 28H184c-15.5 0-28-12.5-28-28s12.5-28 28-28' +
+          'z"/>'#13#10#13#10'  <!-- Keypad Buttons (3x3 Grid) -->'#13#10'  <g fill="#000000' +
+          '">'#13#10'    <!-- Row 1 -->'#13#10'    <rect x="272" y="254" width="36" hei' +
+          'ght="18" rx="9"/>'#13#10'    <rect x="328" y="254" width="36" height="' +
+          '18" rx="9"/>'#13#10'    <rect x="384" y="254" width="36" height="18" r' +
+          'x="9"/>'#13#10'    <!-- Row 2 -->'#13#10'    <rect x="272" y="286" width="36' +
+          '" height="18" rx="9"/>'#13#10'    <rect x="328" y="286" width="36" hei' +
+          'ght="18" rx="9"/>'#13#10'    <rect x="384" y="286" width="36" height="' +
+          '18" rx="9"/>'#13#10'    <!-- Row 3 -->'#13#10'    <rect x="272" y="318" widt' +
+          'h="36" height="18" rx="9"/>'#13#10'    <rect x="328" y="318" width="36' +
+          '" height="18" rx="9"/>'#13#10'    <rect x="384" y="318" width="36" hei' +
+          'ght="18" rx="9"/>'#13#10'  </g>'#13#10'</svg>'#13#10
+      end
+      item
+        IconName = 'SelectToRight'
+        SVGText = 
+          '<svg xmlns="http://w3.org" viewBox="0 0 512 512" width="512" hei' +
+          'ght="512">'#13#10'  <path fill="#000000" d="M106 496c-12 10-30 12-45 4' +
+          '-16-8-26-25-24-43 1-7 4-14 7-21l68-174c2-4 2-8 0-12L44 76c-3-7-6' +
+          '-14-7-21-2-18 8-35 24-43 15-8 33-6 45 4l356 206c13 8 21 22 21 38' +
+          's-8 30-21 38L106 496z"/>'#13#10'</svg>'#13#10
+      end
+      item
+        IconName = 'SelectToLeft'
+        SVGText = 
+          '<svg xmlns="http://w3.org" viewBox="0 0 512 512" width="512" hei' +
+          'ght="512">'#13#10'  <path fill="#000000" transform="translate(512, 0) ' +
+          'scale(-1, 1)" d="M106 496c-12 10-30 12-45 4-16-8-26-25-24-43 1-7' +
+          ' 4-14 7-21l68-174c2-4 2-8 0-12L44 76c-3-7-6-14-7-21-2-18 8-35 24' +
+          '-43 15-8 33-6 45 4l356 206c13 8 21 22 21 38s-8 30-21 38L106 496z' +
+          '"/>'#13#10'</svg>'#13#10
       end>
     Left = 67
     Top = 366
@@ -7846,13 +7913,28 @@ object DM: TDM
         CollectionIndex = 62
         CollectionName = 'Filter'
         Name = 'Filter'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'CashRegister'
+        Name = 'CashRegister'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'SelectToRight'
+        Name = 'SelectToRight'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'SelectToLeft'
+        Name = 'SelectToLeft'
       end>
     ImageCollection = svgMain
     Width = 32
     Height = 32
     Size = 32
     Left = 182
-    Top = 425
+    Top = 424
   end
   object qryPawnPay: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

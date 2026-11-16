@@ -8,13 +8,11 @@ uses
   DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, RzButton;
 
 type
   TfrmEditInvItem = class(TForm)
     GroupBox1: TGroupBox;
-    btnCancel: TBitBtn;
-    btnSave: TBitBtn;
     GroupBox2: TGroupBox;
     Label1: TLabel;
     DBEdit1: TDBEdit;
@@ -53,9 +51,14 @@ type
     qryBrands: TFDQuery;
     qryBrandsINV_ITEM_BRAND: TWideStringField;
     cbBrand: TDBComboBox;
+    btnSave: TRzBitBtn;
+    btnCancel: TBitBtn;
+    lblDescription: TLabel;
+    edDescription: TDBEdit;
     procedure FormShow(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -68,13 +71,13 @@ var
 
 implementation
 
-Uses Inventory, SearchClient, PawnDM;
+Uses PawnDM, GLbUtils, uPawnDialogs;
 
 {$R *.dfm}
 
 procedure TfrmEditInvItem.FormShow(Sender: TObject);
 begin
-  Width := 381;
+  FrmSetViewSize(Self);
 
   dsTypes.DataSet := DM.clnJTypes;
   dsStyles.DataSet := DM.clnJStyles;
@@ -93,22 +96,33 @@ begin
 
   qryCategories.Close;
   qryCategories.Open;
-//  qryStoneShapes.Open;
-//  qryStoneColors.Open;
 
   if NewRow then
-    begin
-      dsInvItems.DataSet.Append;
-    end
+    dsInvItems.DataSet.Append
   else
-    begin
-      dsInvItems.DataSet.Edit;
-    end;
-  edItemCount.SetFocus;
+    dsInvItems.DataSet.Edit;
+
+  // For now only Description, Quantity, Unit Price and Note are editable; the
+  // other fields are ReadOnly in the DFM and shown for reference.
+  edDescription.SetFocus;
 end;
 
 procedure TfrmEditInvItem.btnSaveClick(Sender: TObject);
 begin
+  if dsInvItems.DataSet.FieldByName('InvItemCount').AsInteger < 1 then
+    begin
+      PawnInfo('Quantity must be at least 1.', 'Inventory Item', Self);
+      edItemCount.SetFocus;
+      exit;
+    end;
+
+  if dsInvItems.DataSet.FieldByName('UnitPrice').AsCurrency < 0 then
+    begin
+      PawnInfo('Unit Price cannot be negative.', 'Inventory Item', Self);
+      DBEdit3.SetFocus;
+      exit;
+    end;
+
   dsInvItems.DataSet.Post;
   DM.AddInventoryBrand(dsInvItems.DataSet.FieldByName('InvItemBrand').AsString);
   if trim(dsInvItems.DataSet.FieldByName('InvItemBarcode').AsString) = '' then
@@ -126,6 +140,14 @@ begin
   dsInvItems.DataSet.Cancel;
 
   ModalResult := mrCancel;
+end;
+
+// Closing with the title-bar X must not leave the list in Edit mode.
+procedure TfrmEditInvItem.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if (ModalResult <> mrOk) and (dsInvItems.DataSet <> nil) and
+     (dsInvItems.DataSet.State in dsEditModes) then
+    dsInvItems.DataSet.Cancel;
 end;
 
 end.

@@ -57,6 +57,20 @@ const
 
   PawnTicketNo = 'PawnTicketNo';
   LayawayTicketNo = 'LayawayTicketNo';
+  SaleTicketNo = 'SaleTicketNo';          // TABLE_KEYS counter for SALES.SALE_TICKET_NO
+  // Sale ticket numbers start after SaleTicketStartAfter and grow by a random
+  // 1..SaleTicketMaxStep per sale, so a customer comparing two receipts cannot
+  // work out the store's sales volume. Order is kept: a later ticket is higher.
+  SaleTicketStartAfter = 3999;
+  SaleTicketMaxStep = 9;
+
+  // SALES.SALE_STATUS
+  SaleStatus_Completed = 'C';
+  SaleStatus_Voided    = 'V';
+
+  // SALES.DISCOUNT_TYPE (NULL = no discount)
+  SaleDiscount_Amount  = 'A';             // dollars off the subtotal
+  SaleDiscount_Percent = 'P';             // percent of the subtotal
 
   PawnCloseReasons: array[0..4] of TCloseReasonRec = (
     (Code: 0; Description: 'Open'),
@@ -66,13 +80,14 @@ const
     (Code: 4; Description: 'Mix Defaulted/Redeemed')
   );
 
-  PawnStatusColors: array[0..5] of TPawnStatusColor = (
+  PawnStatusColors: array[0..6] of TPawnStatusColor = (
     (Status: PawnItemStatus_Pawned;     BG: clWhite;   FG: clBlack),  // White
     (Status: PawnItemStatus_Redeemed;   BG: $00F1FAF0; FG: clBlack),  // light green
     (Status: PawnItemStatus_Defaulted;  BG: $00ECECFB; FG: clBlack),  // light red
     (Status: PawnItemStatus_ForSale;    BG: $00E6F9FF; FG: clBlack),  // Light Yellow
     (Status: PawnItemStatus_Melted;     BG: $00F2F2F2; FG: clBlack),  // Light gray
-    (Status: PawnItemStatus_Sold;       BG: $00FFE8F3; FG: clBlack)   // Light purple
+    (Status: PawnItemStatus_Sold;       BG: $00FFE8F3; FG: clBlack),  // Light purple
+    (Status: PawnItemStatus_Layaway;    BG: $00FFEEDD; FG: clBlack)   // Light blue
   );
 
   EnableColor: array [false..true] of TColor = (clBtnFace, clWindow);
@@ -272,6 +287,8 @@ procedure FillPrinterTrays(ComboBox: TComboBox; const APrinterName: string);
 function GetPawnStatusColor(const AStatus: string): TPawnStatusColor;
 procedure CalcTaxAndTotal(const Amount: Currency; const TaxPercent: Currency;
                           out Tax: Currency; out TotalAmount: Currency);
+function CalcSaleDiscount(const Subtotal: Currency; IsPercent: boolean;
+                          const Value: Currency): Currency;
 
 // FULL build identity: file version, git branch/hash (from the build-time
 // BuildInfo.inc), and compile date. For support, not for customers -- written to
@@ -1450,6 +1467,28 @@ begin
 
   // Total must always be Amount + Tax (never round total independently)
   TotalAmount := Amount + Tax;
+end;
+
+{ Dollar discount for a whole sale. Value is dollars, or a percent of the
+  subtotal when IsPercent; either way the result is rounded to cents and kept
+  between 0 and the subtotal, so a total can never go negative. The sale
+  drawer and TDM.CompleteSale both use this, so screen and ticket agree. }
+function CalcSaleDiscount(const Subtotal: Currency; IsPercent: boolean;
+                          const Value: Currency): Currency;
+begin
+  if (Subtotal <= 0) or (Value <= 0) then
+    Exit(0);
+
+  if IsPercent then
+    if Value >= 100 then
+      Result := Subtotal
+    else
+      Result := RoundTo(Subtotal * Value / 100, -2)
+  else
+    Result := RoundTo(Value, -2);
+
+  if Result > Subtotal then
+    Result := Subtotal;
 end;
 
 

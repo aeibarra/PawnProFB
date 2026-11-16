@@ -14951,6 +14951,10 @@ object frmClients: TfrmClients
       Caption = 'View Item status History'
       OnClick = popItemHistoryClick
     end
+    object popItemSell: TMenuItem
+      Caption = 'Sell this item...'
+      OnClick = popItemSellClick
+    end
   end
   object PopMnuLayaway: TPopupMenu
     OnPopup = PopMnuLayawayPopup

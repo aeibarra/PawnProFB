@@ -768,6 +768,7 @@ type
     btnPayEdit: TBitBtn;
     btnPayDelete: TBitBtn;
     PopMnuPawnItems: TPopupMenu;
+    popItemSell: TMenuItem;
     popmnuItemRedeemed: TMenuItem;
     popmnuItemDefaulted: TMenuItem;
     N1: TMenuItem;
@@ -927,6 +928,7 @@ type
     procedure gridItemsDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure PopMnuPawnItemsPopup(Sender: TObject);
+    procedure popItemSellClick(Sender: TObject);
     procedure popmnuItemRedeemedClick(Sender: TObject);
     procedure popmnuItemDefaultedClick(Sender: TObject);
     procedure popmnuItemMeltedScrapClick(Sender: TObject);
@@ -995,7 +997,12 @@ type
     procedure OpenClientsQuery(FName, LName: string);
     procedure SaveTopMarginPolRep;
     procedure CalcPawnAmountFromItemCost(var PawnAmount: Currency; var ItemsWithNoEnteredCost: integer);
+    procedure RefreshCurrentTransaction;
   end;
+
+// Called by other screens (sale drawer, Sell Items) after they change item
+// statuses, so an open client screen does not keep showing the old status.
+procedure RefreshClientsAfterItemChange;
 
 var
   frmClients: TfrmClients;
@@ -1007,9 +1014,38 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
   PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, PurchaseChangeStatus, uPawnDialogs,
-  ItemHistory;
+  ItemHistory, Inventory;
 
 {$R *.DFM}
+
+procedure RefreshClientsAfterItemChange;
+begin
+  if frmClients <> nil then
+    frmClients.RefreshCurrentTransaction;
+end;
+
+{ Reloads the transactions and items, then puts the cursor back on the same
+  transaction and item. By key, not by row number: the transaction list is
+  ordered by TRAN_STATUS first, so a status change moves the row and a plain
+  row-number refresh would land on a different pawn. Skipped while either
+  dataset is being edited -- reopening it would throw the edit away. }
+procedure TfrmClients.RefreshCurrentTransaction;
+var
+  TranNo, ItemNo: Variant;
+begin
+  if not DM.qryTransactions.Active or (DM.qryTransactions.State in dsEditModes) or
+     (qryInvItems.State in dsEditModes) then
+    exit;
+
+  TranNo := DM.qryTransactionsTRANSACTION_NO.Value;
+  ItemNo := Null;
+  if qryInvItems.Active and not qryInvItems.IsEmpty then
+    ItemNo := qryInvItemsINV_ITEM_NO.Value;
+
+  DM.RefreshFBQry(DM.qryTransactions, TranNo, 'TRANSACTION_NO');
+  if qryInvItems.Active then
+    DM.RefreshFBQry(qryInvItems, ItemNo, 'INV_ITEM_NO');
+end;
 
 procedure TfrmClients.OpenClientsQuery(FName, LName: string);
 var
@@ -1402,7 +1438,22 @@ end;
 
 
 procedure TfrmClients.btnTranDeleteClick(Sender: TObject);
+var
+  Tickets: string;
 begin
+  // Deleting a transaction deletes its items too (cascade); items already on a
+  // sale ticket must stay, or the sales history loses them.
+  if DM.qryTransactions.Active and not DM.qryTransactions.IsEmpty then
+    begin
+      Tickets := DM.GetSaleTicketsOfTransaction(DM.qryTransactions.FieldByName('TRANSACTION_NO').AsInteger);
+      if Tickets <> '' then
+        begin
+          PawnWarn('This transaction cannot be deleted: some of its items are on sale ticket ' +
+                   Tickets + '.', 'Delete Transaction', Self);
+          exit;
+        end;
+    end;
+
   if MessageDlg('Are you sure you wish to delete this Transaction?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       DM.qryTransactions.Delete;
@@ -1680,8 +1731,7 @@ begin
       DM.LaywayClosePayoffBalance(DM.qryTransactionsTRANSACTION_NO.AsInteger, false);
     end;
 
-   DM.RefreshFBQry(DM.qryTransactions);
-   DM.RefreshFBQry(qryInvItems);
+   RefreshCurrentTransaction;
 end;
 
 procedure TfrmClients.ActionScanCardExecute(Sender: TObject);
@@ -1770,7 +1820,29 @@ function TfrmClients.GetPawnItemStatus(out AStatusDate: TDateTime): string;
 begin
   AStatusDate := 0;
 
-  if qryInvItemsINV_ITEM_STATUS.AsString = TranForSale then
+  // Sold, Scrap and Layaway are decided first. The date branches below cannot
+  // tell them apart: a sold or scrapped item keeps its purchase / pawn /
+  // for-sale dates, and read from those alone it showed "For Sale". Sold goes
+  // by SOLD_DATE, like TDM.GetItemStatus (a sale always writes it); Scrap and
+  // Layaway by the status char, which only this app's workflows write.
+  if not qryInvItemsSOLD_DATE.IsNull then
+    begin
+      Result := PawnItemStatus_Sold;
+      AStatusDate := qryInvItemsSOLD_DATE.AsDateTime;
+    end
+  else if qryInvItemsINV_ITEM_STATUS.AsString = 'C' then
+    begin
+      Result := PawnItemStatus_Melted;
+      if not qryInvItemsMELTED_DATE.IsNull then
+        AStatusDate := qryInvItemsMELTED_DATE.AsDateTime;
+    end
+  else if qryInvItemsINV_ITEM_STATUS.AsString = 'L' then
+    begin
+      Result := PawnItemStatus_Layaway;
+      if not qryInvItemsLAYAWAY_DATE.IsNull then
+        AStatusDate := qryInvItemsLAYAWAY_DATE.AsDateTime;
+    end
+  else if qryInvItemsINV_ITEM_STATUS.AsString = TranForSale then
     begin
       Result := PawnItemStatus_ForSale;
       if not qryInvItemsFORSALE_DATE.IsNull then
@@ -2271,6 +2343,14 @@ end;
 
 procedure TfrmClients.btnDeleteItemClick(Sender: TObject);
 begin
+  // An item on a sale ticket (completed or voided) is part of the sales history.
+  if OpenSQLStatementFB('SELECT COUNT(*) FROM SALE_LINES WHERE INV_ITEM_NO = ' +
+                        qryInvItemsINV_ITEM_NO.AsString) > 0 then
+    begin
+      PawnWarn('This item cannot be deleted: it is on a sale ticket.', 'Delete Item', Self);
+      exit;
+    end;
+
   if MessageDlg('Are you sure you wish to delete this item?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     ExecSQLStatementFB('delete from STONES where INV_ITEM_NO=' + qryInvItemsINV_ITEM_NO.AsString);
@@ -2409,6 +2489,10 @@ begin
   popmnuItemForSale.Visible := IsPawn or IsPurchase;
   popmnuItemUndecided.Visible := IsPurchase;
   N4.Visible := IsPawn or IsPurchase;
+
+  // Only a For Sale item can be sold; hidden otherwise so the menu stays short.
+  popItemSell.Visible := HasItem and (qryInvItemsINV_ITEM_STATUS.AsString = 'S') and
+                         qryInvItemsSOLD_DATE.IsNull;
 
   if IsPawn then
     begin
@@ -2778,8 +2862,7 @@ begin
 
   DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, RedeemedDate, DefaultedDate, MeltedDate, ForSaleDate);
   DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
-  DM.RefreshFBQry(qryInvItems);
-  DM.RefreshFBQry(DM.qryTransactions);
+  RefreshCurrentTransaction;
 end;
 
 procedure TfrmClients.popmnuItemPawnedClick(Sender: TObject);
@@ -2789,6 +2872,19 @@ begin
 //  DM.UpdatePawnItemStatus(qryInvItemsINV_ITEM_NO.AsInteger, null, null, null, null);
 //  DM.UpdatePawnStatusBaseOnItems(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 //  DM.RefreshFBQry(qryInvItems);
+end;
+
+{ Interim shortcut until the full sale screen: opens Active Items List on
+  this one item, where the store sells it through the sale drawer. }
+procedure TfrmClients.popItemSellClick(Sender: TObject);
+begin
+  if not qryInvItems.Active or qryInvItems.IsEmpty or
+     (qryInvItemsINV_ITEM_STATUS.AsString <> 'S') then
+    exit;
+
+  frmPawnMain.actInventory.Execute;   // creates the screen, or brings it up
+  if frmInventory <> nil then
+    frmInventory.ShowItem(qryInvItemsINV_ITEM_NO.AsInteger, qryInvItemsINV_ITEM_BARCODE.AsString);
 end;
 
 procedure TfrmClients.popItemHistoryClick(Sender: TObject);
@@ -2850,7 +2946,7 @@ procedure TfrmClients.mnuCloseLayawayClick(Sender: TObject);
 begin
   btnCloseLayawayClick(Sender);
 
-  DM.RefreshFBQry(DM.qryTransactions);
+  RefreshCurrentTransaction;
 
 end;
 
@@ -2900,8 +2996,7 @@ procedure TfrmClients.mnuReOpenLayawayClick(Sender: TObject);
 begin
   DM.ReactivateLayway(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 
-  DM.RefreshFBQry(DM.qryTransactions);
-  DM.RefreshFBQry(qryInvItems);
+  RefreshCurrentTransaction;
 end;
 
 { How many inventory items hang off the transaction on screen.

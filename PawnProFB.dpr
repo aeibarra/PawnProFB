@@ -109,7 +109,8 @@ uses
   uImageAuditController in 'uImageAuditController.pas',
   LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport},
   ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets},
-  AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters};
+  AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters},
+  SellItems in 'SellItems.pas' {frmSellItems};
 
 {$R *.RES}
 
