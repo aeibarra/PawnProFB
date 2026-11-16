@@ -86,8 +86,8 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       1207
       750)
     object lblSandbox: TLabel
-      Left = 503
-      Top = 22
+      Left = 505
+      Top = 74
       Width = 490
       Height = 20
       Caption = 'SANDBOX MODE - these tickets are NOT reported to law enforcement'
@@ -109,7 +109,7 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
     end
     object bnViewSentTickets: TRzToolButton
       Left = 1025
-      Top = 127
+      Top = 122
       Width = 164
       Height = 40
       Flat = False
@@ -127,14 +127,25 @@ object frmLeadsOnlineSoapExport: TfrmLeadsOnlineSoapExport
       Font.Style = []
       ParentFont = False
       OnClick = bnViewSentTicketsClick
-      ExplicitLeft = 986
+    end
+    object btnNotifyNoTransactions: TRzToolButton
+      Left = 506
+      Top = 18
+      Width = 307
+      Height = 38
+      Flat = False
+      ShowCaption = True
+      UseToolbarShowCaption = False
+      Caption = 'Notify that no Transactions for the Day'
+      OnClick = btnNotifyNoTransactionsClick
     end
     object btnRefresh: TBitBtn
-      Left = 528
-      Top = 56
+      Left = 506
+      Top = 122
       Width = 120
-      Height = 32
+      Height = 40
       Caption = ' &Refresh'
+      Images = DM.vilMain24
       TabOrder = 2
       OnClick = btnRefreshClick
     end

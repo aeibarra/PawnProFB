@@ -110,7 +110,8 @@ uses
   LeadsOnlineSoapExport in 'LeadsOnlineSoapExport.pas' {frmLeadsOnlineSoapExport},
   ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets},
   AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters},
-  SellItems in 'SellItems.pas' {frmSellItems};
+  SellItems in 'SellItems.pas' {frmSellItems},
+  NotifyNoTransactions in 'NotifyNoTransactions.pas' {frmNotifyNoTransactions};
 
 {$R *.RES}
 

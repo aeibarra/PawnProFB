@@ -77,11 +77,13 @@ type
     popMnuGrid: TPopupMenu;
     ExcludeSelected1: TMenuItem;
     bnViewSentTickets: TRzToolButton;
+    btnNotifyNoTransactions: TRzToolButton;
     procedure btnExitClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnRefreshClick(Sender: TObject);
     procedure bnViewSentTicketsClick(Sender: TObject);
+    procedure btnNotifyNoTransactionsClick(Sender: TObject);
     procedure btnSubmitClick(Sender: TObject);
     procedure ScopeChanged(Sender: TObject);
     procedure DateRangeChanged(Sender: TObject);
@@ -155,7 +157,7 @@ implementation
 uses
   System.StrUtils, System.DateUtils,
   PawnDM, LeadsOnlineDM, PawnGlobal, uPawnDialogs, CheckBoxDrawer,
-  uLeadsOnlineTicketMap, ViewSentTickets;
+  uLeadsOnlineTicketMap, ViewSentTickets, NotifyNoTransactions;
 
 const
   ColSelected   = 'SELECTED';
@@ -511,6 +513,22 @@ begin
   finally
     frmViewSentTickets.Free;
     frmViewSentTickets := nil;
+  end;
+end;
+
+{ Tells LeadsOnline a day had NO pawn activity, so the police are told rather
+  than left to infer it from silence. Without this the store has to log into
+  the LeadsOnline website by hand.
+
+  The form does the checking -- see NotifyNoTransactions. }
+procedure TfrmLeadsOnlineSoapExport.btnNotifyNoTransactionsClick(Sender: TObject);
+begin
+  frmNotifyNoTransactions := TfrmNotifyNoTransactions.Create(Self);
+  try
+    frmNotifyNoTransactions.ShowModal;
+  finally
+    frmNotifyNoTransactions.Free;
+    frmNotifyNoTransactions := nil;
   end;
 end;
 

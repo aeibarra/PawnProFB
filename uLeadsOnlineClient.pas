@@ -136,6 +136,23 @@ type
       ACategory: ImageCategory; AItemIndex: Integer;
       out AResult: TLeadsOnlineResult; out AError: string): Boolean;
 
+    /// Tells LeadsOnline that a given day had NO pawn activity, so the police
+    /// are told rather than left to infer it from silence.
+    ///
+    /// THIS IS A STATEMENT TO LAW ENFORCEMENT THAT NOTHING HAPPENED. The
+    /// caller must establish that the day really was empty before calling;
+    /// nothing here can check that.
+    function SetNoTransactionDay(ADate: TDate): TLeadsOnlineResult;
+    /// Non-raising form: returns False and fills AError on transport failure.
+    ///
+    /// The two outcomes are handled differently by design. False means the
+    /// service was never reached and the operator should try again. True with
+    /// a non-zero AResult.ErrorCode means LeadsOnline reached a decision and
+    /// refused -- that date is finished here and has to be done on their
+    /// website. We deliberately do not reproduce their rules locally.
+    function TrySetNoTransactionDay(ADate: TDate; out AResult: TLeadsOnlineResult;
+      out AError: string): Boolean;
+
     property StoreId: Integer read FStoreId;
     property UserName: string read FUserName;
     property UseSandbox: Boolean read FUseSandbox;
@@ -597,6 +614,45 @@ begin
   AError := '';
   try
     AResult := SubmitTransaction(ATicket);
+    Result := True;             // reached the service; AResult says what it said
+  except
+    on E: Exception do
+    begin
+      AResult := Default(TLeadsOnlineResult);
+      AError := E.Message;
+      Result := False;          // never reached the service
+    end;
+  end;
+end;
+
+function TLeadsOnlineClient.SetNoTransactionDay(ADate: TDate): TLeadsOnlineResult;
+var
+  Login: LoginInfo;
+  DateText: string;
+begin
+  // Same wire format as every other date we send them -- see
+  // TLeadsOnlineTicketMapper.FormatDate.
+  DateText := FormatDateTime('yyyy-mm-dd', ADate);
+
+  Login := NewLoginInfo;
+  try
+    Result := Execute('SetNoTransactionDayForStore',
+      function: Response
+      begin
+        Result := GetService.SetNoTransactionDayForStore(FApiVersion,
+          ResolveIpAddress, DateText, Login);
+      end);
+  finally
+    Login.Free;
+  end;
+end;
+
+function TLeadsOnlineClient.TrySetNoTransactionDay(ADate: TDate;
+  out AResult: TLeadsOnlineResult; out AError: string): Boolean;
+begin
+  AError := '';
+  try
+    AResult := SetNoTransactionDay(ADate);
     Result := True;             // reached the service; AResult says what it said
   except
     on E: Exception do
