@@ -1,6 +1,7 @@
 # Declaring a day with no pawns
 
-Design note. Written 2026-11-16, not yet built.
+Design note. Written 2026-11-16, decisions settled with the user the same
+day. Not yet built.
 
 Gema Jewelers' local police want to be told when a day had no pawn activity,
 rather than inferring it from silence. Today that means someone logging into the
@@ -68,7 +69,13 @@ CREATE TABLE LEADS_SOAP_NO_ACTIVITY
 );
 ```
 
-`UNIQUE (ACTIVITY_DATE)` stops the same day being declared twice.
+`UNIQUE (ACTIVITY_DATE)` keeps one row per day. Write it with
+`UPDATE OR INSERT ... MATCHING (ACTIVITY_DATE)`, the same shape as
+`SQLRecordSubmission`, so that a connectivity retry overwrites the earlier
+failure rather than being blocked by it.
+
+**Record every attempt, including failures.** The grid exists to show what went
+wrong; a table holding only successes could not do that.
 
 **This is a schema change, so it needs all four steps** from CLAUDE.md —
 migration script, `Schema.sql`, regenerate the full-deploy, and a `Step<N>_*` in
@@ -76,18 +83,45 @@ migration script, `Schema.sql`, regenerate the full-deploy, and a `Step<N>_*` in
 matters: the USB template is deliberately stale, so the migration runner is the
 only thing that will put this table in front of a store.
 
-### 3. A button, on the LeadsOnline export screen
+### 3. The screens
 
-Beside the existing controls. It opens a small dialog: pick the date, see what
-the check below found, confirm.
+**`btnNotifyNoTransactions`** on the export screen, "Notify that no Transactions
+for the Day". A `TRzToolButton`, which never takes focus — so it cannot be fired
+by a stray Enter or Space, only by a deliberate click. That matters more here
+than anywhere else in the application: this button makes a statement to police.
+
+It opens a small form:
+
+- **a date field**, the same style as the report screens
+- **Notify** and **Cancel**, Notify also a never-focusing tool button, for the
+  same reason
+- **a result area** showing success or the error text
+- **a grid down the left** listing previous declarations and how each one went
+
+The grid is not decoration. It is how a problem gets diagnosed without opening
+the database, and it is how the store shows the police what it has declared.
+
+Nothing on this form may be a Default button. Enter must do nothing at all here;
+Esc cancels.
+
+**Say what the check found, not just that it failed.** If the 14th had three
+transactions, show that number before refusing. "It won't let me" sends someone
+to the phone; "there were 3 transactions that day" answers itself.
 
 ## The rules, and why each exists
 
-### Default to yesterday, and never allow the future
+### Warn, loudly, when declaring today before 5pm
 
-You cannot truthfully say "no pawns today" at two in the afternoon. Default the
-date to **yesterday**, allow the operator to pick an earlier one, and refuse a
-date later than yesterday outright.
+You cannot truthfully say "no pawns today" at two in the afternoon, so declaring
+**today** before 5pm raises a strong warning. It is a warning and not a refusal:
+a shop that closes early has a legitimate reason to close the day out.
+
+**The warning keys on the date, not the clock alone.** Declaring *yesterday* at
+9am is perfectly correct and must pass silently. Only `ADate = Today` before 5pm
+warns. Otherwise clerks meet the warning during legitimate use, learn to click
+through it, and it stops working on the day it matters.
+
+A date later than today is refused outright.
 
 ### Refuse when the day was not actually empty
 
@@ -97,25 +131,24 @@ they half-read must not be able to file a false statement.
 
 This must be in the code, not in the training.
 
-### What "empty" means is wider than the TRANSACTIONS table
+### "Empty" means no pawn or purchase in TRANSACTIONS
 
-Check three things for that date, not one:
+One check, against `TRANSACTIONS`, for pawns and purchases on that date.
 
-| | why |
-|---|---|
-| `TRANSACTIONS` | the obvious one |
-| `LEADS_SOAP_SUBMISSION` | a ticket already reported for that date proves the day was not empty, even if the transaction has since gone |
-| `EXPORT_LOG_FILE_DETAIL` | the same for the older CSV channel |
+Checking `LEADS_SOAP_SUBMISSION` and `EXPORT_LOG_FILE_DETAIL` as well was
+considered and **deliberately dropped**. The argument for them was Gema: they
+delete pawns once redeemed, 86% of their history is gone, and transaction 3457
+was found reused under a new ticket — so a day that looks empty in their
+`TRANSACTIONS` table might not have been. The submission log records what was
+*sent* rather than what still exists, which makes it the more durable witness.
 
-**The second and third are there because of Gema**, who asked for this feature.
-They delete pawns once redeemed or defaulted — 86% of their history is gone, and
-transaction 3457 was found reused under a new ticket number. A day that looks
-empty in their `TRANSACTIONS` table is not evidence the day *was* empty. The
-submission log is the more trustworthy witness, because it records what was sent
-rather than what still exists.
+That is being fixed at the source instead: **the store is being moved off
+deleting pawns altogether.** Solving it there is better than carrying a
+workaround in every store's code forever, and once no pawns are deleted the
+transaction table is a complete record again.
 
-A store that deletes its history is exactly the store most likely to produce a
-false "no activity" day, and the only one who has asked for the feature.
+If deletion turns out to continue, this is the first thing to revisit — it is
+one extra `EXISTS` and no new code paths.
 
 ### Manual, not automatic — for now
 
@@ -130,11 +163,26 @@ is on the wrong side.
 Revisit once there is evidence of how often it is used and whether the checks
 above ever actually fire.
 
-### Say what happened, in the same words as everything else
+### One attempt. Connectivity is retryable; anything else is terminal
 
-Reuse `LeadsOnlineErrorText`. Reuse the Sent / Failed vocabulary from the export
-screen. An operator should not have to learn a second set of words for the same
-service.
+**No retry machinery, and no error recovery built here.** The outcome divides in
+two, along the line the client wrapper already draws:
+
+| `Try*` returns | meaning | what the operator is told |
+|---|---|---|
+| **False** | never reached the service | a connection problem — try again |
+| **True**, `errorCode = 0` | accepted | done |
+| **True**, `errorCode <> 0` | reached and refused | **do this one on the LeadsOnline website** |
+
+That last row is the rule that keeps this feature small. A refusal from
+LeadsOnline is their business logic talking, and reproducing their rules here —
+duplicate day, date out of range, store not configured for it — would mean
+chasing a moving target in someone else's system. The website is authoritative
+and already handles every case. Send them there.
+
+Reuse `LeadsOnlineErrorText` for the wording, and the Sent / Failed vocabulary
+from the export screen. An operator should not learn a second set of words for
+the same service.
 
 ## Showing it afterwards
 
