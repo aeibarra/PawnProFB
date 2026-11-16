@@ -176,9 +176,15 @@ two, along the line the client wrapper already draws:
 
 That last row is the rule that keeps this feature small. A refusal from
 LeadsOnline is their business logic talking, and reproducing their rules here —
-duplicate day, date out of range, store not configured for it — would mean
-chasing a moving target in someone else's system. The website is authoritative
-and already handles every case. Send them there.
+date out of range, store not configured for it — would mean chasing a moving
+target in someone else's system. The website is authoritative and already
+handles every case. Send them there.
+
+**Declaring the same day twice is safe.** Tested against the sandbox on
+2026-11-16: LeadsOnline ignores the repeat and answers success again. There is
+therefore no duplicate check, and none is needed — re-declaring a day costs
+nothing, and `UPDATE OR INSERT MATCHING` keeps it to one row locally either
+way. This was an open question when the note was written; it is now answered.
 
 Reuse `LeadsOnlineErrorText` for the wording, and the Sent / Failed vocabulary
 from the export screen. An operator should not learn a second set of words for

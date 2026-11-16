@@ -45,6 +45,7 @@ uses
 type
   TfrmNotifyNoTransactions = class(TForm)
     pnLeft: TRzPanel;
+    lblHistory: TRzLabel;
     grHistory: TDBGrid;
     pnRight: TRzPanel;
     lblDate: TRzLabel;
@@ -335,10 +336,15 @@ begin
     NOT REACHED is a connection problem and is worth trying again.
 
     REACHED AND REFUSED is LeadsOnline's own business logic talking. We do not
-    reproduce their rules here -- duplicate day, date out of range, store not
-    configured -- because that means chasing a moving target in someone else's
-    system. Their website is authoritative and already handles every case, so
-    the operator is sent there. }
+    reproduce their rules here -- date out of range, store not configured --
+    because that means chasing a moving target in someone else's system. Their
+    website is authoritative and already handles every case, so the operator is
+    sent there.
+
+    DECLARING THE SAME DAY TWICE IS SAFE. Tested against the sandbox on
+    2026-11-16: LeadsOnline ignores the repeat and answers success again. So
+    there is deliberately no duplicate check here, and re-declaring a day costs
+    nothing. UPDATE OR INSERT MATCHING keeps it to one row either way. }
   if not Reached then
   begin
     RecordAttempt(ADate, True, 0, Err);

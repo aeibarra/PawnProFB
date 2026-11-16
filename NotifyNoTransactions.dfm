@@ -24,19 +24,33 @@ object frmNotifyNoTransactions: TfrmNotifyNoTransactions
     Height = 420
     Align = alLeft
     BorderOuter = fsNone
-    Caption = 'Previous notifications'
-    Alignment = taLeftJustify
+    Caption = ''
     Padding.Left = 8
     Padding.Top = 8
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 0
+    object lblHistory: TRzLabel
+      AlignWithMargins = True
+      Left = 8
+      Top = 8
+      Width = 424
+      Height = 22
+      Align = alTop
+      Caption = 'Previous notifications'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object grHistory: TDBGrid
       AlignWithMargins = True
       Left = 8
-      Top = 32
+      Top = 36
       Width = 424
-      Height = 380
+      Height = 376
       Align = alClient
       DataSource = dsHistory
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
