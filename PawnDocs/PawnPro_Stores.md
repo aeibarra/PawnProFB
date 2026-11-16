@@ -21,7 +21,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Perez Cash Joyeria | SOAP | FB5 | single | live 2026-09-10 |
 | I Love Miami Jewelry | **none** | **FB5** | single | converted 2026-11-09, done |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
-| A1 Jewelry Loans | CSV/FTP | ASA | single | to migrate |
+| A1 Jewelry Loans | CSV/FTP | ASA | single | **next** — credentials in hand |
 | Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
 | Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
@@ -814,19 +814,36 @@ after that date.
 6145 SW 8th St, Miami, FL 33144
 Phone — · Email — · LeadsOnline store id —
 
-### A1 Jewelry Loans (Frank's store)
+### A1 Jewelry Loans (Frank's store) — NEXT, credentials in hand
 **A1 Jewelry Loans, Pawn Shop**
 8150 SW 8th St #125, Miami, FL 33144
-Phone (305) 967-8981 · Email frankgonza1234@icloud.com · LeadsOnline store id —
+Phone (305) 967-8981 · Email frankgonza1234@icloud.com
 
-Email received 2026-11-12, after they returned the call. **Credentials
-requested from Russell the same day.**
+### LeadsOnline
 
-Still unknown, and worth asking when he replies or on arrival: their existing
-`LEADS_STORE_ID`. Every migrating store so far has had one already in its
-database, matching exactly what LeadsOnline issued, and that check has caught a
-mistake twice -- so read it from `STORE` before the first submission even if
-Russell states it.
+| | |
+|---|---|
+| **Store ID** | `69997` |
+| **API user name** | `a1jewelry8150` |
+| **API password** | not recorded here — password manager, and `STORE` at install |
+| **Credentials issued** | 2026-11-16, by Russell House |
+
+Email received 2026-11-12 after they returned the call; credentials requested
+the same day and issued four days later.
+
+The user name follows the house pattern of name plus street number, and 8150
+matches 8150 SW 8th St. That is the install-day check.
+
+**`69997` is a shape we have not seen before.** Every other store sits in the
+63xxx range or is an older short number (Lucky 75764, Ricardo 71184, Kendale
+4351, Perez Cash Joyeria 97956). So **read `STORE.LEADS_STORE_ID` from their
+database before the first submission and compare.** At every migrating store so
+far the id already on file was exactly what LeadsOnline issued, and that check
+has caught a mistake twice:
+
+```
+.\Run-StoreSurvey.ps1 -ExpectedStoreId 69997
+```
 
 ### Ok Jewelers — LIVE on SOAP 2026-09-10
 10601 SW 40th St, Miami, FL 33165
