@@ -875,6 +875,12 @@ A backup beside the database on the same drive is not a backup: one disk failure
 takes both. This is the arrangement the rule below was written for, and the third
 live store needing a backup fix.
 
+**External drive being fitted Friday 2026-11-20.** On the day: set
+`BACKUP_PATH` to a folder on it rather than its root, tick *Do backup when
+closing application*, then prove it -- close PawnPro, reopen, and check
+`BACKUP_HISTORY` gained a row. The failure is silent, which is how I Love
+Miami went two years without one.
+
 ### Ok Jewelers — LIVE on SOAP 2026-09-10
 10601 SW 40th St, Miami, FL 33165
 Contact (786) 916-7641 · Email scanizares2003@yahoo.com · LeadsOnline store id `63235`
