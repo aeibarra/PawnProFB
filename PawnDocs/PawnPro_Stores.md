@@ -21,7 +21,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Perez Cash Joyeria | SOAP | FB5 | single | live 2026-09-10 |
 | I Love Miami Jewelry | **none** | **FB5** | single | converted 2026-11-09, done |
 | A Loz Jewelry | CSV/FTP | ASA | single | to migrate |
-| A1 Jewelry Loans | CSV/FTP | ASA | single | **next** — credentials in hand |
+| A1 Jewelry Loans | SOAP | FB5 | single | live 2026-11-17 |
 | Ok Jewelers | SOAP | FB5 | single | live 2026-09-10 |
 | Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
@@ -548,7 +548,7 @@ a year old and may come back as error 7 regardless.
 
 ## Stores still to migrate
 
-**Two left**: A Loz and A1 Jewelry Loans. I Love Miami, Home of Watches, AJ
+**One left**: A Loz Jewelry. A1 Jewelry Loans, I Love Miami, Home of Watches, AJ
 Jewelry and Gema Jewelers are done, and Gold Star has been sold; they have moved
 out of this list in all but heading, and their entries below record what
 happened.
@@ -814,7 +814,7 @@ after that date.
 6145 SW 8th St, Miami, FL 33144
 Phone — · Email — · LeadsOnline store id —
 
-### A1 Jewelry Loans (Frank's store) — NEXT, credentials in hand
+### A1 Jewelry Loans (Frank's store) — LIVE on SOAP 2026-11-17
 **A1 Jewelry Loans, Pawn Shop**
 8150 SW 8th St #125, Miami, FL 33144
 Phone (305) 967-8981 · Email frankgonza1234@icloud.com
@@ -834,16 +834,46 @@ the same day and issued four days later.
 The user name follows the house pattern of name plus street number, and 8150
 matches 8150 SW 8th St. That is the install-day check.
 
-**`69997` is a shape we have not seen before.** Every other store sits in the
-63xxx range or is an older short number (Lucky 75764, Ricardo 71184, Kendale
-4351, Perez Cash Joyeria 97956). So **read `STORE.LEADS_STORE_ID` from their
-database before the first submission and compare.** At every migrating store so
-far the id already on file was exactly what LeadsOnline issued, and that check
-has caught a mistake twice:
+`69997` looked unfamiliar -- every other store is 63xxx or an older short number
+(Lucky 75764, Ricardo 71184, Kendale 4351, Perez Cash Joyeria 97956) -- so it was
+checked against the store's own database before anything was sent.
+**`LEADS_STORE_ID` reads 69997 in the pre-cutover copy too**, so what Russell
+issued was already on file. Same as every migrating store so far.
 
-```
-.\Run-StoreSurvey.ps1 -ExpectedStoreId 69997
-```
+#### Cutover, 2026-11-17
+
+| | |
+|---|---|
+| **Legal name** | A1 Jewelry Loan Inc. PAWNBROKER. |
+| **Store id in the database** | `69997`, confirmed against `PAWNDATA_before.FDB` |
+| **API user** | `a1jewelry8150` (8150 matches 8150 SW 8th St) |
+| **Endpoint** | production -- the sandbox flag was not left on |
+| **Export method** | `S`, switched from `C` |
+| **Skip CSV-sent** | TRUE |
+| **Schema** | **v13** -- the first store to receive v12 and v13 |
+| **Data** | 1,663 transactions from 2018-10-11, 767 customers, 3,070 items |
+| **Databases** | `DB/A1Jewelry/`, with the pre-SOAP copy as `PAWNDATA_before.FDB` |
+
+**Nothing submitted yet**, and **12 transactions are waiting, all from the last
+year**. Worth sending at least one to prove the channel rather than leaving it
+unexercised, as happened at Ok Jewelers.
+
+**The first store with images: 3,000 of them.** Perez Cash Joyeria, Ok Jewelers
+and Home of Watches all had none, so the image upload path has never run against
+a real store. `LEADS_SOAP_IMAGE_SENT` is still empty -- watch the Photos and IDs
+columns on the first send.
+
+#### ⚠️ Backups point at the system disk
+
+| | |
+|---|---|
+| `BACKUP_PATH` | `C:\Pawn\Backup` -- **the system disk** |
+| `AUTO_BACKUP_WHEN_CLOSE_APP` | FALSE |
+| Backups logged | 2, the last from the install itself |
+
+A backup beside the database on the same drive is not a backup: one disk failure
+takes both. This is the arrangement the rule below was written for, and the third
+live store needing a backup fix.
 
 ### Ok Jewelers — LIVE on SOAP 2026-09-10
 10601 SW 40th St, Miami, FL 33165
@@ -1093,7 +1123,7 @@ had none and 61.
 
 ## Open items
 
-- **⚠️ All nine SOAP stores need the executable replaced with 3.37.5.3, and this
+- **⚠️ All ten SOAP stores need the executable replaced with 3.37.6.1, and this
   one is not housekeeping.** Until 3.37.5.0 the driver licence barcode parser
   searched for field tags anywhere in the text, so it silently wrote wrong
   customer data: a surname MCDADAMS was stored as MC, an address 123 DADLEY
@@ -1113,12 +1143,14 @@ had none and 61.
   Confirm each store afterwards from the About box rather than assuming the copy
   landed.
 
-- **Two stores are running without working backups.** I Love Miami was the
-  third, fixed on 2026-11-09 after two years on a single backup from
-  2024-12-23 with `BACKUP_PATH` set to a bare drive root.
+- **Three stores are running without working backups**, and it remains the
+  most common defect on this list. I Love Miami was a fourth, fixed on
+  2026-11-09 after two years on a single backup from 2024-12-23 with
+  `BACKUP_PATH` set to a bare drive root.
 
   | store | `BACKUP_PATH` | auto | last backup |
   |---|---|---|---|
+  | A1 Jewelry Loans | `C:\Pawn\Backup` -- **system disk** | off | 2026-11-17 |
   | Home of Watches | **empty** | off | none |
   | Kendale | set | off | -- |
 
@@ -1139,5 +1171,5 @@ Two more, both at Kendale, both easy to lose:
 - **`AUTO_BACKUP_WHEN_CLOSE_APP` is off** — the only live store where it is, and
   the one whose staff are least likely to remember doing it by hand.
 
-The CSV/FTP export still exists and still works. The nine SOAP stores do not
-use it; the three still to migrate all do.
+The CSV/FTP export still exists and still works. The ten SOAP stores do not
+use it; A Loz, the one still to migrate, does.
