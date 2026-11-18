@@ -313,7 +313,9 @@ type
     procedure VoidSale(SaleNo: integer; const Reason: string);
     function FindSaleOfItem(InvItemNo: integer; out SaleNo, TicketNo, LineCount: integer;
                             out Total: Currency): boolean;
-    function GetSaleTicketsOfTransaction(TransactionNo: integer): string;
+    function GetSoldItemsInfo(TransactionNo, InvItemNo: integer; out SoldCount: integer;
+                              out SaleNos: TArray<integer>): string;
+    procedure DeleteWithLog(const SaleNos: TArray<integer>; const Reason: string; const DeleteProc: TProc);
     function UnsellItem(InvItemNo: integer): boolean;
     procedure RefreshFBQry(Qry: TFDQuery); overload;
     procedure RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string); overload;
@@ -2484,7 +2486,11 @@ begin
          [ftWideString, ftWideString, ftInteger, ftWideString]) = 0 then
       raise Exception.Create('This sale was already voided.');
 
-    LineCount := ConnFB.ExecSQLScalar('SELECT COUNT(*) FROM SALE_LINES WHERE SALE_NO = :SALE_NO', [SaleNo]);
+    // Lines whose item no longer exists (deleted together with this void, see
+    // TDM.DeleteWithLog) have nothing to put back, so they are not expected.
+    LineCount := ConnFB.ExecSQLScalar(
+      'SELECT COUNT(*) FROM SALE_LINES l WHERE l.SALE_NO = :SALE_NO ' +
+      '  AND EXISTS (SELECT 1 FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO)', [SaleNo]);
     Restored := ConnFB.ExecSQL(
       'UPDATE INVENTORY_ITEMS SET INV_ITEM_STATUS = ''S'', SOLD_DATE = NULL ' +
       'WHERE INV_ITEM_NO IN (SELECT INV_ITEM_NO FROM SALE_LINES WHERE SALE_NO = :SALE_NO) ' +
@@ -2539,37 +2545,92 @@ begin
   end;
 end;
 
-{ Sale ticket numbers (completed or voided) holding items of a transaction,
-  comma separated; '' when none. Such a transaction must not be deleted, or
-  its items (deleted with it by cascade) would vanish from the sales history.
-  There is no FK from SALE_LINES to INVENTORY_ITEMS (see the v12 migration),
-  so this check is what protects it. }
-function TDM.GetSaleTicketsOfTransaction(TransactionNo: integer): string;
+{ Before deleting an item (InvItemNo > 0) or a whole transaction
+  (InvItemNo = 0): how many of its items are sold (SOLD_DATE set, or status
+  'D'), and the COMPLETED sale tickets holding them. Returns those tickets as
+  text ('4012, 4031'), '' when none; SaleNos are what TDM.DeleteWithLog voids.
+  Voided tickets need nothing: they stay in history as they are. }
+function TDM.GetSoldItemsInfo(TransactionNo, InvItemNo: integer; out SoldCount: integer;
+  out SaleNos: TArray<integer>): string;
 var
   Qry: TFDQuery;
+  Scope: string;
 begin
   Result := '';
+  SaleNos := nil;
+  if InvItemNo > 0 then
+    Scope := 'ii.INV_ITEM_NO = ' + IntToStr(InvItemNo)
+  else
+    Scope := 'ii.TRANSACTION_NO = ' + IntToStr(TransactionNo);
+
+  SoldCount := ConnFB.ExecSQLScalar(
+    'SELECT COUNT(*) FROM INVENTORY_ITEMS ii WHERE ' + Scope +
+    ' AND (ii.SOLD_DATE IS NOT NULL OR ii.INV_ITEM_STATUS = ''D'')');
+
   Qry := TFDQuery.Create(nil);
   try
     Qry.Connection := ConnFB;
     Qry.SQL.Text :=
-      'SELECT DISTINCT s.SALE_TICKET_NO ' +
+      'SELECT DISTINCT s.SALE_NO, s.SALE_TICKET_NO ' +
       'FROM SALE_LINES l ' +
       'JOIN SALES s ON s.SALE_NO = l.SALE_NO ' +
       'JOIN INVENTORY_ITEMS ii ON ii.INV_ITEM_NO = l.INV_ITEM_NO ' +
-      'WHERE ii.TRANSACTION_NO = :TRANSACTION_NO ' +
+      'WHERE ' + Scope + ' AND s.SALE_STATUS = :COMPLETED ' +
       'ORDER BY s.SALE_TICKET_NO';
-    Qry.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
+    Qry.ParamByName('COMPLETED').AsString := SaleStatus_Completed;
     Qry.Open;
     while not Qry.Eof do
       begin
+        SaleNos := SaleNos + [Qry.Fields[0].AsInteger];
         if Result <> '' then
           Result := Result + ', ';
-        Result := Result + '#' + Qry.Fields[0].AsString;
+        Result := Result + Qry.Fields[1].AsString;
         Qry.Next;
       end;
   finally
     Qry.Free;
+  end;
+end;
+
+{ Deletes an item or a transaction (DeleteProc does the actual delete) and
+  voids the completed sale tickets of its sold items, all in one database
+  transaction: everything happens, or nothing does.
+
+  The log is written by the database (BEFORE DELETE triggers into
+  INVENTORY_ITEMS_DELETED / TRANSACTIONS_DELETED, schema v13); Reason reaches
+  them through the transaction's context. The delete runs BEFORE the voids,
+  so the copy shows a sold item as Sold; VoidSale then puts the ticket's
+  remaining items back to For Sale and skips the deleted one. }
+procedure TDM.DeleteWithLog(const SaleNos: TArray<integer>; const Reason: string; const DeleteProc: TProc);
+var
+  SaleNo: integer;
+  StartedFBTrans: Boolean;
+begin
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    if Trim(Reason) <> '' then
+      ConnFB.ExecSQLScalar(
+        'SELECT RDB$SET_CONTEXT(''USER_TRANSACTION'', ''PAWNPRO_DELETE_REASON'', ' +
+        'CAST(:REASON AS VARCHAR(200))) FROM RDB$DATABASE',
+        [Copy(Trim(Reason), 1, 200)], [ftWideString]);
+
+    DeleteProc();
+
+    for SaleNo in SaleNos do
+      VoidSale(SaleNo, Copy('Item deleted: ' + Trim(Reason), 1, 120));
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Rollback;
+    raise;
   end;
 end;
 

@@ -998,6 +998,8 @@ type
     procedure SaveTopMarginPolRep;
     procedure CalcPawnAmountFromItemCost(var PawnAmount: Currency; var ItemsWithNoEnteredCost: integer);
     procedure RefreshCurrentTransaction;
+  private
+    function AskDeleteReason(const Caption: string; out Reason: string): boolean;
   end;
 
 // Called by other screens (sale drawer, Sell Items) after they change item
@@ -1437,28 +1439,71 @@ begin
 end;
 
 
+{ Asks why sold items are being deleted. Required: the user must type
+  something, or cancel. }
+function TfrmClients.AskDeleteReason(const Caption: string; out Reason: string): boolean;
+begin
+  Reason := '';
+  repeat
+    Result := PawnPrompt('Reason for deleting (required, sold items):', Caption, Reason, Self);
+    if not Result then
+      exit;
+    Reason := Trim(Reason);
+    if Reason = '' then
+      PawnInfo('Please type a reason. It is kept in the deleted records log.', Caption, Self);
+  until Reason <> '';
+end;
+
+{ Deleting a transaction deletes its items and payments too (cascade). Every
+  deletion is logged by the database (schema v13). With sold items, a reason
+  is required, and the completed sale tickets holding them are voided in the
+  same step: those tickets' other items go back to For Sale. }
 procedure TfrmClients.btnTranDeleteClick(Sender: TObject);
 var
-  Tickets: string;
+  TranNo, SoldCount: integer;
+  Tickets, Reason, Msg: string;
+  SaleNos: TArray<integer>;
 begin
-  // Deleting a transaction deletes its items too (cascade); items already on a
-  // sale ticket must stay, or the sales history loses them.
-  if DM.qryTransactions.Active and not DM.qryTransactions.IsEmpty then
+  if not DM.qryTransactions.Active or DM.qryTransactions.IsEmpty then
+    exit;
+
+  TranNo := DM.qryTransactions.FieldByName('TRANSACTION_NO').AsInteger;
+  Tickets := DM.GetSoldItemsInfo(TranNo, 0, SoldCount, SaleNos);
+  Reason := '';
+
+  if SoldCount = 0 then
     begin
-      Tickets := DM.GetSaleTicketsOfTransaction(DM.qryTransactions.FieldByName('TRANSACTION_NO').AsInteger);
+      if MessageDlg('Are you sure you wish to delete this Transaction?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+        exit;
+    end
+  else
+    begin
+      Msg := Format('%d item(s) of this transaction are sold.', [SoldCount]);
       if Tickets <> '' then
-        begin
-          PawnWarn('This transaction cannot be deleted: some of its items are on sale ticket ' +
-                   Tickets + '.', 'Delete Transaction', Self);
-          exit;
-        end;
+        Msg := Msg + sLineBreak + 'Receipt No. ' + Tickets + ' will be voided; its other items go back to For Sale.';
+      if not PawnConfirm(Msg + sLineBreak + sLineBreak + 'Delete this transaction?', 'Delete Transaction', Self) then
+        exit;
+      if not AskDeleteReason('Delete Transaction', Reason) then
+        exit;
     end;
 
-  if MessageDlg('Are you sure you wish to delete this Transaction?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-    begin
-      DM.qryTransactions.Delete;
-    end;
+  try
+    DM.DeleteWithLog(SaleNos, Reason,
+      procedure
+      begin
+        DM.qryTransactions.Delete;
+      end);
+  except
+    on E: Exception do
+      begin
+        PawnWarn(E.Message, 'Delete Transaction', Self);
+        RefreshCurrentTransaction;
+        exit;
+      end;
+  end;
 
+  if Length(SaleNos) > 0 then
+    RefreshClientsAfterItemChange;
 end;
 
 procedure TfrmClients.AddEditPayments(NewRow: boolean);
@@ -2341,24 +2386,58 @@ begin
 
 end;
 
+{ Every deletion is logged by the database (schema v13). A sold item needs a
+  reason, and its completed sale ticket is voided in the same step: the
+  ticket's other items go back to For Sale. The item's stones go with it
+  (FK cascade) -- not deleted first, so the log can still list them. }
 procedure TfrmClients.btnDeleteItemClick(Sender: TObject);
+var
+  ItemNo, SoldCount: integer;
+  Tickets, Reason, Msg: string;
+  SaleNos: TArray<integer>;
 begin
-  // An item on a sale ticket (completed or voided) is part of the sales history.
-  if OpenSQLStatementFB('SELECT COUNT(*) FROM SALE_LINES WHERE INV_ITEM_NO = ' +
-                        qryInvItemsINV_ITEM_NO.AsString) > 0 then
+  if not qryInvItems.Active or qryInvItems.IsEmpty then
+    exit;
+
+  ItemNo := qryInvItemsINV_ITEM_NO.AsInteger;
+  Tickets := DM.GetSoldItemsInfo(0, ItemNo, SoldCount, SaleNos);
+  Reason := '';
+
+  if SoldCount = 0 then
     begin
-      PawnWarn('This item cannot be deleted: it is on a sale ticket.', 'Delete Item', Self);
-      exit;
+      if MessageDlg('Are you sure you wish to delete this item?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+        exit;
+    end
+  else
+    begin
+      Msg := 'This item is sold.';
+      if Tickets <> '' then
+        Msg := Msg + sLineBreak + 'Receipt No. ' + Tickets + ' will be voided; its other items go back to For Sale.';
+      if not PawnConfirm(Msg + sLineBreak + sLineBreak + 'Delete this item?', 'Delete Item', Self) then
+        exit;
+      if not AskDeleteReason('Delete Item', Reason) then
+        exit;
     end;
 
-  if MessageDlg('Are you sure you wish to delete this item?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    ExecSQLStatementFB('delete from STONES where INV_ITEM_NO=' + qryInvItemsINV_ITEM_NO.AsString);
-    ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + qryInvItemsINV_ITEM_NO.AsString);
-
-    qryInvItems.Delete;
-    UpdatePurchaseStatusActions;
+  try
+    DM.DeleteWithLog(SaleNos, Reason,
+      procedure
+      begin
+        ExecSQLStatementFB('delete from IMAGES_DATA where IMAG_REF_TO_ROW_NO=' + IntToStr(ItemNo));
+        qryInvItems.Delete;
+      end);
+  except
+    on E: Exception do
+      begin
+        PawnWarn(E.Message, 'Delete Item', Self);
+        RefreshCurrentTransaction;
+        exit;
+      end;
   end;
+
+  UpdatePurchaseStatusActions;
+  if Length(SaleNos) > 0 then
+    RefreshClientsAfterItemChange;
 end;
 
 procedure TfrmClients.qryPawnItemsCalcFields(DataSet: TDataSet);
