@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Grids, DBGrids, ExtCtrls, System.UITypes,
+  Dialogs, StdCtrls, Grids, DBGrids, ExtCtrls, System.UITypes, System.Types,
   Buttons, DB, Mask, ComCtrls,
   FireDAC.Comp.Client, Data.SqlTimSt,
   RzForms, RzButton, RzTreeVw, RzSplit, FireDAC.Stan.Intf, FireDAC.Stan.Option,

@@ -2138,6 +2138,7 @@ object frmReport02: TfrmReport02
   object RepItemsForSale: TppReport
     AutoStop = False
     DataPipeline = DBPItemsForSale
+    PassSetting = psTwoPass
     PrinterSetup.BinName = 'Default'
     PrinterSetup.DocumentName = 'Report'
     PrinterSetup.Duplex = dpNone

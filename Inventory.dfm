@@ -523,9 +523,6 @@ object frmInventory: TfrmInventory
       BevelOuter = bvNone
       ShowCaption = False
       TabOrder = 0
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitHeight = 653
       object lblSaleCount: TLabel
         Left = 0
         Top = 52
@@ -602,9 +599,6 @@ object frmInventory: TfrmInventory
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
-      ExplicitLeft = 51
-      ExplicitTop = 3
-      ExplicitHeight = 647
       object pnSaleButtons: TPanel
         Left = 2
         Top = 438
@@ -614,7 +608,6 @@ object frmInventory: TfrmInventory
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 0
-        ExplicitTop = 432
         DesignSize = (
           593
           46)
@@ -707,7 +700,6 @@ object frmInventory: TfrmInventory
         ParentFont = False
         ShowCaption = False
         TabOrder = 1
-        ExplicitTop = 478
         DesignSize = (
           593
           165)
@@ -844,10 +836,6 @@ object frmInventory: TfrmInventory
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitLeft = 113
-        ExplicitTop = 54
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         object Panel3: TPanel
           Left = 0
           Top = 0
@@ -1015,6 +1003,8 @@ object frmInventory: TfrmInventory
   end
   object qryInvItems: TFDQuery
     Connection = DM.ConnFB
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
     UpdateOptions.AssignedValues = [uvFetchGeneratorsPoint]
     UpdateOptions.FetchGeneratorsPoint = gpImmediate
     UpdateOptions.UpdateTableName = 'INVENTORY_ITEMS'
