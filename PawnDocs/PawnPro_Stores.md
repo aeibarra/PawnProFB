@@ -26,6 +26,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 | Big Jewelers | **new** | **new** | ? | NEW CUSTOMER 2026-10-28 — credentials requested |
+| Brenda Joyeria | **none** | ASA | ? | upgrading 2026-11-19 — NO INTERNET |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service, as Felitin's, Kendale and Gema were. **AJ Jewelry** was the one
@@ -1112,6 +1113,39 @@ migrating store skips because the pump brings reference data).
   set it at install rather than leaving it.
 
 Downtown Miami, well away from the SW 8th St cluster.
+
+### Brenda Joyeria — upgrading 2026-11-19, no LeadsOnline
+9160 NW 122nd St, Hialeah Gardens, FL 33018
+Phone (305) 826-0666 · Email — · LeadsOnline store id — **none**
+
+Thought lost, then called back on 2026-11-18. A conversion only: like AJ Jewelry
+and I Love Miami they have no LeadsOnline account, so there are no credentials to
+request, no cutover and no export screen. The ASA-to-FB5 upgrade IS the whole
+job.
+
+#### ⚠️ The computer has no internet access at all
+
+The first store in this state, and worth recording because nothing in the app
+depends on the network except one thing — which looks broken when it cannot
+reach it.
+
+**Set `SHOWGOLDPRICE=N` before handing the machine over**, or press the *Show
+Gold Price* toolbar button so it is down, which writes the same key.
+
+Left on, the price bar shows a red `Error: ...` permanently and retries every
+fifteen minutes. It is harmless — the fetch runs on a background task with a
+five-second connect timeout, wrapped in try/except, so the UI never blocks, the
+app never hangs, and shutdown still joins the task on a bounded wait. But a
+permanent error on the main screen reads as a broken program to a store, and
+they will ask.
+
+`FormShow` honours the setting by never enabling `Timer15Min`, so turning it off
+stops the work rather than merely hiding the result. Note `PawnProSetup` seeds
+the key to `Y`, so a fresh install arrives with the price bar on.
+
+**Everything else is local and unaffected.** Encrypted backups use the embedded
+vendor public key with no key server, and the migration runner applies v12 and
+v13 from inside the EXE.
 
 ## Template for the next store
 
