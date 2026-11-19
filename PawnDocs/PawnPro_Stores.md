@@ -26,7 +26,7 @@ missing entries below are as much a part of the record as the filled ones.
 | Home of Watches & Jewels | SOAP | FB5 | single | live 2026-10-08 |
 | AJ Jewelry | **none** | **FB5** | single | converted 2026-09-03, done |
 | Big Jewelers | **new** | **new** | ? | NEW CUSTOMER 2026-10-28 — credentials requested |
-| Brenda Joyeria | **none** | ASA | ? | upgrading 2026-11-19 — NO INTERNET |
+| Brenda Joyeria | **none** | **FB5** | ? | converted 2026-11-19, done |
 
 Every remaining migration is a full one: ASA to Firebird 5 **and** onto the web
 service, as Felitin's, Kendale and Gema were. **AJ Jewelry** was the one
@@ -213,6 +213,26 @@ would be refused with error 7. They are meant to be cleared with **Never send
 these to LeadsOnline** on the export grid rather than submitted.
 
 ### Open items
+
+- **⚠️ The two stores with no LeadsOnline account are still opted in to the
+  CSV export.** `LEADS_ONLINE_EXPORT_METHOD` is `'C'` at both Brenda Joyeria and
+  I Love Miami, so the police-export button is on their main screen. Clicking it
+  opens the CSV/FTP screen with every transaction the store has ever written,
+  no store id and no FTP address.
+
+  Nobody set that. `Step6` backfilled every existing row to `'C'`; `Step7`
+  changed only the default for new databases. So **every converted store arrives
+  opted in**, and the two that should not be were never switched off.
+
+  The opt-out works and is already written — `ApplyLeadsOnlineVisibility` hides
+  the whole action when the method is `'N'`, with a comment saying an
+  unconfigured store "must not look like it reports to law enforcement". It just
+  has to be applied: one setting per store, through the LeadsOnline Settings
+  screen, which stays visible for exactly this purpose. **AJ Jewelry has not
+  been checked** and is likely the same.
+
+  Worth deciding whether the conversion checklist should set this, since every
+  future non-LeadsOnline store will land the same way.
 
 - **Postcode disagreement.** The store record says `Miami, FL 33186`; the
   credentials request sent to LeadsOnline said `33185`. One is wrong, and it is
@@ -1114,7 +1134,7 @@ migrating store skips because the pump brings reference data).
 
 Downtown Miami, well away from the SW 8th St cluster.
 
-### Brenda Joyeria — upgrading 2026-11-19, no LeadsOnline
+### Brenda Joyeria — CONVERTED to FB5 2026-11-19, done
 9160 NW 122nd St, Hialeah Gardens, FL 33018
 Phone (305) 826-0666 · Email — · LeadsOnline store id — **none**
 
@@ -1146,6 +1166,125 @@ the key to `Y`, so a fresh install arrives with the price bar on.
 **Everything else is local and unaffected.** Encrypted backups use the embedded
 vendor public key with no key server, and the migration runner applies v12 and
 v13 from inside the EXE.
+
+#### How it went
+
+Reviewed `E:\DB\BrendaJoyeria\PAWNDATA.FDB` on 2026-11-19.
+
+| | |
+|---|---|
+| **Data** | 1,460 pawns and purchases from 2019-08-23, 619 customers, 2,825 items, 698 stones |
+| **Schema version** | **14** — the migration runner brought it forward, as designed |
+| **Images** | `IMAGES_DATA` empty. No extraction step was needed and none was done |
+| **Backups** | `D:\Pawnbackup\`, automatic on close, **720 logged since 2019-08-26** |
+| **Encrypted backup** | `PawnPro_20261119_115348.fbk.enc` written during the visit |
+| **Police id** | 27 |
+| **Terms** | 10% a month, 2-month default maturity, interest method 1, dates by day (`D`) |
+
+**The backup needed nothing.** It is the first store this year to arrive with a
+working path, auto-backup already ticked, and a seven-year history — and the
+first where the new encrypted envelope was seen to run on the day of install
+rather than being configured afterwards. Four of the ten live stores have needed
+backup work after the fact; this one did not.
+
+**Nothing was ever reported anywhere.** `EXPORT_FILE_LOG`,
+`EXPORT_LOG_FILE_DETAIL` and `LEADS_SOAP_SUBMISSION` are all empty, and
+`LEADS_STORE_ID` is null. The store has never filed electronically by either
+channel, which matches what the owner said.
+
+#### ⚠️ The police-export button is visible here, and should not be
+
+`LEADS_ONLINE_EXPORT_METHOD` is **`'C'`** — CSV over FTP — not `'N'`.
+
+Nobody chose that. `Step6` created the column with a `'C'` default and
+backfilled every existing row to `'C'` so the CSV stores kept working; `Step7`
+changed the default to `'N'` but deliberately left existing rows alone, which
+only brand-new databases ever see. A converted store therefore arrives opted
+**in**.
+
+The consequence is visible on the main screen. `ApplyLeadsOnlineVisibility`
+gates `actLeadsOnlineExport` on `UsesLeadsOnline`, and `'C'` counts as yes, so
+the export entry point is offered — and `actLeadsOnlineExportExecute` treats
+anything that is not `'S'` as CSV, so clicking it opens the CSV/FTP screen
+against 1,460 never-reported transactions with no store id and no FTP address.
+
+The comment on that method says an unconfigured store "must not look like it
+reports to law enforcement". The mechanism is right; it was never applied to the
+stores it was written for:
+
+| store | method | should be |
+|---|---|---|
+| Brenda Joyeria | `'C'` | `'N'` |
+| I Love Miami Jewelry | `'C'` | `'N'` |
+| AJ Jewelry | not checked | `'N'` |
+
+One row each, through the LeadsOnline **Settings** screen, which stays visible
+precisely so the setting can be reached. See *Open items*.
+
+#### Volume — third busiest of the eight measured
+
+Asked on 2026-11-19: is this a volume store? **Yes, by current activity, and
+the all-time total hides it.** 1,460 since 2019 ranks sixth, but every big
+number on this list is a longer history, not a busier shop. Pawns and purchases
+in the last twelve months, measured identically across every database on the
+review drive:
+
+| store | last 12 months | avg loan | first ticket |
+|---|---|---|---|
+| Kendale Jewelry | 672 | $788 | 2008-08-07 |
+| Perez Cash Joyeria | 308 | $1,625 | 2001-08-16 |
+| **Brenda Joyeria** | **270** | **$1,367** | **2019-08-23** |
+| A1 Jewelry Loans | 220 | $5,219 | 2018-10-11 |
+| Gema Jewelers | 142 | $1,317 | 2015-10-05 |
+| Felitin's Gold | 126 | $634 | 2018-08-16 |
+| I Love Miami Jewelry | 48 | $1,565 | 2025-01-31 |
+| Home of Watches | 31 | $4,094 | 2025-03-11 |
+
+Ricardo Joyeria and Perez Cash Jewelry II are not on the drive and are missing
+from the comparison; both are larger all-time (58,809 and 38,742) and probably
+sit above Brenda. Call it **third to fifth of the thirteen**, and firmly in the
+half of the list that matters.
+
+By money rather than tickets it places lower — roughly $370k lent a year, fifth
+of the eight, since A1 writes a fifth as many tickets at four times the size.
+Brenda's shape is steady and mid-sized: 2022 through 2026 sit between 223 and
+252 transactions a year, with 2026 the busiest. Not growing, not quiet.
+
+Gema's 142 is understated and not comparable — that store deletes redeemed
+pawns.
+
+#### ⚠️ Seven years, 1,460 pawns, and one payment
+
+`PAYMENTS` holds exactly **one** row: $150 interest on transaction 1383, dated
+2025-12-19. Every transaction in the database has `TRAN_CLOSE_REASON = 0`
+(Open), including the 107 that were set to `TRAN_STATUS = 'I'` without a reason.
+2,594 of 2,825 items are still `'P'`. 92% of everything ever lent — $1.32M of
+$1.43M — counts as outstanding.
+
+**This is not a Brenda problem, and that is the finding.** The same query across
+every database on the drive: Kendale 2 payments, Felitin's 1, Brenda 1, and A1,
+Gema, Perez Cash Joyeria, I Love Miami and Home of Watches **zero**. Three
+payment rows exist across eight stores and 48,000 transactions.
+
+The pump is not the explanation — Brenda's single payment predates its
+conversion by eleven months, so payment rows do migrate. The stores simply do
+not use the screen. They write the ticket in PawnPro, print it, and track the
+money elsewhere.
+
+Two consequences worth holding on to:
+
+1. **The payment and redemption subsystem has no production data anywhere.**
+   `Report01`, the interest engine and the close-reason logic have never been
+   exercised by a real store. The planned `Report01` realign is being built
+   against behaviour nothing has tested in the field.
+2. **It is the same root cause as the Report02 bound.** Unmaintained statuses
+   are why *List of Active Pawns* printed seven years of history, and the
+   12/24/60-month limit is the right shape of answer precisely because no store
+   closes anything. See `Docs/Report02_ActivePawns_Design.md`.
+
+**Four customers have bad dates of birth** — null, future, or over 110 years ago.
+No consequence here, since nothing is filed electronically, but it is the same
+count-and-fix the data-quality tool is meant for.
 
 ## Template for the next store
 
