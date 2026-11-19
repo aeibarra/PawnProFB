@@ -111,7 +111,8 @@ uses
   ViewSentTickets in 'ViewSentTickets.pas' {frmViewSentTickets},
   AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters},
   SellItems in 'SellItems.pas' {frmSellItems},
-  NotifyNoTransactions in 'NotifyNoTransactions.pas' {frmNotifyNoTransactions};
+  NotifyNoTransactions in 'NotifyNoTransactions.pas' {frmNotifyNoTransactions},
+  QuickSale in 'QuickSale.pas' {frmQuickSale};
 
 {$R *.RES}
 

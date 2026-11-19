@@ -408,6 +408,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <Form>frmSellItems</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="QuickSale.pas">
+            <Form>frmQuickSale</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

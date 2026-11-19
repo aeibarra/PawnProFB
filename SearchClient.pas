@@ -769,6 +769,7 @@ type
     btnPayDelete: TBitBtn;
     PopMnuPawnItems: TPopupMenu;
     popItemSell: TMenuItem;
+    popItemQuickSale: TMenuItem;
     popmnuItemRedeemed: TMenuItem;
     popmnuItemDefaulted: TMenuItem;
     N1: TMenuItem;
@@ -929,6 +930,7 @@ type
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure PopMnuPawnItemsPopup(Sender: TObject);
     procedure popItemSellClick(Sender: TObject);
+    procedure popItemQuickSaleClick(Sender: TObject);
     procedure popmnuItemRedeemedClick(Sender: TObject);
     procedure popmnuItemDefaultedClick(Sender: TObject);
     procedure popmnuItemMeltedScrapClick(Sender: TObject);
@@ -1016,7 +1018,7 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
   PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, PurchaseChangeStatus, uPawnDialogs,
-  ItemHistory, Inventory;
+  ItemHistory, Inventory, QuickSale;
 
 {$R *.DFM}
 
@@ -2572,6 +2574,7 @@ begin
   // Only a For Sale item can be sold; hidden otherwise so the menu stays short.
   popItemSell.Visible := HasItem and (qryInvItemsINV_ITEM_STATUS.AsString = 'S') and
                          qryInvItemsSOLD_DATE.IsNull;
+  popItemQuickSale.Visible := popItemSell.Visible;
 
   if IsPawn then
     begin
@@ -2964,6 +2967,24 @@ begin
   frmPawnMain.actInventory.Execute;   // creates the screen, or brings it up
   if frmInventory <> nil then
     frmInventory.ShowItem(qryInvItemsINV_ITEM_NO.AsInteger, qryInvItemsINV_ITEM_BARCODE.AsString);
+end;
+
+{ Quick Sale: sells this one item right here -- the store types the sale
+  price and the totals follow (TfrmQuickSale). Saved as a numbered sale ticket,
+  like the sale drawer. An open Active Items List is refreshed so it does not
+  keep showing the item as For Sale. }
+procedure TfrmClients.popItemQuickSaleClick(Sender: TObject);
+begin
+  if not qryInvItems.Active or qryInvItems.IsEmpty or
+     (qryInvItemsINV_ITEM_STATUS.AsString <> 'S') then
+    exit;
+
+  if not TfrmQuickSale.Execute(qryInvItemsINV_ITEM_NO.AsInteger, Self) then
+    exit;
+
+  RefreshCurrentTransaction;
+  if (frmInventory <> nil) and frmInventory.qryInvItems.Active then
+    frmInventory.btnSearchClick(nil);
 end;
 
 procedure TfrmClients.popItemHistoryClick(Sender: TObject);

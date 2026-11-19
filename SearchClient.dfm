@@ -14944,6 +14944,10 @@ object frmClients: TfrmClients
       Caption = 'Sell this item...'
       OnClick = popItemSellClick
     end
+    object popItemQuickSale: TMenuItem
+      Caption = 'Quick Sale...'
+      OnClick = popItemQuickSaleClick
+    end
   end
   object PopMnuLayaway: TPopupMenu
     OnPopup = PopMnuLayawayPopup
