@@ -953,6 +953,7 @@ type
     procedure mnuReOpenLayawayClick(Sender: TObject);
     procedure btnReactivateClick(Sender: TObject);
     procedure btnChangePawnStatusClick(Sender: TObject);
+    procedure Panel4Resize(Sender: TObject);
     procedure btnReactivatePurchaseClick(Sender: TObject);
     procedure btnChangePurchaseStatusClick(Sender: TObject);
     procedure popItemHistoryClick(Sender: TObject);
@@ -1001,7 +1002,12 @@ type
     procedure CalcPawnAmountFromItemCost(var PawnAmount: Currency; var ItemsWithNoEnteredCost: integer);
     procedure RefreshCurrentTransaction;
   private
+    { What the DATA says about the two pawn status buttons, kept apart from
+      whether they currently FIT. See ApplyPawnStatusButtonFit. }
+    FPawnStatusWanted: boolean;
+    FReactivatePawnWanted: boolean;
     function AskDeleteReason(const Caption: string; out Reason: string): boolean;
+    procedure ApplyPawnStatusButtonFit;
   end;
 
 // Called by other screens (sale drawer, Sell Items) after they change item
@@ -2070,6 +2076,76 @@ begin
   btnAddInvItemsClick(btnAddInvItems);
 end;
 
+{ True when AControl's rectangle intersects that of any other visible sibling,
+  ignoring AIgnore.
+
+  Only alNone siblings are considered. An aligned control fills whatever is left
+  of the panel, so it would always "overlap" and would silently hide the button
+  at every width. }
+function OverlapsVisibleSibling(AControl, AIgnore: TControl): boolean;
+var
+  I: integer;
+  Other: TControl;
+begin
+  Result := False;
+  if (AControl = nil) or (AControl.Parent = nil) then
+    Exit;
+
+  for I := 0 to AControl.Parent.ControlCount - 1 do
+    begin
+      Other := AControl.Parent.Controls[I];
+      if (Other = AControl) or (Other = AIgnore) or
+         (not Other.Visible) or (Other.Align <> alNone) then
+        Continue;
+
+      if (AControl.Left < Other.Left + Other.Width) and
+         (Other.Left < AControl.Left + AControl.Width) and
+         (AControl.Top < Other.Top + Other.Height) and
+         (Other.Top < AControl.Top + AControl.Height) then
+        Exit(True);
+    end;
+end;
+
+{ Hide a pawn status button rather than let it sit on top of another one.
+
+  Both status buttons are anchored to the right edge, so on a screen narrower
+  than the form was designed for (1735 client width) they slide left across the
+  fixed left-hand group. The gap between "New Pawn with Items" and "Change Pawn
+  Status" is only 14px at design width, so it closes first and closes hard --
+  found at Brenda Joyeria on a ~1300-wide monitor, where the status button
+  covered "New Pawn with Items" completely.
+
+  Hiding is safe here ONLY because these two buttons are pure aliases:
+  btnChangePawnStatusClick calls mnuPawnStatusInactiveClick and
+  btnReactivateClick calls mnuPawnStatusActiveClick. Both menu items stay on the
+  grid's right-click menu, which is not affected by width, so the function
+  remains reachable and nothing is lost but the shortcut.
+
+  Do NOT extend this to btnChangePurchaseStatus / btnReactivatePurchase. Those
+  hold their own logic and have no right-click equivalent, so hiding them would
+  remove the function outright. They also sit 210px clear of the left group
+  instead of 14px, so they do not collide at the widths that break this tab.
+
+  The decision is deliberately in two parts -- FPawnStatusWanted says whether
+  the button applies to the current transaction, and this pass can only take it
+  away. That is what lets the button come back when the window is widened or the
+  splitter moved; a single flag overwritten by a resize could not. }
+procedure TfrmClients.ApplyPawnStatusButtonFit;
+begin
+  btnChangePawnStatus.Visible := FPawnStatusWanted and
+    not OverlapsVisibleSibling(btnChangePawnStatus, btnReactivate);
+
+  btnReactivate.Visible := FReactivatePawnWanted and
+    not OverlapsVisibleSibling(btnReactivate, btnChangePawnStatus);
+end;
+
+{ Fires on form resize and on SplitterBottom drags alike, both of which change
+  the panel width. Re-runs only the fit test, never the data query behind it. }
+procedure TfrmClients.Panel4Resize(Sender: TObject);
+begin
+  ApplyPawnStatusButtonFit;
+end;
+
 procedure TfrmClients.UpdatePawnStatusActions;
 var
   HasPawn, IsActive: boolean;
@@ -2081,8 +2157,9 @@ begin
   IsActive := HasPawn and
               (DM.qryTransactionsTRAN_STATUS.AsString = TranStatus_Active);
 
-  btnChangePawnStatus.Visible := IsActive;
-  btnReactivate.Visible := HasPawn and not IsActive;
+  FPawnStatusWanted := IsActive;
+  FReactivatePawnWanted := HasPawn and not IsActive;
+  ApplyPawnStatusButtonFit;
 
   mnuPawnStatusInactive.Enabled := IsActive;
   mnuPawnStatusActive.Enabled := HasPawn and not IsActive;

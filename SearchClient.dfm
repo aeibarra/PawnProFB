@@ -758,6 +758,7 @@ object frmClients: TfrmClients
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
+          OnResize = Panel4Resize
           DesignSize = (
             797
             60)
