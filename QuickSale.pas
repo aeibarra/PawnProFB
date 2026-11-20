@@ -1,7 +1,7 @@
 ﻿unit QuickSale;
 
 { Quick Sale: sells ONE For Sale item straight from the client screen's Items
-  tab (right click, "Quick Sale"), without going through the Active Items List
+  tab (right click, "Quick Sale"), without going through the Items screen
   and its sale drawer.
 
   The store types the sale price; subtotal, tax (STORE.SALES_TAX_PERC) and

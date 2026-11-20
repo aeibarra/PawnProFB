@@ -73,7 +73,7 @@ type
     function AddCurrentForSaleItem: boolean;
     procedure RecalcTotals;
   public
-    { Adds one item to this sale before the screen is shown (Active Items List
+    { Adds one item to this sale before the screen is shown (Items screen
       passes its selected item). False when that item is not For Sale. }
     function AddItemToSale(InvItemNo: integer): boolean;
   end;

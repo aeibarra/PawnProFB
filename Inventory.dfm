@@ -2,7 +2,7 @@ object frmInventory: TfrmInventory
   Left = 350
   Top = 116
   BorderIcons = [biSystemMenu, biMaximize]
-  Caption = 'Inventory'
+  Caption = 'Items'
   ClientHeight = 720
   ClientWidth = 1791
   Color = clBtnFace

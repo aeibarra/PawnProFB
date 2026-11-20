@@ -743,8 +743,6 @@ type
     TabPurchaseTran: TRzTabSheet;
     gridPawn: TDBGrid;
     Panel4: TPanel;
-    btnNewPawn: TBitBtn;
-    btnEditPawn: TBitBtn;
     btnDelPawn: TBitBtn;
     btnNewPathWithItems: TRzBitBtn;
     DBGrid6: TDBGrid;
@@ -857,6 +855,8 @@ type
     popItemHistory: TMenuItem;
     btnAddFilters: TRzToolButton;
     lblAddFilters: TRzLabel;
+    btnNewPawn: TBitBtn;
+    btnEditPawn: TBitBtn;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -3033,7 +3033,7 @@ begin
 //  DM.RefreshFBQry(qryInvItems);
 end;
 
-{ Interim shortcut until the full sale screen: opens Active Items List on
+{ Interim shortcut until the full sale screen: opens the Items screen on
   this one item, where the store sells it through the sale drawer. }
 procedure TfrmClients.popItemSellClick(Sender: TObject);
 begin
@@ -3048,7 +3048,7 @@ end;
 
 { Quick Sale: sells this one item right here -- the store types the sale
   price and the totals follow (TfrmQuickSale). Saved as a numbered sale ticket,
-  like the sale drawer. An open Active Items List is refreshed so it does not
+  like the sale drawer. An open Items screen is refreshed so it does not
   keep showing the item as For Sale. }
 procedure TfrmClients.popItemQuickSaleClick(Sender: TObject);
 begin

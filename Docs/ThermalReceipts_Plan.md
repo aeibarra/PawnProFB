@@ -158,7 +158,7 @@ Update the **Tracker** table as each one moves forward.
 | Carats | sum of `STONES.CT` for the item |
 | Price | `UNIT_PRICE` |
 
-- **Barcode:** Code 128. It is shorter than EAN-13 for 6 digits, so it fits a small tag. Scanning it should find the item in the Active Items List and the sale drawer.
+- **Barcode:** Code 128. It is shorter than EAN-13 for 6 digits, so it fits a small tag. Scanning it should find the item on the Items screen and in the sale drawer.
 - **Printer:** a thermal-transfer label printer (with a ribbon), with jewelry barbell tag stock. Direct-thermal tags fade and smudge. **Not** the TM-T20IV.
 - **To do:**
   - ask Richard which label printer and tag size he uses (usually on the roll's box)

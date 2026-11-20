@@ -1093,7 +1093,7 @@ begin
   end;
 
   if qryInvItems.IsEmpty then
-    PawnInfo('This item was not found.', 'Active Items List', Self);
+    PawnInfo('This item was not found.', 'Items', Self);
   UpdateSaleButtons;
 end;
 
@@ -1130,9 +1130,9 @@ begin
 
       if qryInvItems.IsEmpty then
         if clnSale.Locate('INV_ITEM_BARCODE', Trim(edBarcode.Text), [loCaseInsensitive]) then
-          PawnInfo('Item ' + Trim(edBarcode.Text) + ' is already in this sale.', 'Active Items List', Self)
+          PawnInfo('Item ' + Trim(edBarcode.Text) + ' is already in this sale.', 'Items', Self)
         else
-          PawnInfo('No item has barcode ' + Trim(edBarcode.Text) + '.', 'Active Items List', Self);
+          PawnInfo('No item has barcode ' + Trim(edBarcode.Text) + '.', 'Items', Self);
       UpdateSaleButtons;
       edBarcode.SetFocus;
       edBarcode.SelectAll;   // the next scan replaces it
