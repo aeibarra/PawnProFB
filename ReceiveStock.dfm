@@ -59,8 +59,8 @@ object frmReceiveStock: TfrmReceiveStock
         ParentFont = False
       end
       object btnNewR: TBitBtn
-        Left = 124
-        Top = 6
+        Left = 37
+        Top = 7
         Width = 110
         Height = 43
         Hint = 'F7'
@@ -74,8 +74,8 @@ object frmReceiveStock: TfrmReceiveStock
         OnClick = btnNewRClick
       end
       object btnEditR: TBitBtn
-        Left = 258
-        Top = 6
+        Left = 171
+        Top = 7
         Width = 110
         Height = 43
         Hint = 'F8'
@@ -89,8 +89,8 @@ object frmReceiveStock: TfrmReceiveStock
         OnClick = btnEditRClick
       end
       object btnVoidR: TBitBtn
-        Left = 418
-        Top = 6
+        Left = 331
+        Top = 7
         Width = 150
         Height = 43
         Hint = 
@@ -217,15 +217,8 @@ object frmReceiveStock: TfrmReceiveStock
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      object lblCopies: TLabel
-        Left = 10
-        Top = 17
-        Width = 48
-        Height = 20
-        Caption = 'Copies:'
-      end
       object btnAddItem: TBitBtn
-        Left = 124
+        Left = 37
         Top = 6
         Width = 110
         Height = 43
@@ -236,23 +229,8 @@ object frmReceiveStock: TfrmReceiveStock
         TabOrder = 0
         OnClick = btnAddItemClick
       end
-      object edCopies: TRzNumericEdit
-        Left = 66
-        Top = 13
-        Width = 42
-        Height = 28
-        Hint = 'How many identical pieces to add: each gets its own barcode'
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        CheckRange = True
-        Max = 500.00000000000000000
-        Min = 1.00000000000000000
-        DisplayFormat = '0'
-        Value = 1.00000000000000000
-      end
       object btnEditItem: TBitBtn
-        Left = 258
+        Left = 171
         Top = 6
         Width = 110
         Height = 43
@@ -260,11 +238,11 @@ object frmReceiveStock: TfrmReceiveStock
         ImageIndex = 14
         ImageName = 'actEdit02'
         Images = DM.vilMain24
-        TabOrder = 2
+        TabOrder = 1
         OnClick = btnEditItemClick
       end
       object btnRemoveItem: TBitBtn
-        Left = 418
+        Left = 331
         Top = 6
         Width = 120
         Height = 43
@@ -275,7 +253,7 @@ object frmReceiveStock: TfrmReceiveStock
         Images = DM.vilMain24
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 2
         OnClick = btnRemoveItemClick
       end
     end

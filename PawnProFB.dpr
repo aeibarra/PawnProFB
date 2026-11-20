@@ -114,7 +114,8 @@ uses
   NotifyNoTransactions in 'NotifyNoTransactions.pas' {frmNotifyNoTransactions},
   QuickSale in 'QuickSale.pas' {frmQuickSale},
   ReceiveStock in 'ReceiveStock.pas' {frmReceiveStock},
-  EditStockReceipt in 'EditStockReceipt.pas' {frmEditStockReceipt};
+  EditStockReceipt in 'EditStockReceipt.pas' {frmEditStockReceipt},
+  EnterRcvItem in 'EnterRcvItem.pas' {frmEnterRcvItem};
 
 {$R *.RES}
 

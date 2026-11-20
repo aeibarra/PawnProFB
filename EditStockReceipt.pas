@@ -33,9 +33,9 @@ type
     cbPayType: TComboBox;
     lblNotes: TLabel;
     memNotes: TMemo;
-    pnButtons: TPanel;
-    btnSave: TRzBitBtn;
-    btnCancel: TBitBtn;
+    gbButtons: TGroupBox;
+    BitBtn1: TBitBtn;
+    RzBitBtn1: TRzBitBtn;
     procedure btnSaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private

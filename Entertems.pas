@@ -22,7 +22,6 @@ type
     dsCategories: TDataSource;
     dsStones: TDataSource;
     btnSave: TRzBitBtn;
-    chkApplyToGroup: TCheckBox;
     GroupBox2: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -98,13 +97,6 @@ type
   public
     { Public declarations }
     NewRow: boolean;
-    // True when called from Receive Stock: the item belongs to a supplier
-    // receipt, not to a transaction (no layaway check, one piece per row).
-    ReceiveStockMode: boolean;
-    // Receive Stock, editing one piece of a copy group: how many pieces the
-    // group has. More than 1 shows chkApplyToGroup (checked); the caller reads
-    // it after Save. This form itself only ever saves the current item.
-    GroupSize: integer;
   end;
 
 var
@@ -130,9 +122,7 @@ begin
   // One screen serves all three transaction types, but the caption was fixed at
   // 'Pawn Item Information' in the DFM, so a clerk adding items to a purchase or
   // a layaway was told they were on a pawn.
-  if ReceiveStockMode then
-    Caption := 'Received Item Information'
-  else if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
+  if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
     Caption := 'Purchase Item Information'
   else if DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway then
     Caption := 'Layaway Item Information'
@@ -156,16 +146,6 @@ begin
   else
     begin
       Items.Edit;
-    end;
-
-  // Received stock is one row per piece; copies are made by Receive Stock.
-  edItemCount.ReadOnly := ReceiveStockMode;
-
-  chkApplyToGroup.Visible := ReceiveStockMode and not NewRow and (GroupSize > 1);
-  if chkApplyToGroup.Visible then
-    begin
-      chkApplyToGroup.Caption := Format('Apply these changes to all %d pieces of this group', [GroupSize]);
-      chkApplyToGroup.Checked := True;
     end;
 
   qryStones.Params.ParamByName('INV_ITEM_NO').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
@@ -196,6 +176,7 @@ begin
   frmEnterPawnStoneInfo := TfrmEnterPawnStoneInfo.Create(Self);
   try
     frmEnterPawnStoneInfo.NewRow := true;
+    frmEnterPawnStoneInfo.StonesSource := dsStones;
     frmEnterPawnStoneInfo.ShowModal;
   finally
     frmEnterPawnStoneInfo.Free;
@@ -207,6 +188,7 @@ begin
   frmEnterPawnStoneInfo := TfrmEnterPawnStoneInfo.Create(Self);
   try
     frmEnterPawnStoneInfo.NewRow := false;
+    frmEnterPawnStoneInfo.StonesSource := dsStones;
     frmEnterPawnStoneInfo.ShowModal;
   finally
     frmEnterPawnStoneInfo.Free;
@@ -313,7 +295,7 @@ var
 begin
   Result := True;
 
-  if ReceiveStockMode or (DM.qryTransactionsTRAN_TYPE.AsString <> TranLayaway) then
+  if DM.qryTransactionsTRAN_TYPE.AsString <> TranLayaway then
     Exit;
 
   ExistingItemsTotal := SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem;

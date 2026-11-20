@@ -423,6 +423,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <Form>frmEditStockReceipt</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="EnterRcvItem.pas">
+            <Form>frmEnterRcvItem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

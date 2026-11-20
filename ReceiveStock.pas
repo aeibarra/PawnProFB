@@ -13,9 +13,10 @@
   and every add or edit done in a pop-up where Save writes and Cancel leaves
   everything as it was.
     Receipts: TfrmEditStockReceipt (EditStockReceipt.pas).
-    Items:    the item form of pawns and purchases (TfrmEnterItems, in
-              ReceiveStockMode). One row per piece: "Copies" makes that many
-              more identical items, each with its own barcode. }
+    Items:    TfrmEnterRcvItem (EnterRcvItem.pas), a smaller item form than
+              the pawn / purchase one -- supplier stock is not reported to
+              the police. One row per piece: "Copies" makes that many more
+              identical items, each with its own barcode. }
 
 interface
 
@@ -39,8 +40,6 @@ type
     gbItems: TGroupBox;
     pnItemButtons: TPanel;
     btnAddItem: TBitBtn;
-    lblCopies: TLabel;
-    edCopies: TRzNumericEdit;
     btnEditItem: TBitBtn;
     btnRemoveItem: TBitBtn;
     lblTotals: TLabel;
@@ -79,7 +78,8 @@ type
     function CurrentReceiptNo: integer;
     function CurrentReceiptVoided: boolean;
     function SelectedItemNo: integer;
-    function EditItem(InvItemNo: integer; GroupSize: integer; out ApplyToGroup: boolean): boolean;
+    function EditItem(InvItemNo: integer; GroupSize: integer; out ApplyToGroup: boolean;
+      out Copies: integer): boolean;
     procedure RefreshItemsScreen;
   end;
 
@@ -90,7 +90,7 @@ implementation
 
 {$R *.dfm}
 
-uses System.DateUtils, System.StrUtils, PawnDM, PawnGlobal, Entertems, EditStockReceipt, uPawnDialogs,
+uses System.DateUtils, System.StrUtils, PawnDM, PawnGlobal, EnterRcvItem, EditStockReceipt, uPawnDialogs,
   Inventory;
 
 const
@@ -344,7 +344,6 @@ begin
   btnEditR.Enabled := IsOpen;
   btnVoidR.Enabled := IsOpen;
   btnAddItem.Enabled := IsOpen;
-  edCopies.Enabled := IsOpen;
   btnEditItem.Enabled := IsOpen and (SelectedItemNo > 0);
   btnRemoveItem.Enabled := btnEditItem.Enabled;
 
@@ -372,11 +371,15 @@ begin
 end;
 
 { Opens the item pop-up on InvItemNo, or on a new item (0). Save writes the
-  item, Cancel undoes the edit (TfrmEnterItems). True when saved. }
+  item and its stones, Cancel undoes the edit (TfrmEnterRcvItem). True when
+  saved. }
 function TfrmReceiveStock.EditItem(InvItemNo: integer; GroupSize: integer;
-  out ApplyToGroup: boolean): boolean;
+  out ApplyToGroup: boolean; out Copies: integer): boolean;
+var
+  Dlg: TfrmEnterRcvItem;
 begin
   ApplyToGroup := False;
+  Copies := 1;
   qryItem.Close;
   qryItem.ParamByName('N').AsInteger := InvItemNo;   // 0: no row, the pop-up appends one
   qryItem.Open;
@@ -384,18 +387,17 @@ begin
   qryItem.FieldByName('INV_ITEM_NO').Required := False;
   qryItem.FieldByName('INV_ITEM_NO').AutoGenerateValue := arAutoInc;
 
-  frmEnterItems := TfrmEnterItems.Create(Self);
+  Dlg := TfrmEnterRcvItem.Create(Self);
   try
-    frmEnterItems.ReceiveStockMode := True;
-    frmEnterItems.NewRow := InvItemNo = 0;
-    frmEnterItems.GroupSize := GroupSize;
-    frmEnterItems.dsInvItems.DataSet := qryItem;
-    Result := frmEnterItems.ShowModal = mrOk;
-    ApplyToGroup := Result and frmEnterItems.chkApplyToGroup.Visible and
-                    frmEnterItems.chkApplyToGroup.Checked;
+    Dlg.NewRow := InvItemNo = 0;
+    Dlg.GroupSize := GroupSize;
+    Dlg.dsItem.DataSet := qryItem;
+    Result := Dlg.ShowModal = mrOk;
+    ApplyToGroup := Result and Dlg.chkApplyToGroup.Visible and Dlg.chkApplyToGroup.Checked;
+    if Result and Dlg.NewRow then
+      Copies := Round(Dlg.edCopies.Value);   // the pop-up's Quantity
   finally
-    frmEnterItems.Free;
-    frmEnterItems := nil;
+    Dlg.Free;
   end;
 end;
 
@@ -432,11 +434,10 @@ begin
   ReceiptNo := CurrentReceiptNo;
   if (ReceiptNo = 0) or CurrentReceiptVoided then
     exit;
-  if not EditItem(0, 0, Dummy) then
+  if not EditItem(0, 0, Dummy, Copies) then
     exit;
 
   ItemNo := qryItem.FieldByName('INV_ITEM_NO').AsInteger;
-  Copies := Round(edCopies.Value);
   try
     DM.SaveStockReceiptLine(ReceiptNo, ItemNo);
     if Copies > 1 then
@@ -445,7 +446,6 @@ begin
     on E: Exception do
       PawnWarn(E.Message, 'Receive Stock', Self);
   end;
-  edCopies.Value := 1;
   RefreshReceipts(ReceiptNo);   // its item count and cost changed
   RefreshLines(ItemNo);
   RefreshItemsScreen;
@@ -456,7 +456,7 @@ end;
   unchecked, only this piece changes and it stays in its group. }
 procedure TfrmReceiveStock.btnEditItemClick(Sender: TObject);
 var
-  ReceiptNo, ItemNo, Group, Size, UnsoldOthers, Changed: integer;
+  ReceiptNo, ItemNo, Group, Size, UnsoldOthers, Changed, Copies: integer;
   ApplyToGroup: boolean;
 begin
   ReceiptNo := CurrentReceiptNo;
@@ -469,7 +469,7 @@ begin
       exit;
     end;
   DM.GetCopyGroupSize(ReceiptNo, ItemNo, Group, Size, UnsoldOthers);
-  if not EditItem(ItemNo, Size, ApplyToGroup) then
+  if not EditItem(ItemNo, Size, ApplyToGroup, Copies) then
     exit;
   DM.SaveStockReceiptLine(ReceiptNo, ItemNo);
 

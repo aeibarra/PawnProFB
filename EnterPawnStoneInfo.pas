@@ -35,9 +35,15 @@ type
     procedure DBEdit3Change(Sender: TObject);
   private
     procedure UpdateWeightUnitState;
+    function Stones: TDataSet;
   public
     { Public declarations }
     NewRow: boolean;
+    // The caller's stones (its dsStones): the pawn/purchase item form, or the
+    // Receive Stock item form. Set before ShowModal.
+    StonesSource: TDataSource;
+    // True: every label in normal (not bold) font. Receive Stock sets it.
+    PlainLabels: boolean;
   end;
 
 var
@@ -45,12 +51,33 @@ var
 
 implementation
 
-Uses Entertems, GLbUtils, PawnDM, PawnGlobal;
+Uses System.UITypes, GLbUtils, PawnDM, PawnGlobal;
 
 {$R *.dfm}
 
-procedure TfrmEnterPawnStoneInfo.FormShow(Sender: TObject);
+function TfrmEnterPawnStoneInfo.Stones: TDataSet;
 begin
+  Result := StonesSource.DataSet;
+end;
+
+procedure TfrmEnterPawnStoneInfo.FormShow(Sender: TObject);
+var
+  i: integer;
+begin
+  if PlainLabels then
+    for i := 0 to ComponentCount - 1 do
+      if Components[i] is TLabel then
+        TLabel(Components[i]).Font.Style := TLabel(Components[i]).Font.Style - [fsBold];
+
+  // Every data control edits the caller's stones.
+  lkStoneShape.DataSource := StonesSource;
+  lkStoneColor.DataSource := StonesSource;
+  edStoneNumber.DataSource := StonesSource;
+  DBEdit2.DataSource := StonesSource;
+  DBEdit3.DataSource := StonesSource;
+  cbStoneType.DataSource := StonesSource;
+  cbWeightUnit.DataSource := StonesSource;
+
   FrmSetViewSize(Self);
 //  Width := 267;
 
@@ -62,11 +89,11 @@ begin
 
   if NewRow then
     begin
-      frmEnterItems.qryStones.Append;
+      Stones.Append;
     end
   else
     begin
-      frmEnterItems.qryStones.Edit;
+      Stones.Edit;
     end;
 
   UpdateWeightUnitState;
@@ -87,58 +114,58 @@ begin
 
   cbWeightUnit.Enabled := HasReportedWeight;
 
-  if not (frmEnterItems.qryStones.State in dsEditModes) then
+  if not (Stones.State in dsEditModes) then
     Exit;
 
   if HasReportedWeight then
   begin
-    if frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.IsNull then
-      frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.AsString :=
+    if Stones.FieldByName('STONE_WEIGHT_UNIT').IsNull then
+      Stones.FieldByName('STONE_WEIGHT_UNIT').AsString :=
         DefaultWeightMeasureUnit;
   end
-  else if not frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.IsNull then
-    frmEnterItems.qryStonesSTONE_WEIGHT_UNIT.Clear;
+  else if not Stones.FieldByName('STONE_WEIGHT_UNIT').IsNull then
+    Stones.FieldByName('STONE_WEIGHT_UNIT').Clear;
 end;
 
 procedure TfrmEnterPawnStoneInfo.btnSaveClick(Sender: TObject);
 begin
-  if frmEnterItems.qryStonesSTONE_NUMBER.IsNull then
+  if Stones.FieldByName('STONE_NUMBER').IsNull then
     begin
       MsgInfo('Please enter the number of stones.');
       edStoneNumber.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.qryStonesSTONE_SHAPE.IsNull then
+  if Stones.FieldByName('STONE_SHAPE').IsNull then
     begin
       MsgInfo('Please enter the stone shape.');
       lkStoneShape.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.qryStonesSTONE_COLOR.IsNull then
+  if Stones.FieldByName('STONE_COLOR').IsNull then
     begin
       MsgInfo('Please enter the stone color.');
       lkStoneColor.SetFocus;
       exit;
     end;
 
-  if frmEnterItems.qryStonesWT.IsNull then
-    frmEnterItems.qryStonesWT.AsFloat := 0;
+  if Stones.FieldByName('WT').IsNull then
+    Stones.FieldByName('WT').AsFloat := 0;
 
-  if frmEnterItems.qryStonesCT.IsNull then
-    frmEnterItems.qryStonesCT.AsFloat := 0;
+  if Stones.FieldByName('CT').IsNull then
+    Stones.FieldByName('CT').AsFloat := 0;
 
-  DM.AddStoneType(frmEnterItems.qryStonesSTONE_TYPE.AsString);
+  DM.AddStoneType(Stones.FieldByName('STONE_TYPE').AsString);
 
-  frmEnterItems.qryStones.Post;
+  Stones.Post;
 
   ModalResult := mrOk;
 end;
 
 procedure TfrmEnterPawnStoneInfo.btnCancelClick(Sender: TObject);
 begin
-  frmEnterItems.qryStones.Cancel;
+  Stones.Cancel;
   ModalResult := mrCancel;
 end;
 

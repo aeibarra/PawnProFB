@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 15;
+  CURRENT_DB_VERSION = 16;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -717,6 +717,19 @@ end;
   CREATE OR ALTER makes the step safe to repeat.
 
   Mirror of Schema/Migrations/PawnPro_FB5_DeletedRecordsLog.sql. }
+{ v16: PAYMENT_TYPES row 6 was seeded as 'America Express'. Data-only: the row
+  keeps its PAY_TYPE_NO, so everything pointing at it just shows the right
+  name. Only the misspelt value is touched, so it is idempotent and a row an
+  operator renamed is left alone.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_FixAmexSpelling.sql. }
+procedure Step16_FixAmexSpelling(Conn: TFDConnection);
+begin
+  ExecDDL(Conn,
+    'UPDATE PAYMENT_TYPES SET PAYMENT_TYPE = ''American Express'' ' +
+    'WHERE PAYMENT_TYPE = ''America Express''');
+end;
+
 procedure Step14_DeletedRecordsLog(Conn: TFDConnection);
 begin
   if not RelationExists(Conn, 'INVENTORY_ITEMS_DELETED') then
@@ -1046,7 +1059,13 @@ begin
     SetDbVersion(Conn, 15);
   end;
 
-  // Future steps: if V < 16 then begin Step16_...(Conn); SetDbVersion(Conn, 16); end;
+  if V < 16 then
+  begin
+    Step16_FixAmexSpelling(Conn);
+    SetDbVersion(Conn, 16);
+  end;
+
+  // Future steps: if V < 17 then begin Step17_...(Conn); SetDbVersion(Conn, 17); end;
 end;
 
 end.
