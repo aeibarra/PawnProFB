@@ -509,7 +509,7 @@ object frmClients: TfrmClients
       object btnExit: TBitBtn
         AlignWithMargins = True
         Left = 1621
-        Top = 10
+        Top = 13
         Width = 92
         Height = 54
         Anchors = [akTop, akRight]
@@ -762,36 +762,6 @@ object frmClients: TfrmClients
           DesignSize = (
             797
             60)
-          object btnNewPawn: TBitBtn
-            Left = 17
-            Top = 2
-            Width = 110
-            Height = 50
-            Hint = 'F7'
-            Caption = ' New'
-            ImageIndex = 15
-            ImageName = 'actAddFld01'
-            Images = DM.vilMain
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
-            OnClick = btnTranAddClick
-          end
-          object btnEditPawn: TBitBtn
-            Left = 144
-            Top = 2
-            Width = 110
-            Height = 50
-            Hint = 'F8'
-            Caption = ' Edit'
-            ImageIndex = 14
-            ImageName = 'actEdit02'
-            Images = DM.vilMain
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
-            OnClick = btnTranEditClick
-          end
           object btnDelPawn: TBitBtn
             Left = 278
             Top = 2
@@ -825,7 +795,7 @@ object frmClients: TfrmClients
               BABAEEB1B1E48F8FCAFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF5656AD5C5C
               C54F4FC14D4DAAFF00FFFF00FFFF00FFACABC69898CEFF00FFFF00FFFF00FFFF
               00FFFF00FFFF00FFFF00FFFF00FF5050A95858AFFF00FFFF00FF}
-            TabOrder = 2
+            TabOrder = 0
             OnClick = btnTranDeleteClick
           end
           object btnNewPathWithItems: TRzBitBtn
@@ -834,7 +804,7 @@ object frmClients: TfrmClients
             Width = 174
             Height = 50
             Caption = ' New Pawn with Items'
-            TabOrder = 3
+            TabOrder = 1
             OnClick = btnNewWithCopyItemsClick
             ImageIndex = 20
             Images = DM.ImageListBtn
@@ -854,7 +824,7 @@ object frmClients: TfrmClients
             Images = DM.vilMain24
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 4
+            TabOrder = 2
             OnClick = btnReactivateClick
           end
           object btnChangePawnStatus: TBitBtn
@@ -870,8 +840,38 @@ object frmClients: TfrmClients
             Images = DM.vilMain24
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 5
+            TabOrder = 3
             OnClick = btnChangePawnStatusClick
+          end
+          object btnNewPawn: TBitBtn
+            Left = 17
+            Top = 2
+            Width = 110
+            Height = 50
+            Hint = 'F7'
+            Caption = ' New'
+            ImageIndex = 15
+            ImageName = 'actAddFld01'
+            Images = DM.vilMain
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = btnTranAddClick
+          end
+          object btnEditPawn: TBitBtn
+            Left = 144
+            Top = 2
+            Width = 110
+            Height = 50
+            Hint = 'F8'
+            Caption = ' Edit'
+            ImageIndex = 14
+            ImageName = 'actEdit02'
+            Images = DM.vilMain
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+            OnClick = btnTranEditClick
           end
         end
       end
@@ -3706,7 +3706,6 @@ object frmClients: TfrmClients
     PDFSettings.Outline = False
     PreviewFormSettings.PageBorder.mmPadding = 0
     PreviewFormSettings.WindowState = wsMaximized
-    PreviewFormSettings.ZoomSetting = zsWholePage
     RTFSettings.AppName = 'ReportBuilder'
     RTFSettings.Author = 'ReportBuilder'
     RTFSettings.DefaultFont.Charset = DEFAULT_CHARSET
