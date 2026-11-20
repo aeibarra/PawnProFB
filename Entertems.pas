@@ -22,6 +22,7 @@ type
     dsCategories: TDataSource;
     dsStones: TDataSource;
     btnSave: TRzBitBtn;
+    chkApplyToGroup: TCheckBox;
     GroupBox2: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -93,9 +94,17 @@ type
     { Private declarations }
     function SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem: Currency;
     function ValidateLayawayItemsTotal: Boolean;
+    function Items: TDataSet;
   public
     { Public declarations }
     NewRow: boolean;
+    // True when called from Receive Stock: the item belongs to a supplier
+    // receipt, not to a transaction (no layaway check, one piece per row).
+    ReceiveStockMode: boolean;
+    // Receive Stock, editing one piece of a copy group: how many pieces the
+    // group has. More than 1 shows chkApplyToGroup (checked); the caller reads
+    // it after Save. This form itself only ever saves the current item.
+    GroupSize: integer;
   end;
 
 var
@@ -103,9 +112,16 @@ var
 
 implementation
 
-Uses SearchClient, PawnDM, EnterPawnStoneInfo, PawnGlobal, GLbUtils, uPawnDialogs;
+Uses PawnDM, EnterPawnStoneInfo, PawnGlobal, GLbUtils, uPawnDialogs;
 
 {$R *.dfm}
+
+{ The item being entered: the caller's dataset, set in dsInvItems.DataSet
+  before ShowModal (the client screen's items, or Receive Stock's item). }
+function TfrmEnterItems.Items: TDataSet;
+begin
+  Result := dsInvItems.DataSet;
+end;
 
 procedure TfrmEnterItems.FormShow(Sender: TObject);
 begin
@@ -114,7 +130,9 @@ begin
   // One screen serves all three transaction types, but the caption was fixed at
   // 'Pawn Item Information' in the DFM, so a clerk adding items to a purchase or
   // a layaway was told they were on a pawn.
-  if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
+  if ReceiveStockMode then
+    Caption := 'Received Item Information'
+  else if DM.qryTransactionsTRAN_TYPE.AsString = TranPurchase then
     Caption := 'Purchase Item Information'
   else if DM.qryTransactionsTRAN_TYPE.AsString = TranLayaway then
     Caption := 'Layaway Item Information'
@@ -129,11 +147,25 @@ begin
 
   if NewRow then
     begin
-      frmClients.qryInvItems.Append;
+      Items.Append;
+      // The store's default weight unit (Store Settings), unless the caller set one.
+      if (Items.FindField('WEIGHT_UNIT') <> nil) and Items.FieldByName('WEIGHT_UNIT').IsNull and
+         (DefaultWeightMeasureUnit <> '') then
+        Items.FieldByName('WEIGHT_UNIT').AsString := DefaultWeightMeasureUnit;
     end
   else
     begin
-      frmClients.qryInvItems.Edit;
+      Items.Edit;
+    end;
+
+  // Received stock is one row per piece; copies are made by Receive Stock.
+  edItemCount.ReadOnly := ReceiveStockMode;
+
+  chkApplyToGroup.Visible := ReceiveStockMode and not NewRow and (GroupSize > 1);
+  if chkApplyToGroup.Visible then
+    begin
+      chkApplyToGroup.Caption := Format('Apply these changes to all %d pieces of this group', [GroupSize]);
+      chkApplyToGroup.Checked := True;
     end;
 
   qryStones.Params.ParamByName('INV_ITEM_NO').AsInteger := dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger;
@@ -185,7 +217,7 @@ procedure TfrmEnterItems.btnSaveClick(Sender: TObject);
 var
   StoneNeedPosting: boolean;
 begin
-  if frmClients.qryInvItemsINV_CAT_NO.IsNull then
+  if Items.FieldByName('INV_CAT_NO').IsNull then
     begin
       MessageDlg('Please select Item Category.', mtInformation, [mbOk], 0);
       exit;
@@ -194,8 +226,8 @@ begin
   if not ValidateLayawayItemsTotal then
     exit;
 
-  frmClients.qryInvItems.Post;
-  DM.AddInventoryBrand(frmClients.qryInvItemsINV_ITEM_BRAND.AsString);
+  Items.Post;
+  DM.AddInventoryBrand(Items.FieldByName('INV_ITEM_BRAND').AsString);
 
   StoneNeedPosting := (NewRow and (qryStones.RecordCount > 0)) or (not NewRow and qryStones.UpdatesPending);
 
@@ -209,7 +241,7 @@ begin
           if (qryStonesINV_ITEM_NO.AsInteger <= 0) or qryStonesINV_ITEM_NO.IsNull then
             begin
               qryStones.Edit;
-              qryStonesINV_ITEM_NO.AsInteger := frmClients.qryInvItems.FieldByName('INV_ITEM_NO').AsInteger;
+              qryStonesINV_ITEM_NO.AsInteger := Items.FieldByName('INV_ITEM_NO').AsInteger;
               qryStones.Post;
             end;
 
@@ -226,11 +258,11 @@ begin
 
 
 
-//  if trim(frmClients.qryInvItems.FieldByName('INV_ITEM_BARCODE').AsString) = '' then
+//  if trim(Items.FieldByName('INV_ITEM_BARCODE').AsString) = '' then
 //    begin
-//      frmClients.qryInvItems.Edit;
-//      frmClients.qryInvItems.FieldByName('INV_ITEM_BARCODE').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
-//      frmClients.qryInvItems.Post;
+//      Items.Edit;
+//      Items.FieldByName('INV_ITEM_BARCODE').AsString := DM.GetBarcode(dsInvItems.DataSet.FieldByName('INV_ITEM_NO').AsInteger); //Format('%.6d', [dsInvItems.DataSet.FieldByName('InvItemNo').AsInteger]);
+//      Items.Post;
 //    end;
 
   ModalResult := mrOk;
@@ -247,10 +279,10 @@ begin
   if DM.qryTransactionsTRANSACTION_NO.IsNull then
     Exit;
 
-  if frmClients.qryInvItemsINV_ITEM_NO.IsNull then
+  if Items.FieldByName('INV_ITEM_NO').IsNull then
     CurrentInvItemNo := 0
   else
-    CurrentInvItemNo := frmClients.qryInvItemsINV_ITEM_NO.AsInteger;
+    CurrentInvItemNo := Items.FieldByName('INV_ITEM_NO').AsInteger;
 
   Query := TFDQuery.Create(nil);
   try
@@ -281,11 +313,11 @@ var
 begin
   Result := True;
 
-  if DM.qryTransactionsTRAN_TYPE.AsString <> TranLayaway then
+  if ReceiveStockMode or (DM.qryTransactionsTRAN_TYPE.AsString <> TranLayaway) then
     Exit;
 
   ExistingItemsTotal := SumUnitPriceForCurrentLayawayItemsExcludingCurrentItem;
-  NewItemsTotal := ExistingItemsTotal + frmClients.qryInvItemsUNIT_PRICE.AsCurrency;
+  NewItemsTotal := ExistingItemsTotal + Items.FieldByName('UNIT_PRICE').AsCurrency;
   LayawayAmount := DM.qryTransactionsTRAN_PAWN_AMOUNT.AsCurrency;
 
   if NewItemsTotal > LayawayAmount then
@@ -301,16 +333,16 @@ end;
 
 procedure TfrmEnterItems.btnCancelClick(Sender: TObject);
 begin
-  frmClients.qryInvItems.Cancel;
+  Items.Cancel;
   ModalResult := mrCancel;
 end;
 
 procedure TfrmEnterItems.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-  if frmClients.qryInvItems.State in [dsEdit, dsInsert] then
+  if Items.State in [dsEdit, dsInsert] then
     begin
-      frmClients.qryInvItems.Cancel;
+      Items.Cancel;
     end;
 end;
 

@@ -61,6 +61,18 @@ object frmEnterItems: TfrmEnterItems
       TabOrder = 0
       OnClick = btnCancelClick
     end
+    object chkApplyToGroup: TCheckBox
+      Left = 14
+      Top = 14
+      Width = 296
+      Height = 44
+      Caption = 'Apply these changes to all pieces of this group'
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+      Visible = False
+      WordWrap = True
+    end
     object btnSave: TRzBitBtn
       Left = 322
       Top = 11

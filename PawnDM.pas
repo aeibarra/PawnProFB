@@ -214,6 +214,7 @@ type
     clnInventoryBrandsINV_ITEM_BRAND: TWideStringField;
     qryCalcUnitCostFromWeight: TFDQuery;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    vilMain20: TSVGIconVirtualImageList;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryStoreCalcFields(DataSet: TDataSet);
@@ -316,6 +317,18 @@ type
     function GetSoldItemsInfo(TransactionNo, InvItemNo: integer; out SoldCount: integer;
                               out SaleNos: TArray<integer>): string;
     procedure DeleteWithLog(const SaleNos: TArray<integer>; const Reason: string; const DeleteProc: TProc);
+    // Receive Stock (supplier purchases, schema v15)
+    function FindOrAddSupplier(const AName: string): integer;
+    function SaveStockReceipt(ReceiptNo, SupplierNo: integer; ReceivedDate: TDateTime;
+                              const InvoiceNo: string; const InvoiceDate, InvoiceTotal, PayTypeNo: Variant;
+                              const Notes: string): integer;
+    procedure SaveStockReceiptLine(ReceiptNo, InvItemNo: integer);
+    procedure CopyStockReceiptItem(ReceiptNo, SourceItemNo, Copies: integer);
+    procedure GetCopyGroupSize(ReceiptNo, InvItemNo: integer; out Group, Size, UnsoldOthers: integer);
+    function ApplyItemToCopyGroup(ReceiptNo, SourceItemNo: integer): integer;
+    function StockReceiptItemIsSold(InvItemNo: integer): boolean;
+    procedure RemoveStockReceiptItem(InvItemNo: integer; const Reason: string);
+    procedure VoidStockReceipt(ReceiptNo: integer; const Reason: string);
     function UnsellItem(InvItemNo: integer): boolean;
     procedure RefreshFBQry(Qry: TFDQuery); overload;
     procedure RefreshFBQry(Qry: TFDQuery; const DSKey: Variant; const DSKeyField: string); overload;
@@ -2632,6 +2645,308 @@ begin
       ConnFB.Rollback;
     raise;
   end;
+end;
+
+{ ---- Receive Stock (supplier purchases, schema v15) ----------------------- }
+
+{ The supplier with this name, added when it is new -- the supplier box works
+  like the brand box: type a name, or pick one typed before. Names are unique
+  ignoring case and accents (UQ_SUPPLIERS_NAME on the UNICODE_CI_AI collation),
+  so 'miami gold' finds 'Miami Gold'. Two PCs adding the same new name at once:
+  the second insert fails on the unique key and simply re-reads the first's.
+  Using a hidden (inactive) supplier makes it active again. }
+function TDM.FindOrAddSupplier(const AName: string): integer;
+var
+  Name: string;
+  V: Variant;
+begin
+  Name := Copy(Trim(AName), 1, 80);
+  if Name = '' then
+    raise Exception.Create('Please enter the supplier.');
+
+  V := ConnFB.ExecSQLScalar('SELECT SUPPLIER_NO FROM SUPPLIERS WHERE SUPPLIER_NAME = :N', [Name], [ftWideString]);
+  if VarIsNull(V) or VarIsEmpty(V) then
+    try
+      V := ConnFB.ExecSQLScalar(
+        'INSERT INTO SUPPLIERS (SUPPLIER_NAME) VALUES (:N) RETURNING SUPPLIER_NO', [Name], [ftWideString]);
+    except
+      V := ConnFB.ExecSQLScalar('SELECT SUPPLIER_NO FROM SUPPLIERS WHERE SUPPLIER_NAME = :N', [Name], [ftWideString]);
+      if VarIsNull(V) or VarIsEmpty(V) then
+        raise;
+    end;
+  Result := V;
+  ConnFB.ExecSQL('UPDATE SUPPLIERS SET ACTIVE = TRUE WHERE SUPPLIER_NO = :S AND ACTIVE = FALSE', [Result]);
+end;
+
+{ Inserts the receipt header (ReceiptNo = 0) or updates it; returns its number.
+  InvoiceDate, InvoiceTotal and PayTypeNo may be Null. Changing the received
+  date also moves the PURCHASE_DATE / FORSALE_DATE of its items still For Sale,
+  so the item dates keep matching the receipt. }
+function TDM.SaveStockReceipt(ReceiptNo, SupplierNo: integer; ReceivedDate: TDateTime;
+  const InvoiceNo: string; const InvoiceDate, InvoiceTotal, PayTypeNo: Variant;
+  const Notes: string): integer;
+var
+  InvNo, Nts: Variant;
+begin
+  if Trim(InvoiceNo) = '' then InvNo := Null else InvNo := Copy(Trim(InvoiceNo), 1, 40);
+  if Trim(Notes) = '' then Nts := Null else Nts := Copy(Trim(Notes), 1, 500);
+
+  if ReceiptNo = 0 then
+    Result := ConnFB.ExecSQLScalar(
+      'INSERT INTO STOCK_RECEIPTS (SUPPLIER_NO, RECEIVED_DATE, INVOICE_NO, INVOICE_DATE, ' +
+      '  INVOICE_TOTAL, PAY_TYPE_NO, NOTES) ' +
+      'VALUES (:S, :RD, :INV, :ID, :TOT, :PT, :NOTES) RETURNING STOCK_RECEIPT_NO',
+      [SupplierNo, DateOf(ReceivedDate), InvNo, InvoiceDate, InvoiceTotal, PayTypeNo, Nts],
+      [ftInteger, ftDate, ftWideString, ftDate, ftCurrency, ftInteger, ftWideString])
+  else
+    begin
+      ConnFB.ExecSQL(
+        'UPDATE STOCK_RECEIPTS SET SUPPLIER_NO = :S, RECEIVED_DATE = :RD, INVOICE_NO = :INV, ' +
+        '  INVOICE_DATE = :ID, INVOICE_TOTAL = :TOT, PAY_TYPE_NO = :PT, NOTES = :NOTES ' +
+        'WHERE STOCK_RECEIPT_NO = :R',
+        [SupplierNo, DateOf(ReceivedDate), InvNo, InvoiceDate, InvoiceTotal, PayTypeNo, Nts, ReceiptNo],
+        [ftInteger, ftDate, ftWideString, ftDate, ftCurrency, ftInteger, ftWideString, ftInteger]);
+      ConnFB.ExecSQL(
+        'UPDATE INVENTORY_ITEMS i SET i.PURCHASE_DATE = :RD, i.FORSALE_DATE = :RD2 ' +
+        'WHERE i.INV_ITEM_STATUS = ''S'' AND i.SOLD_DATE IS NULL AND i.TRANSACTION_NO IS NULL ' +
+        '  AND i.INV_ITEM_NO IN (SELECT l.INV_ITEM_NO FROM STOCK_RECEIPT_LINES l WHERE l.STOCK_RECEIPT_NO = :R)',
+        [DateOf(ReceivedDate), DateOf(ReceivedDate), ReceiptNo], [ftDate, ftDate, ftInteger]);
+      Result := ReceiptNo;
+    end;
+end;
+
+{ The receipt's line for an item, added or brought in line with the item:
+  while the stock is being received, an edit of the item is a correction of
+  what came in, so the line follows it. }
+procedure TDM.SaveStockReceiptLine(ReceiptNo, InvItemNo: integer);
+begin
+  if ConnFB.ExecSQL(
+       'UPDATE STOCK_RECEIPT_LINES l SET ' +
+       '  l.DESCRIPTION = (SELECT LEFT(i.DESCRIPTION, 120) FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO), ' +
+       '  l.UNIT_COST = (SELECT i.UNIT_COST FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO), ' +
+       '  l.UNIT_PRICE = (SELECT i.UNIT_PRICE FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO) ' +
+       'WHERE l.STOCK_RECEIPT_NO = :R AND l.INV_ITEM_NO = :I', [ReceiptNo, InvItemNo]) = 0 then
+    ConnFB.ExecSQL(
+      'INSERT INTO STOCK_RECEIPT_LINES (STOCK_RECEIPT_NO, INV_ITEM_NO, DESCRIPTION, UNIT_COST, UNIT_PRICE) ' +
+      'SELECT CAST(:R AS INTEGER), i.INV_ITEM_NO, LEFT(i.DESCRIPTION, 120), i.UNIT_COST, i.UNIT_PRICE ' +
+      'FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = :I', [ReceiptNo, InvItemNo]);
+end;
+
+{ "Copies": Copies more items exactly like SourceItemNo (stones included),
+  each with its own number and barcode and its own receipt line, all in one
+  copy group with the original. One database
+  transaction: all copies or none. A plain loop, not an EXECUTE BLOCK: FireDAC
+  would take the block's own :variables for its parameters. }
+procedure TDM.CopyStockReceiptItem(ReceiptNo, SourceItemNo, Copies: integer);
+var
+  k, NewNo, Group: integer;
+  StartedFBTrans: Boolean;
+begin
+  if Copies <= 0 then
+    exit;
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    // The original and its copies share the receipt's next group number, so
+    // an edit can later be applied to all of them (ApplyItemToCopyGroup).
+    Group := ConnFB.ExecSQLScalar(
+      'SELECT COALESCE(MAX(COPY_GROUP), 0) + 1 FROM STOCK_RECEIPT_LINES WHERE STOCK_RECEIPT_NO = :R', [ReceiptNo]);
+    ConnFB.ExecSQL('UPDATE STOCK_RECEIPT_LINES SET COPY_GROUP = :G WHERE STOCK_RECEIPT_NO = :R AND INV_ITEM_NO = :I',
+                   [Group, ReceiptNo, SourceItemNo]);
+
+    for k := 1 to Copies do
+      begin
+        NewNo := ConnFB.ExecSQLScalar(
+          'INSERT INTO INVENTORY_ITEMS (INV_CAT_NO, J_TYPE, J_STYLE, J_METAL, INV_ITEM_COUNT, NOTE, ' +
+          '  SIZE_LENGTH, WEIGHT, KT, UNIT_COST, UNIT_PRICE, INV_ITEM_STATUS, TRANSACTION_NO, ' +
+          '  INV_ITEM_BRAND, SERIAL_NUMBER, OWNER_APP_NUMBER, MODEL_NUMBER, GENDER, DESCRIPTION, ' +
+          '  WEIGHT_UNIT, PURCHASE_DATE, FORSALE_DATE) ' +
+          'SELECT INV_CAT_NO, J_TYPE, J_STYLE, J_METAL, INV_ITEM_COUNT, NOTE, ' +
+          '  SIZE_LENGTH, WEIGHT, KT, UNIT_COST, UNIT_PRICE, INV_ITEM_STATUS, TRANSACTION_NO, ' +
+          '  INV_ITEM_BRAND, SERIAL_NUMBER, OWNER_APP_NUMBER, MODEL_NUMBER, GENDER, DESCRIPTION, ' +
+          '  WEIGHT_UNIT, PURCHASE_DATE, FORSALE_DATE ' +
+          'FROM INVENTORY_ITEMS WHERE INV_ITEM_NO = :SRC ' +
+          'RETURNING INV_ITEM_NO', [SourceItemNo]);
+
+        ConnFB.ExecSQL('UPDATE INVENTORY_ITEMS SET INV_ITEM_BARCODE = :B WHERE INV_ITEM_NO = :I',
+                       [GetBarcode(NewNo), NewNo], [ftWideString, ftInteger]);
+        ConnFB.ExecSQL(
+          'INSERT INTO STONES (INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT) ' +
+          'SELECT CAST(:NEW_NO AS INTEGER), STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT ' +
+          'FROM STONES WHERE INV_ITEM_NO = :SRC', [NewNo, SourceItemNo]);
+        SaveStockReceiptLine(ReceiptNo, NewNo);
+        ConnFB.ExecSQL('UPDATE STOCK_RECEIPT_LINES SET COPY_GROUP = :G WHERE STOCK_RECEIPT_NO = :R AND INV_ITEM_NO = :I',
+                       [Group, ReceiptNo, NewNo]);
+      end;
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Rollback;
+    raise;
+  end;
+end;
+
+{ The copy group of an item on a receipt (0 when it is a single piece), how
+  many pieces of the group are still there, and how many of the OTHER pieces
+  are still unsold -- the ones an "apply to the group" edit would change. }
+procedure TDM.GetCopyGroupSize(ReceiptNo, InvItemNo: integer; out Group, Size, UnsoldOthers: integer);
+var
+  V: Variant;
+begin
+  Group := 0;
+  Size := 0;
+  UnsoldOthers := 0;
+  V := ConnFB.ExecSQLScalar(
+    'SELECT COPY_GROUP FROM STOCK_RECEIPT_LINES WHERE STOCK_RECEIPT_NO = :R AND INV_ITEM_NO = :I',
+    [ReceiptNo, InvItemNo]);
+  if VarIsNull(V) or VarIsEmpty(V) then
+    exit;
+  Group := V;
+  Size := ConnFB.ExecSQLScalar(
+    'SELECT COUNT(*) FROM STOCK_RECEIPT_LINES l JOIN INVENTORY_ITEMS i ON i.INV_ITEM_NO = l.INV_ITEM_NO ' +
+    'WHERE l.STOCK_RECEIPT_NO = :R AND l.COPY_GROUP = :G', [ReceiptNo, Group]);
+  UnsoldOthers := ConnFB.ExecSQLScalar(
+    'SELECT COUNT(*) FROM STOCK_RECEIPT_LINES l JOIN INVENTORY_ITEMS i ON i.INV_ITEM_NO = l.INV_ITEM_NO ' +
+    'WHERE l.STOCK_RECEIPT_NO = :R AND l.COPY_GROUP = :G AND l.INV_ITEM_NO <> :I ' +
+    '  AND i.INV_ITEM_STATUS = ''S'' AND i.SOLD_DATE IS NULL', [ReceiptNo, Group, InvItemNo]);
+end;
+
+{ An edit of one piece of a copy group, applied to the group's other UNSOLD
+  pieces: the same details and stones. Each piece keeps its own barcode,
+  status, dates and serial number (by nature one per piece). Sold / layaway
+  pieces are never touched. One database transaction. Returns how many pieces
+  were changed. }
+function TDM.ApplyItemToCopyGroup(ReceiptNo, SourceItemNo: integer): integer;
+var
+  Group, Size, Unsold: integer;
+  StartedFBTrans: Boolean;
+const
+  OthersSQL =
+    'SELECT l.INV_ITEM_NO FROM STOCK_RECEIPT_LINES l JOIN INVENTORY_ITEMS o ON o.INV_ITEM_NO = l.INV_ITEM_NO ' +
+    'WHERE l.STOCK_RECEIPT_NO = :R AND l.COPY_GROUP = :G AND l.INV_ITEM_NO <> :SRC ' +
+    '  AND o.INV_ITEM_STATUS = ''S'' AND o.SOLD_DATE IS NULL';
+begin
+  Result := 0;
+  GetCopyGroupSize(ReceiptNo, SourceItemNo, Group, Size, Unsold);
+  if (Group = 0) or (Unsold = 0) then
+    exit;
+
+  StartedFBTrans := False;
+  try
+    if not ConnFB.InTransaction then
+    begin
+      ConnFB.StartTransaction;
+      StartedFBTrans := True;
+    end;
+
+    Result := ConnFB.ExecSQL(
+      'UPDATE INVENTORY_ITEMS o SET ' +
+      '  o.INV_CAT_NO = (SELECT s.INV_CAT_NO FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.J_TYPE = (SELECT s.J_TYPE FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.J_STYLE = (SELECT s.J_STYLE FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.J_METAL = (SELECT s.J_METAL FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.GENDER = (SELECT s.GENDER FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.DESCRIPTION = (SELECT s.DESCRIPTION FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.NOTE = (SELECT s.NOTE FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.SIZE_LENGTH = (SELECT s.SIZE_LENGTH FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.WEIGHT = (SELECT s.WEIGHT FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.WEIGHT_UNIT = (SELECT s.WEIGHT_UNIT FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.KT = (SELECT s.KT FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.UNIT_COST = (SELECT s.UNIT_COST FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.UNIT_PRICE = (SELECT s.UNIT_PRICE FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.INV_ITEM_BRAND = (SELECT s.INV_ITEM_BRAND FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.MODEL_NUMBER = (SELECT s.MODEL_NUMBER FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC), ' +
+      '  o.OWNER_APP_NUMBER = (SELECT s.OWNER_APP_NUMBER FROM INVENTORY_ITEMS s WHERE s.INV_ITEM_NO = :SRC) ' +
+      'WHERE o.INV_ITEM_NO IN (' + OthersSQL + ')',
+      [SourceItemNo, ReceiptNo, Group]);
+
+    // Stones: the group's other unsold pieces get exactly the edited piece's stones.
+    ConnFB.ExecSQL('DELETE FROM STONES WHERE INV_ITEM_NO IN (' + OthersSQL + ')',
+                   [ReceiptNo, Group, SourceItemNo]);
+    ConnFB.ExecSQL(
+      'INSERT INTO STONES (INV_ITEM_NO, STONE_NUMBER, STONE_SHAPE, STONE_COLOR, CT, WT, STONE_TYPE, STONE_WEIGHT_UNIT) ' +
+      'SELECT x.INV_ITEM_NO, s.STONE_NUMBER, s.STONE_SHAPE, s.STONE_COLOR, s.CT, s.WT, s.STONE_TYPE, s.STONE_WEIGHT_UNIT ' +
+      'FROM STONES s, (' + OthersSQL + ') x WHERE s.INV_ITEM_NO = :SRC2',
+      [ReceiptNo, Group, SourceItemNo, SourceItemNo]);
+
+    // The group's lines follow, as SaveStockReceiptLine does for one item.
+    ConnFB.ExecSQL(
+      'UPDATE STOCK_RECEIPT_LINES l SET ' +
+      '  l.DESCRIPTION = (SELECT LEFT(i.DESCRIPTION, 120) FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO), ' +
+      '  l.UNIT_COST = (SELECT i.UNIT_COST FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO), ' +
+      '  l.UNIT_PRICE = (SELECT i.UNIT_PRICE FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO) ' +
+      'WHERE l.STOCK_RECEIPT_NO = :R AND l.COPY_GROUP = :G ' +
+      '  AND EXISTS (SELECT 1 FROM INVENTORY_ITEMS i WHERE i.INV_ITEM_NO = l.INV_ITEM_NO ' +
+      '              AND i.INV_ITEM_STATUS = ''S'' AND i.SOLD_DATE IS NULL)',
+      [ReceiptNo, Group]);
+
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Commit;
+  except
+    if StartedFBTrans and ConnFB.InTransaction then
+      ConnFB.Rollback;
+    raise;
+  end;
+end;
+
+{ Sold, or on layaway: the item has left the stock and stays out of this
+  receipt's edits (it is deleted, if ever, from the Items / client screens). }
+function TDM.StockReceiptItemIsSold(InvItemNo: integer): boolean;
+begin
+  Result := ConnFB.ExecSQLScalar(
+    'SELECT COUNT(*) FROM INVENTORY_ITEMS WHERE INV_ITEM_NO = :I ' +
+    '  AND (SOLD_DATE IS NOT NULL OR INV_ITEM_STATUS IN (''D'', ''L''))', [InvItemNo]) > 0;
+end;
+
+{ Takes an unsold item off a receipt: the item is deleted (logged by the v14
+  trigger, with the receipt number); its receipt line stays as the record of
+  what came in. }
+procedure TDM.RemoveStockReceiptItem(InvItemNo: integer; const Reason: string);
+begin
+  if StockReceiptItemIsSold(InvItemNo) then
+    raise Exception.Create('This item is sold or on layaway, so it is no longer only on this receipt.');
+  DeleteWithLog(nil, Reason,
+    procedure
+    begin
+      ConnFB.ExecSQL('DELETE FROM IMAGES_DATA WHERE IMAG_REF_TO_ROW_NO = :I', [InvItemNo]);
+      ConnFB.ExecSQL('DELETE FROM INVENTORY_ITEMS WHERE INV_ITEM_NO = :I', [InvItemNo]);
+    end);
+end;
+
+{ Voids a receipt entered by mistake: its items are deleted (logged, with the
+  reason) and the receipt stays, marked 'V'. Refused while any of its items is
+  sold or on layaway -- those left the stock and cannot be un-received. }
+procedure TDM.VoidStockReceipt(ReceiptNo: integer; const Reason: string);
+begin
+  if ConnFB.ExecSQLScalar(
+       'SELECT COUNT(*) FROM STOCK_RECEIPT_LINES l JOIN INVENTORY_ITEMS i ON i.INV_ITEM_NO = l.INV_ITEM_NO ' +
+       'WHERE l.STOCK_RECEIPT_NO = :R AND (i.SOLD_DATE IS NOT NULL OR i.INV_ITEM_STATUS IN (''D'', ''L''))',
+       [ReceiptNo]) > 0 then
+    raise Exception.Create('Some items of this receipt are sold or on layaway. The receipt was not voided.');
+
+  DeleteWithLog(nil, Copy('Receipt voided: ' + Trim(Reason), 1, 200),
+    procedure
+    begin
+      ConnFB.ExecSQL(
+        'DELETE FROM IMAGES_DATA WHERE IMAG_REF_TO_ROW_NO IN ' +
+        '  (SELECT INV_ITEM_NO FROM STOCK_RECEIPT_LINES WHERE STOCK_RECEIPT_NO = :R)', [ReceiptNo]);
+      ConnFB.ExecSQL(
+        'DELETE FROM INVENTORY_ITEMS WHERE INV_ITEM_NO IN ' +
+        '  (SELECT INV_ITEM_NO FROM STOCK_RECEIPT_LINES WHERE STOCK_RECEIPT_NO = :R)', [ReceiptNo]);
+      if ConnFB.ExecSQL(
+           'UPDATE STOCK_RECEIPTS SET RECEIPT_STATUS = ''V'', VOID_DATE = CURRENT_TIMESTAMP, ' +
+           '  VOID_REASON = :REASON WHERE STOCK_RECEIPT_NO = :R AND RECEIPT_STATUS = ''A''',
+           [Copy(Trim(Reason), 1, 120), ReceiptNo], [ftWideString, ftInteger]) = 0 then
+        raise Exception.Create('This receipt was already voided.');
+    end);
 end;
 
 { Undo the sale of an item that has no sale ticket (sold before tickets

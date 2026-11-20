@@ -208,7 +208,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
-      Height = 78
+      Height = 29
       Align = alClient
       AutoResize = False
       AutoStyle = False
@@ -241,10 +241,10 @@ object frmPawnMain: TfrmPawnMain
       ToolbarControls = (
         RzToolButton16
         RzToolButton17
-        btnBackupDatabase
+        btnReceiveStock
         RzToolButton19
-        RzToolButton5
-        btnTransactionList)
+        btnTransactionList
+        btnBackupDatabase)
       object RzToolButton16: TRzToolButton
         AlignWithMargins = True
         Left = 4
@@ -270,7 +270,7 @@ object frmPawnMain: TfrmPawnMain
       end
       object btnBackupDatabase: TRzToolButton
         AlignWithMargins = True
-        Left = 230
+        Left = 566
         Top = 7
         Width = 110
         Height = 67
@@ -293,9 +293,9 @@ object frmPawnMain: TfrmPawnMain
         UseToolbarButtonSize = False
         Action = actInventory
       end
-      object RzToolButton5: TRzToolButton
+      object btnReceiveStock: TRzToolButton
         AlignWithMargins = True
-        Left = 456
+        Left = 230
         Top = 7
         Width = 110
         Height = 67
@@ -303,11 +303,11 @@ object frmPawnMain: TfrmPawnMain
         Layout = blGlyphTop
         Spacing = 6
         UseToolbarButtonSize = False
-        Caption = 'Items For Sale'
-        Visible = False
+        Caption = 'Receive Stock'
+        OnClick = btnReceiveStockClick
       end
       object btnTransactionList: TRzToolButton
-        Left = 569
+        Left = 456
         Top = 7
         Width = 110
         Height = 67
@@ -358,7 +358,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
-      Height = 78
+      Height = 29
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -522,7 +522,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
-      Height = 78
+      Height = 29
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -671,7 +671,7 @@ object frmPawnMain: TfrmPawnMain
       Left = 0
       Top = 0
       Width = 1461
-      Height = 78
+      Height = 29
       Align = alClient
       AutoStyle = False
       Images = DM.vilMain
@@ -2942,7 +2942,7 @@ object frmPawnMain: TfrmPawnMain
       OnExecute = actClientPawnAndPurchaseExecute
     end
     object actInventory: TAction
-      Caption = 'Active Items List'
+      Caption = 'Items'
       ImageIndex = 29
       ImageName = 'actActiveIventory'
       OnExecute = actInventoryExecute

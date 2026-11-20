@@ -112,7 +112,9 @@ uses
   AdditionalFilters in 'AdditionalFilters.pas' {frmAdditionalFilters},
   SellItems in 'SellItems.pas' {frmSellItems},
   NotifyNoTransactions in 'NotifyNoTransactions.pas' {frmNotifyNoTransactions},
-  QuickSale in 'QuickSale.pas' {frmQuickSale};
+  QuickSale in 'QuickSale.pas' {frmQuickSale},
+  ReceiveStock in 'ReceiveStock.pas' {frmReceiveStock},
+  EditStockReceipt in 'EditStockReceipt.pas' {frmEditStockReceipt};
 
 {$R *.RES}
 

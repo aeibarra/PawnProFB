@@ -119,7 +119,7 @@ type
     RzToolButton17: TRzToolButton;
     btnBackupDatabase: TRzToolButton;
     RzToolButton19: TRzToolButton;
-    RzToolButton5: TRzToolButton;
+    btnReceiveStock: TRzToolButton;
     pnClients: TRzPanel;
     RzToolButton1: TRzToolButton;
     ToolbarClients: TRzToolbar;
@@ -194,6 +194,7 @@ type
     procedure btnExportImagesClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure pbUnderTabsPaint(Sender: TObject);
+    procedure btnReceiveStockClick(Sender: TObject);
   private
     SaveOriPaintboxColor: TColor;
     // Latest fire-and-forget gold-price fetch. Held so shutdown can join it
@@ -222,7 +223,7 @@ var
 
 implementation
 
-Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory,
+Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory, ReceiveStock,
   MaintenanceJewle, SetupBarcodePrinter,
   BackupDB, TransactionList, ExportPoliceInformation,
   Report01, Report02, RepPurchases, GLbUtils, ReportExportTransactions,
@@ -824,6 +825,23 @@ begin
   end;
 
   MsgInfo(IntToStr(ExpCount) + ' Records exported!');
+end;
+
+{ Receive Stock: enter a supplier (wholesale) invoice; its items go straight to
+  For Sale. See ReceiveStock.pas. }
+procedure TfrmPawnMain.btnReceiveStockClick(Sender: TObject);
+begin
+  // Modeless, like Clients and Items: one instance, brought to the front when
+  // already open (left alone while a caFree release is still finishing).
+  if Assigned(frmReceiveStock) then
+    begin
+      if not (csDestroying in frmReceiveStock.ComponentState) then
+        frmReceiveStock.BringToFront;
+      exit;
+    end;
+
+  frmReceiveStock := TfrmReceiveStock.Create(Self);
+  frmReceiveStock.Show;
 end;
 
 procedure TfrmPawnMain.btnSelectPrintersClick(Sender: TObject);

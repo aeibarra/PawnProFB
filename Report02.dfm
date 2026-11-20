@@ -2103,10 +2103,13 @@ object frmReport02: TfrmReport02
       
         '           trim(coalesce(jm.J_METAL_DESC, '#39#39') || '#39' '#39' || coalesce' +
         '(jt.J_TYPE_DESC, '#39#39'))) as "Description",'
-      
-        '  case t.TRAN_TYPE when '#39'U'#39' then '#39'Purchase'#39' when '#39'P'#39' then '#39'Pawn'#39 +
-        ' else '#39#39' end as "Source",'
-      '  t.TRAN_TICKET_NO as "TicketNo",'
+            '  case when t.TRAN_TYPE = '#39'U'#39' then '#39'Purchase'#39
+      '       when t.TRAN_TYPE = '#39'P'#39' then '#39'Pawn'#39
+      '       when rl.STOCK_RECEIPT_NO is not null then '#39'Supplier'#39
+      '       else '#39#39' end as "Source",'
+
+        '  coalesce(t.TRAN_TICKET_NO, '#39'Rcpt '#39' || rl.STOCK_RECEIPT_NO) as "Tic' +
+        'ketNo",'
       
         '  coalesce(ii.FORSALE_DATE, ii.PURCHASE_DATE, ii.DEFAULTED_DATE,' +
         ' cast(ii.CREATED as date)) as "ForSaleSince",'
@@ -2116,6 +2119,9 @@ object frmReport02: TfrmReport02
       'from INVENTORY_ITEMS ii'
       'left join INV_CATEGORIES c on c.INV_CAT_NO = ii.INV_CAT_NO'
       'left join TRANSACTIONS t on t.TRANSACTION_NO = ii.TRANSACTION_NO'
+
+        'left join STOCK_RECEIPT_LINES rl on rl.INV_ITEM_NO = ii.INV_ITEM_N' +
+        'O'
       'left join J_TYPES jt on jt.J_TYPE = ii.J_TYPE'
       'left join J_METALS jm on jm.J_METAL = ii.J_METAL'
       'where ii.INV_ITEM_STATUS = '#39'S'#39

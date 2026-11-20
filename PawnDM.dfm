@@ -4713,6 +4713,11 @@ object DM: TDM
         CollectionIndex = 65
         CollectionName = 'SelectToLeft'
         Name = 'SelectToLeft'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'Cancel'
+        Name = 'Cancel'
       end>
     ImageCollection = svgMain
     Width = 40
@@ -7617,9 +7622,33 @@ object DM: TDM
           ' 4-14 7-21l68-174c2-4 2-8 0-12L44 76c-3-7-6-14-7-21-2-18 8-35 24' +
           '-43 15-8 33-6 45 4l356 206c13 8 21 22 21 38s-8 30-21 38L106 496z' +
           '"/>'#13#10'</svg>'#13#10
+      end
+      item
+        IconName = 'Cancel'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="6' +
+          '0" height="60" viewBox="0 0 48 48">'#13#10'<linearGradient id="hbE9Evn' +
+          'j3wAjjA2RX0We2a_OZuepOQd0omj_gr1" x1="7.534" x2="27.557" y1="7.5' +
+          '34" y2="27.557" gradientUnits="userSpaceOnUse"><stop offset="0" ' +
+          'stop-color="#f44f5a"></stop><stop offset=".443" stop-color="#ee3' +
+          'd4a"></stop><stop offset="1" stop-color="#e52030"></stop></linea' +
+          'rGradient><path fill="url(#hbE9Evnj3wAjjA2RX0We2a_OZuepOQd0omj_g' +
+          'r1)" d="M42.42,12.401c0.774-0.774,0.774-2.028,0-2.802L38.401,5.5' +
+          '8c-0.774-0.774-2.028-0.774-2.802,0'#9'L24,17.179L12.401,5.58c-0.774' +
+          '-0.774-2.028-0.774-2.802,0L5.58,9.599c-0.774,0.774-0.774,2.028,0' +
+          ',2.802L17.179,24L5.58,35.599'#9'c-0.774,0.774-0.774,2.028,0,2.802l4' +
+          '.019,4.019c0.774,0.774,2.028,0.774,2.802,0L42.42,12.401z"></path' +
+          '><linearGradient id="hbE9Evnj3wAjjA2RX0We2b_OZuepOQd0omj_gr2" x1' +
+          '="27.373" x2="40.507" y1="27.373" y2="40.507" gradientUnits="use' +
+          'rSpaceOnUse"><stop offset="0" stop-color="#a8142e"></stop><stop ' +
+          'offset=".179" stop-color="#ba1632"></stop><stop offset=".243" st' +
+          'op-color="#c21734"></stop></linearGradient><path fill="url(#hbE9' +
+          'Evnj3wAjjA2RX0We2b_OZuepOQd0omj_gr2)" d="M24,30.821L35.599,42.42' +
+          'c0.774,0.774,2.028,0.774,2.802,0l4.019-4.019'#9'c0.774-0.774,0.774-' +
+          '2.028,0-2.802L30.821,24L24,30.821z"></path>'#13#10'</svg>'
       end>
     Left = 67
-    Top = 366
+    Top = 365
   end
   object vilMain24: TSVGIconVirtualImageList
     Tag = 1
@@ -7928,6 +7957,11 @@ object DM: TDM
         CollectionIndex = 65
         CollectionName = 'SelectToLeft'
         Name = 'SelectToLeft'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'Cancel'
+        Name = 'Cancel'
       end>
     ImageCollection = svgMain
     Width = 32
@@ -8955,5 +8989,325 @@ object DM: TDM
     ScreenCursor = gcrHourGlass
     Left = 68
     Top = 184
+  end
+  object vilMain20: TSVGIconVirtualImageList
+    Tag = 1
+    Images = <
+      item
+        CollectionIndex = 4
+        CollectionName = 'actPrint4'
+        Name = 'actPrint4'
+      end
+      item
+        CollectionIndex = 0
+        CollectionName = 'actSearch'
+        Name = 'actSearch'
+      end
+      item
+        CollectionIndex = 1
+        CollectionName = 'actExit'
+        Name = 'actExit'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'actPrint2'
+        Name = 'actPayment'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'actSearch3'
+        Name = 'actPrint4'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = 'actSearch4'
+        Name = 'actSearch3'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'actFindUserMale'
+        Name = 'actFindUserMale'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'actFindUserMale2'
+        Name = 'actFindUserMale2'
+      end
+      item
+        CollectionIndex = 11
+        CollectionName = 'Add User Male 2'
+        Name = 'Add User Male 2'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = 'Registration1'
+        Name = 'Registration1'
+      end
+      item
+        CollectionIndex = 13
+        CollectionName = 'Denied 2'
+        Name = 'Denied 2'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = 'actlabels1'
+        Name = 'actlabels1'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'acrExit01'
+        Name = 'acrExit01'
+      end
+      item
+        CollectionIndex = 16
+        CollectionName = 'actEdit01'
+        Name = 'actEdit01'
+      end
+      item
+        CollectionIndex = 17
+        CollectionName = 'actEdit02'
+        Name = 'actEdit02'
+      end
+      item
+        CollectionIndex = 18
+        CollectionName = 'actAddFld01'
+        Name = 'actAddFld01'
+      end
+      item
+        CollectionIndex = 19
+        CollectionName = 'actReceipt01'
+        Name = 'actReceipt01'
+      end
+      item
+        CollectionIndex = 20
+        CollectionName = 'actSigma'
+        Name = 'actSigma'
+      end
+      item
+        CollectionIndex = 21
+        CollectionName = 'actTakePicture'
+        Name = 'actTakePicture'
+      end
+      item
+        CollectionIndex = 22
+        CollectionName = 'actSave01'
+        Name = 'actSave01'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'actAddItems'
+        Name = 'actAddItems'
+      end
+      item
+        CollectionIndex = 24
+        CollectionName = 'actItems'
+        Name = 'actItems'
+      end
+      item
+        CollectionIndex = 25
+        CollectionName = 'actTrash'
+        Name = 'actTrash'
+      end
+      item
+        CollectionIndex = 26
+        CollectionName = 'actTrash01'
+        Name = 'actTrash01'
+      end
+      item
+        CollectionIndex = 27
+        CollectionName = 'actBackupDB'
+        Name = 'actBackupDB'
+      end
+      item
+        CollectionIndex = 28
+        CollectionName = 'actExportCDV'
+        Name = 'actExportCDV'
+      end
+      item
+        CollectionIndex = 29
+        CollectionName = 'actDollar01'
+        Name = 'actDollar01'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'actPawnPurchase'
+        Name = 'actPawnPurchase'
+      end
+      item
+        CollectionIndex = 31
+        CollectionName = 'actCashOnHand'
+        Name = 'actCashOnHand'
+      end
+      item
+        CollectionIndex = 32
+        CollectionName = 'actActiveIventory'
+        Name = 'actActiveIventory'
+      end
+      item
+        CollectionIndex = 34
+        CollectionName = 'actPreviewDocument'
+        Name = 'actPreviewDocument'
+      end
+      item
+        CollectionIndex = 35
+        CollectionName = 'icons8-report'
+        Name = 'icons8-report'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'icons8-gear'
+        Name = 'icons8-gear'
+      end
+      item
+        CollectionIndex = 37
+        CollectionName = 'icons8-send-file'
+        Name = 'icons8-send-file'
+      end
+      item
+        CollectionIndex = 38
+        CollectionName = 'Report'
+        Name = 'Report'
+      end
+      item
+        CollectionIndex = 40
+        CollectionName = 'actCSVUpload'
+        Name = 'actCSVUpload'
+      end
+      item
+        CollectionIndex = 41
+        CollectionName = 'inventory'
+        Name = 'inventory'
+      end
+      item
+        CollectionIndex = 42
+        CollectionName = 'Calendar'
+        Name = 'Calendar'
+      end
+      item
+        CollectionIndex = 43
+        CollectionName = 'Diamond-ring'
+        Name = 'Diamond-ring'
+      end
+      item
+        CollectionIndex = 44
+        CollectionName = 'icons8-add-dollar'
+        Name = 'icons8-add-dollar'
+      end
+      item
+        CollectionIndex = 45
+        CollectionName = 'ForSaleItems'
+        Name = 'ForSaleItems'
+      end
+      item
+        CollectionIndex = 46
+        CollectionName = 'LeadsOnline Logo'
+        Name = 'LeadsOnline Logo'
+      end
+      item
+        CollectionIndex = 47
+        CollectionName = 'StoneShape'
+        Name = 'StoneShape'
+      end
+      item
+        CollectionIndex = 48
+        CollectionName = 'icons8-gold'
+        Name = 'icons8-gold'
+      end
+      item
+        CollectionIndex = 49
+        CollectionName = 'icons8-ring'
+        Name = 'icons8-ring'
+      end
+      item
+        CollectionIndex = 50
+        CollectionName = 'icons8-diamond'
+        Name = 'icons8-diamond'
+      end
+      item
+        CollectionIndex = 51
+        CollectionName = 'stocks-growth'
+        Name = 'stocks-growth'
+      end
+      item
+        CollectionIndex = 52
+        CollectionName = 'stocks-growth-bw'
+        Name = 'stocks-growth-bw'
+      end
+      item
+        CollectionIndex = 53
+        CollectionName = 'shopping-bag'
+        Name = 'shopping-bag'
+      end
+      item
+        CollectionIndex = 54
+        CollectionName = 'imagesgallery'
+        Name = 'imagesgallery'
+      end
+      item
+        CollectionIndex = 55
+        CollectionName = 'TakePictureID'
+        Name = 'TakePictureID'
+      end
+      item
+        CollectionIndex = 56
+        CollectionName = 'actChangeTranStatus'
+        Name = 'actChangeTranStatus'
+      end
+      item
+        CollectionIndex = 57
+        CollectionName = 'icons8-change'
+        Name = 'icons8-change'
+      end
+      item
+        CollectionIndex = 58
+        CollectionName = 'icons8-driver-license'
+        Name = 'icons8-driver-license'
+      end
+      item
+        CollectionIndex = 59
+        CollectionName = 'icons8-driver-license_blue'
+        Name = 'icons8-driver-license_blue'
+      end
+      item
+        CollectionIndex = 60
+        CollectionName = 'driver-license_black'
+        Name = 'driver-license_black'
+      end
+      item
+        CollectionIndex = 61
+        CollectionName = 'driver-license_Color'
+        Name = 'driver-license_Color'
+      end
+      item
+        CollectionIndex = 62
+        CollectionName = 'Filter'
+        Name = 'Filter'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'CashRegister'
+        Name = 'CashRegister'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'SelectToRight'
+        Name = 'SelectToRight'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'SelectToLeft'
+        Name = 'SelectToLeft'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'Cancel'
+        Name = 'Cancel'
+      end>
+    ImageCollection = svgMain
+    Width = 20
+    Height = 20
+    Size = 20
+    Left = 327
+    Top = 482
   end
 end
