@@ -37,7 +37,7 @@ uses
 
 const
   // Bump this whenever a new Step<N>_* is added below.
-  CURRENT_DB_VERSION = 16;
+  CURRENT_DB_VERSION = 17;
 
 { Ensures the connected database is at CURRENT_DB_VERSION, applying any pending
   steps. Raises on failure — the caller must treat that as fatal (do not run the
@@ -730,6 +730,72 @@ begin
     'WHERE PAYMENT_TYPE = ''America Express''');
 end;
 
+{ v17: standard reference rows. A store moved from the old system gets its
+  lookups copied as they were there; Perez Cash II's had only 2 item statuses,
+  no genders and no payment types (blank Status on the Items screen, empty
+  "Paid by"). Adds any MISSING standard row of ITEM_STATUS, J_GENDERS and
+  PAYMENT_TYPES (existing rows never changed), and renames the old-system
+  status names C 'Close' -> 'Scrap' and S 'Sale' -> 'For Sale' so every store
+  reads the same. Statuses are matched by code in the app, so the rename is
+  display-only. Idempotent.
+
+  Mirror of Schema/Migrations/PawnPro_FB5_ReferenceDataConsistency.sql. }
+procedure Step17_ReferenceDataConsistency(Conn: TFDConnection);
+begin
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''C'', ''Scrap'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''C'')');
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''D'', ''Sold'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''D'')');
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''L'', ''Layaway'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''L'')');
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''P'', ''Pawn'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''P'')');
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''R'', ''Redeem'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''R'')');
+  ExecDDL(Conn,
+    'INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC) SELECT ''S'', ''For Sale'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = ''S'')');
+  ExecDDL(Conn,
+    'INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC) SELECT ''M'', ''Men''''s'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = ''M'')');
+  ExecDDL(Conn,
+    'INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC) SELECT ''N'', ''Not Applicable'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = ''N'')');
+  ExecDDL(Conn,
+    'INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC) SELECT ''W'', ''Women''''s'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = ''W'')');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 1, ''Cash'', ''999999'', ''N'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 1)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 2, ''Check'', ''999999'', ''N'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 2)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 3, ''Money Order'', ''999999'', ''N'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 3)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 4, ''MasterCard'', ''9999 9999 9999 9999'', ''Y'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 4)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 5, ''Visa'', ''9999 9999 9999 9999'', ''Y'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 5)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 6, ''American Express'', ''9999 9999 9999 9999'', ''Y'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 6)');
+  ExecDDL(Conn,
+    'INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD) SELECT 7, ''Discover'', ''9999 9999 9999 9999'', ''Y'' FROM RDB$DATABASE ' +
+    'WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 7)');
+  ExecDDL(Conn,
+    'UPDATE ITEM_STATUS SET STATUS_DESC = ''Scrap'' WHERE STATUS = ''C'' AND STATUS_DESC = ''Close''');
+  ExecDDL(Conn,
+    'UPDATE ITEM_STATUS SET STATUS_DESC = ''For Sale'' WHERE STATUS = ''S'' AND STATUS_DESC = ''Sale''');
+end;
+
 procedure Step14_DeletedRecordsLog(Conn: TFDConnection);
 begin
   if not RelationExists(Conn, 'INVENTORY_ITEMS_DELETED') then
@@ -1065,7 +1131,13 @@ begin
     SetDbVersion(Conn, 16);
   end;
 
-  // Future steps: if V < 17 then begin Step17_...(Conn); SetDbVersion(Conn, 17); end;
+  if V < 17 then
+  begin
+    Step17_ReferenceDataConsistency(Conn);
+    SetDbVersion(Conn, 17);
+  end;
+
+  // Future steps: if V < 18 then begin Step18_...(Conn); SetDbVersion(Conn, 18); end;
 end;
 
 end.

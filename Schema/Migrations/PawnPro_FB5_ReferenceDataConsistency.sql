@@ -1,0 +1,66 @@
+/*******************************************************************************
+ * PawnPro — Firebird 5 migration: standard reference rows (schema v17)
+ *
+ * A store moved from the old ASA system gets its lookups copied as they were
+ * there (Pump_ASA_FB wipes the FB lookups first). Perez Cash II's old database
+ * had only 2 item statuses (C = 'Close', L), no genders and no payment types,
+ * so its Items screen showed a blank Status for Pawn, For Sale, Sold... and the
+ * Receive Stock "Paid by" list was empty. No later step ever looked at
+ * reference data.
+ *
+ * 1. Adds any MISSING standard row (by key) to ITEM_STATUS, J_GENDERS and
+ *    PAYMENT_TYPES, exactly as the seed script has it. Existing rows are never
+ *    changed or deleted, so a store's own rows and payment types stay.
+ * 2. Renames the two old-system item status names to the standard ones, so
+ *    every store reads the same: C 'Close' -> 'Scrap', S 'Sale' -> 'For Sale'.
+ *    Only those exact values are touched. The app matches statuses by their
+ *    code (INV_ITEM_STATUS), never by the description, so this is display-only.
+ *
+ * Idempotent: a re-run adds nothing and renames nothing.
+ *
+ * Mirror of Step17_ReferenceDataConsistency in uDBMigrations.pas.
+ ******************************************************************************/
+
+/* 1. Missing standard rows */
+
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'C', 'Scrap' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'C');
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'D', 'Sold' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'D');
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'L', 'Layaway' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'L');
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'P', 'Pawn' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'P');
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'R', 'Redeem' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'R');
+INSERT INTO ITEM_STATUS (STATUS, STATUS_DESC)
+  SELECT 'S', 'For Sale' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM ITEM_STATUS WHERE STATUS = 'S');
+
+INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC)
+  SELECT 'M', 'Men''s' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = 'M');
+INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC)
+  SELECT 'N', 'Not Applicable' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = 'N');
+INSERT INTO J_GENDERS (J_GENDER, J_GENDER_DESC)
+  SELECT 'W', 'Women''s' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM J_GENDERS WHERE J_GENDER = 'W');
+
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 1, 'Cash', '999999', 'N' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 1);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 2, 'Check', '999999', 'N' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 2);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 3, 'Money Order', '999999', 'N' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 3);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 4, 'MasterCard', '9999 9999 9999 9999', 'Y' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 4);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 5, 'Visa', '9999 9999 9999 9999', 'Y' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 5);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 6, 'American Express', '9999 9999 9999 9999', 'Y' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 6);
+INSERT INTO PAYMENT_TYPES (PAY_TYPE_NO, PAYMENT_TYPE, PAYMENT_MASK, IS_CREDIT_CARD)
+  SELECT 7, 'Discover', '9999 9999 9999 9999', 'Y' FROM RDB$DATABASE WHERE NOT EXISTS (SELECT 1 FROM PAYMENT_TYPES WHERE PAY_TYPE_NO = 7);
+
+/* 2. Old-system item status names -> standard names */
+
+UPDATE ITEM_STATUS SET STATUS_DESC = 'Scrap'    WHERE STATUS = 'C' AND STATUS_DESC = 'Close';
+UPDATE ITEM_STATUS SET STATUS_DESC = 'For Sale' WHERE STATUS = 'S' AND STATUS_DESC = 'Sale';
+
+COMMIT;
