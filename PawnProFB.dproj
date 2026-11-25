@@ -354,7 +354,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="uPawnProIniPrinters.pas"/>
+        <DCCReference Include="uPrinting.pas"/>
         <DCCReference Include="uPawnIniDefaults.pas"/>
         <DCCReference Include="PaymentLayaway.pas">
             <Form>frmPaymentLayaway</Form>

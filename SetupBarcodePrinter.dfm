@@ -2,9 +2,9 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   Left = 503
   Top = 182
   BorderStyle = bsDialog
-  Caption = 'Select Printer'
-  ClientHeight = 516
-  ClientWidth = 1018
+  Caption = 'Printer Settings'
+  ClientHeight = 772
+  ClientWidth = 940
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -1951,247 +1951,343 @@ object frmSetupBarcodePrinter: TfrmSetupBarcodePrinter
   object GroupBox1: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 440
-    Width = 1012
+    Top = 696
+    Width = 934
     Height = 73
     Align = alBottom
-    TabOrder = 4
-    ExplicitTop = 653
-    ExplicitWidth = 502
-    object btnSelectPrintLabel: TBitBtn
-      Left = 710
-      Top = 14
-      Width = 159
+    TabOrder = 3
+    ExplicitTop = 592
+    object btnSave: TBitBtn
+      Left = 653
+      Top = 15
+      Width = 124
       Height = 45
-      Caption = 'Select Printer'
+      Caption = 'Save'
       Default = True
-      ImageIndex = 0
-      ImageName = 'actPrint4'
+      ImageIndex = 19
+      ImageName = 'actSave01'
       Images = DM.vilMain24
+      Spacing = 10
       TabOrder = 0
-      OnClick = btnSelectPrintLabelClick
+      OnClick = btnSaveClick
     end
     object btnExit: TRzBitBtn
-      Left = 894
+      Left = 799
       Top = 14
-      Width = 106
+      Width = 109
       Height = 45
       Cancel = True
       Caption = 'Cancel'
       TabOrder = 1
       OnClick = btnExitClick
-      ImageIndex = 3
-      Images = DM.ImageListBtn
-      Spacing = -5
+      ImageIndex = 64
+      Images = DM.vilMain24
+      Margin = 10
+      Spacing = -10
     end
   end
-  object GroupBox2: TGroupBox
-    AlignWithMargins = True
-    Left = 3
-    Top = 3
-    Width = 502
-    Height = 278
-    Caption = 'Police Report Printer'
+  object gbThisPC: TGroupBox
+    Left = 12
+    Top = 8
+    Width = 916
+    Height = 280
+    Caption = 'Printers on this PC'
     TabOrder = 0
-    object Label1: TLabel
-      Left = 25
-      Top = 92
-      Width = 50
+    object lblHdrPrinter: TLabel
+      Left = 260
+      Top = 26
+      Width = 230
       Height = 21
-      Caption = 'Printer:'
+      AutoSize = False
+      Caption = 'Printer'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clGrayText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
     end
-    object Label3: TLabel
-      Left = 25
-      Top = 34
-      Width = 182
+    object lblHdrTray: TLabel
+      Left = 600
+      Top = 26
+      Width = 230
       Height = 21
-      Caption = 'Select Police Report to use'
+      AutoSize = False
+      Caption = 'Tray'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clGrayText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
     end
-    object Label4: TLabel
-      Left = 25
-      Top = 154
-      Width = 119
+    object lblPagePrinter: TLabel
+      Left = 16
+      Top = 56
+      Width = 230
       Height = 21
-      Caption = 'Printer Bin / Tray:'
+      AutoSize = False
+      Caption = 'Page printer (Letter):'
     end
-    object cbPrinters: TComboBox
-      Left = 22
-      Top = 115
-      Width = 451
+    object lblLetterRcpt: TLabel
+      Left = 16
+      Top = 100
+      Width = 230
+      Height = 21
+      AutoSize = False
+      Caption = 'Letter receipts:'
+    end
+    object lblReceiptPrinter: TLabel
+      Left = 16
+      Top = 144
+      Width = 230
+      Height = 21
+      AutoSize = False
+      Caption = 'Receipt printer (80 mm):'
+    end
+    object lblEnvelopePrinter: TLabel
+      Left = 16
+      Top = 188
+      Width = 230
+      Height = 21
+      AutoSize = False
+      Caption = 'Envelope label printer:'
+    end
+    object lblDotMatrix: TLabel
+      Left = 16
+      Top = 232
+      Width = 230
+      Height = 21
+      AutoSize = False
+      Caption = 'Dot-matrix printer:'
+    end
+    object cbPagePrinter: TComboBox
+      Left = 260
+      Top = 52
+      Width = 330
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 0
+      OnChange = cbPagePrinterChange
+    end
+    object cbPagePrinterBin: TComboBox
+      Left = 600
+      Top = 52
+      Width = 190
       Height = 29
       Style = csDropDownList
       TabOrder = 1
-      OnChange = cbPrintersChange
+      OnChange = SettingChange
+    end
+    object btnTestPage: TRzBitBtn
+      Left = 802
+      Top = 50
+      Width = 100
+      Height = 33
+      Hint = 
+        'Print a test page on this printer (default tray). Police forms (' +
+        'laser) and Letter receipts'
+      Caption = 'Test'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      TabStop = False
+      OnClick = btnTestClick
+      ImageIndex = 0
+      Images = DM.vilMain20
+      Margin = 15
+      Spacing = -10
+    end
+    object cbLetterRcptPrinter: TComboBox
+      Left = 260
+      Top = 96
+      Width = 330
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 3
+      OnChange = cbLetterRcptPrinterChange
+    end
+    object cbLetterRcptBin: TComboBox
+      Left = 600
+      Top = 96
+      Width = 190
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 4
+      OnChange = SettingChange
+    end
+    object btnTestLetterRcpt: TRzBitBtn
+      Left = 802
+      Top = 94
+      Width = 100
+      Height = 33
+      Hint = 
+        'Print a test page on this printer (default tray). Receipts print' +
+        'ed on Letter paper (no receipt printer, or no 80 mm layout yet)'
+      Caption = 'Test'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      TabStop = False
+      OnClick = btnTestClick
+      ImageIndex = 0
+      Images = DM.vilMain20
+      Margin = 15
+      Spacing = -10
+    end
+    object cbReceiptPrinter: TComboBox
+      Left = 260
+      Top = 140
+      Width = 330
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 6
+      OnChange = SettingChange
+    end
+    object btnTestReceipt: TRzBitBtn
+      Left = 802
+      Top = 138
+      Width = 100
+      Height = 33
+      Hint = 
+        'Print a test page on this printer (default tray). The 3-inch the' +
+        'rmal receipt printer'
+      Caption = 'Test'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 7
+      TabStop = False
+      OnClick = btnTestClick
+      ImageIndex = 0
+      Images = DM.vilMain20
+      Margin = 15
+      Spacing = -10
+    end
+    object cbEnvelopePrinter: TComboBox
+      Left = 260
+      Top = 184
+      Width = 330
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 8
+      OnChange = SettingChange
+    end
+    object btnTestEnvelope: TRzBitBtn
+      Left = 802
+      Top = 182
+      Width = 100
+      Height = 33
+      Hint = 
+        'Print a test page on this printer (default tray). Envelope item ' +
+        'labels (1.1" x 3.5")'
+      Caption = 'Test'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 9
+      TabStop = False
+      OnClick = btnTestClick
+      ImageIndex = 0
+      Images = DM.vilMain20
+      Margin = 15
+      Spacing = -10
+    end
+    object cbDotMatrixPrinter: TComboBox
+      Left = 260
+      Top = 228
+      Width = 330
+      Height = 29
+      Style = csDropDownList
+      TabOrder = 10
+      OnChange = SettingChange
+    end
+    object btnTestDotMatrix: TRzBitBtn
+      Left = 802
+      Top = 226
+      Width = 100
+      Height = 33
+      Hint = 
+        'Print a test page on this printer (default tray). Police form on' +
+        ' a dot-matrix printer (10-0920 / 10-0924)'
+      Caption = 'Test'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 11
+      TabStop = False
+      OnClick = btnTestClick
+      ImageIndex = 0
+      Images = DM.vilMain20
+      Margin = 15
+      Spacing = -10
+    end
+  end
+  object gbStore: TGroupBox
+    Left = 12
+    Top = 296
+    Width = 916
+    Height = 100
+    Caption = 'Store settings (all PCs)'
+    TabOrder = 1
+    object lblPoliceForm: TLabel
+      Left = 16
+      Top = 44
+      Width = 81
+      Height = 21
+      Caption = 'Police form:'
+    end
+    object lblLaserCopies: TLabel
+      Left = 680
+      Top = 44
+      Width = 88
+      Height = 21
+      Caption = 'Laser copies:'
     end
     object cbTypeOfPoliceReport: TRzComboBox
-      Left = 22
-      Top = 58
-      Width = 451
+      Left = 140
+      Top = 40
+      Width = 520
       Height = 29
       Style = csDropDownList
       TabOrder = 0
       OnChange = cbTypeOfPoliceReportChange
     end
-    object pnPoliceRptCopies: TRzPanel
-      Left = 25
-      Top = 219
-      Width = 291
-      Height = 41
-      BorderOuter = fsFlat
-      BorderSides = []
-      BorderColor = clBtnHighlight
-      TabOrder = 2
-      object RzLabel1: TRzLabel
-        Left = 13
-        Top = 6
-        Width = 190
-        Height = 21
-        Caption = 'Police Report Laser Copies: '
-      end
-      object edLaserCopies: TRzSpinEdit
-        Left = 209
-        Top = 3
-        Width = 48
-        Height = 29
-        Max = 100.00000000000000000
-        TabOrder = 0
-      end
-    end
-    object cbPolicePrinterBins: TComboBox
-      Left = 22
-      Top = 177
-      Width = 257
+    object edLaserCopies: TRzSpinEdit
+      Left = 790
+      Top = 40
+      Width = 60
       Height = 29
-      Style = csDropDownList
-      TabOrder = 3
+      Max = 100.00000000000000000
+      TabOrder = 1
     end
   end
-  object GroupBox3: TGroupBox
-    AlignWithMargins = True
-    Left = 511
-    Top = 1
-    Width = 502
-    Height = 214
-    Caption = 'Payment Receipt Printer'
+  object gbWhere: TGroupBox
+    Left = 12
+    Top = 404
+    Width = 916
+    Height = 286
+    Caption = 'What prints where on this PC'
     TabOrder = 2
-    object Label2: TLabel
-      Left = 25
-      Top = 68
-      Width = 50
-      Height = 21
-      Caption = 'Printer:'
-    end
-    object Label5: TLabel
-      Left = 25
-      Top = 131
-      Width = 119
-      Height = 21
-      Caption = 'Printer Bin / Tray:'
-    end
-    object cbPrintersPayReceipt: TComboBox
-      Left = 22
-      Top = 91
-      Width = 451
-      Height = 29
-      Style = csDropDownList
+    object lvWhere: TListView
+      AlignWithMargins = True
+      Left = 5
+      Top = 26
+      Width = 906
+      Height = 255
+      Align = alClient
+      Columns = <
+        item
+          Caption = 'Document'
+          Width = 230
+        end
+        item
+          Caption = 'Prints on'
+          Width = 650
+        end>
+      ReadOnly = True
+      RowSelect = True
       TabOrder = 0
-      OnChange = cbPrintersPayReceiptChange
-    end
-    object cbPayReceiptBins: TComboBox
-      Left = 22
-      Top = 154
-      Width = 257
-      Height = 29
-      Style = csDropDownList
-      TabOrder = 1
-    end
-    object chkUsePaymentReceiptPrinter: TCheckBox
-      Left = 31
-      Top = 38
-      Width = 226
-      Height = 17
-      Caption = 'Use Payment Receipt Printer'
-      TabOrder = 2
-    end
-  end
-  object GroupBox4: TGroupBox
-    AlignWithMargins = True
-    Left = 3
-    Top = 287
-    Width = 502
-    Height = 144
-    Caption = 'Envelope Label Printer'
-    TabOrder = 1
-    object Label6: TLabel
-      Left = 25
-      Top = 68
-      Width = 50
-      Height = 21
-      Caption = 'Printer:'
-    end
-    object cbPrintersEnvelopeLabel: TComboBox
-      Left = 22
-      Top = 91
-      Width = 451
-      Height = 29
-      Style = csDropDownList
-      TabOrder = 0
-    end
-    object chkUseEnvelopeLabelPrinter: TCheckBox
-      Left = 31
-      Top = 38
-      Width = 450
-      Height = 17
-      Caption = 'Use Envelope Label Printer (Brother QL-820NWB  - 1.1" x 3.5")'
-      TabOrder = 1
-    end
-  end
-  object GroupBox5: TGroupBox
-    AlignWithMargins = True
-    Left = 511
-    Top = 220
-    Width = 502
-    Height = 214
-    Caption = 'Layaway Receipt Printer'
-    TabOrder = 3
-    object Label7: TLabel
-      Left = 25
-      Top = 68
-      Width = 50
-      Height = 21
-      Caption = 'Printer:'
-    end
-    object Label8: TLabel
-      Left = 25
-      Top = 131
-      Width = 119
-      Height = 21
-      Caption = 'Printer Bin / Tray:'
-    end
-    object cbPrintersLayawayRcpt: TComboBox
-      Left = 22
-      Top = 91
-      Width = 451
-      Height = 29
-      Style = csDropDownList
-      TabOrder = 0
-      OnChange = cbPrintersLayawayRcptChange
-    end
-    object cbLayawayRcptBins: TComboBox
-      Left = 22
-      Top = 154
-      Width = 257
-      Height = 29
-      Style = csDropDownList
-      TabOrder = 1
-    end
-    object chkUseLayawayReceiptPrinter: TCheckBox
-      Left = 31
-      Top = 38
-      Width = 226
-      Height = 17
-      Caption = 'Use Layaway Receipt Printer'
-      TabOrder = 2
+      TabStop = False
+      ViewStyle = vsReport
+      ExplicitHeight = 149
     end
   end
 end

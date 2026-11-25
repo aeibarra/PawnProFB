@@ -98,20 +98,9 @@ begin
         FormatDateTime('yyyy-mm-dd hh:nn:ss', Now, TFormatSettings.Invariant));
 
     // ----- [PRINTERS] -----
-    // Police-report printer is the only one shown by default; the rest are
-    // opt-in via these flags. Their respective buttons stay hidden until the
-    // user flips the flag and configures the printer name.
-    EnsureKey(Ini, 'PRINTERS', 'UsePaymentReceiptPrinter', 'N');
-    EnsureKey(Ini, 'PRINTERS', 'UseEnvelopeLabelPrinter',  'N');
-    EnsureKey(Ini, 'PRINTERS', 'EnvelopeLabelPrinterName', '');
-
-    // Deliberately NOT written for existing installs: LoadPrinterSettingsFromIni
-    // falls back to the payment receipt printer when these are absent, which is
-    // where the layaway receipt used to go. Writing blanks here would take that
-    // fallback away and silently stop layaway receipts printing.
-    EnsureKey(Ini, 'PRINTERS', 'UseLayawayReceiptPrinter', 'N');
-    EnsureKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRN',           '');
-    EnsureKey(Ini, 'PRINTERS', 'LAYAWAYRCPTPRNBIN',        '');
+    // Nothing seeded: a missing printer key means "not set", and the keys are
+    // written by Printer Settings (uPrinting). The old per-document keys must
+    // not be written either: uPrinting reads them once to upgrade a PC.
 
     // ----- [LEADS_ONLINE] -----
     EnsureKey(Ini, 'LEADS_ONLINE', 'CSVPath', '');

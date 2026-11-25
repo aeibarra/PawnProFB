@@ -759,8 +759,7 @@ procedure TfrmPawnMain.BarcodePrinter1Click(Sender: TObject);
 begin
   frmSetupBarcodePrinter := TfrmSetupBarcodePrinter.Create(Self);
   try
-    frmSetupBarcodePrinter.PrinterKey := IniKeyBarcode;
-    frmSetupBarcodePrinter.Caption := 'Select Barcode Printer';
+    // The old barcode-printer entry: the one Printer Settings screen now.
     frmSetupBarcodePrinter.ShowModal;
   finally
     frmSetupBarcodePrinter.Free;
@@ -867,9 +866,6 @@ procedure TfrmPawnMain.btnSelectPrintersClick(Sender: TObject);
 begin
   frmSetupBarcodePrinter := TfrmSetupBarcodePrinter.Create(Self);
   try
-    frmSetupBarcodePrinter.PrinterKey := IniKeyRepPolPrn;
-    frmSetupBarcodePrinter.PrinterPaymentReceiptKey := IniKeyPayReceiptPrn;
-    frmSetupBarcodePrinter.Caption := 'Select Printer';
     frmSetupBarcodePrinter.ShowModal;
   finally
     frmSetupBarcodePrinter.Free;

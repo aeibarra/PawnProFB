@@ -357,7 +357,7 @@ var
 
 implementation
 
-Uses PawnGlobal, uPawnProIniPrinters, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA,
+Uses PawnGlobal, uPrinting, uPawnIniDefaults, DPAPIUtils, SearchClient, Nvv.FB5.DBA,
   SealedBox, Nvv.Crypto.FileEnvelope, uDBMigrations, uImageMaintenanceGate;
 
 {$R *.DFM}
@@ -1206,7 +1206,7 @@ begin
 
   PopulateWeightUnits;
 
-  LoadPrinterSettingsFromIni(GlobalIniFile, AppPrinterSettings);
+  ReloadPrinterSettings;
 (*  Using ODBC driver
   ConnStr := Format('Provider=MSDASQL.1;Persist Security Info=True;Extended Properties="driver=%s;pwd=%s;uid=%s;dbn=%s;eng=%s;CommLinks=SharedMemory,TCPIP{HOST=%s}"',
                     [Driver, PWD, UID, DBN, ENG, HOST]);

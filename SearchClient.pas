@@ -1022,7 +1022,7 @@ implementation
 uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPayment, CardReader, EditInvItem, Entertems,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
-  ReportsDM, uPawnProIniPrinters, EnterLayaway,
+  ReportsDM, uPrinting, EnterLayaway,
   PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, PurchaseChangeStatus, uPawnDialogs,
   ItemHistory, Inventory, QuickSale, SellItems;
 
@@ -1157,11 +1157,12 @@ begin
   // Reload printer settings from the INI FIRST, then use them — otherwise the
   // button visibility (and any print launched from this form) can act on stale
   // values from a prior load / a setting just changed in the setup screen.
-  LoadPrinterSettingsFromIni(GlobalIniFile, AppPrinterSettings);
+  ReloadPrinterSettings;
 
-  btnPrintPayReceipt.Visible := AppPrinterSettings.UsePaymentReceiptPrinter;
-  btnPrintEnvLabel.Visible := AppPrinterSettings.UseEnvelopeLabelPrinter;
-  btnLayawayRcpt.Visible := AppPrinterSettings.UseLayawayReceiptPrinter;
+  // A print button shows when this PC has a printer for that document.
+  btnPrintPayReceipt.Visible := CanPrint(pdPawnPaymentRcpt);
+  btnPrintEnvLabel.Visible := CanPrint(pdEnvelopeLabel);
+  btnLayawayRcpt.Visible := CanPrint(pdLayawayRcpt);
 
   DM.RefreshStoreQry;
 
@@ -1610,7 +1611,12 @@ procedure TfrmClients.btnPrintEnvLabelClick(Sender: TObject);
 var
   qry: TFDQuery;
   TotalItems, iPos: integer;
+  T: TPrintTarget;
 begin
+  // Once for all the labels: one message, not one per item.
+  if not GetPrintTarget(pdEnvelopeLabel, T, Self) then
+    exit;
+
   qry := TFDQuery.Create(nil);
   try
     qry.Connection := DM.ConnFB;
@@ -1622,7 +1628,8 @@ begin
     while not qry.Eof do
     begin
       inc(iPos);
-      DMReports.PrintItemEnvelopeLable(qry.FieldByName('INV_ITEM_NO').AsInteger, iPos, TotalItems);
+      DMReports.PrintItemEnvelopeLable(qry.FieldByName('INV_ITEM_NO').AsInteger, iPos, TotalItems,
+        T.PrinterName);
       qry.Next;
     end;
   finally
@@ -1634,7 +1641,7 @@ procedure TfrmClients.btnPrintPayReceiptClick(Sender: TObject);
 begin
   if DM.qryPayments.RecordCount > 0 then
   begin
-    DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger, AppPrinterSettings.PayReceiptPrinter, AppPrinterSettings.PayReceiptPrinterBin);
+    DMReports.PrintPaymentReceipt(DM.qryPaymentsPAYMENT_NO.AsInteger);
   end;
 end;
 
@@ -1644,8 +1651,13 @@ const
 var
   items, i: integer;
   mult: Extended;
+  T: TPrintTarget;
 begin
   DM.RefreshStoreQry;
+
+  // The page printer, or the dot-matrix printer for forms 10-0920 / 10-0924.
+  if not GetPrintTarget(pdPoliceForm, T, Self) then
+    exit;
 
   if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 3, 4] then
     begin
@@ -1680,7 +1692,7 @@ begin
   lblStoreName2.Visible := false;
   lblStoreName2.Caption := 'Pawnshop';
 
-  RptPoliceRep.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
+  RptPoliceRep.PrinterSetup.PrinterName := T.PrinterName;
   RptPoliceRep.PrinterSetup.MarginTop := 0.01 * DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger;
 
   RptPoliceLaserPrePrinted.PrinterSetup.MarginTop := 0.01 * DM.qryStoreSTORE_ADJ_TOP_MARG.AsInteger;
@@ -1704,16 +1716,16 @@ begin
     end
   else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 2 then //Laser Print all form
     begin
-      RepPoliceLaser.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
+      RepPoliceLaser.PrinterSetup.PrinterName := T.PrinterName;
       RepPoliceLaser.PrinterSetup.Copies := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
 
-      DMReports.PrintToTray(RepPoliceLaser, AppPrinterSettings.PoliceReportPrinter, AppPrinterSettings.PoliceReportBin);  /////////////LASER/////////////////////////
+      DMReports.PrintToTray(RepPoliceLaser, T.PrinterName, T.Bin);  /////////////LASER/////////////////////////
     end
   else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 3 then //Laser PrePrinted
     begin
       for i := 1 to DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger do
         begin
-          RptPoliceLaserprePrinted.PrinterSetup.PrinterName := AppPrinterSettings.PoliceReportPrinter;
+          RptPoliceLaserprePrinted.PrinterSetup.PrinterName := T.PrinterName;
     //      RptPoliceLaserprePrinted.PrinterSetup.Copies := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
           case i of
           1:
@@ -1735,7 +1747,7 @@ begin
             lblPrePrintedLaserPageType.Caption := '';
           end;
 
-          DMReports.PrintToTray(RptPoliceLaserPrePrinted, AppPrinterSettings.PoliceReportPrinter, AppPrinterSettings.PoliceReportBin); /////////////LASER/////////////////////////
+          DMReports.PrintToTray(RptPoliceLaserPrePrinted, T.PrinterName, T.Bin); /////////////LASER/////////////////////////
         end;
     end
   else if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger = 4 then //Dot Matrix 0924
@@ -2912,8 +2924,7 @@ begin
       Exit;
     end;
 
-  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger,
-    AppPrinterSettings.LayawayReceiptPrinter, AppPrinterSettings.LayawayReceiptPrinterBin);
+  DMReports.PrintLAYAWAYReceipt(DM.qryTransactionsTRANSACTION_NO.AsInteger);
 end;
 
 procedure TfrmClients.FormCreate(Sender: TObject);

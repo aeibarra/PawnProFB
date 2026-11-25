@@ -1,55 +1,69 @@
 ﻿unit SetupBarcodePrinter;
 
+{ Printer Settings.
+
+  Top: the printers of THIS PC (PawnPro.ini), one row each, with a Test
+  button. Middle: the settings of the whole STORE (police form type and
+  copies, in STORE). Bottom: "What prints where", worked out live from the
+  choices on screen by the same rules the app prints with (uPrinting), so
+  nobody has to know the rules to check the result. }
+
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Printers, IniFiles, Buttons, Vcl.Mask, RzEdit, RzSpnEdt,
-  Vcl.ExtCtrls, RzButton, RzCmboBx, RzLabel, RzPanel;
+  Dialogs, StdCtrls, Printers, Buttons, Vcl.Mask, RzEdit, RzSpnEdt,
+  Vcl.ExtCtrls, RzButton, RzCmboBx, RzLabel, RzPanel, Vcl.ComCtrls, uPrinting;
 
 type
   TfrmSetupBarcodePrinter = class(TForm)
     GroupBox1: TGroupBox;
-    btnSelectPrintLabel: TBitBtn;
-    GroupBox2: TGroupBox;
-    cbPrinters: TComboBox;
-    Label1: TLabel;
+    btnSave: TBitBtn;
     btnExit: TRzBitBtn;
+    gbThisPC: TGroupBox;
+    lblHdrPrinter: TLabel;
+    lblHdrTray: TLabel;
+    lblPagePrinter: TLabel;
+    cbPagePrinter: TComboBox;
+    cbPagePrinterBin: TComboBox;
+    btnTestPage: TRzBitBtn;
+    lblLetterRcpt: TLabel;
+    cbLetterRcptPrinter: TComboBox;
+    cbLetterRcptBin: TComboBox;
+    btnTestLetterRcpt: TRzBitBtn;
+    lblReceiptPrinter: TLabel;
+    cbReceiptPrinter: TComboBox;
+    btnTestReceipt: TRzBitBtn;
+    lblEnvelopePrinter: TLabel;
+    cbEnvelopePrinter: TComboBox;
+    btnTestEnvelope: TRzBitBtn;
+    lblDotMatrix: TLabel;
+    cbDotMatrixPrinter: TComboBox;
+    btnTestDotMatrix: TRzBitBtn;
+    gbStore: TGroupBox;
+    lblPoliceForm: TLabel;
     cbTypeOfPoliceReport: TRzComboBox;
-    Label3: TLabel;
-    pnPoliceRptCopies: TRzPanel;
+    lblLaserCopies: TLabel;
     edLaserCopies: TRzSpinEdit;
-    RzLabel1: TRzLabel;
-    GroupBox3: TGroupBox;
-    Label2: TLabel;
-    cbPrintersPayReceipt: TComboBox;
-    cbPolicePrinterBins: TComboBox;
-    cbPayReceiptBins: TComboBox;
-    Label4: TLabel;
-    Label5: TLabel;
-    chkUsePaymentReceiptPrinter: TCheckBox;
-    GroupBox4: TGroupBox;
-    Label6: TLabel;
-    cbPrintersEnvelopeLabel: TComboBox;
-    chkUseEnvelopeLabelPrinter: TCheckBox;
-    GroupBox5: TGroupBox;
-    Label7: TLabel;
-    Label8: TLabel;
-    cbPrintersLayawayRcpt: TComboBox;
-    cbLayawayRcptBins: TComboBox;
-    chkUseLayawayReceiptPrinter: TCheckBox;
-    procedure btnSelectPrintLabelClick(Sender: TObject);
-    procedure btnExitClick(Sender: TObject);
+    gbWhere: TGroupBox;
+    lvWhere: TListView;
     procedure FormShow(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
+    procedure btnExitClick(Sender: TObject);
     procedure cbTypeOfPoliceReportChange(Sender: TObject);
-    procedure cbPrintersChange(Sender: TObject);
-    procedure cbPrintersPayReceiptChange(Sender: TObject);
-    procedure cbPrintersLayawayRcptChange(Sender: TObject);
+    procedure cbPagePrinterChange(Sender: TObject);
+    procedure cbLetterRcptPrinterChange(Sender: TObject);
+    procedure SettingChange(Sender: TObject);
+    procedure btnTestClick(Sender: TObject);
   private
-    { Private declarations }
-  public
-    { Public declarations }
-    PrinterKey, PrinterPaymentReceiptKey: string;
+    FLoading: boolean;
+    procedure FillPrinters(Combo: TComboBox; const FirstItem, Current: string);
+    function ComboPrinter(Combo: TComboBox): string;
+    procedure FillBins(Combo: TComboBox; const PrinterName, Current: string);
+    function ComboBin(Combo: TComboBox): string;
+    function ScreenSettings: TPrinterSettings;
+    function PoliceFormType: integer;
+    procedure UpdateWhere;
   end;
 
 var
@@ -57,64 +71,149 @@ var
 
 implementation
 
-Uses PawnGlobal, PawnDM, uPawnProIniPrinters;
+Uses PawnGlobal, PawnDM, uPawnDialogs;
 
 {$R *.dfm}
 
-procedure TfrmSetupBarcodePrinter.btnSelectPrintLabelClick(Sender: TObject);
+const
+  NoPrinter = '(none)';
+  SameAsPage = '(same as page printer)';
+  DefaultTray = '(default tray)';
+  NotInstalled = '  (not installed on this PC)';
+
+{ ---- printer and tray lists ---------------------------------------------- }
+
+{ FirstItem ('(none)' or '(same as page printer)') stands for ''. A saved
+  printer this PC no longer has stays in the list, marked, so saving does not
+  quietly drop it and the list below shows the problem. }
+procedure TfrmSetupBarcodePrinter.FillPrinters(Combo: TComboBox; const FirstItem, Current: string);
 begin
-  AppPrinterSettings.PoliceReportPrinter := cbPrinters.Text;
-  AppPrinterSettings.PoliceReportBin := cbPolicePrinterBins.Text;
+  Combo.Items.BeginUpdate;
+  try
+    Combo.Items.Clear;
+    Combo.Items.Add(FirstItem);
+    Combo.Items.AddStrings(Printer.Printers);
+    if (Current <> '') and (Printer.Printers.IndexOf(Current) < 0) then
+      Combo.Items.Add(Current + NotInstalled);
+  finally
+    Combo.Items.EndUpdate;
+  end;
 
-  AppPrinterSettings.UsePaymentReceiptPrinter := chkUsePaymentReceiptPrinter.Checked;
-  AppPrinterSettings.PayReceiptPrinter := cbPrintersPayReceipt.Text;
-  AppPrinterSettings.PayReceiptPrinterBin := cbPayReceiptBins.Text;
+  if Current = '' then
+    Combo.ItemIndex := 0
+  else if Printer.Printers.IndexOf(Current) >= 0 then
+    Combo.ItemIndex := Combo.Items.IndexOf(Current)
+  else
+    Combo.ItemIndex := Combo.Items.Count - 1;
+end;
 
-  AppPrinterSettings.UseEnvelopeLabelPrinter := chkUseEnvelopeLabelPrinter.Checked;
-  AppPrinterSettings.EnvelopeLabelPrinterName := cbPrintersEnvelopeLabel.Text;
+function TfrmSetupBarcodePrinter.ComboPrinter(Combo: TComboBox): string;
+begin
+  if Combo.ItemIndex <= 0 then
+    exit('');
+  Result := Combo.Items[Combo.ItemIndex];
+  if Result.EndsWith(NotInstalled) then
+    Result := Copy(Result, 1, Length(Result) - Length(NotInstalled));
+end;
 
-  AppPrinterSettings.UseLayawayReceiptPrinter := chkUseLayawayReceiptPrinter.Checked;
-  AppPrinterSettings.LayawayReceiptPrinter := cbPrintersLayawayRcpt.Text;
-  AppPrinterSettings.LayawayReceiptPrinterBin := cbLayawayRcptBins.Text;
+procedure TfrmSetupBarcodePrinter.FillBins(Combo: TComboBox; const PrinterName, Current: string);
+var
+  Bin: string;
+begin
+  Combo.Items.BeginUpdate;
+  try
+    Combo.Items.Clear;
+    Combo.Items.Add(DefaultTray);
+    if PrinterName <> '' then
+      for Bin in GetPrinterBinNames(PrinterName) do
+        Combo.Items.Add(Bin);
+  finally
+    Combo.Items.EndUpdate;
+  end;
+  Combo.ItemIndex := Combo.Items.IndexOf(Current);
+  if Combo.ItemIndex < 0 then
+    Combo.ItemIndex := 0;
+end;
 
-  SavePrinterSettingsToIni(GlobalIniFile, AppPrinterSettings);
+function TfrmSetupBarcodePrinter.ComboBin(Combo: TComboBox): string;
+begin
+  if Combo.ItemIndex <= 0 then
+    Result := ''
+  else
+    Result := Combo.Items[Combo.ItemIndex];
+end;
+
+{ ---- show / save ---------------------------------------------------------- }
+
+procedure TfrmSetupBarcodePrinter.FormShow(Sender: TObject);
+var
+  S: TPrinterSettings;
+  Idx: integer;
+begin
+  FLoading := True;
+  try
+    DM.RefreshStoreQry;
+    ReloadPrinterSettings;
+    S := AppPrinterSettings;
+
+    cbTypeOfPoliceReport.AddItemValue('Dot Matrix Printer. Preprinted Police Report (10-0920)', '1');
+    cbTypeOfPoliceReport.AddItemValue('Dot Matrix Printer. Preprinted Police Report (10-0924)', '4');
+    cbTypeOfPoliceReport.AddItemValue('Laser Printer. Generate Police Report Form', '2');
+    cbTypeOfPoliceReport.AddItemValue('Laser Printer. Fill Pre-Printed Police Report Form (10-0909)', '3');
+    Idx := cbTypeOfPoliceReport.Values.IndexOf(DM.qryStorePOLICE_REPORT_TO_PRINT.AsString);
+    if Idx < 0 then
+      Idx := 0;
+    cbTypeOfPoliceReport.ItemIndex := Idx;
+    edLaserCopies.Value := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
+
+    FillPrinters(cbPagePrinter, NoPrinter, S.PagePrinter);
+    FillBins(cbPagePrinterBin, S.PagePrinter, S.PagePrinterBin);
+    FillPrinters(cbLetterRcptPrinter, SameAsPage, S.LetterRcptPrinter);
+    if S.LetterRcptPrinter <> '' then
+      FillBins(cbLetterRcptBin, S.LetterRcptPrinter, S.LetterRcptBin)
+    else
+      FillBins(cbLetterRcptBin, S.PagePrinter, S.LetterRcptBin);
+    FillPrinters(cbReceiptPrinter, NoPrinter, S.ReceiptPrinter);
+    FillPrinters(cbEnvelopePrinter, NoPrinter, S.EnvelopeLabelPrinter);
+    FillPrinters(cbDotMatrixPrinter, NoPrinter, S.DotMatrixPrinter);
+  finally
+    FLoading := False;
+  end;
+  cbTypeOfPoliceReportChange(nil);   // also fills "What prints where"
+end;
+
+function TfrmSetupBarcodePrinter.ScreenSettings: TPrinterSettings;
+begin
+  Result := Default(TPrinterSettings);
+  Result.PagePrinter          := ComboPrinter(cbPagePrinter);
+  Result.PagePrinterBin       := ComboBin(cbPagePrinterBin);
+  Result.LetterRcptPrinter    := ComboPrinter(cbLetterRcptPrinter);
+  Result.LetterRcptBin        := ComboBin(cbLetterRcptBin);
+  Result.ReceiptPrinter       := ComboPrinter(cbReceiptPrinter);
+  Result.EnvelopeLabelPrinter := ComboPrinter(cbEnvelopePrinter);
+  // Kept even while hidden (a laser form): switching back finds it again.
+  Result.DotMatrixPrinter     := ComboPrinter(cbDotMatrixPrinter);
+end;
+
+function TfrmSetupBarcodePrinter.PoliceFormType: integer;
+begin
+  if cbTypeOfPoliceReport.ItemIndex < 0 then
+    Result := 0
+  else
+    Result := StrToIntDef(cbTypeOfPoliceReport.Value, 0);
+end;
+
+procedure TfrmSetupBarcodePrinter.btnSaveClick(Sender: TObject);
+begin
+  SavePrinterSettings(ScreenSettings);
 
   DM.qryStore.Edit;
-  DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger := trunc(edLaserCopies.Value);
-
-  if cbTypeOfPoliceReport.ItemIndex in [0, 1, 2, 3] then
-    DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger := cbTypeOfPoliceReport.Value.ToInteger;// Values[cbTypeOfPoliceReport.ItemIndex];// idx := cbTypeOfPoliceReport.Values.IndexOf(IntToStr(DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger)); //cbTypeOfPoliceReport.ItemIndex + 1;
-
+  DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger := Trunc(edLaserCopies.Value);
+  if PoliceFormType in [1, 2, 3, 4] then
+    DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger := PoliceFormType;
   DM.qryStore.Post;
 
   ModalResult := mrOk;
-end;
-
-procedure TfrmSetupBarcodePrinter.cbPrintersChange(Sender: TObject);
-begin
-  FillPrinterTrays(cbPolicePrinterBins, cbPrinters.Text);
-end;
-
-procedure TfrmSetupBarcodePrinter.cbPrintersLayawayRcptChange(Sender: TObject);
-begin
-  FillPrinterTrays(cbLayawayRcptBins, cbPrintersLayawayRcpt.Text);
-end;
-
-procedure TfrmSetupBarcodePrinter.cbPrintersPayReceiptChange(Sender: TObject);
-begin
-  FillPrinterTrays(cbPayReceiptBins, cbPrintersPayReceipt.Text);
-end;
-
-procedure TfrmSetupBarcodePrinter.cbTypeOfPoliceReportChange(Sender: TObject);
-var
-  V: integer;
-  LaserPrinter: boolean;
-begin
-  V := cbTypeOfPoliceReport.Value.ToInteger;
-  LaserPrinter := V in [2, 3];
-
-  edLaserCopies.Enabled := LaserPrinter;
-  pnPoliceRptCopies.Enabled := LaserPrinter;
 end;
 
 procedure TfrmSetupBarcodePrinter.btnExitClick(Sender: TObject);
@@ -122,67 +221,126 @@ begin
   ModalResult := mrCancel;
 end;
 
-procedure TfrmSetupBarcodePrinter.FormShow(Sender: TObject);
+{ ---- changes -------------------------------------------------------------- }
+
+{ The dot-matrix row matters only for the dot-matrix forms; laser copies only
+  for the laser ones. }
+procedure TfrmSetupBarcodePrinter.cbTypeOfPoliceReportChange(Sender: TObject);
 var
-  idx: integer;
+  DotMatrix: boolean;
 begin
-  LoadPrinterSettingsFromIni(GlobalIniFile, AppPrinterSettings);
+  DotMatrix := IsDotMatrixPoliceForm(PoliceFormType);
+  lblDotMatrix.Visible := DotMatrix;
+  cbDotMatrixPrinter.Visible := DotMatrix;
+  btnTestDotMatrix.Visible := DotMatrix;
+  lblLaserCopies.Enabled := not DotMatrix;
+  edLaserCopies.Enabled := not DotMatrix;
+  UpdateWhere;
+end;
 
-  cbTypeOfPoliceReport.AddItemValue('Dot Matrix Printer. Preprinted Police Report (10-0920)', '1');
-  cbTypeOfPoliceReport.AddItemValue('Dot Matrix Printer. Preprinted Police Report (10-0924)', '4');
-  cbTypeOfPoliceReport.AddItemValue('Laser Printer. Generate Police Report Form', '2');
-  cbTypeOfPoliceReport.AddItemValue('Laser Printer. Fill Pre-Printed Police Report Form (10-0909)', '3');
+procedure TfrmSetupBarcodePrinter.cbPagePrinterChange(Sender: TObject);
+begin
+  FillBins(cbPagePrinterBin, ComboPrinter(cbPagePrinter), '');
+  if ComboPrinter(cbLetterRcptPrinter) = '' then
+    FillBins(cbLetterRcptBin, ComboPrinter(cbPagePrinter), '');
+  UpdateWhere;
+end;
 
-  DM.RefreshStoreQry;
+procedure TfrmSetupBarcodePrinter.cbLetterRcptPrinterChange(Sender: TObject);
+begin
+  if ComboPrinter(cbLetterRcptPrinter) <> '' then
+    FillBins(cbLetterRcptBin, ComboPrinter(cbLetterRcptPrinter), '')
+  else
+    FillBins(cbLetterRcptBin, ComboPrinter(cbPagePrinter), '');
+  UpdateWhere;
+end;
 
-  edLaserCopies.Value := DM.qryStorePOLICE_REPORT_LASER_COPIES.AsInteger;
-  if DM.qryStorePOLICE_REPORT_TO_PRINT.AsInteger in [1, 2, 3, 4] then
+procedure TfrmSetupBarcodePrinter.SettingChange(Sender: TObject);
+begin
+  UpdateWhere;
+end;
+
+{ Each row's Test button: a one-page test on that row's printer. }
+procedure TfrmSetupBarcodePrinter.btnTestClick(Sender: TObject);
+var
+  Name, UsedFor: string;
+begin
+  if Sender = btnTestPage then
     begin
-      idx := cbTypeOfPoliceReport.Values.IndexOf(DM.qryStorePOLICE_REPORT_TO_PRINT.AsString);
-      cbTypeOfPoliceReport.ItemIndex := idx;
+      Name := ComboPrinter(cbPagePrinter);
+      UsedFor := 'Page printer (Letter)';
+    end
+  else if Sender = btnTestLetterRcpt then
+    begin
+      Name := ComboPrinter(cbLetterRcptPrinter);
+      if Name = '' then
+        Name := ComboPrinter(cbPagePrinter);
+      UsedFor := 'Letter receipts';
+    end
+  else if Sender = btnTestReceipt then
+    begin
+      Name := ComboPrinter(cbReceiptPrinter);
+      UsedFor := 'Receipt printer (80 mm)';
+    end
+  else if Sender = btnTestEnvelope then
+    begin
+      Name := ComboPrinter(cbEnvelopePrinter);
+      UsedFor := 'Envelope label printer';
     end
   else
-    cbTypeOfPoliceReport.ItemIndex := 0;
-
-  cbTypeOfPoliceReportChange(nil);
-
-  //Populates the printers dropdown
-  cbPrinters.Items.Text := Printer.Printers.Text;
-  cbPrintersPayReceipt.Items.Text := Printer.Printers.Text;
-  cbPrintersEnvelopeLabel.Items.Text := Printer.Printers.Text;
-  cbPrintersLayawayRcpt.Items.Text := Printer.Printers.Text;
-
-  cbPrinters.ItemIndex := cbPrinters.Items.IndexOf(AppPrinterSettings.PoliceReportPrinter);
-  if cbPrinters.ItemIndex >= 0 then
     begin
-      cbPrintersChange(nil);
-      idx := cbPolicePrinterBins.Items.IndexOf(AppPrinterSettings.PoliceReportBin);
-      if idx >= 0 then
-        cbPolicePrinterBins.ItemIndex := idx;
+      Name := ComboPrinter(cbDotMatrixPrinter);
+      UsedFor := 'Dot-matrix printer (police form)';
     end;
 
-  chkUsePaymentReceiptPrinter.Checked := AppPrinterSettings.UsePaymentReceiptPrinter;
-  cbPrintersPayReceipt.ItemIndex := cbPrintersPayReceipt.Items.IndexOf(AppPrinterSettings.PayReceiptPrinter);
-  if cbPrintersPayReceipt.ItemIndex >= 0 then
-    begin
-      cbPrintersPayReceiptChange(nil);
-      idx := cbPayReceiptBins.Items.IndexOf(AppPrinterSettings.PayReceiptPrinterBin);
-      if idx >= 0 then
-        cbPayReceiptBins.ItemIndex := idx;
-    end;
+  if Name = '' then
+    PawnInfo('Choose a printer on this row first.', 'Test Print', Self)
+  else
+    PrintTestPage(Name, UsedFor, Self);
+end;
 
-  chkUseEnvelopeLabelPrinter.Checked := AppPrinterSettings.UseEnvelopeLabelPrinter;
-  cbPrintersEnvelopeLabel.ItemIndex := cbPrintersEnvelopeLabel.Items.IndexOf(AppPrinterSettings.EnvelopeLabelPrinterName);
+{ ---- what prints where ---------------------------------------------------- }
 
-  chkUseLayawayReceiptPrinter.Checked := AppPrinterSettings.UseLayawayReceiptPrinter;
-  cbPrintersLayawayRcpt.ItemIndex := cbPrintersLayawayRcpt.Items.IndexOf(AppPrinterSettings.LayawayReceiptPrinter);
-  if cbPrintersLayawayRcpt.ItemIndex >= 0 then
-    begin
-      cbPrintersLayawayRcptChange(nil);
-      idx := cbLayawayRcptBins.Items.IndexOf(AppPrinterSettings.LayawayReceiptPrinterBin);
-      if idx >= 0 then
-        cbLayawayRcptBins.ItemIndex := idx;
-    end;
+procedure TfrmSetupBarcodePrinter.UpdateWhere;
+var
+  S: TPrinterSettings;
+  Doc: TPrintDoc;
+  T: TPrintTarget;
+  Txt: string;
+  Item: TListItem;
+begin
+  if FLoading then
+    exit;
+  S := ScreenSettings;
+
+  lvWhere.Items.BeginUpdate;
+  try
+    lvWhere.Items.Clear;
+    for Doc in PrintDocsListed do
+      begin
+        if ResolvePrintTarget(S, Doc, PoliceFormType, T) then
+          begin
+            Txt := T.PrinterName;
+            if T.Bin <> '' then
+              Txt := Txt + ', ' + T.Bin;
+            if Doc in [pdPawnPaymentRcpt, pdLayawayRcpt, pdSaleRcpt] then
+              if T.Thermal then
+                Txt := Txt + '  (80 mm)'
+              else
+                Txt := Txt + '  (Letter)';
+            if not PrinterInstalled(T.PrinterName) then
+              Txt := Txt + '  - NOT INSTALLED on this PC';
+          end
+        else
+          Txt := 'Does not print: ' + T.Why;
+
+        Item := lvWhere.Items.Add;
+        Item.Caption := PrintDocName(Doc);
+        Item.SubItems.Add(Txt);
+      end;
+  finally
+    lvWhere.Items.EndUpdate;
+  end;
 end;
 
 end.

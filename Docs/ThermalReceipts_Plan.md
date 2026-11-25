@@ -28,10 +28,10 @@ Update the **Tracker** table as each one moves forward.
   - Paper: 80 mm wide, and the length grows with the content (continuous roll).
   - The cut, and the cash-drawer kick, are first set in the Epson driver.
   - If the driver turns out unreliable for either, the app sends raw ESC/POS commands for just those two.
-- **Printer settings** ([uPawnProIniPrinters.pas](../uPawnProIniPrinters.pas), the `AppPrinterSettings` record):
-  - Today there are separate entries for the payment receipt (`PayReceiptPrinter`, `UsePaymentReceiptPrinter`) and the layaway receipt (`LayawayReceiptPrinter`). The layaway one falls back to the payment printer.
-  - Add one **`ReceiptPrinter`** used by every receipt below.
-  - Keep a per-receipt override only where a store really needs a different printer.
+- **Printer settings** ([uPrinting.pas](../uPrinting.pas), built 2026-11-25):
+  - Each PC sets up printers, not documents: page printer, Letter receipts (optional printer/tray), **receipt printer (80 mm)**, envelope label, dot-matrix.
+  - A receipt prints its 80 mm layout on the receipt printer; with no receipt printer, or no 80 mm layout yet, its Letter layout on the page printer.
+  - To make a receipt use its 80 mm layout: set its `HasThermalLayout` entry in `uPrinting`, and pick the report from `T.Thermal` in its print procedure.
 - **Reprint:** every receipt can be printed again. A reprint says **REPRINT** and its print date, so it can't be passed off as the original.
 - **Language:** receipts print in English, the language of record for US stores. The multilanguage plan translates only what is shown on screen.
 
@@ -190,7 +190,7 @@ Status: **Planned**, **In progress**, **Built** (compiles), **Tested** (printed 
 | # | Receipt | Report | Status | Notes |
 |---|---|---|---|---|
 | — | TM-T20IV setup (driver, paper, cut) | — | Planned | Ethernet model |
-| — | `ReceiptPrinter` setting | — | Planned | One setting for all receipts |
+| — | `ReceiptPrinter` setting | — | Built | uPrinting + Printer Settings screen |
 | 1 | Pawn payment receipt | `RepPrintPayReceipt` | Planned | Exists, Letter size |
 | 2 | Pawn redeem receipt | (receipt 1) | Planned | Heading + items returned |
 | 3 | Layaway opening receipt | `RepLayawayRcpt` | Planned | Exists, Letter size |

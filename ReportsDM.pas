@@ -241,9 +241,13 @@ type
     function CalcPaymentDueDate(const PawnDate, LastPaymentDate: TDateTime): TDateTime;
   public
     procedure PrintToTray(const AReport: TppReport; const APrinterName, ATrayName: string);
-    procedure PrintPaymentReceipt(PaymentNo: integer; const PrinterName, PrinterTray: string);
-    procedure PrintItemEnvelopeLable(InvItemNo: integer; ItemPos, TotalItems: integer);
-    procedure PrintLAYAWAYReceipt(TransactionNo: integer; const PrinterName, PrinterTray: string);
+    { Receipts find their printer themselves (uPrinting); nothing prints, after
+      a message, when this PC has none set up for them. }
+    procedure PrintPaymentReceipt(PaymentNo: integer);
+    procedure PrintLAYAWAYReceipt(TransactionNo: integer);
+    { One label; the caller resolves the envelope label printer once for all. }
+    procedure PrintItemEnvelopeLable(InvItemNo: integer; ItemPos, TotalItems: integer;
+      const LabelPrinter: string);
   end;
 
 var
@@ -253,7 +257,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses PawnDM, PawnGlobal;
+uses PawnDM, PawnGlobal, uPrinting;
 
 {$R *.dfm}
 
@@ -291,7 +295,8 @@ begin
   Text := Format('%m', [DM.qryTransactionsTRAN_SALES_TAX.AsCurrency]);
 end;
 
-procedure TDMReports.PrintItemEnvelopeLable(InvItemNo: integer; ItemPos, TotalItems: integer);
+procedure TDMReports.PrintItemEnvelopeLable(InvItemNo: integer; ItemPos, TotalItems: integer;
+  const LabelPrinter: string);
 begin
 
   if InvItemNo <= 0 then
@@ -303,7 +308,9 @@ begin
 
   with rptEnvelopeItemLabel.PrinterSetup do
   begin
-      PrinterName := 'Brother QL-820NWB';
+      // The envelope label printer set for this PC (it was hardcoded to
+      // 'Brother QL-820NWB', whatever the setting said).
+      PrinterName := LabelPrinter;   // inside 'with PrinterSetup'
 
       // DK-1201 Label Size
       PaperName   := '1.1" x 3.5"';
@@ -372,8 +379,13 @@ begin
     Result := EndOfAMonth(Y, M);
 end;
 
-procedure TDMReports.PrintPaymentReceipt(PaymentNo: integer; const PrinterName, PrinterTray: string);
+procedure TDMReports.PrintPaymentReceipt(PaymentNo: integer);
+var
+  T: TPrintTarget;
 begin
+  if not GetPrintTarget(pdPawnPaymentRcpt, T) then
+    exit;
+
   DM.RefreshStoreQry;
 
   qryPrnPayReceipt.Close;
@@ -384,7 +396,8 @@ begin
   qryTranItems.Params.ParamByName('PAYMENT_NO').AsInteger := PaymentNo;
   qryTranItems.Open;
 
-  PrintToTray(RepPrintPayReceipt, PrinterName, PrinterTray);
+  // Letter layout only for now; the 80 mm one goes here when T.Thermal.
+  PrintToTray(RepPrintPayReceipt, T.PrinterName, T.Bin);
 end;
 
 procedure TDMReports.qryInvItemCalcFields(DataSet: TDataSet);
@@ -436,8 +449,13 @@ begin
   qryPrnPayReceiptcDueDate.AsDateTime := CalcPaymentDueDate(qryPrnPayReceiptTranDate.AsDateTime , DM.LastPaymentForTransaction(qryPrnPayReceiptTransactionNo.AsInteger));
 end;
 
-procedure TDMReports.PrintLAYAWAYReceipt(TransactionNo: integer; const PrinterName, PrinterTray: string);
+procedure TDMReports.PrintLAYAWAYReceipt(TransactionNo: integer);
+var
+  T: TPrintTarget;
 begin
+  if not GetPrintTarget(pdLayawayRcpt, T) then
+    exit;
+
   qryLayawayRcpt.Close;
   qryLayawayRcpt.Params.ParamByName('TRANSACTION_NO').AsInteger := TransactionNo;
   qryLayawayRcpt.Open;
@@ -451,7 +469,8 @@ begin
 
   ppSubReportPayments.Visible := qryLayawayPayments.RecordCount > 0;
 
-  PrintToTray(RepLayawayRcpt, PrinterName, PrinterTray);
+  // Letter layout only for now; the 80 mm one goes here when T.Thermal.
+  PrintToTray(RepLayawayRcpt, T.PrinterName, T.Bin);
 end;
 
 end.

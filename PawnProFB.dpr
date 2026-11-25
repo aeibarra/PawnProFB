@@ -93,7 +93,7 @@ uses
   uLeadsOnlineClient in 'uLeadsOnlineClient.pas',
   uLeadsOnlineTicketMap in 'uLeadsOnlineTicketMap.pas',
   ReportsDM in 'ReportsDM.pas' {DMReports: TDataModule},
-  uPawnProIniPrinters in 'uPawnProIniPrinters.pas',
+  uPrinting in 'uPrinting.pas',
   uPawnIniDefaults in 'uPawnIniDefaults.pas',
   PaymentLayaway in 'PaymentLayaway.pas' {frmPaymentLayaway},
   EnterLayaway in 'EnterLayaway.pas' {frmEnterLayaway},
