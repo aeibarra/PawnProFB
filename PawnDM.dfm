@@ -29,16 +29,16 @@ object DM: TDM
     Top = 92
   end
   object RegIniFile: TRzRegIniFile
-    Left = 157
-    Top = 517
+    Left = 322
+    Top = 370
   end
   object ImageListBtn: TImageList
     Tag = 1
     ColorDepth = cd32Bit
     Height = 32
     Width = 32
-    Left = 65
-    Top = 432
+    Left = 323
+    Top = 435
     Bitmap = {
       494C01011C00D801040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000000001000001002000000000000000
@@ -4718,6 +4718,31 @@ object DM: TDM
         CollectionIndex = 66
         CollectionName = 'Cancel'
         Name = 'Cancel'
+      end
+      item
+        CollectionIndex = 67
+        CollectionName = 'CashRegisterColor'
+        Name = 'CashRegisterColor'
+      end
+      item
+        CollectionIndex = 68
+        CollectionName = 'Cancel2'
+        Name = 'Cancel2'
+      end
+      item
+        CollectionIndex = 69
+        CollectionName = 'Cancel3'
+        Name = 'Cancel3'
+      end
+      item
+        CollectionIndex = 70
+        CollectionName = 'ReceiptPrinter'
+        Name = 'ReceiptPrinter'
+      end
+      item
+        CollectionIndex = 71
+        CollectionName = 'CancelOld'
+        Name = 'CancelOld'
       end>
     ImageCollection = svgMain
     Width = 40
@@ -7646,6 +7671,110 @@ object DM: TDM
           'Evnj3wAjjA2RX0We2b_OZuepOQd0omj_gr2)" d="M24,30.821L35.599,42.42' +
           'c0.774,0.774,2.028,0.774,2.802,0l4.019-4.019'#9'c0.774-0.774,0.774-' +
           '2.028,0-2.802L30.821,24L24,30.821z"></path>'#13#10'</svg>'
+      end
+      item
+        IconName = 'CashRegisterColor'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" widt' +
+          'h="48" height="48">'#13#10'  '#13#10'  <path fill="#64e5ff" d="M10 3h10c.55 ' +
+          '0 1 .45 1 1v12H9V4c0-.55.45-1 1-1z" />'#13#10'  <path fill="#45d2f7" d' +
+          '="M10 3h10c.55 0 1 .45 1 1v12H9V4c0-.55.45-1 1-1zm0 1v11h10V4H10' +
+          'z" />'#13#10#13#10'  '#13#10'  <rect x="33" y="12" width="6" height="4" fill="#1' +
+          '557b0" />'#13#10#13#10'  '#13#10'  <rect x="28" y="3" width="16" height="10" rx=' +
+          '"1.5" fill="#42a5f5" />'#13#10'  <rect x="28.75" y="3.75" width="14.5"' +
+          ' height="8.5" rx="1" fill="none" stroke="#2196f3" stroke-width="' +
+          '1.5" />'#13#10#13#10'  '#13#10'  <path fill="#1e6fd9" d="M7 16h34c1.66 0 3 1.34 ' +
+          '3 3v16H4V19c0-1.66 1.34-3 3-3z" />'#13#10'  <path fill="#1565c0" d="M7' +
+          ' 16h34c1.66 0 3 1.34 3 3v16h-1.5V19c0-.83-.67-1.5-1.5-1.5H7c-.83' +
+          ' 0-1.5.67-1.5 1.5v16H4V19c0-1.66 1.34-3 3-3z" />'#13#10#13#10'  '#13#10'  <circl' +
+          'e cx="12" cy="23" r="2.2" fill="#42a5f5" />'#13#10'  <circle cx="18" c' +
+          'y="23" r="2.2" fill="#42a5f5" />'#13#10'  <circle cx="24" cy="23" r="2' +
+          '.2" fill="#42a5f5" />'#13#10'  <circle cx="30" cy="23" r="2.2" fill="#' +
+          '42a5f5" />'#13#10'  <circle cx="36" cy="23" r="2.2" fill="#42a5f5" />'#13 +
+          #10#13#10'  '#13#10'  <circle cx="15" cy="29" r="2.2" fill="#42a5f5" />'#13#10'  <c' +
+          'ircle cx="21" cy="29" r="2.2" fill="#42a5f5" />'#13#10'  <circle cx="2' +
+          '7" cy="29" r="2.2" fill="#42a5f5" />'#13#10'  <circle cx="33" cy="29" ' +
+          'r="2.2" fill="#42a5f5" />'#13#10#13#10'  '#13#10'  <path fill="#0d47a1" d="M4 35' +
+          'h40v5c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2v-5z" />'#13#10#13#10'  '#13#10'  <circle ' +
+          'cx="24" cy="38.5" r="2.2" fill="#1e6fd9" />'#13#10'</svg>'
+      end
+      item
+        IconName = 'Cancel2'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" v' +
+          'iewBox="0 0 40 40">'#13#10'  <defs>'#13#10'    <linearGradient id="btnBgGrad' +
+          '" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">'#13 +
+          #10'      <stop offset="0" stop-color="#fff1f2" />'#13#10'      <stop off' +
+          'set="1" stop-color="#ffe4e6" />'#13#10'    </linearGradient>'#13#10'    <lin' +
+          'earGradient id="btnXGrad" x1="13" y1="13" x2="27" y2="27" gradie' +
+          'ntUnits="userSpaceOnUse">'#13#10'      <stop offset="0" stop-color="#f' +
+          '43f5e" />'#13#10'      <stop offset="1" stop-color="#be123c" />'#13#10'    <' +
+          '/linearGradient>'#13#10'  </defs>'#13#10'  <rect x="3" y="3" width="34" heig' +
+          'ht="34" rx="10" fill="url(#btnBgGrad)" stroke="#fda4af" stroke-w' +
+          'idth="1.5" />'#13#10'  <path fill="none" stroke="url(#btnXGrad)" strok' +
+          'e-width="2.6" stroke-linecap="round" d="M14.5 14.5L25.5 25.5M25.' +
+          '5 14.5L14.5 25.5" />'#13#10'</svg>'
+      end
+      item
+        IconName = 'Cancel3'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" v' +
+          'iewBox="0 0 36 36">'#13#10'  <defs>'#13#10'    <linearGradient id="cancelGra' +
+          'dThin" x1="6" y1="6" x2="30" y2="30" gradientUnits="userSpaceOnU' +
+          'se">'#13#10'      <stop offset="0" stop-color="#f44f5a" />'#13#10'      <sto' +
+          'p offset="0.5" stop-color="#ee3d4a" />'#13#10'      <stop offset="1" s' +
+          'top-color="#d91b2b" />'#13#10'    </linearGradient>'#13#10'  </defs>'#13#10'  <pat' +
+          'h fill="none" stroke="url(#cancelGradThin)" stroke-width="3.2" s' +
+          'troke-linecap="round" d="M10 10L26 26M26 10L10 26" />'#13#10'</svg>'
+      end
+      item
+        IconName = 'ReceiptPrinter'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 84" widt' +
+          'h="80" height="84">'#13#10'  '#13#10'  <path fill="#363261" d="M21.5 1.5c-.4' +
+          ' 0-.5.2-.5.5v18.5h-7c-4.7 0-8.5 3.8-8.5 8.5v44c0 1.4 1.1 2.5 2.5' +
+          ' 2.5h64c1.4 0 2.5-1.1 2.5-2.5V29c0-4.7-3.8-8.5-8.5-8.5h-7V2c0-.3' +
+          '-.1-.5-.5-.5c-.2 0-.3.1-.5.2l-5.7 4.4c-.2.1-.4.1-.6 0l-5.7-4.4c-' +
+          '.3-.2-.7-.2-1 0L40 5.6l-5-3.9c-.3-.2-.7-.2-1 0l-5.7 4.4c-.2.1-.4' +
+          '.1-.6 0l-5.7-4.4c-.2-.1-.3-.2-.5-.2z" />'#13#10#13#10'  '#13#10'  <path fill="#6' +
+          'd78b8" d="M14 23.5h52c3 0 5.5 2.5 5.5 5.5v43.5h-63V29c0-3 2.5-5.' +
+          '5 5.5-5.5z" />'#13#10#13#10'  '#13#10'  <rect x="16" y="30.5" width="48" height=' +
+          '"7.5" rx="2.5" fill="#363261" />'#13#10#13#10'  '#13#10'  <path fill="#dcf0ff" d' +
+          '="M23 4.5l5.2 4.1 5.8-4.5 6 4.6 6-4.6 5.8 4.5 5.2-4.1V38H23V4.5z' +
+          '" />'#13#10#13#10'  '#13#10'  <rect x="23" y="35" width="34" height="3" fill="#a' +
+          'ebed6" />'#13#10#13#10'  '#13#10'  <rect x="28" y="11.5" width="13.5" height="3.' +
+          '2" rx="1.6" fill="#64b5f6" />'#13#10'  <rect x="28" y="18.5" width="10' +
+          '" height="3.2" rx="1.6" fill="#64b5f6" />'#13#10'  <rect x="28" y="25.' +
+          '5" width="12" height="3.2" rx="1.6" fill="#64b5f6" />'#13#10#13#10'  '#13#10'  <' +
+          'rect x="46" y="11.5" width="6" height="3.2" rx="1.6" fill="#64b5' +
+          'f6" />'#13#10'  <rect x="46" y="18.5" width="6" height="3.2" rx="1.6" ' +
+          'fill="#64b5f6" />'#13#10'  <rect x="46" y="25.5" width="6" height="3.2' +
+          '" rx="1.6" fill="#64b5f6" />'#13#10#13#10'  '#13#10'  <rect x="16" y="44" width=' +
+          '"48" height="9" rx="1" fill="#8bc34a" />'#13#10#13#10'  '#13#10'  <rect x="16" y' +
+          '="59" width="9" height="9" rx="1" fill="#dcf0ff" />'#13#10'  <rect x="' +
+          '29" y="59" width="9" height="9" rx="1" fill="#dcf0ff" />'#13#10'  <rec' +
+          't x="42" y="59" width="9" height="9" rx="1" fill="#dcf0ff" />'#13#10' ' +
+          ' <rect x="55" y="59" width="9" height="9" rx="1" fill="#ff6b6b" ' +
+          '/>'#13#10'</svg>'
+      end
+      item
+        IconName = 'CancelOld'
+        SVGText = 
+          '```svg'#13#10'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 ' +
+          '24" width="24" height="24">'#13#10'  <defs>'#13#10'    <linearGradient id="c' +
+          'rossGrad" x1="0%" y1="0%" x2="100%" y2="100%">'#13#10'      <stop offs' +
+          'et="0%" stop-color="#f7b3a8" />'#13#10'      <stop offset="45%" stop-c' +
+          'olor="#e33629" />'#13#10'      <stop offset="100%" stop-color="#9e0b00' +
+          '" />'#13#10'    </linearGradient>'#13#10'    <linearGradient id="borderGrad"' +
+          ' x1="0%" y1="0%" x2="100%" y2="100%">'#13#10'      <stop offset="0%" s' +
+          'top-color="#c47e74" />'#13#10'      <stop offset="100%" stop-color="#6' +
+          '10500" />'#13#10'    </linearGradient>'#13#10'  </defs>'#13#10'  <path d="M 8.2 6.' +
+          '0 '#13#10'       L 12.0 9.8 '#13#10'       L 15.8 6.0 '#13#10'       L 18.0 8.2 '#13#10 +
+          '       L 14.2 12.0 '#13#10'       L 18.0 15.8 '#13#10'       L 15.8 18.0 '#13#10' ' +
+          '      L 12.0 14.2 '#13#10'       L 8.2 18.0 '#13#10'       L 6.0 15.8 '#13#10'    ' +
+          '   L 9.8 12.0 '#13#10'       L 6.0 8.2 Z" fill="url(#crossGrad)" strok' +
+          'e="url(#borderGrad)" stroke-width="0.9" stroke-linejoin="round" ' +
+          '/>'#13#10'</svg>'#13#10'```'
       end>
     Left = 67
     Top = 365
@@ -7962,6 +8091,31 @@ object DM: TDM
         CollectionIndex = 66
         CollectionName = 'Cancel'
         Name = 'Cancel'
+      end
+      item
+        CollectionIndex = 67
+        CollectionName = 'CashRegisterColor'
+        Name = 'CashRegisterColor'
+      end
+      item
+        CollectionIndex = 68
+        CollectionName = 'Cancel2'
+        Name = 'Cancel2'
+      end
+      item
+        CollectionIndex = 69
+        CollectionName = 'Cancel3'
+        Name = 'Cancel3'
+      end
+      item
+        CollectionIndex = 70
+        CollectionName = 'ReceiptPrinter'
+        Name = 'ReceiptPrinter'
+      end
+      item
+        CollectionIndex = 71
+        CollectionName = 'CancelOld'
+        Name = 'CancelOld'
       end>
     ImageCollection = svgMain
     Width = 32
@@ -9302,12 +9456,37 @@ object DM: TDM
         CollectionIndex = 66
         CollectionName = 'Cancel'
         Name = 'Cancel'
+      end
+      item
+        CollectionIndex = 67
+        CollectionName = 'CashRegisterColor'
+        Name = 'CashRegisterColor'
+      end
+      item
+        CollectionIndex = 68
+        CollectionName = 'Cancel2'
+        Name = 'Cancel2'
+      end
+      item
+        CollectionIndex = 69
+        CollectionName = 'Cancel3'
+        Name = 'Cancel3'
+      end
+      item
+        CollectionIndex = 70
+        CollectionName = 'ReceiptPrinter'
+        Name = 'ReceiptPrinter'
+      end
+      item
+        CollectionIndex = 71
+        CollectionName = 'CancelOld'
+        Name = 'CancelOld'
       end>
     ImageCollection = svgMain
     Width = 20
     Height = 20
     Size = 20
-    Left = 327
-    Top = 482
+    Left = 180
+    Top = 485
   end
 end

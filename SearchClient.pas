@@ -1024,7 +1024,7 @@ uses PawnMain, PawnDM, EnterClientInfo, EnterTransactions,
   EnterPurchase, PoliceAdj, IDNumCalc, ItemPictures,
   ReportsDM, uPawnProIniPrinters, EnterLayaway,
   PaymentLayaway, ConfirmCloseLayaway, GLbUtils, PawnChangeStatus, PurchaseChangeStatus, uPawnDialogs,
-  ItemHistory, Inventory, QuickSale;
+  ItemHistory, Inventory, QuickSale, SellItems;
 
 {$R *.DFM}
 
@@ -3062,6 +3062,7 @@ begin
   RefreshCurrentTransaction;
   if (frmInventory <> nil) and frmInventory.qryInvItems.Active then
     frmInventory.btnSearchClick(nil);
+  RefreshSellItemsScreen;
 end;
 
 procedure TfrmClients.popItemHistoryClick(Sender: TObject);

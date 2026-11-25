@@ -340,7 +340,6 @@ object frmEnterRcvItem: TfrmEnterRcvItem
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 593
       object btnAddStone: TBitBtn
         Left = 8
         Top = 5
@@ -476,8 +475,8 @@ object frmEnterRcvItem: TfrmEnterRcvItem
   end
   object dsStones: TDataSource
     DataSet = qryStones
-    Left = 438
-    Top = 402
+    Left = 316
+    Top = 429
   end
   object qryStones: TFDQuery
     OnCalcFields = qryStonesCalcFields
@@ -493,8 +492,8 @@ object frmEnterRcvItem: TfrmEnterRcvItem
       'SELECT *'
       'FROM STONES'
       'WHERE INV_ITEM_NO = :INV_ITEM_NO')
-    Left = 437
-    Top = 339
+    Left = 317
+    Top = 375
     ParamData = <
       item
         Name = 'INV_ITEM_NO'

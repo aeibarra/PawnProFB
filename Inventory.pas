@@ -10,10 +10,7 @@ uses
   RzForms, RzButton, RzTreeVw, RzSplit, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  RzPanel, RzEdit, Vcl.WinXCtrls;
-
-const
-  WM_POST_SALE_EDIT = WM_USER + 101;   // see TfrmInventory.gridSaleKeyPress
+  RzPanel, RzEdit, Vcl.WinXCtrls, uSaleTicket;
 
 type
   TfrmInventory = class(TForm)
@@ -134,8 +131,6 @@ type
     procedure pnSalesOpened(Sender: TObject);
     procedure btnSaleItemClick(Sender: TObject);
     procedure btnBackToStockClick(Sender: TObject);
-    procedure clnSaleBeforeInsert(DataSet: TDataSet);
-    procedure clnSaleAfterChange(DataSet: TDataSet);
     procedure DiscountChange(Sender: TObject);
     procedure btnCompleteSaleClick(Sender: TObject);
     procedure dbgItemsDblClick(Sender: TObject);
@@ -145,24 +140,18 @@ type
   private
     Param_LineNo_qryInvItems: integer;
     FSavedUncheckedCategories: string;   // read in FormCreate, applied after the tree loads
-    FTaxPerc: Currency;
-    FDiscountInvalid: boolean;   // set by RecalcSaleTotals; blocks Complete Sale
-    FAddingToSale: boolean;   // only btnSaleItemClick may insert sale rows
-    FSaleCompleted: boolean;  // the drawer shows a saved ticket until New Sale
-    FInSale: TArray<integer>; // INV_ITEM_NOs in the open sale, hidden from the list
-    FRemovedFromSale: integer;  // set by clnSaleBeforeDelete, handled after the delete
-    function ItemInSale(InvItemNo: integer): boolean;
-    procedure SetItemInSale(InvItemNo: integer; Value: boolean);
+    // The open sale: lines, items hidden from the list, totals, completed
+    // state. Shared with the Sell Items screen (uSaleTicket.pas).
+    FTicket: TSaleTicket;
+    procedure SaleChanged(Sender: TObject);
     procedure ApplyInSaleFilter(LocateItemNo: integer = 0);
     procedure qryInvItemsFilterInSale(DataSet: TDataSet; var Accept: Boolean);
-    procedure clnSaleBeforeDelete(DataSet: TDataSet);
     procedure gridSaleKeyPress(Sender: TObject; var Key: Char);
     procedure gridSaleExit(Sender: TObject);
     procedure PostSaleEdit;
     procedure WMPostSaleEdit(var Msg: TMessage); message WM_POST_SALE_EDIT;
-    procedure SetSaleCompleted(Value: boolean; TicketNo: integer = 0);
+    procedure UpdateSaleLock;
     procedure PositionPrintButtons(Sender: TObject);
-    procedure CreateSaleTable;
     procedure RecalcSaleTotals;
     function GetSelectedTreeCategories: string;
     function GetUncheckedTreeCategories: string;
@@ -409,18 +398,17 @@ begin
 
   // Items in the open sale are hidden from the list (see ApplyInSaleFilter).
   qryInvItems.OnFilterRecord := qryInvItemsFilterInSale;
-  clnSale.BeforeDelete := clnSaleBeforeDelete;
 
   // A price typed in the sale grid is saved on Enter, or when the grid loses
   // focus, not only when moving to another row (see gridSaleKeyPress).
   gridSale.OnKeyPress := gridSaleKeyPress;
   gridSale.OnExit := gridSaleExit;
 
-  CreateSaleTable;
-  SetSaleCompleted(False);
+  FTicket := TSaleTicket.Create(Self, clnSale);
+  FTicket.OnChange := SaleChanged;
+  UpdateSaleLock;
   edSoldDate.Date := Date;
-  FTaxPerc := DM.qryStoreSALES_TAX_PERC.AsCurrency;
-  lblTaxCaption.Caption := Format('Tax (%s%%):', [FormatFloat('0.##', FTaxPerc)]);
+  lblTaxCaption.Caption := Format('Tax (%s%%):', [FormatFloat('0.##', FTicket.TaxPerc)]);
   RecalcSaleTotals;
   UpdateSaleButtons;
 end;
@@ -447,33 +435,12 @@ end;
 
 { ---- This Sale drawer ---------------------------------------------------- }
 
-procedure TfrmInventory.CreateSaleTable;
-begin
-  clnSale.Close;
-  clnSale.FieldDefs.Clear;
-  clnSale.FieldDefs.Add('INV_ITEM_NO', ftInteger);
-  clnSale.FieldDefs.Add('INV_ITEM_BARCODE', ftWideString, 30);
-  clnSale.FieldDefs.Add('INV_ITEM_COUNT', ftInteger);
-  clnSale.FieldDefs.Add('DESCRIPTION', ftWideString, 250);
-  clnSale.FieldDefs.Add('UNIT_COST', ftCurrency);
-  clnSale.FieldDefs.Add('SALE_PRICE', ftCurrency);
-  clnSale.CreateDataSet;
-
-  // Only Sale Price is editable: the other grid columns are ReadOnly in the
-  // DFM (TField.ReadOnly would also block Append from filling them).
-  clnSale.FieldByName('INV_ITEM_NO').Visible := False;
-  TCurrencyField(clnSale.FieldByName('UNIT_COST')).DisplayFormat := '$,0.00';
-  TCurrencyField(clnSale.FieldByName('SALE_PRICE')).DisplayFormat := '$,0.00';
-end;
-
 { Puts the item selected in the list into this sale (the whole row, whatever
   its quantity), and opens the drawer so the user sees it land. Only For Sale
   items qualify; an item already in the sale is just selected there. }
 procedure TfrmInventory.btnSaleItemClick(Sender: TObject);
-var
-  Desc: string;
 begin
-  if FSaleCompleted then
+  if FTicket.Completed then
     begin
       PawnInfo('This sale is already completed. Press New Sale / Clear to start the next one.',
                'This Sale', Self);
@@ -494,32 +461,18 @@ begin
       exit;
     end;
 
-  if not clnSale.Locate('INV_ITEM_NO', qryInvItemsInvItemNo.AsInteger, []) then
+  if not FTicket.Contains(qryInvItemsInvItemNo.AsInteger) then
     begin
-      Desc := Trim(qryInvItemsDescription.AsString);
-      if Desc = '' then
-        Desc := Trim(qryInvItemsJMetalDesc.AsString + ' ' + qryInvItemsJTypeDesc.AsString);
-
-      FAddingToSale := True;
-      try
-        clnSale.Append;
-        clnSale.FieldByName('INV_ITEM_NO').AsInteger := qryInvItemsInvItemNo.AsInteger;
-        clnSale.FieldByName('INV_ITEM_BARCODE').AsString := qryInvItemsInvItemBarcode.AsString;
-        clnSale.FieldByName('INV_ITEM_COUNT').AsInteger := qryInvItemsInvItemCount.AsInteger;
-        clnSale.FieldByName('DESCRIPTION').AsString := Desc;
-        if not qryInvItemsUnitCost.IsNull then
-          clnSale.FieldByName('UNIT_COST').AsCurrency := qryInvItemsUnitCost.AsCurrency;
-        if not qryInvItemsUnitPrice.IsNull then
-          clnSale.FieldByName('SALE_PRICE').AsCurrency := qryInvItemsUnitPrice.AsCurrency;
-        clnSale.Post;
-      finally
-        FAddingToSale := False;
-      end;
-
+      FTicket.AddItem(qryInvItemsInvItemNo.AsInteger, qryInvItemsInvItemBarcode.AsString,
+        qryInvItemsInvItemCount.AsInteger,
+        TSaleTicket.ItemDescription(qryInvItemsDescription.AsString,
+                                    qryInvItemsJMetalDesc.AsString, qryInvItemsJTypeDesc.AsString),
+        qryInvItemsUnitCost.AsVariant, qryInvItemsUnitPrice.AsVariant);
       // The item moves: out of the list, into the sale.
-      SetItemInSale(clnSale.FieldByName('INV_ITEM_NO').AsInteger, True);
       ApplyInSaleFilter;
-    end;
+    end
+  else
+    clnSale.Locate('INV_ITEM_NO', qryInvItemsInvItemNo.AsInteger, []);
 
   if not pnSales.Opened then
     pnSales.Opened := True;
@@ -527,34 +480,9 @@ end;
 
 { ---- items in the open sale are hidden from the list --------------------- }
 
-function TfrmInventory.ItemInSale(InvItemNo: integer): boolean;
-var
-  N: integer;
-begin
-  Result := False;
-  for N in FInSale do
-    if N = InvItemNo then
-      exit(True);
-end;
-
-procedure TfrmInventory.SetItemInSale(InvItemNo: integer; Value: boolean);
-var
-  i: integer;
-begin
-  if Value then
-    begin
-      if not ItemInSale(InvItemNo) then
-        FInSale := FInSale + [InvItemNo];
-    end
-  else
-    for i := High(FInSale) downto 0 do
-      if FInSale[i] = InvItemNo then
-        Delete(FInSale, i, 1);
-end;
-
 procedure TfrmInventory.qryInvItemsFilterInSale(DataSet: TDataSet; var Accept: Boolean);
 begin
-  Accept := not ItemInSale(qryInvItemsInvItemNo.AsInteger);
+  Accept := (FTicket = nil) or not FTicket.Contains(qryInvItemsInvItemNo.AsInteger);
 end;
 
 { Re-applies the filter after the sale changed. Nothing is written to the
@@ -573,7 +501,7 @@ begin
   qryInvItems.DisableControls;
   try
     qryInvItems.Filtered := False;
-    qryInvItems.Filtered := Length(FInSale) > 0;
+    qryInvItems.Filtered := FTicket.HasOpenItems;
 
     if (LocateItemNo = 0) or not qryInvItems.Locate('InvItemNo', LocateItemNo, []) then
       if (OldRecNo > 0) and not qryInvItems.IsEmpty then
@@ -587,31 +515,11 @@ begin
   UpdateSaleButtons;
 end;
 
-{ Any way a line leaves the sale (left arrow, Remove, Ctrl+Del in the grid)
-  puts its item back in the list; the filter is re-applied in AfterDelete
-  (clnSaleAfterChange), once the row is really gone. }
-procedure TfrmInventory.clnSaleBeforeDelete(DataSet: TDataSet);
-begin
-  FRemovedFromSale := clnSale.FieldByName('INV_ITEM_NO').AsInteger;
-  SetItemInSale(FRemovedFromSale, False);
-end;
-
 // Takes the selected row out of this sale. Nothing was written to the
 // database yet, so the item simply stays in stock as For Sale.
 procedure TfrmInventory.btnBackToStockClick(Sender: TObject);
 begin
-  if FSaleCompleted then
-    exit;   // a completed ticket stays as it was saved
-  if clnSale.Active and not clnSale.IsEmpty then
-    clnSale.Delete;
-end;
-
-{ The sale grid is editable for Sale Price only; arrowing past the last row
-  must not create an empty sale line. }
-procedure TfrmInventory.clnSaleBeforeInsert(DataSet: TDataSet);
-begin
-  if not FAddingToSale then
-    Abort;
+  FTicket.RemoveCurrent;
 end;
 
 { Enter in the sale grid hands the typed price to the field but leaves the row
@@ -639,28 +547,26 @@ begin
   PostSaleEdit;
 end;
 
-{ Posts a pending price edit; AfterPost recalculates the totals. A bad value
+{ Posts a pending price edit; OnChange recalculates the totals. A bad value
   (e.g. letters) is reported and the row stays in edit to be corrected. }
 procedure TfrmInventory.PostSaleEdit;
+var
+  Err: string;
 begin
-  if not clnSale.Active or not (clnSale.State in dsEditModes) then
-    exit;
-  try
-    clnSale.Post;
-  except
-    on E: Exception do
-      PawnWarn(E.Message, 'This Sale', Self);
-  end;
+  if not FTicket.PostPendingEdit(Err) then
+    PawnWarn(Err, 'This Sale', Self);
 end;
 
-procedure TfrmInventory.clnSaleAfterChange(DataSet: TDataSet);
+// A price posted, a line added or removed: totals, and a removed item goes
+// back into the list, selected.
+procedure TfrmInventory.SaleChanged(Sender: TObject);
+var
+  Removed: integer;
 begin
   RecalcSaleTotals;
-  if FRemovedFromSale <> 0 then
-    begin
-      ApplyInSaleFilter(FRemovedFromSale);
-      FRemovedFromSale := 0;
-    end;
+  Removed := FTicket.TakeRemovedItemNo;
+  if Removed <> 0 then
+    ApplyInSaleFilter(Removed);
 end;
 
 procedure TfrmInventory.DiscountChange(Sender: TObject);
@@ -668,60 +574,28 @@ begin
   RecalcSaleTotals;
 end;
 
-{ Totals: Subtotal is the sum of the Sale Prices; the discount for the whole
-  sale (dollars, or a percent of the subtotal) comes off before tax, and can
-  never exceed the subtotal. An out-of-range entry shows in red. }
+{ Totals (rules in TSaleTicket.Totals). An out-of-range discount shows in red. }
 procedure TfrmInventory.RecalcSaleTotals;
 var
-  Subtotal, Discount, Tax, Total, Entered: Currency;
-  BM: TBookmark;
-  OutOfRange: boolean;
+  T: TSaleTotals;
 begin
-  Subtotal := 0;
-  if clnSale.Active then
-    begin
-      BM := clnSale.GetBookmark;
-      clnSale.DisableControls;
-      try
-        clnSale.First;
-        while not clnSale.Eof do
-          begin
-            Subtotal := Subtotal + clnSale.FieldByName('SALE_PRICE').AsCurrency;
-            clnSale.Next;
-          end;
-        if clnSale.BookmarkValid(BM) then
-          clnSale.GotoBookmark(BM);
-      finally
-        clnSale.FreeBookmark(BM);
-        clnSale.EnableControls;
-      end;
-    end;
-
-  Entered := edDiscount.Value;
-  if cbDiscountType.ItemIndex = 1 then   // % Percent
-    OutOfRange := (Entered < 0) or (Entered > 100)
-  else                                    // $ Amount
-    OutOfRange := (Entered < 0) or (Entered > Subtotal);
-  Discount := CalcSaleDiscount(Subtotal, cbDiscountType.ItemIndex = 1, Entered);
-  FDiscountInvalid := OutOfRange;
-  if OutOfRange then
+  if FTicket = nil then
+    exit;   // a discount control's OnChange while the form is still loading
+  T := FTicket.Totals(cbDiscountType.ItemIndex = 1, edDiscount.Value);
+  if T.DiscountInvalid then
     edDiscount.Font.Color := clRed
   else
     edDiscount.Font.Color := clWindowText;
 
-  CalcTaxAndTotal(Subtotal - Discount, FTaxPerc, Tax, Total);
-  lblSubtotal.Caption := FormatCurr('$,0.00', Subtotal);
-  if Discount = 0 then
+  lblSubtotal.Caption := FormatCurr('$,0.00', T.Subtotal);
+  if T.Discount = 0 then
     lblDiscountAmt.Caption := '$0.00'
   else
-    lblDiscountAmt.Caption := FormatCurr('-$,0.00', Discount);
-  lblTax.Caption := FormatCurr('$,0.00', Tax);
-  lblTotal.Caption := FormatCurr('$,0.00', Total);
-  if clnSale.Active then
-    lblSaleCount.Caption := IntToStr(clnSale.RecordCount)
-  else
-    lblSaleCount.Caption := '0';
-  btnCompleteSale.Enabled := not FSaleCompleted and clnSale.Active and not clnSale.IsEmpty;
+    lblDiscountAmt.Caption := FormatCurr('-$,0.00', T.Discount);
+  lblTax.Caption := FormatCurr('$,0.00', T.Tax);
+  lblTotal.Caption := FormatCurr('$,0.00', T.Total);
+  lblSaleCount.Caption := IntToStr(FTicket.Count);
+  btnCompleteSale.Enabled := not FTicket.Completed and (FTicket.Count > 0);
 end;
 
 procedure TfrmInventory.btnCloseClick(Sender: TObject);
@@ -781,9 +655,11 @@ end;
   Reactivate Layaway instead. }
 procedure TfrmInventory.UpdateSaleButtons;
 begin
-  btnSaleItem.Enabled := CurrentItemIsForSale and not FSaleCompleted;
+  if FTicket = nil then
+    exit;   // the list's OnDataChange while the form is still loading
+  btnSaleItem.Enabled := CurrentItemIsForSale and not FTicket.Completed;
   // VCL still shows hints on a disabled button, so say why it is greyed out.
-  if FSaleCompleted then
+  if FTicket.Completed then
     btnSaleItem.Hint := 'This sale is completed - press New Sale / Clear first'
   else if btnSaleItem.Enabled then
     btnSaleItem.Hint := 'Add the selected item to this sale'
@@ -837,7 +713,7 @@ begin
 
   // Keep a copy already in this sale in step (its Sale Price is left alone:
   // it may hold a discount typed in the drawer).
-  if not FSaleCompleted and clnSale.Locate('INV_ITEM_NO', ItemNo, []) then
+  if not FTicket.Completed and clnSale.Locate('INV_ITEM_NO', ItemNo, []) then
     begin
       clnSale.Edit;
       clnSale.FieldByName('INV_ITEM_COUNT').AsInteger := qryInvItemsInvItemCount.AsInteger;
@@ -861,8 +737,9 @@ begin
     if CurrentItemIsForSale then
       Dlg.AddItemToSale(qryInvItemsInvItemNo.AsInteger);
 
-    if Dlg.ShowModal <> mrOk then
-      exit;
+    // The screen stays open after a sale (for the next one), so refresh
+    // whatever way it was closed.
+    Dlg.ShowModal;
   finally
     Dlg.Free;
   end;
@@ -922,67 +799,43 @@ end;
   never closed for the user. No ticket is printed yet. }
 procedure TfrmInventory.btnCompleteSaleClick(Sender: TObject);
 var
-  Lines: TArray<TSaleLine>;
-  i, TicketNo: integer;
+  Msg: string;
 begin
-  if clnSale.State in dsEditModes then
-    clnSale.Post;
+  PostSaleEdit;
+  case FTicket.Validate(edSoldDate.Date, cbDiscountType.ItemIndex = 1, edDiscount.Value, Msg) of
+    spNone: ;
+    spEmpty: exit;
+    spNoPrice:
+      begin
+        PawnInfo(Msg, 'Complete Sale', Self);
+        gridSale.SetFocus;
+        gridSale.SelectedField := clnSale.FieldByName('SALE_PRICE');
+        exit;
+      end;
+    spDiscount:
+      begin
+        RecalcSaleTotals;
+        PawnInfo(Msg, 'Complete Sale', Self);
+        edDiscount.SetFocus;
+        exit;
+      end;
+    spFutureDate:
+      begin
+        PawnInfo(Msg, 'Complete Sale', Self);
+        edSoldDate.SetFocus;
+        exit;
+      end;
+  end;
 
-  if clnSale.IsEmpty then
-    exit;
-
-  // Every item needs a real price.
-  clnSale.First;
-  while not clnSale.Eof do
-    begin
-      if clnSale.FieldByName('SALE_PRICE').AsCurrency <= 0 then
-        begin
-          PawnInfo(Format('Please enter a sale price for item %s.',
-                          [clnSale.FieldByName('INV_ITEM_BARCODE').AsString]), 'Complete Sale', Self);
-          gridSale.SetFocus;
-          gridSale.SelectedField := clnSale.FieldByName('SALE_PRICE');
-          exit;
-        end;
-      clnSale.Next;
-    end;
-
-  // The discount shows red when out of range; it must be fixed, not capped.
   RecalcSaleTotals;
-  if FDiscountInvalid then
-    begin
-      PawnInfo('The discount cannot be more than the sale.', 'Complete Sale', Self);
-      edDiscount.SetFocus;
-      exit;
-    end;
-
-  if edSoldDate.Date > Date then
-    begin
-      PawnInfo('The sale date cannot be in the future.', 'Complete Sale', Self);
-      edSoldDate.SetFocus;
-      exit;
-    end;
-
   if not PawnConfirm(Format('Complete the sale of %d item(s) for %s (tax included)?',
-                            [clnSale.RecordCount, lblTotal.Caption]), 'Complete Sale', Self) then
+                            [FTicket.Count, lblTotal.Caption]), 'Complete Sale', Self) then
     exit;
-
-  SetLength(Lines, clnSale.RecordCount);
-  i := 0;
-  clnSale.First;
-  while not clnSale.Eof do
-    begin
-      Lines[i].InvItemNo := clnSale.FieldByName('INV_ITEM_NO').AsInteger;
-      Lines[i].Description := clnSale.FieldByName('DESCRIPTION').AsString;
-      Lines[i].SalePrice := clnSale.FieldByName('SALE_PRICE').AsCurrency;
-      Inc(i);
-      clnSale.Next;
-    end;
 
   Screen.Cursor := crHourGlass;
   try
     try
-      TicketNo := DM.CompleteSale(Lines, edSoldDate.Date, cbDiscountType.ItemIndex = 1,
-                                  edDiscount.Value, FTaxPerc);
+      FTicket.Complete(edSoldDate.Date, cbDiscountType.ItemIndex = 1, edDiscount.Value);
     except
       on E: Exception do
         begin
@@ -997,8 +850,9 @@ begin
   end;
 
   RefreshClientsAfterItemChange;
+  RefreshSellItemsScreen;
 
-  SetSaleCompleted(True, TicketNo);
+  UpdateSaleLock;
   btnSearchClick(nil);
 end;
 
@@ -1018,32 +872,29 @@ begin
   btnPrintLabel.Left := btnPrintOneLabel.Left - Gap - btnPrintLabel.Width;
 end;
 
-{ Locks the drawer on a saved ticket (True) or opens it for a new sale
-  (False). While locked: nothing can be added, removed or re-priced, the
-  totals stay as saved, and only New Sale / Clear is enabled. }
-procedure TfrmInventory.SetSaleCompleted(Value: boolean; TicketNo: integer);
+{ Locks the drawer on a saved ticket or opens it for a new sale, as
+  FTicket.Completed says. While locked: nothing can be added, removed or
+  re-priced, the totals stay as saved, and only New Sale / Clear is enabled. }
+procedure TfrmInventory.UpdateSaleLock;
+var
+  Locked: boolean;
 begin
-  FSaleCompleted := Value;
-
-  // A completed ticket's items are Sold now: nothing left to hide.
-  if Value then
+  Locked := FTicket.Completed;
+  if Locked then
     begin
-      FInSale := nil;
-      ApplyInSaleFilter;
-    end;
-
-  if Value then
-    lblRcptNo.Caption := Format('Receipt No. %d', [TicketNo])
+      ApplyInSaleFilter;   // a completed ticket's items are Sold: nothing to hide
+      lblRcptNo.Caption := Format('Receipt No. %d', [FTicket.TicketNo]);
+    end
   else
     lblRcptNo.Caption := '';
 
-  btnNewSaleClearOldSale.Enabled := Value;
-  gridSale.ReadOnly := Value;
-  edDiscount.Enabled := not Value;
-  cbDiscountType.Enabled := not Value;
-  edSoldDate.Enabled := not Value;
-  btnRemoveFromSale.Enabled := not Value;
-  btnBackToStock.Enabled := not Value;
+  btnNewSaleClearOldSale.Enabled := Locked;
+  gridSale.ReadOnly := Locked;
+  edDiscount.Enabled := not Locked;
+  cbDiscountType.Enabled := not Locked;
+  edSoldDate.Enabled := not Locked;
+  btnRemoveFromSale.Enabled := not Locked;
+  btnBackToStock.Enabled := not Locked;
 
   RecalcSaleTotals;
   UpdateSaleButtons;
@@ -1053,15 +904,12 @@ end;
   sale. The ticket itself is saved; this only empties the screen. }
 procedure TfrmInventory.btnNewSaleClearOldSaleClick(Sender: TObject);
 begin
-  if clnSale.State in dsEditModes then
-    clnSale.Cancel;
-  clnSale.EmptyDataSet;
-  FInSale := nil;
+  FTicket.Clear;
   ApplyInSaleFilter;
   edDiscount.Value := 0;
   cbDiscountType.ItemIndex := 0;
   edSoldDate.Date := Date;
-  SetSaleCompleted(False);
+  UpdateSaleLock;
 end;
 
 { Interim, until the full sale screen: the client screen's Items tab opens

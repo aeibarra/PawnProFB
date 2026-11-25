@@ -3,46 +3,54 @@ object frmSellItems: TfrmSellItems
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Sell Items'
-  ClientHeight = 640
-  ClientWidth = 1180
+  ClientHeight = 716
+  ClientWidth = 1296
   Color = clBtnFace
+  Constraints.MaxHeight = 755
+  Constraints.MaxWidth = 1312
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -15
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poOwnerFormCenter
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 20
   object pnFind: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1174
+    Width = 1290
     Height = 54
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    DesignSize = (
+      1290
+      54)
     object lblFind: TLabel
       Left = 14
-      Top = 17
-      Width = 210
+      Top = 23
+      Width = 192
       Height = 20
       Caption = 'Scan barcode or type to find:'
     end
     object edFind: TEdit
       Left = 236
-      Top = 13
-      Width = 300
+      Top = 19
+      Width = 226
       Height = 28
       TabOrder = 0
       TextHint = 'Barcode or description'
       OnKeyPress = edFindKeyPress
     end
     object btnFind: TRzBitBtn
-      Left = 550
-      Top = 7
+      Left = 473
+      Top = 12
       Width = 105
       Height = 40
       Caption = '&Find'
@@ -53,12 +61,27 @@ object frmSellItems: TfrmSellItems
       Margin = 5
       Spacing = -10
     end
+    object btnClose: TBitBtn
+      Left = 1187
+      Top = 11
+      Width = 92
+      Height = 43
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Exit'
+      ImageIndex = 2
+      ImageName = 'actExit'
+      Images = DM.vilMain24
+      TabOrder = 2
+      TabStop = False
+      OnClick = btnCloseClick
+    end
   end
   object pnLists: TPanel
     Left = 0
     Top = 60
-    Width = 1180
-    Height = 480
+    Width = 1296
+    Height = 656
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -67,7 +90,7 @@ object frmSellItems: TfrmSellItems
       Left = 3
       Top = 3
       Width = 590
-      Height = 474
+      Height = 650
       Align = alLeft
       Caption = 'Items For Sale'
       Font.Charset = ANSI_CHARSET
@@ -82,7 +105,7 @@ object frmSellItems: TfrmSellItems
         Left = 5
         Top = 25
         Width = 580
-        Height = 394
+        Height = 570
         Align = alClient
         DataSource = dsForSale
         Font.Charset = ANSI_CHARSET
@@ -119,7 +142,7 @@ object frmSellItems: TfrmSellItems
             Expanded = False
             FieldName = 'DESCRIPTION'
             Title.Caption = 'Description'
-            Width = 150
+            Width = 215
             Visible = True
           end
           item
@@ -138,22 +161,22 @@ object frmSellItems: TfrmSellItems
           end
           item
             Expanded = False
-            FieldName = 'UNIT_COST'
-            Title.Caption = 'Cost'
+            FieldName = 'UNIT_PRICE'
+            Title.Caption = 'Price'
             Width = 70
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'UNIT_PRICE'
-            Title.Caption = 'Price'
+            FieldName = 'UNIT_COST'
+            Title.Caption = 'Cost'
             Width = 70
             Visible = True
           end>
       end
       object pnForSaleButtons: TPanel
         Left = 2
-        Top = 422
+        Top = 598
         Width = 586
         Height = 50
         Align = alBottom
@@ -162,7 +185,7 @@ object frmSellItems: TfrmSellItems
         object lblForSaleCount: TLabel
           Left = 10
           Top = 16
-          Width = 120
+          Width = 115
           Height = 20
           Caption = '0 item(s) For Sale'
           Font.Charset = ANSI_CHARSET
@@ -189,255 +212,462 @@ object frmSellItems: TfrmSellItems
           ImageIndex = 8
           Images = DM.vilMain24
           Margin = 8
-          Spacing = 4
         end
       end
     end
-    object gbThisSale: TGroupBox
-      AlignWithMargins = True
-      Left = 599
-      Top = 3
-      Width = 578
-      Height = 474
+    object Panel1: TPanel
+      Left = 596
+      Top = 0
+      Width = 700
+      Height = 656
       Align = alClient
-      Caption = 'This Sale'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Segoe UI Semibold'
-      Font.Style = [fsBold]
-      ParentFont = False
+      BevelOuter = bvNone
       TabOrder = 1
-      object gridSale: TDBGrid
+      object pnSaleStrip: TPanel
         AlignWithMargins = True
-        Left = 5
-        Top = 25
-        Width = 568
-        Height = 394
+        Left = 3
+        Top = 3
+        Width = 48
+        Height = 650
+        Align = alLeft
+        BevelOuter = bvNone
+        ShowCaption = False
+        TabOrder = 0
+        object lblSaleCount: TLabel
+          Left = 1
+          Top = 55
+          Width = 48
+          Height = 21
+          Hint = 'Items in this sale'
+          Alignment = taCenter
+          AutoSize = False
+          Caption = '0'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clHighlight
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+        end
+        object btnToggleSale: TRzToolButton
+          Left = 2
+          Top = 8
+          Width = 48
+          Height = 48
+          Hint = 'Go to the lines of this sale'
+          ImageIndex = 58
+          Images = DM.vilMain
+          UseToolbarButtonSize = False
+          Caption = 'Sales'
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = btnToggleSaleClick
+        end
+        object btnSaleItem: TRzToolButton
+          Left = 5
+          Top = 132
+          Width = 40
+          Height = 40
+          Hint = 'Add the selected item to this sale'
+          ImageIndex = 59
+          Images = DM.vilMain24
+          UseToolbarButtonSize = False
+          Caption = 'Sales'
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = btnAddToSaleClick
+        end
+        object btnBackToStock: TRzToolButton
+          Left = 5
+          Top = 210
+          Width = 40
+          Height = 40
+          Hint = 'Put the selected sale item back to stock'
+          ImageIndex = 60
+          Images = DM.vilMain24
+          UseToolbarButtonSize = False
+          Caption = 'Sales'
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = btnRemoveFromSaleClick
+        end
+      end
+      object gbThisSale: TGroupBox
+        AlignWithMargins = True
+        Left = 57
+        Top = 3
+        Width = 640
+        Height = 650
         Align = alClient
-        DataSource = dsSale
+        Caption = 'This Sale'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgCancelOnExit]
+        Font.Height = -15
+        Font.Name = 'Segoe UI Semibold'
+        Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 0
-        TitleFont.Charset = ANSI_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -13
-        TitleFont.Name = 'Segoe UI'
-        TitleFont.Style = []
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'INV_ITEM_BARCODE'
-            ReadOnly = True
-            Title.Caption = 'Barcode'
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'INV_ITEM_COUNT'
-            ReadOnly = True
-            Title.Caption = 'Qty'
-            Width = 35
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DESCRIPTION'
-            ReadOnly = True
-            Title.Caption = 'Description'
-            Width = 200
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'UNIT_COST'
-            ReadOnly = True
-            Title.Caption = 'Cost'
-            Width = 80
-            Visible = True
-          end
-          item
-            Color = clInfoBk
-            Expanded = False
-            FieldName = 'SALE_PRICE'
-            Title.Caption = 'Sale Price'
-            Title.Font.Charset = ANSI_CHARSET
-            Title.Font.Color = clWindowText
-            Title.Font.Height = -13
-            Title.Font.Name = 'Segoe UI'
-            Title.Font.Style = [fsBold]
-            Width = 90
-            Visible = True
-          end>
-      end
-      object pnSaleButtons: TPanel
-        Left = 2
-        Top = 422
-        Width = 574
-        Height = 50
-        Align = alBottom
-        BevelOuter = bvNone
         TabOrder = 1
-        object lblPriceHint: TLabel
-          Left = 10
-          Top = 16
-          Width = 260
-          Height = 20
-          Caption = 'Type the Sale Price (discounts here).'
+        object gridSale: TDBGrid
+          AlignWithMargins = True
+          Left = 5
+          Top = 25
+          Width = 630
+          Height = 356
+          Align = alClient
+          DataSource = dsSale
           Font.Charset = ANSI_CHARSET
-          Font.Color = clGrayText
-          Font.Height = -15
+          Font.Color = clWindowText
+          Font.Height = -13
           Font.Name = 'Segoe UI'
           Font.Style = []
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgCancelOnExit]
           ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = ANSI_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -13
+          TitleFont.Name = 'Segoe UI'
+          TitleFont.Style = []
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'INV_ITEM_BARCODE'
+              ReadOnly = True
+              Title.Caption = 'Barcode'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -15
+              Title.Font.Name = 'Segoe UI'
+              Title.Font.Style = []
+              Width = 96
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'INV_ITEM_COUNT'
+              ReadOnly = True
+              Title.Caption = 'Qty'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -15
+              Title.Font.Name = 'Segoe UI'
+              Title.Font.Style = []
+              Width = 53
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DESCRIPTION'
+              ReadOnly = True
+              Title.Caption = 'Description'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -15
+              Title.Font.Name = 'Segoe UI'
+              Title.Font.Style = []
+              Width = 246
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'UNIT_COST'
+              ReadOnly = True
+              Title.Caption = 'Cost'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -15
+              Title.Font.Name = 'Segoe UI'
+              Title.Font.Style = []
+              Width = 83
+              Visible = True
+            end
+            item
+              Color = clInfoBk
+              Expanded = False
+              FieldName = 'SALE_PRICE'
+              Title.Caption = 'Sale Price'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -15
+              Title.Font.Name = 'Segoe UI'
+              Title.Font.Style = [fsBold]
+              Width = 94
+              Visible = True
+            end>
         end
-        object btnRemoveFromSale: TRzBitBtn
-          Left = 424
-          Top = 5
-          Width = 140
-          Height = 40
-          Caption = 'Remove'
+        object pnSaleButtons: TPanel
+          AlignWithMargins = True
+          Left = 5
+          Top = 387
+          Width = 630
+          Height = 46
+          Align = alBottom
+          BevelOuter = bvNone
+          TabOrder = 1
+          object lblDiscount: TLabel
+            Left = 14
+            Top = 13
+            Width = 61
+            Height = 20
+            Caption = 'Discount:'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -15
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object btnRemoveFromSale: TRzBitBtn
+            Left = 481
+            Top = 3
+            Width = 140
+            Height = 40
+            Caption = 'Remove'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -15
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            OnClick = btnRemoveFromSaleClick
+            ImageIndex = 22
+            Images = DM.vilMain24
+            Margin = 8
+          end
+          object edDiscount: TRzNumericEdit
+            Left = 83
+            Top = 9
+            Width = 90
+            Height = 28
+            Hint = 'Discount for the whole sale, taken before tax'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
+            OnChange = DiscountChange
+            IntegersOnly = False
+            DisplayFormat = ',0.00;(,0.00)'
+          end
+          object cbDiscountType: TComboBox
+            Left = 185
+            Top = 9
+            Width = 100
+            Height = 28
+            Style = csDropDownList
+            ItemIndex = 0
+            TabOrder = 2
+            Text = '$ Amount'
+            OnChange = DiscountChange
+            Items.Strings = (
+              '$ Amount'
+              '% Percent')
+          end
+        end
+        object pnSaleTotals: TPanel
+          AlignWithMargins = True
+          Left = 5
+          Top = 439
+          Width = 630
+          Height = 206
+          Align = alBottom
+          BevelEdges = [beTop]
+          BevelKind = bkFlat
+          BevelOuter = bvNone
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
           Font.Height = -15
           Font.Name = 'Segoe UI'
           Font.Style = []
           ParentFont = False
-          TabOrder = 0
-          OnClick = btnRemoveFromSaleClick
-          ImageIndex = 22
-          Images = DM.vilMain24
-          Margin = 8
-          Spacing = 4
+          ShowCaption = False
+          TabOrder = 2
+          object lblSoldDate: TLabel
+            Left = 12
+            Top = 14
+            Width = 67
+            Height = 20
+            Caption = 'Sold date:'
+          end
+          object lblSubtotalCaption: TLabel
+            Left = 357
+            Top = 14
+            Width = 61
+            Height = 21
+            Caption = 'Subtotal:'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblSubtotal: TLabel
+            Left = 437
+            Top = 14
+            Width = 120
+            Height = 20
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '$0.00'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblDiscountCaption: TLabel
+            Left = 357
+            Top = 38
+            Width = 64
+            Height = 21
+            Caption = 'Discount:'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblDiscountAmt: TLabel
+            Left = 437
+            Top = 38
+            Width = 120
+            Height = 20
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '$0.00'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblTaxCaption: TLabel
+            Left = 357
+            Top = 62
+            Width = 60
+            Height = 21
+            Caption = 'Tax (0%):'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblTax: TLabel
+            Left = 437
+            Top = 62
+            Width = 120
+            Height = 20
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '$0.00'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblTotalCaption: TLabel
+            Left = 357
+            Top = 95
+            Width = 48
+            Height = 25
+            Caption = 'Total:'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object lblTotal: TLabel
+            Left = 437
+            Top = 95
+            Width = 120
+            Height = 21
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '$0.00'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object lblRcptNo: TLabel
+            Left = 156
+            Top = 38
+            Width = 77
+            Height = 20
+            Caption = 'Receipt No.'
+          end
+          object edSoldDate: TRzDateTimeEdit
+            Left = 12
+            Top = 37
+            Width = 120
+            Height = 28
+            TabStop = False
+            EditType = etDate
+            TabOrder = 3
+          end
+          object btnNewSale: TRzBitBtn
+            Left = 11
+            Top = 142
+            Width = 180
+            Height = 50
+            Hint = 'Clear the completed sale and start the next one'
+            Caption = 'New Sale / Clear'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            OnClick = btnNewSaleClick
+            ImageIndex = 48
+            Images = DM.vilMain24
+            Margin = 8
+          end
+          object btnCompleteSale: TRzBitBtn
+            Left = 354
+            Top = 142
+            Width = 211
+            Height = 50
+            Caption = 'Complete Sale'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -15
+            Font.Name = 'Segoe UI Semibold'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 1
+            OnClick = btnCompleteSaleClick
+            ImageIndex = 28
+            Images = DM.vilMain24
+            Margin = 8
+          end
+          object btnPrintSalesReceipt: TRzBitBtn
+            Left = 578
+            Top = 142
+            Width = 49
+            Height = 50
+            Hint = 'Print Sales Receipt'
+            HotTrack = True
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = btnPrintSalesReceiptClick
+            ImageIndex = 65
+            Images = DM.vilMain24
+            Spacing = 0
+          end
         end
       end
-    end
-  end
-  object gbTotals: TGroupBox
-    AlignWithMargins = True
-    Left = 3
-    Top = 543
-    Width = 1174
-    Height = 94
-    Align = alBottom
-    TabOrder = 2
-    DesignSize = (
-      1174
-      94)
-    object lblSoldDate: TLabel
-      Left = 16
-      Top = 37
-      Width = 70
-      Height = 20
-      Caption = 'Sold date:'
-    end
-    object lblSubtotalCaption: TLabel
-      Left = 300
-      Top = 14
-      Width = 65
-      Height = 20
-      Caption = 'Subtotal:'
-    end
-    object lblSubtotal: TLabel
-      Left = 380
-      Top = 14
-      Width = 120
-      Height = 20
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '$0.00'
-    end
-    object lblTaxCaption: TLabel
-      Left = 300
-      Top = 38
-      Width = 70
-      Height = 20
-      Caption = 'Tax (0%):'
-    end
-    object lblTax: TLabel
-      Left = 380
-      Top = 38
-      Width = 120
-      Height = 20
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '$0.00'
-    end
-    object lblTotalCaption: TLabel
-      Left = 300
-      Top = 62
-      Width = 41
-      Height = 21
-      Caption = 'Total:'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object lblTotal: TLabel
-      Left = 380
-      Top = 62
-      Width = 120
-      Height = 21
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '$0.00'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object edSoldDate: TRzDateTimeEdit
-      Left = 96
-      Top = 33
-      Width = 120
-      Height = 28
-      EditType = etDate
-      TabOrder = 0
-    end
-    object btnCompleteSale: TRzBitBtn
-      Left = 850
-      Top = 22
-      Width = 170
-      Height = 50
-      Anchors = [akTop, akRight]
-      Caption = 'Complete Sale'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Segoe UI Semibold'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 1
-      OnClick = btnCompleteSaleClick
-      ImageIndex = 28
-      Images = DM.vilMain24
-      Margin = 8
-      Spacing = 4
-    end
-    object btnClose: TBitBtn
-      Left = 1040
-      Top = 22
-      Width = 115
-      Height = 50
-      Anchors = [akTop, akRight]
-      Cancel = True
-      Caption = '&Close'
-      ImageIndex = 2
-      ImageName = 'actExit'
-      Images = DM.vilMain24
-      TabOrder = 2
-      OnClick = btnCloseClick
     end
   end
   object qryForSale: TFDQuery
@@ -447,25 +677,23 @@ object frmSellItems: TfrmSellItems
   end
   object dsForSale: TDataSource
     DataSet = qryForSale
+    OnDataChange = dsForSaleDataChange
     Left = 176
     Top = 180
   end
   object clnSale: TFDMemTable
-    BeforeInsert = clnSaleBeforeInsert
-    AfterPost = clnSaleAfterChange
-    AfterDelete = clnSaleAfterChange
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
     ResourceOptions.SilentMode = True
     UpdateOptions.AssignedValues = [uvCheckRequired]
     UpdateOptions.CheckRequired = False
-    Left = 696
-    Top = 180
+    Left = 891
+    Top = 149
   end
   object dsSale: TDataSource
     DataSet = clnSale
-    Left = 776
-    Top = 180
+    Left = 893
+    Top = 207
   end
 end

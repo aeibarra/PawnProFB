@@ -3,7 +3,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Stock Receipt'
-  ClientHeight = 474
+  ClientHeight = 452
   ClientWidth = 516
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -20,12 +20,11 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     Left = 3
     Top = 3
     Width = 510
-    Height = 402
+    Height = 380
     Align = alClient
     Caption = ' Supplier Invoice '
     TabOrder = 0
-    ExplicitWidth = 516
-    ExplicitHeight = 399
+    ExplicitHeight = 402
     object lblReceiptNo: TLabel
       Left = 20
       Top = 30
@@ -55,35 +54,35 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object lblInvoiceNo: TLabel
       Left = 25
-      Top = 124
+      Top = 119
       Width = 63
       Height = 20
       Caption = 'Invoice #:'
     end
     object lblInvoiceDate: TLabel
       Left = 188
-      Top = 124
+      Top = 119
       Width = 84
       Height = 20
       Caption = 'Invoice date:'
     end
     object lblInvoiceTotal: TLabel
       Left = 328
-      Top = 124
+      Top = 119
       Width = 85
       Height = 20
       Caption = 'Invoice total:'
     end
     object lblPayType: TLabel
       Left = 25
-      Top = 188
+      Top = 178
       Width = 51
       Height = 20
       Caption = 'Paid by:'
     end
     object lblNotes: TLabel
       Left = 25
-      Top = 249
+      Top = 235
       Width = 42
       Height = 20
       Caption = 'Notes:'
@@ -108,7 +107,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object edInvoiceNo: TEdit
       Left = 25
-      Top = 147
+      Top = 142
       Width = 150
       Height = 28
       MaxLength = 40
@@ -116,7 +115,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object edInvoiceDate: TRzDateTimeEdit
       Left = 188
-      Top = 147
+      Top = 142
       Width = 126
       Height = 28
       EditType = etDate
@@ -124,7 +123,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object edInvoiceTotal: TRzNumericEdit
       Left = 328
-      Top = 147
+      Top = 142
       Width = 117
       Height = 28
       TabOrder = 4
@@ -133,7 +132,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object cbPayType: TComboBox
       Left = 25
-      Top = 214
+      Top = 201
       Width = 160
       Height = 28
       Style = csDropDownList
@@ -141,7 +140,7 @@ object frmEditStockReceipt: TfrmEditStockReceipt
     end
     object memNotes: TMemo
       Left = 25
-      Top = 275
+      Top = 258
       Width = 460
       Height = 104
       MaxLength = 500
@@ -151,13 +150,12 @@ object frmEditStockReceipt: TfrmEditStockReceipt
   end
   object gbButtons: TGroupBox
     Left = 0
-    Top = 408
+    Top = 386
     Width = 516
     Height = 66
     Align = alBottom
     TabOrder = 1
-    ExplicitLeft = 2
-    ExplicitWidth = 517
+    ExplicitTop = 408
     object BitBtn1: TBitBtn
       Left = 378
       Top = 12

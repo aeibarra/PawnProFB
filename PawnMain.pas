@@ -118,7 +118,7 @@ type
     RzToolButton16: TRzToolButton;
     RzToolButton17: TRzToolButton;
     btnBackupDatabase: TRzToolButton;
-    RzToolButton19: TRzToolButton;
+    btnItems: TRzToolButton;
     btnReceiveStock: TRzToolButton;
     pnClients: TRzPanel;
     RzToolButton1: TRzToolButton;
@@ -159,6 +159,7 @@ type
     btnTransactionList: TRzToolButton;
     RzSpacer6: TRzSpacer;
     btnExportImages: TRzToolButton;
+    btnSalesItems: TRzToolButton;
     procedure FormShow(Sender: TObject);
     procedure Jewel1Click(Sender: TObject);
     procedure JewelType1Click(Sender: TObject);
@@ -195,6 +196,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure pbUnderTabsPaint(Sender: TObject);
     procedure btnReceiveStockClick(Sender: TObject);
+    procedure btnSalesItemsClick(Sender: TObject);
   private
     SaveOriPaintboxColor: TColor;
     // Latest fire-and-forget gold-price fetch. Held so shutdown can join it
@@ -223,7 +225,7 @@ var
 
 implementation
 
-Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory, ReceiveStock,
+Uses PawnSplash, PawnDM, SearchClient, PawnGlobal, Inventory, ReceiveStock, SellItems,
   MaintenanceJewle, SetupBarcodePrinter,
   BackupDB, TransactionList, ExportPoliceInformation,
   Report01, Report02, RepPurchases, GLbUtils, ReportExportTransactions,
@@ -842,6 +844,23 @@ begin
 
   frmReceiveStock := TfrmReceiveStock.Create(Self);
   frmReceiveStock.Show;
+end;
+
+{ Sell Items: the stand-alone sale screen (numbered sale tickets). Modeless
+  from here, like Clients and Items; the Items screen still opens its own
+  modal copy with the selected item. }
+procedure TfrmPawnMain.btnSalesItemsClick(Sender: TObject);
+begin
+  if Assigned(frmSellItems) then
+    begin
+      if not (csDestroying in frmSellItems.ComponentState) then
+        frmSellItems.BringToFront;
+      exit;
+    end;
+
+  frmSellItems := TfrmSellItems.Create(Self);
+  frmSellItems.Modeless := True;
+  frmSellItems.Show;
 end;
 
 procedure TfrmPawnMain.btnSelectPrintersClick(Sender: TObject);

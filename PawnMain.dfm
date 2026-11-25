@@ -242,7 +242,8 @@ object frmPawnMain: TfrmPawnMain
         RzToolButton16
         RzToolButton17
         btnReceiveStock
-        RzToolButton19
+        btnItems
+        btnSalesItems
         btnTransactionList
         btnBackupDatabase)
       object RzToolButton16: TRzToolButton
@@ -270,7 +271,7 @@ object frmPawnMain: TfrmPawnMain
       end
       object btnBackupDatabase: TRzToolButton
         AlignWithMargins = True
-        Left = 566
+        Left = 636
         Top = 7
         Width = 110
         Height = 67
@@ -281,11 +282,11 @@ object frmPawnMain: TfrmPawnMain
         Caption = 'Backup Database'
         OnClick = actBackupExecute
       end
-      object RzToolButton19: TRzToolButton
+      object btnItems: TRzToolButton
         AlignWithMargins = True
         Left = 343
         Top = 7
-        Width = 110
+        Width = 90
         Height = 67
         Layout = blGlyphTop
         Spacing = 6
@@ -307,7 +308,7 @@ object frmPawnMain: TfrmPawnMain
         OnClick = btnReceiveStockClick
       end
       object btnTransactionList: TRzToolButton
-        Left = 456
+        Left = 526
         Top = 7
         Width = 110
         Height = 67
@@ -316,6 +317,17 @@ object frmPawnMain: TfrmPawnMain
         UseToolbarButtonSize = False
         Caption = 'Transactions List'
         OnClick = btnTransactionListClick
+      end
+      object btnSalesItems: TRzToolButton
+        Left = 436
+        Top = 7
+        Width = 90
+        Height = 67
+        ImageIndex = 62
+        Layout = blGlyphTop
+        UseToolbarButtonSize = False
+        Caption = 'Sale Items'
+        OnClick = btnSalesItemsClick
       end
     end
   end

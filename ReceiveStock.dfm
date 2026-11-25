@@ -2,8 +2,8 @@ object frmReceiveStock: TfrmReceiveStock
   Left = 0
   Top = 0
   Caption = 'Receive Stock'
-  ClientHeight = 860
-  ClientWidth = 1300
+  ClientHeight = 767
+  ClientWidth = 1263
   Color = clBtnFace
   Constraints.MinHeight = 600
   Constraints.MinWidth = 1000
@@ -22,30 +22,33 @@ object frmReceiveStock: TfrmReceiveStock
   object Splitter1: TSplitter
     Left = 0
     Top = 383
-    Width = 1300
+    Width = 1263
     Height = 5
     Cursor = crVSplit
     Align = alTop
     MinSize = 150
+    ExplicitWidth = 1300
   end
   object gbReceipts: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1294
+    Width = 1257
     Height = 377
     Align = alTop
     Caption = ' Receipts '
     TabOrder = 0
+    ExplicitWidth = 1294
     object pnReceiptButtons: TPanel
       AlignWithMargins = True
       Left = 5
       Top = 316
-      Width = 1284
+      Width = 1247
       Height = 56
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitWidth = 1284
       object lblTotals: TLabel
         Left = 600
         Top = 16
@@ -112,7 +115,7 @@ object frmReceiveStock: TfrmReceiveStock
       AlignWithMargins = True
       Left = 5
       Top = 25
-      Width = 1284
+      Width = 1247
       Height = 285
       Align = alClient
       DataSource = dsReceipts
@@ -203,20 +206,24 @@ object frmReceiveStock: TfrmReceiveStock
     AlignWithMargins = True
     Left = 3
     Top = 391
-    Width = 1294
-    Height = 404
+    Width = 1257
+    Height = 311
     Align = alClient
     Caption = ' Items Received '
     TabOrder = 1
+    ExplicitWidth = 1294
+    ExplicitHeight = 404
     object pnItemButtons: TPanel
       AlignWithMargins = True
       Left = 5
-      Top = 343
-      Width = 1284
+      Top = 250
+      Width = 1247
       Height = 56
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitTop = 343
+      ExplicitWidth = 1284
       object btnAddItem: TBitBtn
         Left = 37
         Top = 6
@@ -261,8 +268,8 @@ object frmReceiveStock: TfrmReceiveStock
       AlignWithMargins = True
       Left = 5
       Top = 25
-      Width = 1284
-      Height = 312
+      Width = 1247
+      Height = 219
       Align = alClient
       DataSource = dsLines
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -344,17 +351,19 @@ object frmReceiveStock: TfrmReceiveStock
   end
   object pnBottom: TPanel
     Left = 0
-    Top = 798
-    Width = 1300
+    Top = 705
+    Width = 1263
     Height = 62
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitTop = 798
+    ExplicitWidth = 1300
     DesignSize = (
-      1300
+      1263
       62)
     object btnClose: TBitBtn
-      Left = 1158
+      Left = 1121
       Top = 8
       Width = 131
       Height = 46
@@ -366,6 +375,7 @@ object frmReceiveStock: TfrmReceiveStock
       Images = DM.vilMain24
       TabOrder = 0
       OnClick = btnCloseClick
+      ExplicitLeft = 1158
     end
   end
   object FormState: TRzFormState

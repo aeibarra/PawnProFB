@@ -958,9 +958,6 @@ object frmInventory: TfrmInventory
     Top = 184
   end
   object clnSale: TFDMemTable
-    BeforeInsert = clnSaleBeforeInsert
-    AfterPost = clnSaleAfterChange
-    AfterDelete = clnSaleAfterChange
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]

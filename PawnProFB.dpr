@@ -115,7 +115,8 @@ uses
   QuickSale in 'QuickSale.pas' {frmQuickSale},
   ReceiveStock in 'ReceiveStock.pas' {frmReceiveStock},
   EditStockReceipt in 'EditStockReceipt.pas' {frmEditStockReceipt},
-  EnterRcvItem in 'EnterRcvItem.pas' {frmEnterRcvItem};
+  EnterRcvItem in 'EnterRcvItem.pas' {frmEnterRcvItem},
+  uSaleTicket in 'uSaleTicket.pas';
 
 {$R *.RES}
 
